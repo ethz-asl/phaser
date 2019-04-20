@@ -12,7 +12,7 @@ class Packet {
     Packet();
 
   private:
-    std::vector<Point> points_;
+    std::vector<PointXYZIf> points_;
 
 };
 
