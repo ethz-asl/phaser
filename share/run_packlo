@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+REST=$@
+
+rosrun packlo packlo \
+    --alsologtostderr=1 \
+    --v=1 \
+    $REST
