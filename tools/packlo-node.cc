@@ -1,4 +1,5 @@
 #include <packlo/packlo-node.h>
+#include <packlo/controller/packet-distributor.h>
 
 #include <ros/ros.h>
 #include <glog/logging.h>
