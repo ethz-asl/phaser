@@ -11,8 +11,9 @@ find_package(catkin_simple REQUIRED)
 catkin_simple(ALL_DEPS_REQUIRED)
 
 cs_add_library(${PROJECT_NAME}_lib
-   src/controller/packet-distributor.cc
-   src/common/packet-converter.cc)
+   src/common/datasource.cc
+   src/controller/distributor.cc
+   )
 
 cs_add_executable(${PROJECT_NAME} tools/packlo-node.cc)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
