@@ -10,7 +10,9 @@ namespace common {
 class Datasource {
   public:
     
-    void subscribeToLidarImages(
+    void subscribeToLidarIntensityImages(
+        std::function<void(const sensor_msgs::ImageConstPtr&)> func);
+    void subscribeToLidarRangeImages(
         std::function<void(const sensor_msgs::ImageConstPtr&)> func);
 
   private:
