@@ -11,10 +11,8 @@ Distributor::Distributor(common::Datasource& ds)
 
 void Distributor::subscribeToTopics() {
   ds_.subscribeToLidarImages([&] (const sensor_msgs::ImageConstPtr& img) {
-  VLOG(1) << "RECV IMG2";
     lidarImageCallback(img);
   }); 
-  VLOG(1) << "subscribed";
 }
 
 void Distributor::lidarImageCallback(const sensor_msgs::ImageConstPtr& img) {
