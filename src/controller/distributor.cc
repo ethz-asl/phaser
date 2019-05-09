@@ -10,15 +10,30 @@ Distributor::Distributor(common::Datasource& ds)
 }
 
 void Distributor::subscribeToTopics() {
-  ds_.subscribeToLidarRangeImages(
-    [&] (const sensor_msgs::ImageConstPtr& img) {
-      lidarImageCallback(img);
-    }); 
+  bool image = false;
+  if (image) 
+    ds_.subscribeToImage(
+      [&] (const sensor_msgs::ImageConstPtr& img) {
+        lidarImageCallback(img);
+      }); 
+  else
+    ds_.subscribeToLidarImages(
+      [&] (const sensor_msgs::ImageConstPtr& intensity_image, 
+          const sensor_msgs::ImageConstPtr& range_image, 
+          const sensor_msgs::ImageConstPtr& noise_image) {
+        lidarImagesCallback(intensity_image, range_image, noise_image);
+      });
 }
 
 void Distributor::lidarImageCallback(const sensor_msgs::ImageConstPtr& img) {
-  VLOG(1) << "img finally received";
   tracker_.trackNewImage(img);
+}
+
+void Distributor::lidarImagesCallback(
+    const sensor_msgs::ImageConstPtr& intensity,
+    const sensor_msgs::ImageConstPtr& range,
+    const sensor_msgs::ImageConstPtr& noise) {
+  tracker_.trackNewImages(intensity, range, noise);
 }
 
 }

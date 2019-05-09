@@ -17,9 +17,12 @@ class LKTracker {
   public:
     LKTracker();
     void trackNewImage(const sensor_msgs::ImageConstPtr& img);
-
+    void trackNewImages(const sensor_msgs::ImageConstPtr& intensity,
+       const sensor_msgs::ImageConstPtr& range,
+       const sensor_msgs::ImageConstPtr& noise);
   private:
     void track(const cv::Mat &img);
+    cv::Mat applyClahe(const std::vector<cv::Mat> &img);
 
     bool is_initialized_ = false;
     cv::Mat prev_tracked_image_;
@@ -28,7 +31,7 @@ class LKTracker {
     cv::Size sub_pix_win_size_;
     cv::Size win_size_;
     cv::TermCriteria term_crit_;
-
+    std::size_t frame_counter_ = 0u;
 };
 
 }
