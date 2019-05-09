@@ -13,6 +13,7 @@ catkin_simple(ALL_DEPS_REQUIRED)
 cs_add_library(${PROJECT_NAME}_lib
    src/common/datasource.cc
    src/controller/distributor.cc
+   src/backend/optical-flow/lk-tracker.cc
    )
 
 cs_add_executable(${PROJECT_NAME} tools/packlo-node.cc)

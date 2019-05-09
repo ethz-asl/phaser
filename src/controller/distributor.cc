@@ -10,13 +10,15 @@ Distributor::Distributor(common::Datasource& ds)
 }
 
 void Distributor::subscribeToTopics() {
-  ds_.subscribeToLidarImages([&] (const sensor_msgs::ImageConstPtr& img) {
-    lidarImageCallback(img);
-  }); 
+  ds_.subscribeToLidarRangeImages(
+    [&] (const sensor_msgs::ImageConstPtr& img) {
+      lidarImageCallback(img);
+    }); 
 }
 
 void Distributor::lidarImageCallback(const sensor_msgs::ImageConstPtr& img) {
   VLOG(1) << "img finally received";
+  tracker_.trackNewImage(img);
 }
 
 }

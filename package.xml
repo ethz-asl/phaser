@@ -20,4 +20,6 @@
   <depend>sensor_msgs</depend>
   <depend>eigen_catkin</depend>
   <depend>eigen_checks</depend>
+  <depend>opencv3_catkin</depend>
+  <depend>cv_bridge</depend>
 </package>

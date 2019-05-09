@@ -1,6 +1,7 @@
 #pragma once
 
 #include <packlo/common/datasource.h>
+#include <packlo/backend/optical-flow/lk-tracker.h>
 
 namespace controller {
 
@@ -14,6 +15,7 @@ class Distributor {
     void lidarImageCallback(const sensor_msgs::ImageConstPtr& img);
     
     common::Datasource& ds_;
+    optical_flow::LKTracker tracker_;
 };
 
 }
