@@ -48,4 +48,15 @@ void Datasource::subscribeToLidarImages(
     }; 
   image_synchronizer_.registerCallback(boost::bind(callback, _1, _2, _3));
 }
+
+void Datasource::subscribeToPointClouds(
+    std::function<void(const sensor_msgs::PointCloud2ConstPtr&)> func) {
+  boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)> callback = 
+      [&] (const sensor_msgs::PointCloud2ConstPtr &cloud) {
+        func(cloud);
+      };
+  ros::Subscriber sub = nh_.subscribe("/os1_cloud_node/points", 1, callback); 
+  subscribers_.emplace_back(std::move(sub));
+}
+
 }

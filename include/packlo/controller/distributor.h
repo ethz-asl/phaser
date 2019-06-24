@@ -16,6 +16,7 @@ class Distributor {
     void lidarImagesCallback(const sensor_msgs::ImageConstPtr& intensity,
         const sensor_msgs::ImageConstPtr& range,
         const sensor_msgs::ImageConstPtr& noise);
+    void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud);
     
     common::Datasource& ds_;
     optical_flow::LKTracker tracker_;

@@ -10,7 +10,8 @@ Distributor::Distributor(common::Datasource& ds)
 }
 
 void Distributor::subscribeToTopics() {
-  bool image = false;
+  /*
+  const bool image = false;
   if (image) 
     ds_.subscribeToImage(
       [&] (const sensor_msgs::ImageConstPtr& img) {
@@ -23,6 +24,12 @@ void Distributor::subscribeToTopics() {
           const sensor_msgs::ImageConstPtr& noise_image) {
         lidarImagesCallback(intensity_image, range_image, noise_image);
       });
+      */
+    ds_.subscribeToPointClouds(
+      [&] (const sensor_msgs::PointCloud2ConstPtr& img) {
+        pointCloudCallback(img);
+      }); 
+
 }
 
 void Distributor::lidarImageCallback(const sensor_msgs::ImageConstPtr& img) {
@@ -34,6 +41,10 @@ void Distributor::lidarImagesCallback(
     const sensor_msgs::ImageConstPtr& range,
     const sensor_msgs::ImageConstPtr& noise) {
   tracker_.trackNewImages(intensity, range, noise);
+}
+
+void Distributor::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
+  VLOG(1) << "Received Point cloud";
 }
 
 }

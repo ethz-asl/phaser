@@ -2,6 +2,7 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
+#include <sensor_msgs/PointCloud2.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/sync_policies/approximate_time.h>
 #include <message_filters/synchronizer.h>
@@ -25,6 +26,9 @@ class Datasource {
           const sensor_msgs::ImageConstPtr&, 
           const sensor_msgs::ImageConstPtr&)> func);
 
+    void subscribeToPointClouds(
+        std::function<void(const sensor_msgs::PointCloud2ConstPtr&)> func);
+
   private:
     ros::NodeHandle nh_;
     std::vector<ros::Subscriber> subscribers_;
@@ -35,6 +39,7 @@ class Datasource {
       = message_filters::sync_policies::ApproximateTime<
         sensor_msgs::Image, sensor_msgs::Image, sensor_msgs::Image>;
     using ImageSynchronizer = message_filters::Synchronizer<ImagePolicy>;
+    
 
     SyncedImageSubscriber sync_intensity_images_sub_;
     SyncedImageSubscriber sync_range_images_sub_;
