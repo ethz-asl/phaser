@@ -21,8 +21,11 @@ class LKTracker {
        const sensor_msgs::ImageConstPtr& range,
        const sensor_msgs::ImageConstPtr& noise);
   private:
-    void track(const cv::Mat &img);
+    void track(const cv::Mat &img,
+       const std_msgs::Header &header);
     cv::Mat applyClahe(const std::vector<cv::Mat> &img);
+    void publishTrackedImage(const cv::Mat &img, 
+       const std_msgs::Header &header);
 
     bool is_initialized_ = false;
     cv::Mat prev_tracked_image_;

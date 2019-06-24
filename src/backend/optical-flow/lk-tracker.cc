@@ -4,6 +4,8 @@
 #include <opencv2/core/cuda.hpp>
 
 #include <glog/logging.h>
+#include <ros/ros.h>
+#include <sensor_msgs/Image.h>
 
 namespace optical_flow {
 
@@ -18,7 +20,7 @@ void LKTracker::trackNewImage(const sensor_msgs::ImageConstPtr& img)
   cv_bridge::CvImagePtr cv_ptr;
   try {
     cv_ptr = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::BGR8);
-    track(cv_ptr->image);
+    //track(cv_ptr->image);
   } catch (cv_bridge::Exception& e) {
     LOG(ERROR) << "Unable to convert to cv";
     VLOG(2) << "cv_bridge exception: " << e.what();
@@ -41,7 +43,7 @@ void LKTracker::trackNewImages(const sensor_msgs::ImageConstPtr& intensity,
     std::vector<cv::Mat> image_array {cv_ptr_intensity->image,
       cv_ptr_range->image, cv_ptr_noise->image};
     cv::Mat equalized = applyClahe(image_array);
-    track(equalized);
+    track(equalized, intensity->header);
   } catch (cv_bridge::Exception& e) {
     LOG(ERROR) << "Unable to convert to cv";
     VLOG(2) << "cv_bridge exception: " << e.what();
@@ -49,6 +51,16 @@ void LKTracker::trackNewImages(const sensor_msgs::ImageConstPtr& intensity,
   }
   if (++frame_counter_ % 30 == 0) 
     is_initialized_ = false;
+}
+
+void LKTracker::publishTrackedImage(const cv::Mat &img, 
+    const std_msgs::Header &header) {
+  static ros::NodeHandle nh;
+  static ros::Publisher pub = nh.advertise<sensor_msgs::Image>("/track_image", 1000); 
+  cv_bridge::CvImage img_bridge(header, sensor_msgs::image_encodings::MONO8, img);
+  sensor_msgs::Image msg;
+  img_bridge.toImageMsg(msg);
+  pub.publish(msg);
 }
 
 cv::Mat LKTracker::applyClahe(const std::vector<cv::Mat> &img_input) {
@@ -77,17 +89,17 @@ cv::Mat LKTracker::applyClahe(const std::vector<cv::Mat> &img_input) {
   //cv::Mat merged;
   cv::merge(clahe_array, merged);
 
-  return merged;
-}
-
-void LKTracker::track(const cv::Mat &img) {
-  // Convert input image to grayscale.
-  cv::Mat conv_gray;
-  cv::cvtColor(img, conv_gray, cv::COLOR_BGR2GRAY);
-  cv::Mat cropped = conv_gray(cv::Rect(128, 0, 512, 64));
-  //cv::Mat image = conv_gray;
+  cv::Mat cropped = merged(cv::Rect(128, 0, 512, 64));
   cv::Mat image;
   cv::resize(cropped, image, cv::Size(512, 128), 0, 0, cv::INTER_NEAREST) ;
+  return image;
+}
+
+void LKTracker::track(const cv::Mat &img,
+    const std_msgs::Header &header) {
+  // Convert input image to grayscale.
+  cv::Mat image;
+  cv::cvtColor(img, image, cv::COLOR_BGR2GRAY);
 
 
   if (!is_initialized_) {
@@ -109,7 +121,7 @@ void LKTracker::track(const cv::Mat &img) {
     for( i = k = 0u; i < n_points; ++i ) {
       if(!status[i]) continue;
       tracked_points_[1][k++] = tracked_points_[1][i];
-      cv::circle(image, tracked_points_[1][i], 3, cv::Scalar(0,255,0), -1, 8);
+      //cv::circle(image, tracked_points_[1][i], 3, cv::Scalar(255,255,0), -1, 8);
     }
     tracked_points_[1].resize(k);
   }
@@ -117,6 +129,7 @@ void LKTracker::track(const cv::Mat &img) {
   is_initialized_ = true;
   cv::imshow("LK Demo", image);
   cv::waitKey(1);
+  publishTrackedImage(image, header);
   std::swap(tracked_points_[1], tracked_points_[0]);
   cv::swap(prev_tracked_image_, image);
 }
