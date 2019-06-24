@@ -1,6 +1,10 @@
 #include <packlo/controller/distributor.h>
+#include <packlo/model/point-cloud.h>
+#include <packlo/common/spherical-projection.h>
 
 #include <glog/logging.h>
+#include <pcl_conversions/pcl_conversions.h>
+
 
 namespace controller {
 
@@ -45,6 +49,14 @@ void Distributor::lidarImagesCallback(
 
 void Distributor::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
   VLOG(1) << "Received Point cloud";
+  
+  model::PointCloud_tPtr input_cloud = std::make_shared<model::PointCloud_t>();
+  pcl::fromROSMsg(*cloud, *input_cloud);
+  model::PointCloud point_cloud (input_cloud);
+
+
+  common::SphericalProjection::convertPointCloud(point_cloud);
+
 }
 
 }

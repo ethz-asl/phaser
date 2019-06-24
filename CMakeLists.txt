@@ -12,7 +12,11 @@ catkin_simple(ALL_DEPS_REQUIRED)
 
 cs_add_library(${PROJECT_NAME}_lib
    src/common/datasource.cc
+   src/model/point-cloud.cc
+
+   src/common/spherical-projection.cc
    src/controller/distributor.cc
+
    src/backend/optical-flow/lk-tracker.cc
    )
 
