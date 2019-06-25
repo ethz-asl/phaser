@@ -1,6 +1,7 @@
 #include <packlo/model/point-cloud.h>
 
 #include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/kdtree/impl/kdtree_flann.hpp>
 #include <pcl/common/transforms.h>
 
 #include <glog/logging.h>
@@ -53,6 +54,10 @@ void PointCloud::transformPointCloud(const Eigen::Matrix4f &T) {
 
 void PointCloud::transformPointCloudCopy(const Eigen::Matrix4f& T, PointCloud& copy) {
   pcl::transformPointCloud (*cloud_, *copy.cloud_, T);
+}
+
+PointCloud_tPtr PointCloud::getRawCloud() const {
+  return cloud_;
 }
 
 }

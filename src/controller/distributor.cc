@@ -7,7 +7,6 @@
 
 #include <glog/logging.h>
 #include <pcl_conversions/pcl_conversions.h>
-#include <pcl/visualization/pcl_visualizer.h>
 
 namespace controller {
 
@@ -57,10 +56,11 @@ void Distributor::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& clo
   pcl::fromROSMsg(*cloud, *input_cloud);
   model::PointCloud point_cloud (input_cloud);
   model::PointCloud syn_cloud = pertubPointCloud(point_cloud);
+  visualization::DebugVisualizer::getInstance()
+    .visualizePointCloudDiff(point_cloud, syn_cloud);  
 
   common::SphericalProjection::convertPointCloud(point_cloud);
   common::SphericalProjection::convertPointCloud(syn_cloud);
-
 
   const int bw = 32;
 
