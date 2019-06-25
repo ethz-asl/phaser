@@ -6,7 +6,7 @@ namespace visualization {
 
 class Visualizer {
   public:
-    explicit Visualize(const Visualize& viz) = delete;
+    explicit Visualizer(const Visualize& viz) = delete;
     
   private:
     Visualizer();

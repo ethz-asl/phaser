@@ -11,17 +11,46 @@ find_package(catkin_simple REQUIRED)
 catkin_simple(ALL_DEPS_REQUIRED)
 
 cs_add_library(${PROJECT_NAME}_lib
-   src/common/datasource.cc
+
+   lib/SOFT/csecond.c
+   lib/SOFT/s2_legendreTransforms.c
+   lib/SOFT/soft_fftw_nt.c
+   lib/SOFT/wrap_s2_rotate_fftw.c
+   lib/SOFT/makeweights.c
+   lib/SOFT/s2_primitive.c
+   lib/SOFT/soft_fftw_pc.c
+   lib/SOFT/wrap_soft_fftw.c
+   lib/SOFT/makeWigner.c
+   lib/SOFT/s2_semi_fly.c
+   lib/SOFT/utils_so3.c
+   lib/SOFT/wrap_soft_fftw_cor2.c
+   lib/SOFT/rotate_so3_fftw.c
+   lib/SOFT/s2_semi_memo.c
+   lib/SOFT/utils_vec_cx.c
+   lib/SOFT/rotate_so3_utils.c
+   lib/SOFT/so3_correlate_fftw.c
+   lib/SOFT/wignerTransforms.c
+   lib/SOFT/s2_cospmls.c
+   lib/SOFT/soft_fftw.c
+   lib/SOFT/wignerTransforms_fftw.c
+
    src/model/point-cloud.cc
 
+   src/common/datasource.cc
    src/common/spherical-projection.cc
+   src/common/spherical-sampler.cc
+   src/common/rotation-utils.cc
+
    src/controller/distributor.cc
 
+   src/visualization/debug-visualizer.cc
+
+   src/backend/correlation/spherical-correlation.cc
    src/backend/optical-flow/lk-tracker.cc
-   )
+)
 
 cs_add_executable(${PROJECT_NAME} tools/packlo-node.cc)
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib fftw3)
 
 cs_install()
 cs_export()

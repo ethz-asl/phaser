@@ -2,6 +2,7 @@
 
 #include <packlo/common/datasource.h>
 #include <packlo/backend/optical-flow/lk-tracker.h>
+#include <packlo/model/point-cloud.h>
 
 namespace controller {
 
@@ -17,6 +18,8 @@ class Distributor {
         const sensor_msgs::ImageConstPtr& range,
         const sensor_msgs::ImageConstPtr& noise);
     void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud);
+
+    model::PointCloud pertubPointCloud(model::PointCloud &cloud);
     
     common::Datasource& ds_;
     optical_flow::LKTracker tracker_;
