@@ -10,7 +10,10 @@ class SphericalSampler {
         const std::size_t bw);
 
   private:
-    static std::vector<model::Point_t> create2BwGrid(const std::size_t bw);
+    static std::vector<model::Point_t> create2BwGrid(
+        const std::size_t bw, const bool cartesian = true);
+    static std::vector<model::Point_t> convertCartesian(
+        std::vector<model::Point_t>& grid);
 };
   
 

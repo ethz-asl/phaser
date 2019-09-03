@@ -29,6 +29,11 @@ public:
 
   PointCloud_tPtr getRawCloud() const;
 
+  Point_t& pointAt(const std::size_t idx);
+  const Point_t& pointAt(const std::size_t idx) const;
+
+  std::size_t size() const;
+  PointCloud clone() const;
 
 private:
   PointCloud_tPtr cloud_; 

@@ -1,6 +1,8 @@
 #include <packlo/common/rotation-utils.h>
 #include <cmath>
 
+#include <glog/logging.h>
+
 namespace common {
 
 void RotationUtils::RotateAroundXYZ(model::PointCloud &cloud, const float alpha_rad, 
@@ -10,7 +12,8 @@ void RotationUtils::RotateAroundXYZ(model::PointCloud &cloud, const float alpha_
   cloud.transformPointCloud(T);
 }
 
-model::PointCloud RotationUtils::RotateAroundXYZCopy(model::PointCloud &cloud, const float alpha_rad, 
+model::PointCloud RotationUtils::RotateAroundXYZCopy(model::PointCloud &cloud, 
+    const float alpha_rad, 
     const float beta_rad, const float gamma_rad) {
   Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
    createTransformationAroundY(beta_rad) * createTransformationAroundX(alpha_rad);
@@ -48,6 +51,23 @@ Eigen::Matrix4f RotationUtils::createTransformationAroundZ(const float gamma_rad
   T(1,1) = std::cos (gamma_rad);
 
   return T;
+}
+
+void RotationUtils::RotateAroundZYZ(model::PointCloud &cloud, const double alpha_rad, 
+    const double beta_rad, const double gamma_rad) {
+  Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
+    createTransformationAroundY(beta_rad) * createTransformationAroundZ(alpha_rad);
+  cloud.transformPointCloud(T);
+}
+
+model::PointCloud RotationUtils::RotateAroundZYZCopy(model::PointCloud &cloud,
+    const double alpha_rad, const double beta_rad, const double gamma_rad) {
+  Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
+   createTransformationAroundY(beta_rad) * createTransformationAroundZ(alpha_rad);
+  model::PointCloud_tPtr copyCloud (new model::PointCloud_t);
+  model::PointCloud copy (copyCloud);
+  cloud.transformPointCloudCopy(T, copy);
+  return copy;
 }
 
 }

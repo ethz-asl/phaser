@@ -16,21 +16,15 @@ std::array<double, 3> SphericalCorrelation::correlateSignals(
    
   std::size_t n_signal = f1.size();
   std::size_t n_pattern = f2.size();
-  double* signal = new double[n_signal*2];
-  double* pattern = new double[n_pattern*2];
+  double* signal = new double[n_signal];
+  double* pattern = new double[n_pattern];
 
-  std::size_t k = 0;
   for (std::size_t i = 0; i < n_signal; ++i) {
-    signal[k] = f1[i];
-    signal[k+1] = 0.0;
-    k += 2;
+    signal[i] = f1[i];
   }
 
-  k = 0;
   for (std::size_t i = 0; i < n_pattern; ++i) {
-    pattern[k] = f2[i];
-    pattern[k+1] = 0.0;
-    k += 2;
+    pattern[i] = f2[i];
   }
 
   VLOG(1) << "starting correlation...";

@@ -19,7 +19,8 @@ class Distributor {
         const sensor_msgs::ImageConstPtr& noise);
     void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud);
 
-    model::PointCloud pertubPointCloud(model::PointCloud &cloud);
+    model::PointCloud pertubPointCloud(model::PointCloud &cloud,
+        const float alpha_rad, const float beta_rad, const float gamma_rad);
     
     common::Datasource& ds_;
     optical_flow::LKTracker tracker_;

@@ -13,6 +13,11 @@ public:
   static model::PointCloud RotateAroundXYZCopy(model::PointCloud &cloud,
       const float alpha_rad, const float beta_rad, const float gamma_rad);
 
+  static void RotateAroundZYZ(model::PointCloud &cloud, const double alpha_rad, 
+      const double beta_rad, const double gamma_rad);
+  static model::PointCloud RotateAroundZYZCopy(model::PointCloud &cloud,
+      const double alpha_rad, const double beta_rad, const double gamma_rad);
+
 private:
   static Eigen::Matrix4f createTransformationAroundX(const float alpha_rad);
   static Eigen::Matrix4f createTransformationAroundY(const float beta_rad);

@@ -49,7 +49,7 @@ void LKTracker::trackNewImages(const sensor_msgs::ImageConstPtr& intensity,
     VLOG(2) << "cv_bridge exception: " << e.what();
     return;
   }
-  if (++frame_counter_ % 30 == 0) 
+  if (++frame_counter_ % 100 == 0) 
     is_initialized_ = false;
 }
 
@@ -100,6 +100,8 @@ void LKTracker::track(const cv::Mat &img,
   // Convert input image to grayscale.
   cv::Mat image;
   cv::cvtColor(img, image, cv::COLOR_BGR2GRAY);
+  cv::Mat colored_image;
+  cv::cvtColor(image, colored_image, cv::COLOR_GRAY2BGR);
 
 
   if (!is_initialized_) {
@@ -121,15 +123,15 @@ void LKTracker::track(const cv::Mat &img,
     for( i = k = 0u; i < n_points; ++i ) {
       if(!status[i]) continue;
       tracked_points_[1][k++] = tracked_points_[1][i];
-      //cv::circle(image, tracked_points_[1][i], 3, cv::Scalar(255,255,0), -1, 8);
+      cv::circle(colored_image, tracked_points_[1][i], 4, cv::Scalar(255,0,0), -1, 8);
     }
     tracked_points_[1].resize(k);
   }
 
   is_initialized_ = true;
-  cv::imshow("LK Demo", image);
+  cv::imshow("LK Demo", colored_image);
   cv::waitKey(1);
-  publishTrackedImage(image, header);
+  publishTrackedImage(colored_image, header);
   std::swap(tracked_points_[1], tracked_points_[0]);
   cv::swap(prev_tracked_image_, image);
 }
