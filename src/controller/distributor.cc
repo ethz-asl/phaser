@@ -1,14 +1,14 @@
-#include <packlo/controller/distributor.h>
-#include <packlo/common/spherical-projection.h>
-#include <packlo/common/spherical-sampler.h>
-#include <packlo/common/rotation-utils.h>
-#include <packlo/visualization/debug-visualizer.h>
+#include "packlo/controller/distributor.h"
+#include "packlo/common/spherical-projection.h"
+#include "packlo/common/spherical-sampler.h"
+#include "packlo/common/rotation-utils.h"
+#include "packlo/visualization/debug-visualizer.h"
+#include "packlo/common/statistic-utils.h"
 
 #include <glog/logging.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/filters/passthrough.h>
 
-#include <chrono>
 
 namespace controller {
 
@@ -19,15 +19,14 @@ Distributor::Distributor(common::Datasource& ds)
 
 void Distributor::subscribeToTopics() {
 	ds_.subscribeToPointClouds(
-		[&] (const sensor_msgs::PointCloud2ConstPtr& img) {
-			pointCloudCallback(img);
+		[&] (const sensor_msgs::PointCloud2ConstPtr& cloud) {
+			pointCloudCallback(cloud);
 	}); 
 }
 
 void Distributor::pointCloudCallback(
 		const sensor_msgs::PointCloud2ConstPtr& cloud) {
   VLOG(1) << "Received point cloud";
-  
   model::PointCloud_tPtr input_cloud (new model::PointCloud_t);
   pcl::fromROSMsg(*cloud, *input_cloud);
   pcl::PassThrough<model::Point_t> pass;
@@ -56,13 +55,13 @@ void Distributor::pointCloudCallback(
     */
 
   const int bw = 64;
-  auto start = std::chrono::steady_clock::now();
-	std::array<double, 3> zyz = 
-		correlatePointcloud(point_cloud, syn_cloud, bw);
-  auto end = std::chrono::steady_clock::now();
+	std::array<double, 3> zyz;
+	const double duration_ms = common::executeTimedFunction(
+			&Distributor::correlatePointcloud, 
+			this, point_cloud, syn_cloud, bw, &zyz);
 
   VLOG(1) << "Done processing point cloud. it took " 
-    << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
+    << duration_ms
     << "ms";
   
   model::PointCloud reg_cloud = common::RotationUtils::RotateAroundZYZCopy(
@@ -77,15 +76,17 @@ model::PointCloud Distributor::pertubPointCloud(model::PointCloud &cloud,
       cloud, alpha_rad, beta_rad, gamma_rad);
 }
 
-std::array<double, 3> Distributor::correlatePointcloud(
+void Distributor::correlatePointcloud(
 		const model::PointCloud& source, 
 		const model::PointCloud& target, 
-		const int bandwith) {
+		const int bandwith, 
+		std::array<double, 3>* const zyz) {
+	CHECK(zyz);
   std::vector<float> f_values = 
 		common::SphericalSampler::sampleUniformly(source, bandwith);
   std::vector<float> h_values = 
 		common::SphericalSampler::sampleUniformly(target, bandwith);
-  return sph_corr_.correlateSignals(f_values, h_values, bandwith);
+  *zyz = sph_corr_.correlateSignals(f_values, h_values, bandwith);
 }
 
 }

@@ -3,5 +3,5 @@ REST=$@
 
 rosrun packlo packlo \
     --alsologtostderr=1 \
-    --v=1 \
+    --v=3 \
     $REST

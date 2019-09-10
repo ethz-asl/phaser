@@ -19,11 +19,11 @@ class Distributor {
 
     model::PointCloud pertubPointCloud(model::PointCloud &cloud,
         const float alpha_rad, const float beta_rad, const float gamma_rad);
-		std::array<double, 3> correlatePointcloud(
+		void correlatePointcloud(
 				const model::PointCloud& source, 
 				const model::PointCloud& target, 
-				const int bandwith); 
-
+				const int bandwith, 
+				std::array<double, 3>* const zyz);
     
     common::Datasource& ds_;
   backend::SphericalCorrelation sph_corr_; 
