@@ -6,7 +6,8 @@ namespace common {
 
 class SphericalSampler {
   public:
-    static std::vector<float> sampleUniformly(model::PointCloud &cloud, 
+    static std::vector<float> sampleUniformly(
+				const model::PointCloud &cloud, 
         const std::size_t bw);
 
   private:

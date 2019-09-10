@@ -1,8 +1,10 @@
 #pragma once
 
 #include <packlo/common/datasource.h>
-#include <packlo/backend/optical-flow/lk-tracker.h>
 #include <packlo/model/point-cloud.h>
+#include <packlo/backend/correlation/spherical-correlation.h>
+
+#include <array>
 
 namespace controller {
 
@@ -13,17 +15,18 @@ class Distributor {
 
   private:
     void subscribeToTopics();
-    void lidarImageCallback(const sensor_msgs::ImageConstPtr& img);
-    void lidarImagesCallback(const sensor_msgs::ImageConstPtr& intensity,
-        const sensor_msgs::ImageConstPtr& range,
-        const sensor_msgs::ImageConstPtr& noise);
     void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud);
 
     model::PointCloud pertubPointCloud(model::PointCloud &cloud,
         const float alpha_rad, const float beta_rad, const float gamma_rad);
+		std::array<double, 3> correlatePointcloud(
+				const model::PointCloud& source, 
+				const model::PointCloud& target, 
+				const int bandwith); 
+
     
     common::Datasource& ds_;
-    optical_flow::LKTracker tracker_;
+  backend::SphericalCorrelation sph_corr_; 
 };
 
 }

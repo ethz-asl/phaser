@@ -22,7 +22,8 @@ public:
   PointCloud_t::iterator begin(); 
   PointCloud_t::iterator end();
 
-  std::vector<float> getNearestPoints(const std::vector<Point_t> &query_points);
+  std::vector<float> getNearestPoints(
+			const std::vector<Point_t> &query_points) const;
 
   void transformPointCloud(const Eigen::Matrix4f &T);
   void transformPointCloudCopy(const Eigen::Matrix4f& T, PointCloud& copy);

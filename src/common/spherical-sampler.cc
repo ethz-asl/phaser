@@ -5,7 +5,8 @@
 
 namespace common {
 
-std::vector<float> SphericalSampler::sampleUniformly(model::PointCloud &cloud,
+std::vector<float> SphericalSampler::sampleUniformly(
+		const model::PointCloud &cloud,
     const std::size_t bw) {
   std::vector<model::Point_t> sample_angles = create2BwGrid(bw, true);
   std::vector<model::Point_t> converted = convertCartesian(sample_angles);

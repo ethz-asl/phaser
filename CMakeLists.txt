@@ -47,7 +47,6 @@ cs_add_library(${PROJECT_NAME}_lib
    src/visualization/debug-visualizer.cc
 
    src/backend/correlation/spherical-correlation.cc
-   src/backend/optical-flow/lk-tracker.cc
 )
 
 cs_add_executable(${PROJECT_NAME} tools/packlo-node.cc)
