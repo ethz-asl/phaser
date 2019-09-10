@@ -92,7 +92,7 @@ void softFFTWCor2( int bw,
 		   double *sig,
 		   double *pat,
 		   double *alpha, double *beta, double *gamma,
-		   int isReal )
+       double *maxval, int isReal )
 {
   int i ;
   int n, bwIn, bwOut, degLim ;
@@ -106,7 +106,7 @@ void softFFTWCor2( int bw,
   int na[2], inembed[2], onembed[2] ;
   int rank, howmany, istride, idist, ostride, odist ;
   int tmp, maxloc, ii, jj, kk ;
-  double tmpval, maxval ;
+  double tmpval;
   double *weights ;
   double *seminaive_naive_tablespace  ;
   double **seminaive_naive_table ;
@@ -298,17 +298,15 @@ void softFFTWCor2( int bw,
 			  isReal ) ;
 
   /* now find max value */
-  maxval = 0.0 ;
+  *maxval = 0.0 ;
   maxloc = 0 ;
-  for ( i = 0 ; i < 8*bwOut*bwOut*bwOut ; i ++ )
-    {
-      tmpval = NORM( so3Sig[i] );
-      if ( tmpval > maxval )
-	{
-	  maxval = tmpval;
-	  maxloc = i ;
-	}
+  for ( i = 0 ; i < 8*bwOut*bwOut*bwOut ; i ++ ) {
+    tmpval = NORM( so3Sig[i] );
+    if ( tmpval > *maxval ) {
+      *maxval = tmpval;
+      maxloc = i ;
     }
+  }
 
   ii = floor( maxloc / (4.*bwOut*bwOut) );
   tmp = maxloc - (ii*4.*bwOut*bwOut);

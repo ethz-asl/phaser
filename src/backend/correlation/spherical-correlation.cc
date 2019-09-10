@@ -11,7 +11,7 @@ namespace backend {
 std::array<double, 3> SphericalCorrelation::correlateSignals(
     const std::vector<float>& f1,
     const std::vector<float>& f2, const int bw) {
-  double alpha, beta, gamma = 0;
+  double alpha, beta, gamma, maxcoeff = 0.0;
   const int is_real = 1;
    
   std::size_t n_signal = f1.size();
@@ -29,7 +29,7 @@ std::array<double, 3> SphericalCorrelation::correlateSignals(
 
   VLOG(1) << "starting correlation...";
   softFFTWCor2(bw, signal, pattern, 
-      &alpha, &beta, &gamma, is_real);
+      &alpha, &beta, &gamma, &maxcoeff, is_real);
 
   VLOG(1) << "done: " << alpha << ", " << beta << ", " << gamma;
   std::array<double, 3> zyz {alpha, beta, gamma};
