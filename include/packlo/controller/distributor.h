@@ -23,6 +23,9 @@ class Distributor {
 
     model::PointCloud pertubPointCloud(model::PointCloud &cloud,
         const float alpha_rad, const float beta_rad, const float gamma_rad);
+		model::PointCloud cutPointCloud(model::PointCloud_tPtr& cloud, 
+				double min, double max, std::string&& dim);
+
 		void correlatePointcloud(
 				const model::PointCloud& source, 
 				const model::PointCloud& target, 

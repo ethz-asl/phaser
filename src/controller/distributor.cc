@@ -8,6 +8,7 @@
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/filters/passthrough.h>
 #include <pcl/filters/voxel_grid.h>
+#include <pcl/common/common.h>
 
 DEFINE_bool(enable_debug, false, 
 		"Enables the debug mode for the registration.");
@@ -47,21 +48,37 @@ void Distributor::pointCloudCallback(
   avg.setLeafSize(0.25f, 0.25f, 0.25f);
   avg.filter(*input_cloud);
 
-  model::PointCloud point_cloud (input_cloud);
-  point_cloud.initialize_kd_tree();
+	model::Point_t min_pt, max_pt;
+	pcl::getMinMax3D(*input_cloud, min_pt, max_pt);
+  model::PointCloud_tPtr input_cloud2 (new model::PointCloud_t);
+	pcl::copyPointCloud(*input_cloud, *input_cloud2);
 
+	float dist = std::sqrt((min_pt.y - max_pt.y) * (min_pt.y - max_pt.y));
+	VLOG(1) << "min pt dist: " << dist;
+  model::PointCloud point_cloud = cutPointCloud(input_cloud,
+			min_pt.y + 0.2 * dist, min_pt.y + 0.60 * dist, "y");
+  model::PointCloud syn_cloud_init = cutPointCloud(input_cloud2,
+			min_pt.y + 0.50 * dist, min_pt.y + dist, "y");
+
+ // model::PointCloud point_cloud (input_cloud);
+  point_cloud.initialize_kd_tree();
 
   const float alpha_rad = M_PI/2.0f;
   const float beta_rad = M_PI/2.2f;
   const float gamma_rad = M_PI/2.5f;
 
-  model::PointCloud syn_cloud = pertubPointCloud(point_cloud, 
+  model::PointCloud syn_cloud = pertubPointCloud(syn_cloud_init, 
       alpha_rad, beta_rad, gamma_rad);
   syn_cloud.initialize_kd_tree();
 
-	if (FLAGS_enable_debug)
+	if (FLAGS_enable_debug) {
+		visualization::DebugVisualizer::getInstance()
+			.visualizePointCloudDiff(point_cloud, point_cloud);  
+		visualization::DebugVisualizer::getInstance()
+			.visualizePointCloudDiff(syn_cloud, syn_cloud);  
 		visualization::DebugVisualizer::getInstance()
 			.visualizePointCloudDiff(point_cloud, syn_cloud);  
+	}
   /*
   model::PointCloud cur_sphere = 
     common::SphericalProjection::convertPointCloudCopy(point_cloud);
@@ -83,6 +100,18 @@ void Distributor::pointCloudCallback(
 	if (FLAGS_enable_debug)
 		visualization::DebugVisualizer::getInstance()
 			.visualizePointCloudDiff(point_cloud, reg_cloud);  
+}
+
+model::PointCloud Distributor::cutPointCloud(model::PointCloud_tPtr& cloud, 
+		double min, double max, std::string&& dim) {
+	VLOG(1) << "pass using " << min << " and " << max;
+  model::PointCloud_tPtr mod_cloud (new model::PointCloud_t);
+  pcl::PassThrough<model::Point_t> pass;
+  pass.setInputCloud (cloud);
+  pass.setFilterFieldName (dim);
+  pass.setFilterLimits (min,max);
+  pass.filter (*mod_cloud);
+  return model::PointCloud{mod_cloud};
 }
 
 model::PointCloud Distributor::pertubPointCloud(model::PointCloud &cloud, 
