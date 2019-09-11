@@ -41,15 +41,17 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/spherical-projection.cc
    src/common/spherical-sampler.cc
    src/common/rotation-utils.cc
+   src/common/statistics-manager.cc
 
    src/controller/distributor.cc
 
    src/visualization/debug-visualizer.cc
 
    src/backend/correlation/spherical-correlation.cc
+	 src/packlo-node.cc
 )
 
-cs_add_executable(${PROJECT_NAME} tools/packlo-node.cc)
+cs_add_executable(${PROJECT_NAME} tools/packlo-app.cc)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib fftw3)
 
 cs_install()

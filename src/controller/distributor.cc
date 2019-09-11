@@ -17,13 +17,15 @@ DEFINE_int32(spherical_bandwith, 64,
 namespace controller {
 
 Distributor::Distributor(common::Datasource& ds)
-  : ds_(ds), sampler_(FLAGS_spherical_bandwith) {
+		: ds_(ds), sampler_(FLAGS_spherical_bandwith), 
+		statistics_manager_(kManagerReferenceName) {
   subscribeToTopics();
 }
 
 void Distributor::subscribeToTopics() {
 	ds_.subscribeToPointClouds(
 		[&] (const sensor_msgs::PointCloud2ConstPtr& cloud) {
+			CHECK(cloud);
 			pointCloudCallback(cloud);
 	}); 
 }
@@ -117,6 +119,15 @@ void Distributor::correlatePointcloud(
 		<< "Sampling took for f and h: [" << duration_sample_f_ms << "ms," 
 		<< duration_sample_h_ms << "ms]. \n"
 		<< "Correlation took: " << duration_correlation_ms << "ms.";
+
+	statistics_manager_.emplaceValue(kSampleDurationKey, duration_sample_f_ms);
+	statistics_manager_.emplaceValue(kSampleDurationKey, duration_sample_h_ms);
+	statistics_manager_.emplaceValue(kCorrelationDurationKey, 
+			duration_correlation_ms);
+}
+
+const common::StatisticsManager& Distributor::getStatistics() const noexcept{
+	return statistics_manager_;
 }
 
 }

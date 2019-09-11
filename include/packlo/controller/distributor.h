@@ -1,9 +1,10 @@
 #pragma once
 
 #include "packlo/common/datasource.h"
+#include "packlo/common/spherical-sampler.h"
+#include "packlo/common/statistics-manager.h"
 #include "packlo/model/point-cloud.h"
 #include "packlo/backend/correlation/spherical-correlation.h"
-#include "packlo/common/spherical-sampler.h"
 
 #include <array>
 
@@ -13,6 +14,8 @@ class Distributor {
 
   public:
     explicit Distributor(common::Datasource& ds);
+
+		const common::StatisticsManager& getStatistics() const noexcept;
 
   private:
     void subscribeToTopics();
@@ -28,6 +31,11 @@ class Distributor {
     common::Datasource& ds_;
 		backend::SphericalCorrelation sph_corr_; 
 		common::SphericalSampler sampler_;
+
+		const std::string kManagerReferenceName = "Controller";
+		const std::string kSampleDurationKey = "Sampling";
+		const std::string kCorrelationDurationKey = "Correlation";
+		common::StatisticsManager statistics_manager_;
 };
 
 }
