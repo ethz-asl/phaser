@@ -1,8 +1,9 @@
 #pragma once
 
-#include <packlo/common/datasource.h>
-#include <packlo/model/point-cloud.h>
-#include <packlo/backend/correlation/spherical-correlation.h>
+#include "packlo/common/datasource.h"
+#include "packlo/model/point-cloud.h"
+#include "packlo/backend/correlation/spherical-correlation.h"
+#include "packlo/common/spherical-sampler.h"
 
 #include <array>
 
@@ -22,11 +23,11 @@ class Distributor {
 		void correlatePointcloud(
 				const model::PointCloud& source, 
 				const model::PointCloud& target, 
-				const int bandwith, 
 				std::array<double, 3>* const zyz);
     
     common::Datasource& ds_;
-  backend::SphericalCorrelation sph_corr_; 
+		backend::SphericalCorrelation sph_corr_; 
+		common::SphericalSampler sampler_;
 };
 
 }

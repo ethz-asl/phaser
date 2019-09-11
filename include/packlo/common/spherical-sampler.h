@@ -1,20 +1,29 @@
 #pragma once
 
 #include <packlo/model/point-cloud.h>
+#include <vector>
 
 namespace common {
 
 class SphericalSampler {
   public:
-    static std::vector<float> sampleUniformly(
+		SphericalSampler(const int bandwith);
+    void sampleUniformly(
 				const model::PointCloud &cloud, 
-        const std::size_t bw);
+        std::vector<float>* grid);
+
+		void initialize(const int bandwith);
+		int getInitializedBandwith() const noexcept;
 
   private:
-    static std::vector<model::Point_t> create2BwGrid(
-        const std::size_t bw, const bool cartesian = true);
-    static std::vector<model::Point_t> convertCartesian(
-        std::vector<model::Point_t>& grid);
+    std::vector<model::Point_t> create2BwGrid(
+        const std::size_t bw);
+    std::vector<model::Point_t> convertCartesian(
+        const std::vector<model::Point_t>& grid);
+
+		std::vector<model::Point_t> cartesian_grid_;
+		bool is_initialized_;
+		int bandwith_;
 };
   
 

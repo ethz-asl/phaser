@@ -1,6 +1,5 @@
 #include "packlo/controller/distributor.h"
 #include "packlo/common/spherical-projection.h"
-#include "packlo/common/spherical-sampler.h"
 #include "packlo/common/rotation-utils.h"
 #include "packlo/visualization/debug-visualizer.h"
 #include "packlo/common/statistic-utils.h"
@@ -8,12 +7,17 @@
 #include <glog/logging.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/filters/passthrough.h>
+#include <pcl/filters/voxel_grid.h>
 
+DEFINE_bool(enable_debug, false, 
+		"Enables the debug mode for the registration.");
+DEFINE_int32(spherical_bandwith, 64, 
+		"Defines the bandwith used for the spherical registration.");
 
 namespace controller {
 
 Distributor::Distributor(common::Datasource& ds)
-  : ds_(ds) {
+  : ds_(ds), sampler_(FLAGS_spherical_bandwith) {
   subscribeToTopics();
 }
 
@@ -36,7 +40,14 @@ void Distributor::pointCloudCallback(
   pass.setFilterLimitsNegative (true);
   pass.filter (*input_cloud);
 
+  pcl::VoxelGrid<model::Point_t> avg;
+  avg.setInputCloud(input_cloud);
+  avg.setLeafSize(0.25f, 0.25f, 0.25f);
+  avg.filter(*input_cloud);
+
   model::PointCloud point_cloud (input_cloud);
+  point_cloud.initialize_kd_tree();
+
 
   const float alpha_rad = M_PI/2.0f;
   const float beta_rad = M_PI/2.2f;
@@ -44,9 +55,11 @@ void Distributor::pointCloudCallback(
 
   model::PointCloud syn_cloud = pertubPointCloud(point_cloud, 
       alpha_rad, beta_rad, gamma_rad);
+  syn_cloud.initialize_kd_tree();
 
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(point_cloud, syn_cloud);  
+	if (FLAGS_enable_debug)
+		visualization::DebugVisualizer::getInstance()
+			.visualizePointCloudDiff(point_cloud, syn_cloud);  
   /*
   model::PointCloud cur_sphere = 
     common::SphericalProjection::convertPointCloudCopy(point_cloud);
@@ -54,11 +67,10 @@ void Distributor::pointCloudCallback(
     common::SphericalProjection::convertPointCloudCopy(syn_cloud);
     */
 
-  const int bw = 64;
 	std::array<double, 3> zyz;
 	const double duration_ms = common::executeTimedFunction(
 			&Distributor::correlatePointcloud, 
-			this, point_cloud, syn_cloud, bw, &zyz);
+			this, point_cloud, syn_cloud, &zyz);
 
   VLOG(1) << "Done processing point cloud. it took " 
     << duration_ms
@@ -66,8 +78,9 @@ void Distributor::pointCloudCallback(
   
   model::PointCloud reg_cloud = common::RotationUtils::RotateAroundZYZCopy(
       syn_cloud, zyz[2], zyz[1], zyz[0]);
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(point_cloud, reg_cloud);  
+	if (FLAGS_enable_debug)
+		visualization::DebugVisualizer::getInstance()
+			.visualizePointCloudDiff(point_cloud, reg_cloud);  
 }
 
 model::PointCloud Distributor::pertubPointCloud(model::PointCloud &cloud, 
@@ -79,14 +92,31 @@ model::PointCloud Distributor::pertubPointCloud(model::PointCloud &cloud,
 void Distributor::correlatePointcloud(
 		const model::PointCloud& source, 
 		const model::PointCloud& target, 
-		const int bandwith, 
 		std::array<double, 3>* const zyz) {
 	CHECK(zyz);
-  std::vector<float> f_values = 
-		common::SphericalSampler::sampleUniformly(source, bandwith);
-  std::vector<float> h_values = 
-		common::SphericalSampler::sampleUniformly(target, bandwith);
-  *zyz = sph_corr_.correlateSignals(f_values, h_values, bandwith);
+  std::vector<float> f_values, h_values; 
+
+	const double duration_sample_f_ms = common::executeTimedFunction(
+			&common::SphericalSampler::sampleUniformly, 
+			sampler_, source, &f_values);
+	const double duration_sample_h_ms = common::executeTimedFunction(
+			&common::SphericalSampler::sampleUniformly, 
+			sampler_, target, &h_values);
+
+	//sampler_.sampleUniformly(source, &f_values);
+	//sampler_.sampleUniformly(target, &h_values);
+
+	const double duration_correlation_ms = common::executeTimedFunction(
+			&backend::SphericalCorrelation::correlateSignals, 
+			sph_corr_, f_values, h_values, 
+			sampler_.getInitializedBandwith(), zyz);
+
+  //sph_corr_.correlateSignals(f_values, h_values, 
+			//sampler_.getInitializedBandwith(), zyz);
+	VLOG(1) << "Registered point cloud.\n"
+		<< "Sampling took for f and h: [" << duration_sample_f_ms << "ms," 
+		<< duration_sample_h_ms << "ms]. \n"
+		<< "Correlation took: " << duration_correlation_ms << "ms.";
 }
 
 }

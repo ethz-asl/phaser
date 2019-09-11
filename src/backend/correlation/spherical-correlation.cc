@@ -1,4 +1,4 @@
-#include <packlo/backend/correlation/spherical-correlation.h>
+#include "packlo/backend/correlation/spherical-correlation.h"
 
 extern "C" {
 #include <soft/wrap_fftw.h>
@@ -8,17 +8,19 @@ extern "C" {
 
 namespace backend {
 
-std::array<double, 3> SphericalCorrelation::correlateSignals(
+void SphericalCorrelation::correlateSignals(
     const std::vector<float>& f1,
-    const std::vector<float>& f2, const int bw) {
+    const std::vector<float>& f2, const int bw, 
+		std::array<double, 3>* const zyz) {
   double alpha, beta, gamma, maxcoeff = 0.0;
-  const int is_real = 1;
+  constexpr int is_real = 1;
    
-  std::size_t n_signal = f1.size();
-  std::size_t n_pattern = f2.size();
+  const std::size_t n_signal = f1.size();
+  const std::size_t n_pattern = f2.size();
   double* signal = new double[n_signal];
   double* pattern = new double[n_pattern];
 
+	// TODO(lbern): change f1 and f2 to be double? 
   for (std::size_t i = 0; i < n_signal; ++i) {
     signal[i] = f1[i];
   }
@@ -27,13 +29,18 @@ std::array<double, 3> SphericalCorrelation::correlateSignals(
     pattern[i] = f2[i];
   }
 
-  VLOG(1) << "starting correlation...";
+  VLOG(2) << "starting correlation with " << n_signal << " signal coeff and "
+		<< n_pattern << " pattern coeff.";
   softFFTWCor2(bw, signal, pattern, 
       &alpha, &beta, &gamma, &maxcoeff, is_real);
+  VLOG(2) << "done, result: " << alpha << ", " << beta << ", " << gamma;
 
-  VLOG(1) << "done: " << alpha << ", " << beta << ", " << gamma;
-  std::array<double, 3> zyz {alpha, beta, gamma};
-  return zyz;
+	(*zyz)[0] = alpha;
+	(*zyz)[1] = beta;
+	(*zyz)[2] = gamma;
+
+	delete [] signal;
+	delete [] pattern;
 }
 
 }
