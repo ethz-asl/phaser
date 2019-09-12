@@ -49,4 +49,6 @@ private:
   const std::size_t kNeighbors = 1;
 };
 
+using PointCloudPtr = std::shared_ptr<PointCloud>;
+
 }

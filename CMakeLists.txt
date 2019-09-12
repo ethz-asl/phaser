@@ -44,6 +44,9 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/statistics-manager.cc
 
    src/controller/distributor.cc
+	 src/backend/registration/sph-registration.cc
+	 src/backend/registration/sph-registration-mock-rotated.cc
+	 src/backend/registration/sph-registration-mock-cutted.cc
 
    src/visualization/debug-visualizer.cc
 

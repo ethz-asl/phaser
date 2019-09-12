@@ -1,12 +1,11 @@
 #pragma once
 
 #include "packlo/common/datasource.h"
-#include "packlo/common/spherical-sampler.h"
-#include "packlo/common/statistics-manager.h"
 #include "packlo/model/point-cloud.h"
-#include "packlo/backend/correlation/spherical-correlation.h"
+#include "packlo/backend/registration/base-registration.h"
+#include "packlo/common/statistics-manager.h"
 
-#include <array>
+#include <memory>
 
 namespace controller {
 
@@ -19,25 +18,17 @@ class Distributor {
 
   private:
     void subscribeToTopics();
+		void initializeRegistrationAlgorithm(const std::string& type);
     void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud);
-
-    model::PointCloud pertubPointCloud(model::PointCloud &cloud,
-        const float alpha_rad, const float beta_rad, const float gamma_rad);
-		model::PointCloud cutPointCloud(model::PointCloud_tPtr& cloud, 
-				double min, double max, std::string&& dim);
-
-		void correlatePointcloud(
-				const model::PointCloud& source, 
-				const model::PointCloud& target, 
-				std::array<double, 3>* const zyz);
+		model::PointCloud_tPtr preprocessPointCloud(
+				const sensor_msgs::PointCloud2ConstPtr& cloud);
     
     common::Datasource& ds_;
-		backend::SphericalCorrelation sph_corr_; 
-		common::SphericalSampler sampler_;
+		std::unique_ptr<registration::BaseRegistration> registrator_;
+		model::PointCloudPtr prev_point_cloud_;
 
-		const std::string kManagerReferenceName = "Controller";
-		const std::string kSampleDurationKey = "Sampling";
-		const std::string kCorrelationDurationKey = "Correlation";
+		// Statistics
+		const std::string kManagerReferenceName = "Distributor";
 		common::StatisticsManager statistics_manager_;
 };
 
