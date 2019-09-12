@@ -4,6 +4,8 @@
 
 #include <pcl/point_types.h>
 #include <pcl/common/projection_matrix.h>
+#include <pcl/kdtree/kdtree_flann.h>
+
 #include <memory>
 #include <vector>
 
@@ -22,7 +24,9 @@ public:
   PointCloud_t::iterator begin(); 
   PointCloud_t::iterator end();
 
-  std::vector<float> getNearestPoints(const std::vector<Point_t> &query_points);
+   void getNearestPoints(
+			const std::vector<Point_t> &query_points, 
+			std::vector<float>* function_values) const;
 
   void transformPointCloud(const Eigen::Matrix4f &T);
   void transformPointCloudCopy(const Eigen::Matrix4f& T, PointCloud& copy);
@@ -35,10 +39,16 @@ public:
   std::size_t size() const;
   PointCloud clone() const;
 
+	void initialize_kd_tree();
+
 private:
   PointCloud_tPtr cloud_; 
+  pcl::KdTreeFLANN<Point_t> kd_tree_; 
 
+	bool kd_tree_is_initialized_;
   const std::size_t kNeighbors = 1;
 };
+
+using PointCloudPtr = std::shared_ptr<PointCloud>;
 
 }

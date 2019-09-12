@@ -1,61 +1,67 @@
-#include <packlo/controller/distributor.h>
-#include <packlo/common/spherical-projection.h>
-#include <packlo/common/spherical-sampler.h>
-#include <packlo/common/rotation-utils.h>
-#include <packlo/visualization/debug-visualizer.h>
-#include <packlo/backend/correlation/spherical-correlation.h>
+#include "packlo/controller/distributor.h"
+#include "packlo/common/spherical-projection.h"
+#include "packlo/common/rotation-utils.h"
+#include "packlo/visualization/debug-visualizer.h"
+#include "packlo/backend/registration/sph-registration.h"
+#include "packlo/backend/registration/sph-registration-mock-rotated.h"
+#include "packlo/backend/registration/sph-registration-mock-cutted.h"
 
 #include <glog/logging.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/filters/passthrough.h>
+#include <pcl/filters/voxel_grid.h>
 
-#include <chrono>
+DEFINE_bool(enable_debug, false, 
+		"Enables the debug mode for the registration.");
+
+DEFINE_string(registration_algorithm, "sph", 
+		"Defines the used algorithm for the point cloud registration.");
 
 namespace controller {
 
 Distributor::Distributor(common::Datasource& ds)
-  : ds_(ds) {
+		: ds_(ds), statistics_manager_(kManagerReferenceName) {
   subscribeToTopics();
+	initializeRegistrationAlgorithm(FLAGS_registration_algorithm);
 }
 
 void Distributor::subscribeToTopics() {
-  const bool image = false;
-  if (image) 
-    ds_.subscribeToImage(
-      [&] (const sensor_msgs::ImageConstPtr& img) {
-        lidarImageCallback(img);
-      }); 
-  else
-    ds_.subscribeToLidarImages(
-      [&] (const sensor_msgs::ImageConstPtr& intensity_image, 
-          const sensor_msgs::ImageConstPtr& range_image, 
-          const sensor_msgs::ImageConstPtr& noise_image) {
-        lidarImagesCallback(intensity_image, range_image, noise_image);
-      });
-  /*
-    ds_.subscribeToPointClouds(
-      [&] (const sensor_msgs::PointCloud2ConstPtr& img) {
-        pointCloudCallback(img);
-      }); 
-      */
-
+	ds_.subscribeToPointClouds(
+		[&] (const sensor_msgs::PointCloud2ConstPtr& cloud) {
+			CHECK(cloud);
+			pointCloudCallback(cloud);
+	}); 
 }
 
-void Distributor::lidarImageCallback(const sensor_msgs::ImageConstPtr& img) {
-  tracker_.trackNewImage(img);
+void Distributor::initializeRegistrationAlgorithm(const std::string& type) {
+	if (type == "sph")
+		registrator_ = std::make_unique<registration::SphRegistration>();
+	else if (type == "sph-mock-rotated")
+		registrator_ 
+			= std::make_unique<registration::SphRegistrationMockRotated>();
+	else if (type == "sph-mock-cutted")
+		registrator_ = std::make_unique<registration::SphRegistrationMockCutted>();
+	else 
+		LOG(FATAL) << "Unknown registration algorithm specified!";
 }
 
-void Distributor::lidarImagesCallback(
-    const sensor_msgs::ImageConstPtr& intensity,
-    const sensor_msgs::ImageConstPtr& range,
-    const sensor_msgs::ImageConstPtr& noise) {
-  tracker_.trackNewImages(intensity, range, noise);
+void Distributor::pointCloudCallback(
+		const sensor_msgs::PointCloud2ConstPtr& cloud) {
+	model::PointCloud_tPtr input_cloud = preprocessPointCloud(cloud);
+	if (prev_point_cloud_ == nullptr) {
+		prev_point_cloud_ = std::make_shared<model::PointCloud>(input_cloud);
+		return;
+	}
+	model::PointCloudPtr cur_point_cloud_ 
+		= std::make_shared<model::PointCloud>(input_cloud);
+	registrator_->registerPointCloud(prev_point_cloud_, cur_point_cloud_);
+	prev_point_cloud_ = cur_point_cloud_;
 }
 
-void Distributor::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud) {
-  VLOG(1) << "Received point cloud";
-  
+model::PointCloud_tPtr Distributor::preprocessPointCloud(
+		const sensor_msgs::PointCloud2ConstPtr& cloud) {
   model::PointCloud_tPtr input_cloud (new model::PointCloud_t);
+
   pcl::fromROSMsg(*cloud, *input_cloud);
   pcl::PassThrough<model::Point_t> pass;
   pass.setInputCloud (input_cloud);
@@ -64,51 +70,16 @@ void Distributor::pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& clo
   pass.setFilterLimitsNegative (true);
   pass.filter (*input_cloud);
 
-  model::PointCloud point_cloud (input_cloud);
+  pcl::VoxelGrid<model::Point_t> avg;
+  avg.setInputCloud(input_cloud);
+  avg.setLeafSize(0.25f, 0.25f, 0.25f);
+  avg.filter(*input_cloud);
 
-  const float alpha_rad = M_PI/2.0f;
-  //const float alpha_rad = 0.0f;
-  const float beta_rad = M_PI/2.2f;
-  //const float beta_rad = 0.0f;
-  const float gamma_rad = M_PI/2.5f;
-  //const float gamma_rad = 0.0f;
-
-  model::PointCloud syn_cloud = pertubPointCloud(point_cloud, 
-      alpha_rad, beta_rad, gamma_rad);
-
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(point_cloud, syn_cloud);  
-  /*
-  model::PointCloud cur_sphere = 
-    common::SphericalProjection::convertPointCloudCopy(point_cloud);
-  model::PointCloud syn_sphere = 
-    common::SphericalProjection::convertPointCloudCopy(syn_cloud);
-    */
-
-  backend::SphericalCorrelation sph_corr; 
-  const int bw = 64;
-  auto start = std::chrono::steady_clock::now();
-  std::vector<float> f_values = common::SphericalSampler::sampleUniformly(point_cloud, bw);
-  std::vector<float> h_values = common::SphericalSampler::sampleUniformly(syn_cloud, bw);
-  visualization::DebugVisualizer::getInstance().writeFunctionValuesToFile("F1.txt", f_values);  
-  visualization::DebugVisualizer::getInstance().writeFunctionValuesToFile("F2.txt", h_values);  
-  std::array<double, 3> zyz = sph_corr.correlateSignals(f_values, h_values, bw);
-  auto end = std::chrono::steady_clock::now();
-
-  VLOG(1) << "Done processing point cloud. it took " 
-    << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count()
-    << "ms";
-  
-  model::PointCloud reg_cloud = common::RotationUtils::RotateAroundZYZCopy(
-      syn_cloud, zyz[2], zyz[1], zyz[0]);
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(point_cloud, reg_cloud);  
+	return input_cloud;
 }
 
-model::PointCloud Distributor::pertubPointCloud(model::PointCloud &cloud, 
-    const float alpha_rad, const float beta_rad, const float gamma_rad) {
-  return common::RotationUtils::RotateAroundXYZCopy(
-      cloud, alpha_rad, beta_rad, gamma_rad);
+const common::StatisticsManager& Distributor::getStatistics() const noexcept{
+	return statistics_manager_;
 }
 
 }

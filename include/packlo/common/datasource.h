@@ -15,7 +15,7 @@ namespace common {
 
 class Datasource {
   public:
-    Datasource(); 
+    explicit Datasource(ros::NodeHandle& nh); 
 
     void subscribeToLidarIntensityImages(
         std::function<void(const sensor_msgs::ImageConstPtr&)> func);
@@ -27,10 +27,10 @@ class Datasource {
           const sensor_msgs::ImageConstPtr&)> func);
 
     void subscribeToPointClouds(
-        std::function<void(const sensor_msgs::PointCloud2ConstPtr&)> func);
+        boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)> func);
 
   private:
-    ros::NodeHandle nh_;
+    ros::NodeHandle& nh_;
     std::vector<ros::Subscriber> subscribers_;
 
     using SyncedImageSubscriber 

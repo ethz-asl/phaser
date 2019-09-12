@@ -1,16 +1,21 @@
 #include <packlo/common/datasource.h>
 #include <glog/logging.h>
 
+DEFINE_string(point_cloud_topic, "/os1_cloud_node/points", 
+		"Defines the topic name for the point clouds.");
+
 namespace common {
 
-Datasource::Datasource() 
-    : sync_intensity_images_sub_(nh_, "/img_node/intensity_image", 1),
-      sync_range_images_sub_(nh_, "/img_node/range_image", 1),
-      sync_noise_images_sub_(nh_, "/img_node/noise_image", 1), 
+Datasource::Datasource(ros::NodeHandle& nh) 
+    : nh_(nh),
+			sync_intensity_images_sub_(nh, "/img_node/intensity_image", 1),
+      sync_range_images_sub_(nh, "/img_node/range_image", 1),
+      sync_noise_images_sub_(nh, "/img_node/noise_image", 1), 
       image_synchronizer_(1, 
           sync_intensity_images_sub_, 
           sync_range_images_sub_, 
-          sync_noise_images_sub_) {
+          sync_noise_images_sub_)
+			 {
 }
 
 void Datasource::subscribeToLidarIntensityImages(
@@ -50,13 +55,11 @@ void Datasource::subscribeToLidarImages(
 }
 
 void Datasource::subscribeToPointClouds(
-    std::function<void(const sensor_msgs::PointCloud2ConstPtr&)> func) {
-  boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)> callback = 
-      [&] (const sensor_msgs::PointCloud2ConstPtr &cloud) {
-        func(cloud);
-      };
-  ros::Subscriber sub = nh_.subscribe("/os1_cloud_node/points", 1, callback); 
+    boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)> func) {
+  ros::Subscriber sub = nh_.subscribe(FLAGS_point_cloud_topic, 1, func); 
   subscribers_.emplace_back(std::move(sub));
+	VLOG(1) << "LiDAR point clouds are subscribed to: " 
+		<< FLAGS_point_cloud_topic;
 }
 
 }

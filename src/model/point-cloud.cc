@@ -1,17 +1,21 @@
 #include <packlo/model/point-cloud.h>
 
-#include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/kdtree/impl/kdtree_flann.hpp>
 #include <pcl/common/transforms.h>
 #include <pcl/common/io.h>
 
 #include <glog/logging.h>
+#include <chrono>
 
 namespace model {
 
 PointCloud::PointCloud(PointCloud_tPtr cloud) 
-  : cloud_(cloud) {
-  
+  : cloud_(cloud), kd_tree_is_initialized_(false) {
+}
+
+void PointCloud::initialize_kd_tree() {
+  kd_tree_.setInputCloud(cloud_);
+	kd_tree_is_initialized_ = true;
 }
 
 PointCloud_t::iterator PointCloud::begin() {
@@ -22,76 +26,42 @@ PointCloud_t::iterator PointCloud::end() {
   return cloud_->end();
 }
 
-std::vector<float> PointCloud::getNearestPoints(const std::vector<Point_t> &query_points) {
-  pcl::KdTreeFLANN<Point_t> kd_tree; 
-  kd_tree.setInputCloud(cloud_);
-
+void PointCloud::getNearestPoints(
+		const std::vector<Point_t> &query_points, 
+		std::vector<float>* function_values) const {
+	CHECK(kd_tree_is_initialized_);
   std::vector<int> pointIdxNKNSearch(kNeighbors);
   std::vector<float> pointNKNSquaredDistance(kNeighbors);
-  std::vector<float> function_values;
-
-  /*
-  VLOG(1) << "======================================";
-  // TEST ---------------------
-  for (std::size_t i = 0u; i < 350; ++i) {
-    
-    auto qpoint = query_points[i];
-    const int kd_tree_res = kd_tree.nearestKSearch (qpoint, kNeighbors,
-        pointIdxNKNSearch, pointNKNSquaredDistance);
-    if (kd_tree_res <= 0) continue;
-
-    float interpolation = 0.0f;
-    VLOG(1) << "query point [" << i << "] : " << qpoint.x << " " << qpoint.y << " " << qpoint.z;
-    const std::size_t n_neighbors = pointIdxNKNSearch.size();
-    for (size_t i = 0u; i < n_neighbors; ++i) {
-      int current_idx = pointIdxNKNSearch[i];
-      const model::Point_t& point = cloud_->points[current_idx]; 
-      double dist_xy = std::sqrt(point.x * point.x + point.y*point.y);
-      double dist = std::sqrt(dist_xy * dist_xy + point.z*point.z);
-      interpolation += 0.33f * cloud_->points[current_idx].intensity
-          + 0.67f * dist;
-      VLOG(1) << "point: " << point.x << " " << point.y << " " << point.z;
-      VLOG(1) << "interpolation: " << interpolation;
-    }
-  }
-
-  // ------------------------------
-  
-  */
-
 
   for (const Point_t& query_point : query_points) {
     // First, find the closest points. 
-    const int kd_tree_res = kd_tree.nearestKSearch (query_point, kNeighbors,
+    const int kd_tree_res = kd_tree_.nearestKSearch (query_point, kNeighbors,
         pointIdxNKNSearch, pointNKNSquaredDistance);
     if (kd_tree_res <= 0) { 
-      VLOG(1) << "kd tree is 0";
-      return function_values;
+      VLOG(2) << "Unable to find nearest neighbor. Skipping point.";
+      continue;
     }
     
     // Approximate the function value given the neighbors. 
     float interpolation = 0.0f;
-    const std::size_t n_neighbors = pointIdxNKNSearch.size();
-    for (size_t i = 0u; i < n_neighbors; ++i) {
+    for (size_t i = 0u; i < kNeighbors; ++i) {
       int current_idx = pointIdxNKNSearch[i];
       const model::Point_t& point = cloud_->points[current_idx]; 
       double dist_xy = std::sqrt(point.x * point.x + point.y*point.y);
       double dist = std::sqrt(dist_xy * dist_xy + point.z*point.z);
       interpolation += 0.33f * cloud_->points[current_idx].intensity
           + 0.67f * dist;
-      //interpolation += dist;
     }
-    function_values.emplace_back(interpolation / n_neighbors);
-    //function_values.emplace_back(0.0f);
+    function_values->emplace_back(interpolation / kNeighbors);
   }
-  return function_values;
 }
 
 void PointCloud::transformPointCloud(const Eigen::Matrix4f &T) {
   pcl::transformPointCloud (*cloud_, *cloud_, T);
 }
 
-void PointCloud::transformPointCloudCopy(const Eigen::Matrix4f& T, PointCloud& copy) {
+void PointCloud::transformPointCloudCopy(
+		const Eigen::Matrix4f& T, PointCloud& copy) {
   pcl::transformPointCloud (*cloud_, *copy.cloud_, T);
 }
 

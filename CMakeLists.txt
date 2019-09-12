@@ -6,7 +6,7 @@ set(CMAKE_CXX_FLAGS         "-Wall -Wextra -msse -msse2 -msse3 -msse4")
 set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(catkin_simple REQUIRED)
 catkin_simple(ALL_DEPS_REQUIRED)
@@ -41,16 +41,20 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/spherical-projection.cc
    src/common/spherical-sampler.cc
    src/common/rotation-utils.cc
+   src/common/statistics-manager.cc
 
    src/controller/distributor.cc
+	 src/backend/registration/sph-registration.cc
+	 src/backend/registration/sph-registration-mock-rotated.cc
+	 src/backend/registration/sph-registration-mock-cutted.cc
 
    src/visualization/debug-visualizer.cc
 
    src/backend/correlation/spherical-correlation.cc
-   src/backend/optical-flow/lk-tracker.cc
+	 src/packlo-node.cc
 )
 
-cs_add_executable(${PROJECT_NAME} tools/packlo-node.cc)
+cs_add_executable(${PROJECT_NAME} tools/packlo-app.cc)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib fftw3)
 
 cs_install()
