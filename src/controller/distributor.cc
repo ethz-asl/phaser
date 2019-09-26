@@ -78,6 +78,12 @@ model::PointCloud_tPtr Distributor::preprocessPointCloud(
 	return input_cloud;
 }
 
+void Distributor::updateStatistics() {
+	VLOG(1) << "updating registrator";
+	registrator_->updateStatistics();
+	statistics_manager_.mergeManager(registrator_->getStatistics());
+}
+
 const common::StatisticsManager& Distributor::getStatistics() const noexcept{
 	return statistics_manager_;
 }

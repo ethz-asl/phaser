@@ -12,7 +12,11 @@ class	StatisticsManager {
 
 		void emplaceValue(std::string&& key, double value);
 		void emplaceValue(const std::string& key, double value);
-		std::vector<double> getValuesForKey(const std::string &key);
+		std::vector<double> getValuesForKey(const std::string&key) const;
+		std::vector<double> getValuesForKey(std::string&& key) const;
+		std::size_t count(std::string&& key) const;
+
+		void mergeManager(const StatisticsManager& manager);
 
 	private:
 		const std::string reference_name_;

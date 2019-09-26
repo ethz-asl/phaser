@@ -5,4 +5,5 @@ rosrun packlo packlo \
     --alsologtostderr=1 \
     --v=3 \
 		--enable_debug=true \
+		--registration_algorithm=sph \
     $REST

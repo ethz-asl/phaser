@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
   const std::atomic<bool>& end_of_days_signal_received 
 		= packlo_node.shouldExit();
   while (ros::ok() && !end_of_days_signal_received.load()) {
-		VLOG_EVERY_N(1, 10) << "\n" << packlo_node.printStatistics();
+		VLOG_EVERY_N(1, 10) << "\n" << packlo_node.updateAndPrintStatistics();
     std::this_thread::sleep_for(std::chrono::seconds(1));
 	}
 

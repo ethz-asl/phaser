@@ -49,6 +49,7 @@ cs_add_library(${PROJECT_NAME}_lib
 	 src/backend/registration/sph-registration-mock-cutted.cc
 
    src/visualization/debug-visualizer.cc
+   src/visualization/plotty-visualizer.cc
 
    src/backend/correlation/spherical-correlation.cc
 	 src/packlo-node.cc

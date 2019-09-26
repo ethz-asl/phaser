@@ -10,8 +10,8 @@ DEFINE_int32(spherical_bandwith, 64,
 namespace registration {
 
 SphRegistration::SphRegistration() 
-		: sampler_(FLAGS_spherical_bandwith), 
-		statistics_manager_(kManagerReferenceName) {
+		: //BaseRegistration(kManagerReferenceName),
+		sampler_(FLAGS_spherical_bandwith) {
 }
 
 void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev, 
@@ -23,6 +23,11 @@ void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev,
 	correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
 	model::PointCloud reg_cloud = common::RotationUtils::RotateAroundZYZCopy(
       *cloud_cur, zyz[2], zyz[1], zyz[0]);
+}
+
+void SphRegistration::updateStatistics() {
+	statistics_manager_.mergeManager(sph_corr_.getStatistics());
+	int test = statistics_manager_.count("signal_values");
 }
 
 const common::StatisticsManager& SphRegistration::getStatistics() 

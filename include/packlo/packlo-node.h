@@ -17,7 +17,7 @@ class PackloNode {
 				ros::NodeHandle& nh_private_);
 		bool run();
 		const std::atomic<bool>& shouldExit() const noexcept;	
-		std::string printStatistics() const noexcept;
+		std::string updateAndPrintStatistics();
 		void shutdown();
 
   private:
