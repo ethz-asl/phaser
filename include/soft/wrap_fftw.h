@@ -50,6 +50,7 @@ extern void softFFTWCor2( int ,
 			  double * ,
 			  double * ,
 			  double ** ,
+			  double ** ,
 			  int ) ;
 
 extern void s2RotateFFTW( int ,

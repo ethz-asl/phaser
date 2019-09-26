@@ -36,8 +36,10 @@ void SphericalCorrelation::correlateSignals(
   VLOG(2) << "starting correlation with " << n_signal << " signal coeff and "
 		<< n_pattern << " pattern coeff.";
 	double *signal_values;
+	double *signal_coeff;
   softFFTWCor2(bw, signal, pattern, 
-      &alpha, &beta, &gamma, &maxcoeff, &signal_values, is_real);
+      &alpha, &beta, &gamma, &maxcoeff, &signal_values, 
+			&signal_coeff, is_real);
   VLOG(2) << "done, result: " << alpha << ", " << beta << ", " << gamma;
 
 	(*zyz)[0] = alpha;
@@ -49,7 +51,10 @@ void SphericalCorrelation::correlateSignals(
 
 	CHECK_NOTNULL(signal_values);
 	convertSignalValues(signal_values, bw);
+	convertSignalCoeff(signal_coeff, bw);
 	delete [] signal_values;
+	delete [] signal_coeff;
+	VLOG(1) << "MAX VALUE = " << maxcoeff;
 }
 
 void SphericalCorrelation::getStatistics(
@@ -64,6 +69,15 @@ void SphericalCorrelation::convertSignalValues(
 	const std::size_t n_values = 8*bw*bw*bw;
 	for (std::size_t i = 0u; i < n_values; ++i) {
 		statistics_manager_.emplaceValue(kSignalKey, signal_values[i]);   
+	}
+}
+
+void SphericalCorrelation::convertSignalCoeff(
+		double *signal_coeff, const int bw) {
+	VLOG(1) << "ADDING CORR KEYS FOR BW " << bw;
+	const std::size_t n_values = (4*bw*bw*bw-bw)/3;
+	for (std::size_t i = 0u; i < n_values; ++i) {
+		statistics_manager_.emplaceValue(kCoeffKey, signal_coeff[i]);   
 	}
 }
 

@@ -20,8 +20,11 @@ class SphericalCorrelation {
 	private:
 		void convertSignalValues(double *signal_values, 
 				const int bw);
+		void convertSignalCoeff(double *signal_coeff, 
+				const int bw);
 	  const std::string kReferenceName = "SPH-Correlation";
 	  const std::string kSignalKey = "signal_values";
+	  const std::string kCoeffKey = "signal_coeff";
 	  common::StatisticsManager statistics_manager_;                              
 };
 

@@ -29,7 +29,6 @@ class SphRegistration : public BaseRegistration {
 		common::SphericalSampler sampler_;
 
 		// Statistics
-		const std::string kManagerReferenceName = "SphRegistration";
 		const std::string kSampleDurationKey = "Sampling";
 		const std::string kCorrelationDurationKey = "Correlation";
 };

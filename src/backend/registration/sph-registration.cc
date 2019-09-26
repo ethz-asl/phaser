@@ -1,16 +1,17 @@
 #include "packlo/backend/registration/sph-registration.h"
 #include "packlo/common/statistic-utils.h"
 #include "packlo/common/rotation-utils.h"
+#include "packlo/visualization/debug-visualizer.h"
 
 #include <glog/logging.h>
 
-DEFINE_int32(spherical_bandwith, 64, 
+DEFINE_int32(spherical_bandwith, 128, 
 		"Defines the bandwith used for the spherical registration.");
 
 namespace registration {
 
 SphRegistration::SphRegistration() 
-		: BaseRegistration(kManagerReferenceName),
+		: BaseRegistration("SphRegistration"),
 		sampler_(FLAGS_spherical_bandwith) {
 }
 
@@ -23,6 +24,8 @@ void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev,
 	correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
 	model::PointCloud reg_cloud = common::RotationUtils::RotateAroundZYZCopy(
       *cloud_cur, zyz[2], zyz[1], zyz[0]);
+  visualization::DebugVisualizer::getInstance()
+		.visualizePointCloudDiff(*cloud_prev, reg_cloud);
 }
 
 void SphRegistration::getStatistics(
