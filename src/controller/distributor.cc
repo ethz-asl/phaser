@@ -62,6 +62,7 @@ model::PointCloud_tPtr Distributor::preprocessPointCloud(
 		const sensor_msgs::PointCloud2ConstPtr& cloud) {
   model::PointCloud_tPtr input_cloud (new model::PointCloud_t);
 
+	// Why is this needed?
   pcl::fromROSMsg(*cloud, *input_cloud);
   pcl::PassThrough<model::Point_t> pass;
   pass.setInputCloud (input_cloud);
@@ -70,6 +71,7 @@ model::PointCloud_tPtr Distributor::preprocessPointCloud(
   pass.setFilterLimitsNegative (true);
   pass.filter (*input_cloud);
 
+	// Only for speedup
   pcl::VoxelGrid<model::Point_t> avg;
   avg.setInputCloud(input_cloud);
   avg.setLeafSize(0.25f, 0.25f, 0.25f);
@@ -80,12 +82,13 @@ model::PointCloud_tPtr Distributor::preprocessPointCloud(
 
 void Distributor::updateStatistics() {
 	VLOG(1) << "updating registrator";
-	registrator_->updateStatistics();
-	statistics_manager_.mergeManager(registrator_->getStatistics());
+	//registrator_->updateStatistics();
 }
 
-const common::StatisticsManager& Distributor::getStatistics() const noexcept{
-	return statistics_manager_;
+void Distributor::getStatistics(
+		common::StatisticsManager* manager) const noexcept{
+	registrator_->getStatistics(manager);
+	manager->mergeManager(statistics_manager_);
 }
 
 }

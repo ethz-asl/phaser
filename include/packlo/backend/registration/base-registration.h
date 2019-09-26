@@ -12,9 +12,8 @@ class BaseRegistration {
 		virtual void registerPointCloud(model::PointCloudPtr cloud_prev, 
 				model::PointCloudPtr cloud_cur) = 0;
 
-		virtual void updateStatistics() = 0;
-		virtual const common::StatisticsManager& getStatistics() 
-				const noexcept = 0;
+		virtual void getStatistics(common::StatisticsManager* manager)
+			const noexcept;
 
 	protected:
 		BaseRegistration() 

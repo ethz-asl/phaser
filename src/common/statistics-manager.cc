@@ -31,10 +31,12 @@ std::vector<double> StatisticsManager::getValuesForKey(std::string&& key)
 }
 
 void StatisticsManager::mergeManager(const StatisticsManager& manager) {
+	VLOG(1) << "Merging with " << manager.reference_name_;
 	for (auto& test : manager.statistics_) {
 		VLOG(1) << "Merge: " << test.first << " second: " << test.second.size();
 	}
 	statistics_.insert(manager.statistics_.begin(), manager.statistics_.end());
+	VLOG(1) << "Done";
 }
 
 std::size_t StatisticsManager::count(std::string&& key) const {

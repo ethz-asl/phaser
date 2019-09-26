@@ -28,8 +28,9 @@ std::string PackloNode::updateAndPrintStatistics() {
 	for (common::StatisticsManager manager : managers) {
 	}
 	*/
-	dist_->updateStatistics();
-	common::StatisticsManager manager = dist_->getStatistics();
+	//dist_->updateStatistics();
+	common::StatisticsManager manager("main");
+	dist_->getStatistics(&manager);
 	visualization::PlottyVisualizer::getInstance()
 		.createPlotFor(manager, "signal_values");
 
@@ -43,7 +44,7 @@ void PackloNode::shutdown() {
 std::vector<common::StatisticsManager> PackloNode::retrieveStatistics()
 		const noexcept {
 	std::vector<common::StatisticsManager> managers; 
-	managers.emplace_back(dist_->getStatistics());
+//	managers.emplace_back(dist_->getStatistics());
 
 	return managers;
 }

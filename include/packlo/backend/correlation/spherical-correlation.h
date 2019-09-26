@@ -15,7 +15,7 @@ class SphericalCorrelation {
       const std::vector<float>& f2, const int bw, 
 			std::array<double, 3>* const zyz);
 
-		const common::StatisticsManager& getStatistics() const noexcept;
+		void getStatistics(common::StatisticsManager* manager) const noexcept;
 
 	private:
 		void convertSignalValues(double *signal_values, 

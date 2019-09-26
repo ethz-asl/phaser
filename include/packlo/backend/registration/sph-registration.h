@@ -16,10 +16,9 @@ class SphRegistration : public BaseRegistration {
 		virtual void registerPointCloud(model::PointCloudPtr cloud_prev, 
 				model::PointCloudPtr cloud_cur) override;
 
-		virtual void updateStatistics() override;
-		virtual const common::StatisticsManager& getStatistics() 
-				const noexcept override;
-	
+		virtual void getStatistics(common::StatisticsManager* manager)
+			const noexcept override;
+
 	protected:
 		void correlatePointcloud(                                          
        const model::PointCloud& source,                                            

@@ -10,7 +10,7 @@ DEFINE_int32(spherical_bandwith, 64,
 namespace registration {
 
 SphRegistration::SphRegistration() 
-		: //BaseRegistration(kManagerReferenceName),
+		: BaseRegistration(kManagerReferenceName),
 		sampler_(FLAGS_spherical_bandwith) {
 }
 
@@ -25,14 +25,10 @@ void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev,
       *cloud_cur, zyz[2], zyz[1], zyz[0]);
 }
 
-void SphRegistration::updateStatistics() {
-	statistics_manager_.mergeManager(sph_corr_.getStatistics());
-	int test = statistics_manager_.count("signal_values");
-}
-
-const common::StatisticsManager& SphRegistration::getStatistics() 
-		const noexcept {
-	return statistics_manager_;
+void SphRegistration::getStatistics(
+		common::StatisticsManager* manager) const noexcept {
+	BaseRegistration::getStatistics(manager);
+	sph_corr_.getStatistics(manager);
 }
 
 void SphRegistration::correlatePointcloud(
@@ -44,14 +40,14 @@ void SphRegistration::correlatePointcloud(
 
 	const double duration_sample_f_ms = common::executeTimedFunction(
 			&common::SphericalSampler::sampleUniformly, 
-			sampler_, source, &f_values);
+			&sampler_, source, &f_values);
 	const double duration_sample_h_ms = common::executeTimedFunction(
 			&common::SphericalSampler::sampleUniformly, 
-			sampler_, target, &h_values);
+			&sampler_, target, &h_values);
 
 	const double duration_correlation_ms = common::executeTimedFunction(
 			&backend::SphericalCorrelation::correlateSignals, 
-			sph_corr_, f_values, h_values, 
+			&sph_corr_, f_values, h_values, 
 			sampler_.getInitializedBandwith(), zyz);
 
 	VLOG(1) << "Registered point cloud.\n"

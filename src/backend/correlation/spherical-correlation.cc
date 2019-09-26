@@ -52,13 +52,15 @@ void SphericalCorrelation::correlateSignals(
 	delete [] signal_values;
 }
 
-const common::StatisticsManager& SphericalCorrelation::getStatistics()
+void SphericalCorrelation::getStatistics(
+		common::StatisticsManager* manager)
 	 const noexcept {
- return statistics_manager_;
+ manager->mergeManager(statistics_manager_);
 }
 
 void SphericalCorrelation::convertSignalValues(
 		double *signal_values, const int bw) {
+	VLOG(1) << "ADDING CORR KEYS FOR BW " << bw;
 	const std::size_t n_values = 8*bw*bw*bw;
 	for (std::size_t i = 0u; i < n_values; ++i) {
 		statistics_manager_.emplaceValue(kSignalKey, signal_values[i]);   
