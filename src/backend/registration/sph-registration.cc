@@ -39,7 +39,7 @@ void SphRegistration::correlatePointcloud(
 		const model::PointCloud& target, 
 		std::array<double, 3>* const zyz) {
 	CHECK(zyz);
-  std::vector<float> f_values, h_values; 
+  std::vector<model::FunctionValue> f_values, h_values; 
 
 	const double duration_sample_f_ms = common::executeTimedFunction(
 			&common::SphericalSampler::sampleUniformly, 
@@ -47,6 +47,7 @@ void SphRegistration::correlatePointcloud(
 	const double duration_sample_h_ms = common::executeTimedFunction(
 			&common::SphericalSampler::sampleUniformly, 
 			&sampler_, target, &h_values);
+	
 
 	const double duration_correlation_ms = common::executeTimedFunction(
 			&backend::SphericalCorrelation::correlateSignals, 

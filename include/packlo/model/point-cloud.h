@@ -1,6 +1,7 @@
 #pragma once
 
-#include <packlo/common/point-types.h>
+#include "packlo/common/point-types.h"
+#include "packlo/model/function-value.h"
 
 #include <pcl/point_types.h>
 #include <pcl/common/projection_matrix.h>
@@ -26,7 +27,7 @@ public:
 
    void getNearestPoints(
 			const std::vector<Point_t> &query_points, 
-			std::vector<float>* function_values) const;
+			std::vector<FunctionValue>* function_values) const;
 
   void transformPointCloud(const Eigen::Matrix4f &T);
   void transformPointCloudCopy(const Eigen::Matrix4f& T, PointCloud& copy);

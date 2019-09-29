@@ -19,7 +19,7 @@ void SphericalSampler::initialize(const int bandwith) {
 
  void SphericalSampler::sampleUniformly(
 		const model::PointCloud &cloud, 
-		std::vector<float>* grid) {
+		std::vector<model::FunctionValue>* grid) {
 	CHECK(is_initialized_);
   cloud.getNearestPoints(cartesian_grid_, grid);
 }

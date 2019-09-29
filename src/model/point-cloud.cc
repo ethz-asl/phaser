@@ -1,4 +1,4 @@
-#include <packlo/model/point-cloud.h>
+#include "packlo/model/point-cloud.h"
 
 #include <pcl/kdtree/impl/kdtree_flann.hpp>
 #include <pcl/common/transforms.h>
@@ -28,7 +28,7 @@ PointCloud_t::iterator PointCloud::end() {
 
 void PointCloud::getNearestPoints(
 		const std::vector<Point_t> &query_points, 
-		std::vector<float>* function_values) const {
+		std::vector<FunctionValue>* function_values) const {
 	CHECK(kd_tree_is_initialized_);
   std::vector<int> pointIdxNKNSearch(kNeighbors);
   std::vector<float> pointNKNSquaredDistance(kNeighbors);
@@ -43,16 +43,18 @@ void PointCloud::getNearestPoints(
     }
     
     // Approximate the function value given the neighbors. 
-    float interpolation = 0.0f;
+		FunctionValue value;
     for (size_t i = 0u; i < kNeighbors; ++i) {
-      int current_idx = pointIdxNKNSearch[i];
+      const int current_idx = pointIdxNKNSearch[i];
       const model::Point_t& point = cloud_->points[current_idx]; 
-      double dist_xy = std::sqrt(point.x * point.x + point.y*point.y);
-      double dist = std::sqrt(dist_xy * dist_xy + point.z*point.z);
-      interpolation += 0.33f * cloud_->points[current_idx].intensity
-          + 0.67f * dist;
+      const double dist = std::sqrt(point.x * point.x + 
+																		point.y * point.y + 
+																		point.z * point.z);
+			value.addRange(dist);
+			value.addIntensity(point.intensity);
+			value.addInterpolation(0.33f * point.intensity + 0.67f * dist);
     }
-    function_values->emplace_back(interpolation / kNeighbors);
+    function_values->emplace_back(std::move(value));
   }
 }
 

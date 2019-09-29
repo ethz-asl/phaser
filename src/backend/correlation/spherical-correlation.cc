@@ -1,10 +1,13 @@
 #include "packlo/backend/correlation/spherical-correlation.h"
+#include "packlo/model/function-value.h"
 
 extern "C" {
 #include <soft/wrap_fftw.h>
 }
 
 #include <glog/logging.h>
+
+#include <algorithm>
 
 namespace backend {
 
@@ -13,48 +16,36 @@ SphericalCorrelation::SphericalCorrelation()
 }
 
 void SphericalCorrelation::correlateSignals(
-    const std::vector<float>& f1,
-    const std::vector<float>& f2, const int bw, 
+    const std::vector<model::FunctionValue>& f1,
+    const std::vector<model::FunctionValue>& f2, const int bw, 
 		std::array<double, 3>* const zyz) {
   double alpha, beta, gamma, maxcoeff = 0.0;
   constexpr int is_real = 1;
    
-  const std::size_t n_signal = f1.size();
-  const std::size_t n_pattern = f2.size();
-  double* signal = new double[n_signal];
-  double* pattern = new double[n_pattern];
+	// Retrieve S2 function values
+  std::vector<double> averaged_signal;
+  std::vector<double> averaged_pattern;
+	retrieveInterpolation(f1, &averaged_signal);
+	retrieveInterpolation(f2, &averaged_pattern);
 
-	// TODO(lbern): change f1 and f2 to be double? 
-  for (std::size_t i = 0; i < n_signal; ++i) {
-    signal[i] = f1[i];
-  }
-
-  for (std::size_t i = 0; i < n_pattern; ++i) {
-    pattern[i] = f2[i];
-  }
-
-  VLOG(2) << "starting correlation with " << n_signal << " signal coeff and "
-		<< n_pattern << " pattern coeff.";
+	// Start signal correlation process
 	double *signal_values;
 	double *signal_coeff;
-  softFFTWCor2(bw, signal, pattern, 
+  softFFTWCor2(bw, averaged_signal.data(), averaged_pattern.data(), 
       &alpha, &beta, &gamma, &maxcoeff, &signal_values, 
 			&signal_coeff, is_real);
   VLOG(2) << "done, result: " << alpha << ", " << beta << ", " << gamma;
 
+	// Get result
 	(*zyz)[0] = alpha;
 	(*zyz)[1] = beta;
 	(*zyz)[2] = gamma;
-
-	delete [] signal;
-	delete [] pattern;
 
 	CHECK_NOTNULL(signal_values);
 	convertSignalValues(signal_values, bw);
 	convertSignalCoeff(signal_coeff, bw);
 	delete [] signal_values;
 	delete [] signal_coeff;
-	VLOG(1) << "MAX VALUE = " << maxcoeff;
 }
 
 void SphericalCorrelation::getStatistics(
@@ -79,6 +70,16 @@ void SphericalCorrelation::convertSignalCoeff(
 	for (std::size_t i = 0u; i < n_values; ++i) {
 		statistics_manager_.emplaceValue(kCoeffKey, signal_coeff[i]);   
 	}
+}
+
+void SphericalCorrelation::retrieveInterpolation(
+		const std::vector<model::FunctionValue>& f, 
+		std::vector<double>* interpolation) {
+  std::transform(f.cbegin(), f.cend(),
+			std::back_inserter(*interpolation),
+      [] (const model::FunctionValue& interp) { 
+				return interp.getInterpolation();
+			});
 }
 
 }

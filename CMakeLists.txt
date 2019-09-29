@@ -36,6 +36,7 @@ cs_add_library(${PROJECT_NAME}_lib
    lib/SOFT/wignerTransforms_fftw.c
 
    src/model/point-cloud.cc
+   src/model/function-value.cc
 
    src/common/datasource.cc
    src/common/spherical-projection.cc
@@ -48,11 +49,11 @@ cs_add_library(${PROJECT_NAME}_lib
 	 src/backend/registration/sph-registration.cc
 	 src/backend/registration/sph-registration-mock-rotated.cc
 	 src/backend/registration/sph-registration-mock-cutted.cc
+   src/backend/correlation/spherical-correlation.cc
 
    src/visualization/debug-visualizer.cc
    src/visualization/plotty-visualizer.cc
 
-   src/backend/correlation/spherical-correlation.cc
 	 src/packlo-node.cc
 )
 

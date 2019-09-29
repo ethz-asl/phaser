@@ -1,6 +1,7 @@
 #pragma once
 
 #include "packlo/common/statistics-manager.h"
+#include "packlo/model/function-value.h"
 
 
 #include <vector>
@@ -11,8 +12,8 @@ namespace backend {
 class SphericalCorrelation {
 	public:
 		SphericalCorrelation();
-    void correlateSignals(const std::vector<float>& f1,
-      const std::vector<float>& f2, const int bw, 
+    void correlateSignals(const std::vector<model::FunctionValue>& f1,
+      const std::vector<model::FunctionValue>& f2, const int bw, 
 			std::array<double, 3>* const zyz);
 
 		void getStatistics(common::StatisticsManager* manager) const noexcept;
@@ -22,6 +23,9 @@ class SphericalCorrelation {
 				const int bw);
 		void convertSignalCoeff(double *signal_coeff, 
 				const int bw);
+		void retrieveInterpolation(const std::vector<model::FunctionValue>& f, 
+				std::vector<double>* interpolation);
+
 	  const std::string kReferenceName = "SPH-Correlation";
 	  const std::string kSignalKey = "signal_values";
 	  const std::string kCoeffKey = "signal_coeff";

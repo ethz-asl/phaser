@@ -1,6 +1,6 @@
 #pragma once
 
-#include <packlo/model/point-cloud.h>
+#include "packlo/model/point-cloud.h"
 #include <vector>
 
 namespace common {
@@ -10,7 +10,7 @@ class SphericalSampler {
 		SphericalSampler(const int bandwith);
     void sampleUniformly(
 				const model::PointCloud &cloud, 
-        std::vector<float>* grid);
+        std::vector<model::FunctionValue>* grid);
 
 		void initialize(const int bandwith);
 		int getInitializedBandwith() const noexcept;
