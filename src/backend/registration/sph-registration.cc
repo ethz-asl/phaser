@@ -1,17 +1,18 @@
 #include "packlo/backend/registration/sph-registration.h"
 #include "packlo/common/statistic-utils.h"
 #include "packlo/common/rotation-utils.h"
+#include "packlo/visualization/debug-visualizer.h"
 
 #include <glog/logging.h>
 
-DEFINE_int32(spherical_bandwith, 64, 
+DEFINE_int32(spherical_bandwith, 128, 
 		"Defines the bandwith used for the spherical registration.");
 
 namespace registration {
 
 SphRegistration::SphRegistration() 
-		: sampler_(FLAGS_spherical_bandwith), 
-		statistics_manager_(kManagerReferenceName) {
+		: BaseRegistration("SphRegistration"),
+		sampler_(FLAGS_spherical_bandwith) {
 }
 
 void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev, 
@@ -23,11 +24,14 @@ void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev,
 	correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
 	model::PointCloud reg_cloud = common::RotationUtils::RotateAroundZYZCopy(
       *cloud_cur, zyz[2], zyz[1], zyz[0]);
+  visualization::DebugVisualizer::getInstance()
+		.visualizePointCloudDiff(*cloud_prev, reg_cloud);
 }
 
-const common::StatisticsManager& SphRegistration::getStatistics() 
-		const noexcept {
-	return statistics_manager_;
+void SphRegistration::getStatistics(
+		common::StatisticsManager* manager) const noexcept {
+	BaseRegistration::getStatistics(manager);
+	sph_corr_.getStatistics(manager);
 }
 
 void SphRegistration::correlatePointcloud(
@@ -39,14 +43,14 @@ void SphRegistration::correlatePointcloud(
 
 	const double duration_sample_f_ms = common::executeTimedFunction(
 			&common::SphericalSampler::sampleUniformly, 
-			sampler_, source, &f_values);
+			&sampler_, source, &f_values);
 	const double duration_sample_h_ms = common::executeTimedFunction(
 			&common::SphericalSampler::sampleUniformly, 
-			sampler_, target, &h_values);
+			&sampler_, target, &h_values);
 
 	const double duration_correlation_ms = common::executeTimedFunction(
 			&backend::SphericalCorrelation::correlateSignals, 
-			sph_corr_, f_values, h_values, 
+			&sph_corr_, f_values, h_values, 
 			sampler_.getInitializedBandwith(), zyz);
 
 	VLOG(1) << "Registered point cloud.\n"

@@ -92,7 +92,8 @@ void softFFTWCor2( int bw,
 		   double *sig,
 		   double *pat,
 		   double *alpha, double *beta, double *gamma,
-       double *maxval, int isReal )
+       double *maxval, double **signal_values,
+			 double **signal_coeff, int isReal )
 {
   int i ;
   int n, bwIn, bwOut, degLim ;
@@ -120,17 +121,20 @@ void softFFTWCor2( int bw,
   degLim = bw - 1 ;
   n = 2 * bwIn ;
 
+	const int bwOutp3 = bwOut*bwOut*bwOut;
   tmpR = (double *) malloc( sizeof(double) * ( n * n ) );
   tmpI = (double *) malloc( sizeof(double) * ( n * n ) );
-  so3Sig = fftw_malloc( sizeof(fftw_complex) * (8*bwOut*bwOut*bwOut) );
-  workspace1 = fftw_malloc( sizeof(fftw_complex) * (8*bwOut*bwOut*bwOut) );
+  so3Sig = fftw_malloc( sizeof(fftw_complex) * (8*bwOutp3) );
+  *signal_values = (double *) malloc( sizeof(double) * (8*bwOutp3) ) ;
+  *signal_coeff = (double *) malloc( sizeof(double) * bwIn * bwIn ) ;
+  workspace1 = fftw_malloc( sizeof(fftw_complex) * (8*bwOutp3) );
   workspace2 = fftw_malloc( sizeof(fftw_complex) * ((14*bwIn*bwIn) + (48 * bwIn)));
   workspace3 = (double *) malloc( sizeof(double) * (12*n + n*bwIn));
   sigCoefR = (double *) malloc( sizeof(double) * bwIn * bwIn ) ;
   sigCoefI = (double *) malloc( sizeof(double) * bwIn * bwIn ) ;
   patCoefR = (double *) malloc( sizeof(double) * bwIn * bwIn ) ;
   patCoefI = (double *) malloc( sizeof(double) * bwIn * bwIn ) ;
-  so3Coef = fftw_malloc( sizeof(fftw_complex) * ((4*bwOut*bwOut*bwOut-bwOut)/3) ) ;
+  so3Coef = fftw_malloc( sizeof(fftw_complex) * ((4*bwOutp3-bwOut)/3) ) ;
   seminaive_naive_tablespace =
     (double *) malloc(sizeof(double) *
 		      (Reduced_Naive_TableSize(bwIn,bwIn) +
@@ -300,13 +304,18 @@ void softFFTWCor2( int bw,
   /* now find max value */
   *maxval = 0.0 ;
   maxloc = 0 ;
-  for ( i = 0 ; i < 8*bwOut*bwOut*bwOut ; i ++ ) {
+  for (i = 0; i < 8*bwOut*bwOut*bwOut; ++i ) {
     tmpval = NORM( so3Sig[i] );
+		(*signal_values)[i] = tmpval;
     if ( tmpval > *maxval ) {
       *maxval = tmpval;
       maxloc = i ;
     }
   }
+
+	for (i = 0; i < bwIn * bwIn; ++i) {
+		(*signal_coeff)[i] = patCoefR[i];
+	}
 
   ii = floor( maxloc / (4.*bwOut*bwOut) );
   tmp = maxloc - (ii*4.*bwOut*bwOut);

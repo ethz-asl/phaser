@@ -45,6 +45,8 @@ void Distributor::initializeRegistrationAlgorithm(const std::string& type) {
 		LOG(FATAL) << "Unknown registration algorithm specified!";
 }
 
+static int test = 0;
+
 void Distributor::pointCloudCallback(
 		const sensor_msgs::PointCloud2ConstPtr& cloud) {
 	model::PointCloud_tPtr input_cloud = preprocessPointCloud(cloud);
@@ -52,6 +54,7 @@ void Distributor::pointCloudCallback(
 		prev_point_cloud_ = std::make_shared<model::PointCloud>(input_cloud);
 		return;
 	}
+	//if (++test % 50 != 0) return;
 	model::PointCloudPtr cur_point_cloud_ 
 		= std::make_shared<model::PointCloud>(input_cloud);
 	registrator_->registerPointCloud(prev_point_cloud_, cur_point_cloud_);
@@ -62,6 +65,7 @@ model::PointCloud_tPtr Distributor::preprocessPointCloud(
 		const sensor_msgs::PointCloud2ConstPtr& cloud) {
   model::PointCloud_tPtr input_cloud (new model::PointCloud_t);
 
+	// Why is this needed?
   pcl::fromROSMsg(*cloud, *input_cloud);
   pcl::PassThrough<model::Point_t> pass;
   pass.setInputCloud (input_cloud);
@@ -70,6 +74,7 @@ model::PointCloud_tPtr Distributor::preprocessPointCloud(
   pass.setFilterLimitsNegative (true);
   pass.filter (*input_cloud);
 
+	// Only for speedup
   pcl::VoxelGrid<model::Point_t> avg;
   avg.setInputCloud(input_cloud);
   avg.setLeafSize(0.25f, 0.25f, 0.25f);
@@ -78,8 +83,15 @@ model::PointCloud_tPtr Distributor::preprocessPointCloud(
 	return input_cloud;
 }
 
-const common::StatisticsManager& Distributor::getStatistics() const noexcept{
-	return statistics_manager_;
+void Distributor::updateStatistics() {
+	VLOG(1) << "updating registrator";
+	//registrator_->updateStatistics();
+}
+
+void Distributor::getStatistics(
+		common::StatisticsManager* manager) const noexcept{
+	registrator_->getStatistics(manager);
+	manager->mergeManager(statistics_manager_);
 }
 
 }

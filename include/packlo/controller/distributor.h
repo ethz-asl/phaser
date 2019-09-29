@@ -14,7 +14,8 @@ class Distributor {
   public:
     explicit Distributor(common::Datasource& ds);
 
-		const common::StatisticsManager& getStatistics() const noexcept;
+		void updateStatistics();
+		void getStatistics(common::StatisticsManager*) const noexcept;
 
   private:
     void subscribeToTopics();

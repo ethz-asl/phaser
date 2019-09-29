@@ -46,6 +46,7 @@ std::vector<model::Point_t> SphericalSampler::convertCartesian(
   std::vector<model::Point_t> res;
   for (const model::Point_t& p : grid) {
     model::Point_t cart_p;
+		VLOG(1) << "sin: " << std::sin(p.y) << " cos: " << std::cos(p.y);
     cart_p.x = 10*std::sin(p.x) * std::cos(p.y);
     cart_p.y = 10*std::sin(p.x) * std::sin(p.y);
     cart_p.z = 10*std::cos(p.x);

@@ -5,4 +5,9 @@ rosrun packlo packlo \
     --alsologtostderr=1 \
     --v=3 \
 		--enable_debug=true \
+		--registration_algorithm=sph-mock-rotated \
+		--spherical_bandwith=64 \
+		--mock_rotate_alpha_rad=3.1415 \
+		--mock_rotate_beta_rad=0.0 \
+		--mock_rotate_gamma_rad=1.7 \
     $REST

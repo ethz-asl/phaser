@@ -1,5 +1,6 @@
-#include <packlo/packlo-node.h>
-#include <packlo/controller/distributor.h>
+#include "packlo/packlo-node.h"
+#include "packlo/controller/distributor.h"
+#include "packlo/visualization/plotty-visualizer.h"
 
 #include <glog/logging.h>
 
@@ -21,11 +22,18 @@ const std::atomic<bool>& PackloNode::shouldExit() const noexcept {
 	return should_exit_;
 }
 
-std::string PackloNode::printStatistics() const noexcept {
+std::string PackloNode::updateAndPrintStatistics() {
+	/*
 	std::vector<common::StatisticsManager> managers = retrieveStatistics();
 	for (common::StatisticsManager manager : managers) {
-
 	}
+	*/
+	//dist_->updateStatistics();
+	common::StatisticsManager manager("main");
+	dist_->getStatistics(&manager);
+	visualization::PlottyVisualizer::getInstance()
+		.createPlotFor(manager, "signal_values");
+
 	return "";
 }
 
@@ -36,7 +44,7 @@ void PackloNode::shutdown() {
 std::vector<common::StatisticsManager> PackloNode::retrieveStatistics()
 		const noexcept {
 	std::vector<common::StatisticsManager> managers; 
-	managers.emplace_back(dist_->getStatistics());
+//	managers.emplace_back(dist_->getStatistics());
 
 	return managers;
 }

@@ -9,6 +9,7 @@ class SphRegistrationMockCutted : public SphRegistration {
 		virtual ~SphRegistrationMockCutted() = default;
 		virtual void registerPointCloud(model::PointCloudPtr cloud_prev, 
 				model::PointCloudPtr cloud_cur) override;
+
 	private:
 		model::PointCloud cutPointCloud(model::PointCloud_tPtr& cloud, 
 				double min, double max, std::string&& dim);
