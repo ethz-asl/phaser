@@ -1,4 +1,5 @@
 #include "packlo/backend/registration/sph-registration.h"
+#include "packlo/backend/alignment/range-based-aligner.h"
 #include "packlo/common/statistic-utils.h"
 #include "packlo/common/rotation-utils.h"
 #include "packlo/visualization/debug-visualizer.h"
@@ -13,6 +14,7 @@ namespace registration {
 SphRegistration::SphRegistration() 
 		: BaseRegistration("SphRegistration"),
 		sampler_(FLAGS_spherical_bandwith) {
+	aligner_ = std::make_unique<alignment::RangeBasedAligner>();
 }
 
 void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev, 

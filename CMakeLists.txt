@@ -50,6 +50,7 @@ cs_add_library(${PROJECT_NAME}_lib
 	 src/backend/registration/sph-registration-mock-rotated.cc
 	 src/backend/registration/sph-registration-mock-cutted.cc
    src/backend/correlation/spherical-correlation.cc
+   src/backend/alignment/range-based-aligner.cc
 
    src/visualization/debug-visualizer.cc
    src/visualization/plotty-visualizer.cc

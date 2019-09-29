@@ -45,8 +45,6 @@ void Distributor::initializeRegistrationAlgorithm(const std::string& type) {
 		LOG(FATAL) << "Unknown registration algorithm specified!";
 }
 
-static int test = 0;
-
 void Distributor::pointCloudCallback(
 		const sensor_msgs::PointCloud2ConstPtr& cloud) {
 	model::PointCloud_tPtr input_cloud = preprocessPointCloud(cloud);
@@ -54,7 +52,6 @@ void Distributor::pointCloudCallback(
 		prev_point_cloud_ = std::make_shared<model::PointCloud>(input_cloud);
 		return;
 	}
-	//if (++test % 50 != 0) return;
 	model::PointCloudPtr cur_point_cloud_ 
 		= std::make_shared<model::PointCloud>(input_cloud);
 	registrator_->registerPointCloud(prev_point_cloud_, cur_point_cloud_);
