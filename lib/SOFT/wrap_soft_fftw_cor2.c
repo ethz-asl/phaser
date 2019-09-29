@@ -126,7 +126,7 @@ void softFFTWCor2( int bw,
   tmpI = (double *) malloc( sizeof(double) * ( n * n ) );
   so3Sig = fftw_malloc( sizeof(fftw_complex) * (8*bwOutp3) );
   *signal_values = (double *) malloc( sizeof(double) * (8*bwOutp3) ) ;
-  *signal_coeff = (double *) malloc( sizeof(double) * ((4*bwOutp3-bwOut)/3) ) ;
+  *signal_coeff = (double *) malloc( sizeof(double) * bwIn * bwIn ) ;
   workspace1 = fftw_malloc( sizeof(fftw_complex) * (8*bwOutp3) );
   workspace2 = fftw_malloc( sizeof(fftw_complex) * ((14*bwIn*bwIn) + (48 * bwIn)));
   workspace3 = (double *) malloc( sizeof(double) * (12*n + n*bwIn));
@@ -313,8 +313,8 @@ void softFFTWCor2( int bw,
     }
   }
 
-	for (i = 0; i < (4*bwOut*bwOut*bwOut-bwOut)/3; ++i) {
-		(*signal_coeff)[i] = NORM( so3Coef[i] );
+	for (i = 0; i < bwIn * bwIn; ++i) {
+		(*signal_coeff)[i] = patCoefR[i];
 	}
 
   ii = floor( maxloc / (4.*bwOut*bwOut) );

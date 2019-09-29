@@ -32,7 +32,7 @@ std::string PackloNode::updateAndPrintStatistics() {
 	common::StatisticsManager manager("main");
 	dist_->getStatistics(&manager);
 	visualization::PlottyVisualizer::getInstance()
-		.createPlotFor(manager, "signal_coeff");
+		.createPlotFor(manager, "signal_values");
 
 	return "";
 }
