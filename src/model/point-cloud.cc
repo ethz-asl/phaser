@@ -9,7 +9,7 @@
 
 namespace model {
 
-PointCloud::PointCloud(PointCloud_tPtr cloud) 
+PointCloud::PointCloud(common::PointCloud_tPtr cloud) 
   : cloud_(cloud), kd_tree_is_initialized_(false) {
 }
 
@@ -18,22 +18,22 @@ void PointCloud::initialize_kd_tree() {
 	kd_tree_is_initialized_ = true;
 }
 
-PointCloud_t::iterator PointCloud::begin() {
+common::PointCloud_t::iterator PointCloud::begin() {
   return cloud_->begin();
 }
 
-PointCloud_t::iterator PointCloud::end() {
+common::PointCloud_t::iterator PointCloud::end() {
   return cloud_->end();
 }
 
 void PointCloud::getNearestPoints(
-		const std::vector<Point_t> &query_points, 
+		const std::vector<common::Point_t> &query_points, 
 		std::vector<FunctionValue>* function_values) const {
 	CHECK(kd_tree_is_initialized_);
   std::vector<int> pointIdxNKNSearch(kNeighbors);
   std::vector<float> pointNKNSquaredDistance(kNeighbors);
 
-  for (const Point_t& query_point : query_points) {
+  for (const common::Point_t& query_point : query_points) {
     // First, find the closest points. 
     const int kd_tree_res = kd_tree_.nearestKSearch (query_point, kNeighbors,
         pointIdxNKNSearch, pointNKNSquaredDistance);
@@ -46,7 +46,7 @@ void PointCloud::getNearestPoints(
 		FunctionValue value;
     for (size_t i = 0u; i < kNeighbors; ++i) {
       const int current_idx = pointIdxNKNSearch[i];
-      const model::Point_t& point = cloud_->points[current_idx]; 
+      const common::Point_t& point = cloud_->points[current_idx]; 
       const double dist = std::sqrt(point.x * point.x + 
 																		point.y * point.y + 
 																		point.z * point.z);
@@ -67,15 +67,15 @@ void PointCloud::transformPointCloudCopy(
   pcl::transformPointCloud (*cloud_, *copy.cloud_, T);
 }
 
-PointCloud_tPtr PointCloud::getRawCloud() const {
+common::PointCloud_tPtr PointCloud::getRawCloud() const {
   return cloud_;
 }
 
-Point_t& PointCloud::pointAt(const std::size_t idx) {
+common::Point_t& PointCloud::pointAt(const std::size_t idx) {
   return cloud_->points[idx];  
 }
 
-const Point_t& PointCloud::pointAt(const std::size_t idx) const {
+const common::Point_t& PointCloud::pointAt(const std::size_t idx) const {
   return cloud_->points[idx];  
 }
 
@@ -84,7 +84,7 @@ std::size_t PointCloud::size() const {
 }
 
 PointCloud PointCloud::clone() const {
-  PointCloud_tPtr cloned (new PointCloud_t);  
+  common::PointCloud_tPtr cloned (new common::PointCloud_t);  
   pcl::copyPointCloud(*cloud_, *cloned);
   return PointCloud(cloned);
 }

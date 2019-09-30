@@ -47,7 +47,7 @@ void Distributor::initializeRegistrationAlgorithm(const std::string& type) {
 
 void Distributor::pointCloudCallback(
 		const sensor_msgs::PointCloud2ConstPtr& cloud) {
-	model::PointCloud_tPtr input_cloud = preprocessPointCloud(cloud);
+	common::PointCloud_tPtr input_cloud = preprocessPointCloud(cloud);
 	if (prev_point_cloud_ == nullptr) {
 		prev_point_cloud_ = std::make_shared<model::PointCloud>(input_cloud);
 		return;
@@ -58,13 +58,13 @@ void Distributor::pointCloudCallback(
 	prev_point_cloud_ = cur_point_cloud_;
 }
 
-model::PointCloud_tPtr Distributor::preprocessPointCloud(
+common::PointCloud_tPtr Distributor::preprocessPointCloud(
 		const sensor_msgs::PointCloud2ConstPtr& cloud) {
-  model::PointCloud_tPtr input_cloud (new model::PointCloud_t);
+  common::PointCloud_tPtr input_cloud (new common::PointCloud_t);
 
 	// Why is this needed?
   pcl::fromROSMsg(*cloud, *input_cloud);
-  pcl::PassThrough<model::Point_t> pass;
+  pcl::PassThrough<common::Point_t> pass;
   pass.setInputCloud (input_cloud);
   pass.setFilterFieldName ("z");
   pass.setFilterLimits (0.0,0.0);
@@ -72,7 +72,7 @@ model::PointCloud_tPtr Distributor::preprocessPointCloud(
   pass.filter (*input_cloud);
 
 	// Only for speedup
-  pcl::VoxelGrid<model::Point_t> avg;
+  pcl::VoxelGrid<common::Point_t> avg;
   avg.setInputCloud(input_cloud);
   avg.setLeafSize(0.25f, 0.25f, 0.25f);
   avg.filter(*input_cloud);

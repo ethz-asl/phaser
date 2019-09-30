@@ -21,7 +21,7 @@ class Distributor {
     void subscribeToTopics();
 		void initializeRegistrationAlgorithm(const std::string& type);
     void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud);
-		model::PointCloud_tPtr preprocessPointCloud(
+		common::PointCloud_tPtr preprocessPointCloud(
 				const sensor_msgs::PointCloud2ConstPtr& cloud);
     
     common::Datasource& ds_;

@@ -11,7 +11,7 @@ class SphRegistrationMockCutted : public SphRegistration {
 				model::PointCloudPtr cloud_cur) override;
 
 	private:
-		model::PointCloud cutPointCloud(model::PointCloud_tPtr& cloud, 
+		model::PointCloud cutPointCloud(common::PointCloud_tPtr& cloud, 
 				double min, double max, std::string&& dim);
 };
 

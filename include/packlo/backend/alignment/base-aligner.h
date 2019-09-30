@@ -4,14 +4,16 @@
 #include "packlo/common/statistics-manager.h"
 
 #include <memory>
+#include <vector>
 
 namespace alignment {
 
 class BaseAligner {
-	virtual void alignRegistered(model::PointCloudPtr cloud_prev, 
+	public:
+		virtual void alignRegistered(const model::PointCloud& cloud_prev, 
 			const std::vector<model::FunctionValue>& f_prev, 
-			model::PointCloudPtr cloud_cur,
-			const std::vector<model::FunctionValue>& f_cur) = 0;
+			const model::PointCloud& cloud_reg,
+			const std::vector<model::FunctionValue>& f_reg) = 0;
 };
 
 using BaseAlignerPtr = std::unique_ptr<BaseAligner>;

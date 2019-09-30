@@ -29,7 +29,7 @@ void DebugVisualizer::visualizePointCloud(const model::PointCloud& cloud) {
   pcl::visualization::PCLVisualizer::Ptr viewer 
     (new pcl::visualization::PCLVisualizer ("3D Viewer"));
   viewer->setBackgroundColor (0, 0, 0);
-  viewer->addPointCloud<model::Point_t> (cloud.getRawCloud(), "Point Cloud");
+  viewer->addPointCloud<common::Point_t> (cloud.getRawCloud(), "Point Cloud");
   viewer->setPointCloudRenderingProperties 
     (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "Point Cloud");
   viewer->addCoordinateSystem (1.0);
@@ -49,19 +49,19 @@ void DebugVisualizer::visualizePointCloudDiff(const model::PointCloud& cloud1,
   viewer->setBackgroundColor (0, 0, 0);
 
   // Add first cloud.
-  const model::PointCloud_tPtr cloud1_ptr = cloud1.getRawCloud();
-  pcl::visualization::PointCloudColorHandlerCustom<model::Point_t> cloud1_color
+  const common::PointCloud_tPtr cloud1_ptr = cloud1.getRawCloud();
+  pcl::visualization::PointCloudColorHandlerCustom<common::Point_t> cloud1_color
     (cloud1_ptr, 0, 255, 0);
-  viewer->addPointCloud<model::Point_t> (
+  viewer->addPointCloud<common::Point_t> (
       cloud1_ptr, cloud1_color, "cloud1");
   viewer->setPointCloudRenderingProperties 
     (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "cloud1");
   
   // Add second cloud.
-  const model::PointCloud_tPtr cloud2_ptr = cloud2.getRawCloud();
-  pcl::visualization::PointCloudColorHandlerCustom<model::Point_t> cloud2_color
+  const common::PointCloud_tPtr cloud2_ptr = cloud2.getRawCloud();
+  pcl::visualization::PointCloudColorHandlerCustom<common::Point_t> cloud2_color
     (cloud2_ptr, 255, 0, 0);
-  viewer->addPointCloud<model::Point_t> (
+  viewer->addPointCloud<common::Point_t> (
       cloud2_ptr, cloud2_color, "cloud2");
   viewer->setPointCloudRenderingProperties 
     (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "cloud2");

@@ -28,6 +28,8 @@ class SphRegistration : public BaseRegistration {
 
 		backend::SphericalCorrelation sph_corr_; 
 		common::SphericalSampler sampler_;
+		std::vector<model::FunctionValue> f_values_; 
+		std::vector<model::FunctionValue> h_values_;
 		alignment::BaseAlignerPtr aligner_; 
 
 		// Statistics

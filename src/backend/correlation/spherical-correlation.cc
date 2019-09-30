@@ -43,7 +43,7 @@ void SphericalCorrelation::correlateSignals(
 
 	CHECK_NOTNULL(signal_values);
 	convertSignalValues(signal_values, bw);
-	convertSignalCoeff(signal_coeff, bw);
+	//convertSignalCoeff(signal_coeff, bw);
 	delete [] signal_values;
 	delete [] signal_coeff;
 }
@@ -78,7 +78,7 @@ void SphericalCorrelation::retrieveInterpolation(
   std::transform(f.cbegin(), f.cend(),
 			std::back_inserter(*interpolation),
       [] (const model::FunctionValue& interp) { 
-				return interp.getInterpolation();
+				return interp.getAveragedInterpolation();
 			});
 }
 

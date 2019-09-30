@@ -5,11 +5,12 @@
 namespace alignment {
 
 class RangeBasedAligner : public BaseAligner {
+	public:
 
-	virtual void alignRegistered(model::PointCloudPtr cloud_prev, 
+		virtual void alignRegistered(const model::PointCloud& cloud_prev, 
 			const std::vector<model::FunctionValue>& f_prev, 
-			model::PointCloudPtr cloud_cur,
-			const std::vector<model::FunctionValue>& f_cur) override;
+			const model::PointCloud& cloud_reg,
+			const std::vector<model::FunctionValue>& f_reg) override;
 };
 
 } // namespace alignment

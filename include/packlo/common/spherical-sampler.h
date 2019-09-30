@@ -16,12 +16,12 @@ class SphericalSampler {
 		int getInitializedBandwith() const noexcept;
 
   private:
-    std::vector<model::Point_t> create2BwGrid(
+    std::vector<common::Point_t> create2BwGrid(
         const std::size_t bw);
-    std::vector<model::Point_t> convertCartesian(
-        const std::vector<model::Point_t>& grid);
+    std::vector<common::Point_t> convertCartesian(
+        const std::vector<common::Point_t>& grid);
 
-		std::vector<model::Point_t> cartesian_grid_;
+		std::vector<common::Point_t> cartesian_grid_;
 		bool is_initialized_;
 		int bandwith_;
 };
