@@ -3,8 +3,9 @@
 #include "packlo/common/rotation-utils.h"
 #include "packlo/visualization/debug-visualizer.h"
 #include "packlo/backend/registration/sph-registration.h"
-#include "packlo/backend/registration/sph-registration-mock-rotated.h"
-#include "packlo/backend/registration/sph-registration-mock-cutted.h"
+#include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
+#include "packlo/backend/registration/mock/sph-registration-mock-cutted.h"
+#include "packlo/backend/registration/mock/sph-registration-mock-translated.h"
 
 #include <glog/logging.h>
 #include <pcl_conversions/pcl_conversions.h>

@@ -1,4 +1,4 @@
-#include "packlo/backend/registration/sph-registration-mock-rotated.h"
+#include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
 #include "packlo/common/rotation-utils.h"
 #include "packlo/visualization/debug-visualizer.h"
 

@@ -47,8 +47,10 @@ cs_add_library(${PROJECT_NAME}_lib
    src/controller/distributor.cc
 	 src/backend/registration/base-registration.cc
 	 src/backend/registration/sph-registration.cc
-	 src/backend/registration/sph-registration-mock-rotated.cc
-	 src/backend/registration/sph-registration-mock-cutted.cc
+	 src/backend/registration/mock/sph-registration-mock-rotated.cc
+	 src/backend/registration/mock/sph-registration-mock-cutted.cc
+	 src/backend/registration/mock/sph-registration-mock-translated.cc
+	 src/backend/registration/mock/sph-registration-mock-transformed.cc
    src/backend/correlation/spherical-correlation.cc
    src/backend/alignment/range-based-aligner.cc
 

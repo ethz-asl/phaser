@@ -1,4 +1,4 @@
-#include "packlo/backend/registration/sph-registration-mock-cutted.h"
+#include "packlo/backend/registration/mock/sph-registration-mock-cutted.h"
 #include "packlo/common/rotation-utils.h"
 
 #include <pcl/filters/passthrough.h>
