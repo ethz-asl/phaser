@@ -42,6 +42,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/spherical-projection.cc
    src/common/spherical-sampler.cc
    src/common/rotation-utils.cc
+   src/common/translation-utils.cc
    src/common/statistics-manager.cc
 
    src/controller/distributor.cc

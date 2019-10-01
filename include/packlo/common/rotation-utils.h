@@ -31,4 +31,4 @@ private:
 
 };
 
-}
+} // namespace common

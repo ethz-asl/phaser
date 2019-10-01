@@ -11,6 +11,8 @@ class SphRegistrationMockTranslated : public SphRegistration {
 				model::PointCloudPtr cloud_cur) override;
 
 	private:
+		 model::PointCloud pertubPointCloud(model::PointCloud &cloud,
+			 const float x, const float y, const float z);
 };
 
 } // namespace registration

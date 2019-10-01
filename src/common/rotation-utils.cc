@@ -31,7 +31,7 @@ std::vector<model::FunctionValue> RotationUtils::RotateAroundZYZCopy(
 											createTransformationAroundY(beta_rad) * 
 											createTransformationAroundX(alpha_rad);
 	std::vector<model::FunctionValue> rotated_values;
-
+	//TODO(lbern:) rotate or remove
 	return rotated_values;
 }
 

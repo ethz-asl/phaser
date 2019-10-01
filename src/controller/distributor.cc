@@ -6,6 +6,7 @@
 #include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
 #include "packlo/backend/registration/mock/sph-registration-mock-cutted.h"
 #include "packlo/backend/registration/mock/sph-registration-mock-translated.h"
+#include "packlo/backend/registration/mock/sph-registration-mock-transformed.h"
 
 #include <glog/logging.h>
 #include <pcl_conversions/pcl_conversions.h>
@@ -42,6 +43,12 @@ void Distributor::initializeRegistrationAlgorithm(const std::string& type) {
 			= std::make_unique<registration::SphRegistrationMockRotated>();
 	else if (type == "sph-mock-cutted")
 		registrator_ = std::make_unique<registration::SphRegistrationMockCutted>();
+	else if (type == "sph-mock-translated")
+		registrator_ = std::make_unique<
+			registration::SphRegistrationMockTranslated>();
+	else if (type == "sph-mock-transformed")
+		registrator_ = std::make_unique<
+			registration::SphRegistrationMockTransformed>();
 	else 
 		LOG(FATAL) << "Unknown registration algorithm specified!";
 }
