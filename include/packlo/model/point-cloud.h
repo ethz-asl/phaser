@@ -39,9 +39,6 @@ public:
 	void writeToFile();
 
 private:
-	void read_directory(const std::string& directory, 
-			std::vector<std::string>* files) const;
-
 	common::PointCloud_tPtr cloud_; 
   pcl::KdTreeFLANN<common::Point_t> kd_tree_; 
 

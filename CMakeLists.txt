@@ -39,6 +39,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/model/function-value.cc
 
    src/common/data/datasource-ros.cc
+   src/common/data/file-system-helper.cc
    src/common/spherical-projection.cc
    src/common/spherical-sampler.cc
    src/common/rotation-utils.cc

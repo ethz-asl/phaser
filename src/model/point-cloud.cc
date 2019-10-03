@@ -1,11 +1,10 @@
 #include "packlo/model/point-cloud.h"
+#include "packlo/common/data/file-system-helper.h"
 
 #include <pcl/kdtree/impl/kdtree_flann.hpp>
 #include <pcl/common/transforms.h>
 #include <pcl/common/io.h>
 #include <pcl/io/ply_io.h>
-
-#include <boost/filesystem.hpp>
 
 #include <glog/logging.h>
 #include <chrono>
@@ -102,23 +101,11 @@ void PointCloud::writeToFile() {
 	CHECK(!FLAGS_PlyWriteDirectory.empty());
 	pcl::PLYWriter writer;
 	std::vector<std::string> files;
-	read_directory(FLAGS_PlyWriteDirectory, &files);	
+	data::FileSystemHelper::readDirectory(FLAGS_PlyWriteDirectory, &files);	
 	std::string file_name = FLAGS_PlyWriteDirectory + FLAGS_PlyPrefix 
 			 + std::to_string(files.size() + 1) + ".ply";
 
 	writer.write(file_name,	*cloud_);
 }
-
-void PointCloud::read_directory(const std::string& directory, 
-		std::vector<std::string>* files) const {
-	boost::filesystem::path p(directory);
-	boost::filesystem::directory_iterator start(p);
-	boost::filesystem::directory_iterator end;
-	std::transform(start, end, std::back_inserter(*files), 
-			[] (const boost::filesystem::directory_entry& entry) {
-        return entry.path().leaf().string();
-    });
-}
-
 
 }
