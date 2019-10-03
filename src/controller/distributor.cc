@@ -60,6 +60,9 @@ void Distributor::pointCloudCallback(
 		prev_point_cloud_ = cloud;
 		return;
 	}
+	cloud->writeToFile();
+	prev_point_cloud_->writeToFile();
+
 	registrator_->registerPointCloud(prev_point_cloud_, cloud);
 	prev_point_cloud_ = cloud;
 }
