@@ -10,7 +10,8 @@ namespace alignment {
 
 class BaseAligner {
 	public:
-		virtual void alignRegistered(const model::PointCloud& cloud_prev, 
+		virtual common::Vector_t alignRegistered(
+		  const model::PointCloud& cloud_prev, 
 			const std::vector<model::FunctionValue>& f_prev, 
 			const model::PointCloud& cloud_reg,
 			const std::vector<model::FunctionValue>& f_reg) = 0;

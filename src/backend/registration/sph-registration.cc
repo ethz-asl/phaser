@@ -31,7 +31,6 @@ void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev,
   visualization::DebugVisualizer::getInstance()
 		.visualizePointCloudDiff(*cloud_prev, reg_cloud);
 
-	VLOG(1) << "------------ ALIGNMENT";
 	CHECK(!f_values_.empty());
 	CHECK(!h_values_.empty());
 	aligner_->alignRegistered(*cloud_prev, f_values_, 
@@ -56,7 +55,7 @@ void SphRegistration::correlatePointcloud(
 	const double duration_sample_h_ms = common::executeTimedFunction(
 			&common::SphericalSampler::sampleUniformly, 
 			&sampler_, target, &h_values_);
-	
+	CHECK(f_values_.size() == h_values_.size());
 
 	const double duration_correlation_ms = common::executeTimedFunction(
 			&backend::SphericalCorrelation::correlateSignals, 

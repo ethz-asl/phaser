@@ -45,13 +45,18 @@ std::vector<common::Point_t> SphericalSampler::create2BwGrid(
 std::vector<common::Point_t> SphericalSampler::convertCartesian(
       const std::vector<common::Point_t>& grid) {
   std::vector<common::Point_t> res;
+	const float n_grid = static_cast<float>(grid.size()) / 25;
+	const float step_distance = 0.00;
+	VLOG(1) << "step distance = " << step_distance << " n: " << n_grid;
+	float dist = 10.0f;
   for (const common::Point_t& p : grid) {
     common::Point_t cart_p;
-		VLOG(1) << "sin: " << std::sin(p.y) << " cos: " << std::cos(p.y);
-    cart_p.x = 10*std::sin(p.x) * std::cos(p.y);
-    cart_p.y = 10*std::sin(p.x) * std::sin(p.y);
-    cart_p.z = 10*std::cos(p.x);
+		//VLOG(1) << "sin: " << std::sin(p.y) << " cos: " << std::cos(p.y);
+    cart_p.x = dist*std::sin(p.x) * std::cos(p.y);
+    cart_p.y = dist*std::sin(p.x) * std::sin(p.y);
+    cart_p.z = dist*std::cos(p.x);
     res.emplace_back(std::move(cart_p));
+		dist += step_distance;
   }
   return res;
 }

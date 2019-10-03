@@ -50,9 +50,10 @@ void PointCloud::getNearestPoints(
       const double dist = std::sqrt(point.x * point.x + 
 																		point.y * point.y + 
 																		point.z * point.z);
+			value.addPoint(point);
 			value.addRange(dist);
 			value.addIntensity(point.intensity);
-			value.addInterpolation(0.33f * point.intensity + 0.67f * dist);
+			value.addInterpolation(0.40f * point.intensity + 0.60f * dist);
     }
     function_values->emplace_back(std::move(value));
   }

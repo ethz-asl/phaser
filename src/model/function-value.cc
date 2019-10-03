@@ -3,10 +3,13 @@
 #include <numeric>
 #include <algorithm>
 
+#include <glog/logging.h>
+
 namespace model {
 
 FunctionValue::FunctionValue()
-	: interpolation_(0.0), range_(0.0), intensity_(0.0) {}
+	: interpolation_(0.0), range_(0.0), intensity_(0.0), 
+		points_(new common::PointCloud_t) {}
 
 FunctionValue::FunctionValue(double interpolation, 
 		double range, double intensity) 
@@ -34,18 +37,15 @@ double FunctionValue::getAveragedIntensity() const noexcept {
 common::Point_t FunctionValue::getAveragedPoint() const noexcept {
 	common::Point_t avg;
 	const auto& points = points_->points;
-	avg = std::accumulate(points.cbegin(), points.cend(), 
-			common::Point_t(),
-			[] (const common::Point_t& acc, const common::Point_t& cur) {
-				common::Point_t res; 
-				res.x = acc.x + cur.x;
-				res.y = acc.y + cur.y;
-				res.z = acc.z + cur.z;
-				return res;
-			});
-	avg.x = avg.x / points.size();
-	avg.y = avg.y / points.size();
-	avg.z = avg.z / points.size();
+	for (const common::Point_t& p : points) {
+		avg.x += p.x;
+		avg.y += p.y;
+		avg.z += p.z;
+	}
+	const float n_points = static_cast<float>(points.size());
+	avg.x = avg.x / n_points;
+	avg.y = avg.y / n_points;
+	avg.z = avg.z / n_points;
 	return avg;
 }
 

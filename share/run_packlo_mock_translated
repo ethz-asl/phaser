@@ -7,7 +7,7 @@ rosrun packlo packlo \
 		--enable_debug=true \
 		--registration_algorithm=sph-mock-translated \
 		--spherical_bandwith=64 \
-		--mock_translate_x=3.0 \
+		--mock_translate_x=4.0 \
 		--mock_translate_y=0.0 \
 		--mock_translate_z=0.0 \
     $REST

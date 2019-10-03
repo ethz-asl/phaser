@@ -39,13 +39,11 @@ class Datasource {
       = message_filters::sync_policies::ApproximateTime<
         sensor_msgs::Image, sensor_msgs::Image, sensor_msgs::Image>;
     using ImageSynchronizer = message_filters::Synchronizer<ImagePolicy>;
-    
 
     SyncedImageSubscriber sync_intensity_images_sub_;
     SyncedImageSubscriber sync_range_images_sub_;
     SyncedImageSubscriber sync_noise_images_sub_;
     ImageSynchronizer image_synchronizer_;
-
 };
 
 }

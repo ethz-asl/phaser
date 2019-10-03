@@ -3,6 +3,7 @@
 #include <pcl/point_types.h>
 #include <pcl/register_point_struct.h>
 #include <pcl/common/projection_matrix.h>
+#include <Eigen/Dense>
 
 // This has to be in global namespace 
 // otherwise PCL complains.
@@ -31,4 +32,5 @@ namespace common {
 	using Point_t = pcl::PointXYZI;                                                 
 	using PointCloud_t = pcl::PointCloud<Point_t>;                                  
 	using PointCloud_tPtr = pcl::PointCloud<Point_t>::Ptr; 
+	using Vector_t = Eigen::Vector3d;
 }
