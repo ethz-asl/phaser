@@ -21,15 +21,15 @@ DEFINE_string(registration_algorithm, "sph",
 
 namespace controller {
 
-Distributor::Distributor(common::Datasource& ds)
+Distributor::Distributor(data::DatasourcePtr& ds)
 		: ds_(ds), statistics_manager_(kManagerReferenceName) {
   subscribeToTopics();
 	initializeRegistrationAlgorithm(FLAGS_registration_algorithm);
 }
 
 void Distributor::subscribeToTopics() {
-	ds_.subscribeToPointClouds(
-		[&] (const sensor_msgs::PointCloud2ConstPtr& cloud) {
+	ds_->subscribeToPointClouds(
+		[&] (const model::PointCloudPtr& cloud) {
 			CHECK(cloud);
 			pointCloudCallback(cloud);
 	}); 
@@ -54,24 +54,21 @@ void Distributor::initializeRegistrationAlgorithm(const std::string& type) {
 }
 
 void Distributor::pointCloudCallback(
-		const sensor_msgs::PointCloud2ConstPtr& cloud) {
-	common::PointCloud_tPtr input_cloud = preprocessPointCloud(cloud);
+		const model::PointCloudPtr& cloud) {
+	preprocessPointCloud(cloud);
 	if (prev_point_cloud_ == nullptr) {
-		prev_point_cloud_ = std::make_shared<model::PointCloud>(input_cloud);
+		prev_point_cloud_ = cloud;
 		return;
 	}
-	model::PointCloudPtr cur_point_cloud_ 
-		= std::make_shared<model::PointCloud>(input_cloud);
-	registrator_->registerPointCloud(prev_point_cloud_, cur_point_cloud_);
-	prev_point_cloud_ = cur_point_cloud_;
+	registrator_->registerPointCloud(prev_point_cloud_, cloud);
+	prev_point_cloud_ = cloud;
 }
 
-common::PointCloud_tPtr Distributor::preprocessPointCloud(
-		const sensor_msgs::PointCloud2ConstPtr& cloud) {
-  common::PointCloud_tPtr input_cloud (new common::PointCloud_t);
+void Distributor::preprocessPointCloud(
+		const model::PointCloudPtr& cloud) {
+  common::PointCloud_tPtr input_cloud = cloud->getRawCloud();
 
 	// Why is this needed?
-  pcl::fromROSMsg(*cloud, *input_cloud);
   pcl::PassThrough<common::Point_t> pass;
   pass.setInputCloud (input_cloud);
   pass.setFilterFieldName ("z");
@@ -84,8 +81,6 @@ common::PointCloud_tPtr Distributor::preprocessPointCloud(
   avg.setInputCloud(input_cloud);
   avg.setLeafSize(0.25f, 0.25f, 0.25f);
   avg.filter(*input_cloud);
-
-	return input_cloud;
 }
 
 void Distributor::updateStatistics() {

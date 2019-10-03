@@ -1,6 +1,6 @@
 #pragma once
 
-#include <packlo/common/datasource.h>
+#include <packlo/common/data/datasource-ros.h>
 #include <packlo/common/statistics-manager.h>
 #include <packlo/controller/distributor.h>
 
@@ -26,7 +26,7 @@ class PackloNode {
 	  ros::AsyncSpinner spinner_;
     ros::NodeHandle& node_handle_;
     ros::NodeHandle& node_handle_private_;
-    common::Datasource ds_;
+		data::DatasourcePtr ds_;
     std::unique_ptr<controller::Distributor> dist_;
 		std::atomic<bool> should_exit_; 
   

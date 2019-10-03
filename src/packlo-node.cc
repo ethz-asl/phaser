@@ -7,8 +7,9 @@
 namespace packlo {
 
 PackloNode::PackloNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private) 
-		:spinner_(1), node_handle_(nh), node_handle_private_(nh_private), ds_(nh) {
+		:spinner_(1), node_handle_(nh), node_handle_private_(nh_private) {
 	should_exit_.store(false);
+	ds_ = std::make_shared<data::DatasourceRos>(nh);
 	dist_ = std::make_unique<controller::Distributor>(ds_);
 }
 
