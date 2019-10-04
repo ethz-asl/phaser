@@ -5,7 +5,9 @@ rosrun packlo packlo \
     --alsologtostderr=1 \
     --v=3 \
 		--enable_debug=true \
-		--registration_algorithm=sph \
+		--registration_algorithm=sph-mock-translated \
 		--spherical_bandwith=64 \
-		--PlyWriteDirectory="/home/berlukas/Documents/ply/" \
+		--mock_translate_x=4.0 \
+		--mock_translate_y=0.0 \
+		--mock_translate_z=0.0 \
     $REST

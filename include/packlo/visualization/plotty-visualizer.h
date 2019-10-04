@@ -5,13 +5,13 @@
 namespace visualization {
 
 class PlottyVisualizer {
-	public:
-		explicit PlottyVisualizer(const PlottyVisualizer& viz) = delete;
+  public:
+    explicit PlottyVisualizer(const PlottyVisualizer& viz) = delete;
 
-		void createPlotFor(const common::StatisticsManager& manager, 
-				std::string&& key);
-		
-		// Singleton instance
+    void createPlotFor(const common::StatisticsManager& manager, 
+        std::string&& key);
+    
+    // Singleton instance
      static inline void init() {
        PlottyVisualizer::getInstance();
      }
@@ -20,8 +20,8 @@ class PlottyVisualizer {
        return instance;
      }
 
-	
-	private:
-		PlottyVisualizer();
+  
+  private:
+    PlottyVisualizer();
 };
 } // namespace visualization

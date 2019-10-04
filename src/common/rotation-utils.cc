@@ -16,11 +16,23 @@ model::PointCloud RotationUtils::RotateAroundXYZCopy(model::PointCloud &cloud,
     const float alpha_rad, 
     const float beta_rad, const float gamma_rad) {
   Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
-   createTransformationAroundY(beta_rad) * createTransformationAroundX(alpha_rad);
-  model::PointCloud_tPtr copyCloud (new model::PointCloud_t);
+                      createTransformationAroundY(beta_rad) * 
+                      createTransformationAroundX(alpha_rad);
+  common::PointCloud_tPtr copyCloud (new common::PointCloud_t);
   model::PointCloud copy (copyCloud);
   cloud.transformPointCloudCopy(T, copy);
   return copy;
+}
+
+std::vector<model::FunctionValue> RotationUtils::RotateAroundZYZCopy(
+    const std::vector<model::FunctionValue>& values,
+    const double alpha_rad, const double beta_rad, const double gamma_rad) {
+  Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
+                      createTransformationAroundY(beta_rad) * 
+                      createTransformationAroundX(alpha_rad);
+  std::vector<model::FunctionValue> rotated_values;
+  //TODO(lbern:) rotate or remove
+  return rotated_values;
 }
 
 Eigen::Matrix4f RotationUtils::createTransformationAroundX(const float alpha_rad) {
@@ -64,7 +76,7 @@ model::PointCloud RotationUtils::RotateAroundZYZCopy(model::PointCloud &cloud,
     const double alpha_rad, const double beta_rad, const double gamma_rad) {
   Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
    createTransformationAroundY(beta_rad) * createTransformationAroundZ(alpha_rad);
-  model::PointCloud_tPtr copyCloud (new model::PointCloud_t);
+  common::PointCloud_tPtr copyCloud (new common::PointCloud_t);
   model::PointCloud copy (copyCloud);
   cloud.transformPointCloudCopy(T, copy);
   return copy;

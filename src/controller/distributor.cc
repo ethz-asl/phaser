@@ -3,8 +3,10 @@
 #include "packlo/common/rotation-utils.h"
 #include "packlo/visualization/debug-visualizer.h"
 #include "packlo/backend/registration/sph-registration.h"
-#include "packlo/backend/registration/sph-registration-mock-rotated.h"
-#include "packlo/backend/registration/sph-registration-mock-cutted.h"
+#include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
+#include "packlo/backend/registration/mock/sph-registration-mock-cutted.h"
+#include "packlo/backend/registration/mock/sph-registration-mock-translated.h"
+#include "packlo/backend/registration/mock/sph-registration-mock-transformed.h"
 
 #include <glog/logging.h>
 #include <pcl_conversions/pcl_conversions.h>
@@ -12,86 +14,87 @@
 #include <pcl/filters/voxel_grid.h>
 
 DEFINE_bool(enable_debug, false, 
-		"Enables the debug mode for the registration.");
+    "Enables the debug mode for the registration.");
 
 DEFINE_string(registration_algorithm, "sph", 
-		"Defines the used algorithm for the point cloud registration.");
+    "Defines the used algorithm for the point cloud registration.");
 
 namespace controller {
 
-Distributor::Distributor(common::Datasource& ds)
-		: ds_(ds), statistics_manager_(kManagerReferenceName) {
+Distributor::Distributor(data::DatasourcePtr& ds)
+    : ds_(ds), statistics_manager_(kManagerReferenceName) {
   subscribeToTopics();
-	initializeRegistrationAlgorithm(FLAGS_registration_algorithm);
+  initializeRegistrationAlgorithm(FLAGS_registration_algorithm);
+  ds_->startStreaming();
 }
 
 void Distributor::subscribeToTopics() {
-	ds_.subscribeToPointClouds(
-		[&] (const sensor_msgs::PointCloud2ConstPtr& cloud) {
-			CHECK(cloud);
-			pointCloudCallback(cloud);
-	}); 
+  ds_->subscribeToPointClouds(
+    [&] (const model::PointCloudPtr& cloud) {
+      CHECK(cloud);
+      pointCloudCallback(cloud);
+  }); 
 }
 
 void Distributor::initializeRegistrationAlgorithm(const std::string& type) {
-	if (type == "sph")
-		registrator_ = std::make_unique<registration::SphRegistration>();
-	else if (type == "sph-mock-rotated")
-		registrator_ 
-			= std::make_unique<registration::SphRegistrationMockRotated>();
-	else if (type == "sph-mock-cutted")
-		registrator_ = std::make_unique<registration::SphRegistrationMockCutted>();
-	else 
-		LOG(FATAL) << "Unknown registration algorithm specified!";
+  if (type == "sph")
+    registrator_ = std::make_unique<registration::SphRegistration>();
+  else if (type == "sph-mock-rotated")
+    registrator_ 
+      = std::make_unique<registration::SphRegistrationMockRotated>();
+  else if (type == "sph-mock-cutted")
+    registrator_ = std::make_unique<registration::SphRegistrationMockCutted>();
+  else if (type == "sph-mock-translated")
+    registrator_ = std::make_unique<
+      registration::SphRegistrationMockTranslated>();
+  else if (type == "sph-mock-transformed")
+    registrator_ = std::make_unique<
+      registration::SphRegistrationMockTransformed>();
+  else 
+    LOG(FATAL) << "Unknown registration algorithm specified!";
 }
-
-static int test = 0;
 
 void Distributor::pointCloudCallback(
-		const sensor_msgs::PointCloud2ConstPtr& cloud) {
-	model::PointCloud_tPtr input_cloud = preprocessPointCloud(cloud);
-	if (prev_point_cloud_ == nullptr) {
-		prev_point_cloud_ = std::make_shared<model::PointCloud>(input_cloud);
-		return;
-	}
-	//if (++test % 50 != 0) return;
-	model::PointCloudPtr cur_point_cloud_ 
-		= std::make_shared<model::PointCloud>(input_cloud);
-	registrator_->registerPointCloud(prev_point_cloud_, cur_point_cloud_);
-	prev_point_cloud_ = cur_point_cloud_;
+    const model::PointCloudPtr& cloud) {
+  VLOG(1) << "received cloud in callback";
+  preprocessPointCloud(cloud);
+  if (prev_point_cloud_ == nullptr) {
+    prev_point_cloud_ = cloud;
+    return;
+  }
+  CHECK_NOTNULL(registrator_);
+  registrator_->registerPointCloud(prev_point_cloud_, cloud);
+  prev_point_cloud_ = cloud;
 }
 
-model::PointCloud_tPtr Distributor::preprocessPointCloud(
-		const sensor_msgs::PointCloud2ConstPtr& cloud) {
-  model::PointCloud_tPtr input_cloud (new model::PointCloud_t);
+void Distributor::preprocessPointCloud(
+    const model::PointCloudPtr& cloud) {
+  common::PointCloud_tPtr input_cloud = cloud->getRawCloud();
 
-	// Why is this needed?
-  pcl::fromROSMsg(*cloud, *input_cloud);
-  pcl::PassThrough<model::Point_t> pass;
+  // Why is this needed?
+  pcl::PassThrough<common::Point_t> pass;
   pass.setInputCloud (input_cloud);
   pass.setFilterFieldName ("z");
   pass.setFilterLimits (0.0,0.0);
   pass.setFilterLimitsNegative (true);
   pass.filter (*input_cloud);
 
-	// Only for speedup
-  pcl::VoxelGrid<model::Point_t> avg;
+  // Only for speedup
+  pcl::VoxelGrid<common::Point_t> avg;
   avg.setInputCloud(input_cloud);
   avg.setLeafSize(0.25f, 0.25f, 0.25f);
   avg.filter(*input_cloud);
-
-	return input_cloud;
 }
 
 void Distributor::updateStatistics() {
-	VLOG(1) << "updating registrator";
-	//registrator_->updateStatistics();
+  VLOG(1) << "updating registrator";
+  //registrator_->updateStatistics();
 }
 
 void Distributor::getStatistics(
-		common::StatisticsManager* manager) const noexcept{
-	registrator_->getStatistics(manager);
-	manager->mergeManager(statistics_manager_);
+    common::StatisticsManager* manager) const noexcept{
+  registrator_->getStatistics(manager);
+  manager->mergeManager(statistics_manager_);
 }
 
 }

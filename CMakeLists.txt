@@ -36,24 +36,31 @@ cs_add_library(${PROJECT_NAME}_lib
    lib/SOFT/wignerTransforms_fftw.c
 
    src/model/point-cloud.cc
+   src/model/function-value.cc
 
-   src/common/datasource.cc
+   src/common/data/datasource-ros.cc
+   src/common/data/datasource-ply.cc
+   src/common/data/file-system-helper.cc
    src/common/spherical-projection.cc
    src/common/spherical-sampler.cc
    src/common/rotation-utils.cc
+   src/common/translation-utils.cc
    src/common/statistics-manager.cc
 
    src/controller/distributor.cc
-	 src/backend/registration/base-registration.cc
-	 src/backend/registration/sph-registration.cc
-	 src/backend/registration/sph-registration-mock-rotated.cc
-	 src/backend/registration/sph-registration-mock-cutted.cc
+   src/backend/registration/base-registration.cc
+   src/backend/registration/sph-registration.cc
+   src/backend/registration/mock/sph-registration-mock-rotated.cc
+   src/backend/registration/mock/sph-registration-mock-cutted.cc
+   src/backend/registration/mock/sph-registration-mock-translated.cc
+   src/backend/registration/mock/sph-registration-mock-transformed.cc
+   src/backend/correlation/spherical-correlation.cc
+   src/backend/alignment/range-based-aligner.cc
 
    src/visualization/debug-visualizer.cc
    src/visualization/plotty-visualizer.cc
 
-   src/backend/correlation/spherical-correlation.cc
-	 src/packlo-node.cc
+   src/packlo-node.cc
 )
 
 cs_add_executable(${PROJECT_NAME} tools/packlo-app.cc)

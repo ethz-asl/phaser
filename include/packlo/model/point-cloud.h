@@ -1,6 +1,7 @@
 #pragma once
 
-#include <packlo/common/point-types.h>
+#include "packlo/common/point-types.h"
+#include "packlo/model/function-value.h"
 
 #include <pcl/point_types.h>
 #include <pcl/common/projection_matrix.h>
@@ -11,41 +12,39 @@
 
 namespace model {
 
-//using Point_t = ::OusterPointType;
-using Point_t = pcl::PointXYZI;
-using PointCloud_t = pcl::PointCloud<Point_t>;
-using PointCloud_tPtr = pcl::PointCloud<Point_t>::Ptr;
-
 class PointCloud {
 
 public:
-  explicit PointCloud(PointCloud_tPtr cloud);
+  explicit PointCloud(common::PointCloud_tPtr cloud);
+  explicit PointCloud(const std::string& ply);
 
-  PointCloud_t::iterator begin(); 
-  PointCloud_t::iterator end();
+  common::PointCloud_t::iterator begin(); 
+  common::PointCloud_t::iterator end();
 
    void getNearestPoints(
-			const std::vector<Point_t> &query_points, 
-			std::vector<float>* function_values) const;
+      const std::vector<common::Point_t> &query_points, 
+      std::vector<FunctionValue>* function_values) const;
 
   void transformPointCloud(const Eigen::Matrix4f &T);
   void transformPointCloudCopy(const Eigen::Matrix4f& T, PointCloud& copy);
 
-  PointCloud_tPtr getRawCloud() const;
+  common::PointCloud_tPtr getRawCloud() const;
 
-  Point_t& pointAt(const std::size_t idx);
-  const Point_t& pointAt(const std::size_t idx) const;
+  common::Point_t& pointAt(const std::size_t idx);
+  const common::Point_t& pointAt(const std::size_t idx) const;
 
   std::size_t size() const;
   PointCloud clone() const;
 
-	void initialize_kd_tree();
+  void initialize_kd_tree();
+  void writeToFile();
 
 private:
-  PointCloud_tPtr cloud_; 
-  pcl::KdTreeFLANN<Point_t> kd_tree_; 
+  void readFromFile(const std::string& ply);
+  common::PointCloud_tPtr cloud_; 
+  pcl::KdTreeFLANN<common::Point_t> kd_tree_; 
 
-	bool kd_tree_is_initialized_;
+  bool kd_tree_is_initialized_;
   const std::size_t kNeighbors = 1;
 };
 
