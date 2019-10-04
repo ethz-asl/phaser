@@ -20,6 +20,11 @@ PointCloud::PointCloud(common::PointCloud_tPtr cloud)
   : cloud_(cloud), kd_tree_is_initialized_(false) {
 }
 
+PointCloud::PointCloud(const std::string& ply)
+		: kd_tree_is_initialized_(false) {
+	readFromFile(ply);
+}
+
 void PointCloud::initialize_kd_tree() {
   kd_tree_.setInputCloud(cloud_);
 	kd_tree_is_initialized_ = true;
@@ -106,6 +111,15 @@ void PointCloud::writeToFile() {
 			 + std::to_string(files.size() + 1) + ".ply";
 
 	writer.write(file_name,	*cloud_);
+}
+
+void PointCloud::readFromFile(const std::string& ply) {
+	CHECK(!ply.empty());
+	VLOG(1) << "Reading PLY file from: " << ply;
+	common::PointCloud_tPtr cloud (new common::PointCloud_t);
+	pcl::PLYReader reader;
+	reader.read(ply, *cloud);	
+	cloud_ = cloud;
 }
 
 }

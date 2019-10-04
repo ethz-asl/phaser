@@ -9,7 +9,7 @@ DEFINE_string(point_cloud_topic, "/os1_cloud_node/points",
 namespace data {
 
 DatasourceRos::DatasourceRos(ros::NodeHandle& nh) 
-    : nh_(nh)	{}
+    : nh_(nh), started_(false)	{}
 
 void DatasourceRos::subscribeToPointClouds(
     boost::function<void(const model::PointCloudPtr& cloud)> func) {
@@ -25,8 +25,14 @@ void DatasourceRos::subscribeToPointClouds(
 		<< FLAGS_point_cloud_topic;
 }
 
+void DatasourceRos::startStreaming() {
+	started_ = true;
+}
+
 void DatasourceRos::pointCloudCallback(
 		const sensor_msgs::PointCloud2ConstPtr& msg) {
+	if (!started_) return;
+
 	common::PointCloud_tPtr input_cloud (new common::PointCloud_t);               
                                                                                    
   pcl::fromROSMsg(*msg, *input_cloud); 

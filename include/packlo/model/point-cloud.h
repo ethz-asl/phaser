@@ -16,6 +16,7 @@ class PointCloud {
 
 public:
   explicit PointCloud(common::PointCloud_tPtr cloud);
+  explicit PointCloud(const std::string& ply);
 
   common::PointCloud_t::iterator begin(); 
   common::PointCloud_t::iterator end();
@@ -39,6 +40,7 @@ public:
 	void writeToFile();
 
 private:
+	void readFromFile(const std::string& ply);
 	common::PointCloud_tPtr cloud_; 
   pcl::KdTreeFLANN<common::Point_t> kd_tree_; 
 

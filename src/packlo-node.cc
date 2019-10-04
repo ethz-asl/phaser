@@ -1,4 +1,6 @@
 #include "packlo/packlo-node.h"
+#include "packlo/common/data/datasource-ros.h"
+#include "packlo/common/data/datasource-ply.h"
 #include "packlo/controller/distributor.h"
 #include "packlo/visualization/plotty-visualizer.h"
 
@@ -6,10 +8,15 @@
 
 namespace packlo {
 
+DEFINE_string(datasource, "bag",
+	"Defines the datasource to use for packlo.");
+
 PackloNode::PackloNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private) 
 		:spinner_(1), node_handle_(nh), node_handle_private_(nh_private) {
 	should_exit_.store(false);
-	ds_ = std::make_shared<data::DatasourceRos>(nh);
+	initializeDatasource(FLAGS_datasource);
+	
+	CHECK_NOTNULL(ds_);
 	dist_ = std::make_unique<controller::Distributor>(ds_);
 }
 
@@ -40,6 +47,15 @@ std::string PackloNode::updateAndPrintStatistics() {
 
 void PackloNode::shutdown() {
 
+}
+
+void PackloNode::initializeDatasource(const std::string& type) {
+	if (type == "bag")
+		ds_ = std::make_shared<data::DatasourceRos>(node_handle_);
+	else if (type == "ply")
+		ds_ = std::make_shared<data::DatasourcePly>();
+	else
+		LOG(FATAL) << "";
 }
 
 std::vector<common::StatisticsManager> PackloNode::retrieveStatistics()

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <packlo/common/data/datasource-ros.h>
-#include <packlo/common/statistics-manager.h>
-#include <packlo/controller/distributor.h>
+#include "packlo/common/data/base-datasource.h"
+#include "packlo/common/statistics-manager.h"
+#include "packlo/controller/distributor.h"
 
 #include <ros/ros.h>
 #include <memory>
@@ -21,6 +21,7 @@ class PackloNode {
 		void shutdown();
 
   private:
+		void initializeDatasource(const std::string& type);
 		std::vector<common::StatisticsManager> retrieveStatistics() const noexcept;
 		
 	  ros::AsyncSpinner spinner_;

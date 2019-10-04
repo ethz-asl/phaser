@@ -2,6 +2,7 @@
 #include "packlo/backend/alignment/range-based-aligner.h"
 #include "packlo/common/statistic-utils.h"
 #include "packlo/common/rotation-utils.h"
+#include "packlo/common/translation-utils.h"
 #include "packlo/visualization/debug-visualizer.h"
 
 #include <glog/logging.h>
@@ -26,15 +27,20 @@ void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev,
 
 	std::array<double, 3> zyz;
 	correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
-	model::PointCloud reg_cloud = common::RotationUtils::RotateAroundZYZCopy(
+	model::PointCloud rot_cloud = common::RotationUtils::RotateAroundZYZCopy(
       *cloud_cur, zyz[2], zyz[1], zyz[0]);
-  visualization::DebugVisualizer::getInstance()
-		.visualizePointCloudDiff(*cloud_prev, reg_cloud);
 
 	CHECK(!f_values_.empty());
 	CHECK(!h_values_.empty());
-	aligner_->alignRegistered(*cloud_prev, f_values_, 
-			reg_cloud, h_values_);
+	common::Vector_t xyz = aligner_->alignRegistered(*cloud_prev, f_values_, 
+			rot_cloud, h_values_);
+	CHECK(xyz.rows() == 3);
+
+	VLOG(1) << "Found translation: " << xyz.transpose();
+	model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
+			rot_cloud, xyz(0), xyz(1), xyz(2));
+  visualization::DebugVisualizer::getInstance()
+		.visualizePointCloudDiff(*cloud_prev, reg_cloud);
 }
 
 void SphRegistration::getStatistics(

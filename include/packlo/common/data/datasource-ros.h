@@ -17,14 +17,13 @@ class DatasourceRos : public BaseDatasource {
 
     virtual void subscribeToPointClouds(
         boost::function<void(const model::PointCloudPtr&)> func) override;
-
+		virtual void startStreaming() override;
   private:
 		void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg);
 
     ros::NodeHandle& nh_;
     std::vector<ros::Subscriber> subscribers_;
-		std::vector<boost::function<void(const model::PointCloudPtr&)>> callbacks_;
-
+		bool started_;
 };
 
 }

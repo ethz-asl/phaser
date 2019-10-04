@@ -25,6 +25,7 @@ Distributor::Distributor(data::DatasourcePtr& ds)
 		: ds_(ds), statistics_manager_(kManagerReferenceName) {
   subscribeToTopics();
 	initializeRegistrationAlgorithm(FLAGS_registration_algorithm);
+	ds_->startStreaming();
 }
 
 void Distributor::subscribeToTopics() {
@@ -55,14 +56,13 @@ void Distributor::initializeRegistrationAlgorithm(const std::string& type) {
 
 void Distributor::pointCloudCallback(
 		const model::PointCloudPtr& cloud) {
+	VLOG(1) << "received cloud in callback";
 	preprocessPointCloud(cloud);
 	if (prev_point_cloud_ == nullptr) {
 		prev_point_cloud_ = cloud;
 		return;
 	}
-	cloud->writeToFile();
-	prev_point_cloud_->writeToFile();
-
+	CHECK_NOTNULL(registrator_);
 	registrator_->registerPointCloud(prev_point_cloud_, cloud);
 	prev_point_cloud_ = cloud;
 }
