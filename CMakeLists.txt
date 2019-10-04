@@ -48,19 +48,19 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/statistics-manager.cc
 
    src/controller/distributor.cc
-	 src/backend/registration/base-registration.cc
-	 src/backend/registration/sph-registration.cc
-	 src/backend/registration/mock/sph-registration-mock-rotated.cc
-	 src/backend/registration/mock/sph-registration-mock-cutted.cc
-	 src/backend/registration/mock/sph-registration-mock-translated.cc
-	 src/backend/registration/mock/sph-registration-mock-transformed.cc
+   src/backend/registration/base-registration.cc
+   src/backend/registration/sph-registration.cc
+   src/backend/registration/mock/sph-registration-mock-rotated.cc
+   src/backend/registration/mock/sph-registration-mock-cutted.cc
+   src/backend/registration/mock/sph-registration-mock-translated.cc
+   src/backend/registration/mock/sph-registration-mock-transformed.cc
    src/backend/correlation/spherical-correlation.cc
    src/backend/alignment/range-based-aligner.cc
 
    src/visualization/debug-visualizer.cc
    src/visualization/plotty-visualizer.cc
 
-	 src/packlo-node.cc
+   src/packlo-node.cc
 )
 
 cs_add_executable(${PROJECT_NAME} tools/packlo-app.cc)
