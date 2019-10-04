@@ -30,6 +30,9 @@ void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev,
 	model::PointCloud rot_cloud = common::RotationUtils::RotateAroundZYZCopy(
       *cloud_cur, zyz[2], zyz[1], zyz[0]);
 
+	rot_cloud.initialize_kd_tree();
+  sampler_.sampleUniformly(rot_cloud, &h_values_);
+
 	CHECK(!f_values_.empty());
 	CHECK(!h_values_.empty());
 	common::Vector_t xyz = aligner_->alignRegistered(*cloud_prev, f_values_, 
