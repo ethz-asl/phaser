@@ -21,7 +21,7 @@ public:
       const double alpha_rad, const double beta_rad, const double gamma_rad);
 
   static std::vector<model::FunctionValue> RotateAroundZYZCopy(
-			const std::vector<model::FunctionValue>& values,
+      const std::vector<model::FunctionValue>& values,
       const double alpha_rad, const double beta_rad, const double gamma_rad);
 
 private:

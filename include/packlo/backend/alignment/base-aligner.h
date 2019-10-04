@@ -9,12 +9,12 @@
 namespace alignment {
 
 class BaseAligner {
-	public:
-		virtual common::Vector_t alignRegistered(
-		  const model::PointCloud& cloud_prev, 
-			const std::vector<model::FunctionValue>& f_prev, 
-			const model::PointCloud& cloud_reg,
-			const std::vector<model::FunctionValue>& f_reg) = 0;
+  public:
+    virtual common::Vector_t alignRegistered(
+      const model::PointCloud& cloud_prev, 
+      const std::vector<model::FunctionValue>& f_prev, 
+      const model::PointCloud& cloud_reg,
+      const std::vector<model::FunctionValue>& f_reg) = 0;
 };
 
 using BaseAlignerPtr = std::unique_ptr<BaseAligner>;

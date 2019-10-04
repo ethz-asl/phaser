@@ -3,8 +3,8 @@
 namespace registration {
 
 void BaseRegistration::getStatistics(
-		common::StatisticsManager* manager) const noexcept {
-	manager->mergeManager(statistics_manager_);
+    common::StatisticsManager* manager) const noexcept {
+  manager->mergeManager(statistics_manager_);
 }
 
 } // namespace registration

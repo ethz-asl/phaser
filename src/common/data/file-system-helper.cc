@@ -6,7 +6,7 @@
 namespace data {
 
 void FileSystemHelper::readDirectory(const std::string& directory,
-		std::vector<std::string>* files) {
+    std::vector<std::string>* files) {
   boost::filesystem::path p(directory);                                         
    boost::filesystem::directory_iterator start(p);                               
    boost::filesystem::directory_iterator end;                                    

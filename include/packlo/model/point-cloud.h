@@ -22,8 +22,8 @@ public:
   common::PointCloud_t::iterator end();
 
    void getNearestPoints(
-			const std::vector<common::Point_t> &query_points, 
-			std::vector<FunctionValue>* function_values) const;
+      const std::vector<common::Point_t> &query_points, 
+      std::vector<FunctionValue>* function_values) const;
 
   void transformPointCloud(const Eigen::Matrix4f &T);
   void transformPointCloudCopy(const Eigen::Matrix4f& T, PointCloud& copy);
@@ -36,15 +36,15 @@ public:
   std::size_t size() const;
   PointCloud clone() const;
 
-	void initialize_kd_tree();
-	void writeToFile();
+  void initialize_kd_tree();
+  void writeToFile();
 
 private:
-	void readFromFile(const std::string& ply);
-	common::PointCloud_tPtr cloud_; 
+  void readFromFile(const std::string& ply);
+  common::PointCloud_tPtr cloud_; 
   pcl::KdTreeFLANN<common::Point_t> kd_tree_; 
 
-	bool kd_tree_is_initialized_;
+  bool kd_tree_is_initialized_;
   const std::size_t kNeighbors = 1;
 };
 

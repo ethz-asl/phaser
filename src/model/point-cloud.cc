@@ -10,9 +10,9 @@
 #include <chrono>
 
 DEFINE_string(PlyWriteDirectory, "", 
-		"Defines the directory to store the point clouds.");
+    "Defines the directory to store the point clouds.");
 DEFINE_string(PlyPrefix, "cloud", 
-		"Defines the prefix name for the PLY.");
+    "Defines the prefix name for the PLY.");
 
 namespace model {
 
@@ -21,13 +21,13 @@ PointCloud::PointCloud(common::PointCloud_tPtr cloud)
 }
 
 PointCloud::PointCloud(const std::string& ply)
-		: kd_tree_is_initialized_(false) {
-	readFromFile(ply);
+    : kd_tree_is_initialized_(false) {
+  readFromFile(ply);
 }
 
 void PointCloud::initialize_kd_tree() {
   kd_tree_.setInputCloud(cloud_);
-	kd_tree_is_initialized_ = true;
+  kd_tree_is_initialized_ = true;
 }
 
 common::PointCloud_t::iterator PointCloud::begin() {
@@ -39,9 +39,9 @@ common::PointCloud_t::iterator PointCloud::end() {
 }
 
 void PointCloud::getNearestPoints(
-		const std::vector<common::Point_t> &query_points, 
-		std::vector<FunctionValue>* function_values) const {
-	CHECK(kd_tree_is_initialized_);
+    const std::vector<common::Point_t> &query_points, 
+    std::vector<FunctionValue>* function_values) const {
+  CHECK(kd_tree_is_initialized_);
   std::vector<int> pointIdxNKNSearch(kNeighbors);
   std::vector<float> pointNKNSquaredDistance(kNeighbors);
 
@@ -55,17 +55,17 @@ void PointCloud::getNearestPoints(
     }
     
     // Approximate the function value given the neighbors. 
-		FunctionValue value;
+    FunctionValue value;
     for (size_t i = 0u; i < kNeighbors; ++i) {
       const int current_idx = pointIdxNKNSearch[i];
       const common::Point_t& point = cloud_->points[current_idx]; 
       const double dist = std::sqrt(point.x * point.x + 
-																		point.y * point.y + 
-																		point.z * point.z);
-			value.addPoint(point);
-			value.addRange(dist);
-			value.addIntensity(point.intensity);
-			value.addInterpolation(0.40f * point.intensity + 0.60f * dist);
+                                    point.y * point.y + 
+                                    point.z * point.z);
+      value.addPoint(point);
+      value.addRange(dist);
+      value.addIntensity(point.intensity);
+      value.addInterpolation(0.40f * point.intensity + 0.60f * dist);
     }
     function_values->emplace_back(std::move(value));
   }
@@ -76,7 +76,7 @@ void PointCloud::transformPointCloud(const Eigen::Matrix4f &T) {
 }
 
 void PointCloud::transformPointCloudCopy(
-		const Eigen::Matrix4f& T, PointCloud& copy) {
+    const Eigen::Matrix4f& T, PointCloud& copy) {
   pcl::transformPointCloud (*cloud_, *copy.cloud_, T);
 }
 
@@ -103,23 +103,23 @@ PointCloud PointCloud::clone() const {
 }
 
 void PointCloud::writeToFile() {
-	CHECK(!FLAGS_PlyWriteDirectory.empty());
-	pcl::PLYWriter writer;
-	std::vector<std::string> files;
-	data::FileSystemHelper::readDirectory(FLAGS_PlyWriteDirectory, &files);	
-	std::string file_name = FLAGS_PlyWriteDirectory + FLAGS_PlyPrefix 
-			 + std::to_string(files.size() + 1) + ".ply";
+  CHECK(!FLAGS_PlyWriteDirectory.empty());
+  pcl::PLYWriter writer;
+  std::vector<std::string> files;
+  data::FileSystemHelper::readDirectory(FLAGS_PlyWriteDirectory, &files); 
+  std::string file_name = FLAGS_PlyWriteDirectory + FLAGS_PlyPrefix 
+       + std::to_string(files.size() + 1) + ".ply";
 
-	writer.write(file_name,	*cloud_);
+  writer.write(file_name, *cloud_);
 }
 
 void PointCloud::readFromFile(const std::string& ply) {
-	CHECK(!ply.empty());
-	VLOG(1) << "Reading PLY file from: " << ply;
-	common::PointCloud_tPtr cloud (new common::PointCloud_t);
-	pcl::PLYReader reader;
-	reader.read(ply, *cloud);	
-	cloud_ = cloud;
+  CHECK(!ply.empty());
+  VLOG(1) << "Reading PLY file from: " << ply;
+  common::PointCloud_tPtr cloud (new common::PointCloud_t);
+  pcl::PLYReader reader;
+  reader.read(ply, *cloud); 
+  cloud_ = cloud;
 }
 
 }

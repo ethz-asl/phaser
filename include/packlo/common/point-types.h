@@ -28,9 +28,9 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(OusterPointType,
     (uint8_t, ring, ring))
 
 namespace common {
-	//using Point_t = ::OusterPointType;                                            
-	using Point_t = pcl::PointXYZI;                                                 
-	using PointCloud_t = pcl::PointCloud<Point_t>;                                  
-	using PointCloud_tPtr = pcl::PointCloud<Point_t>::Ptr; 
-	using Vector_t = Eigen::Vector3d;
+  //using Point_t = ::OusterPointType;                                            
+  using Point_t = pcl::PointXYZI;                                                 
+  using PointCloud_t = pcl::PointCloud<Point_t>;                                  
+  using PointCloud_tPtr = pcl::PointCloud<Point_t>::Ptr; 
+  using Vector_t = Eigen::Vector3d;
 }
