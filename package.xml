@@ -27,5 +27,4 @@
 
   <depend>eigen_catkin</depend>
   <depend>eigen_checks</depend>
-
 </package>

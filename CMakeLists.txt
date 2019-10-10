@@ -6,6 +6,9 @@ set(CMAKE_CXX_FLAGS         "-Wall -Wextra -msse -msse2 -msse3 -msse4")
 set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
+list(APPEND CMAKE_FIND_ROOT_PATH ${CMAKE_SOURCE_DIR})
+find_package(NLOPT REQUIRED)
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(catkin_simple REQUIRED)
@@ -56,6 +59,8 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/registration/mock/sph-registration-mock-transformed.cc
    src/backend/correlation/spherical-correlation.cc
    src/backend/alignment/range-based-aligner.cc
+   src/backend/alignment/optimized-aligner.cc
+   src/backend/alignment/objective.cc
 
    src/visualization/debug-visualizer.cc
    src/visualization/plotty-visualizer.cc
@@ -64,7 +69,8 @@ cs_add_library(${PROJECT_NAME}_lib
 )
 
 cs_add_executable(${PROJECT_NAME} tools/packlo-app.cc)
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib fftw3)
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib
+  fftw3 ${NLOPT_LIBRARIES})
 
 cs_install()
 cs_export()
