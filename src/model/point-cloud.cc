@@ -16,6 +16,10 @@ DEFINE_string(PlyPrefix, "cloud",
 
 namespace model {
 
+PointCloud::PointCloud() 
+  : cloud_(new common::PointCloud_t), kd_tree_is_initialized_(false) {
+}
+
 PointCloud::PointCloud(common::PointCloud_tPtr cloud) 
   : cloud_(cloud), kd_tree_is_initialized_(false) {
 }
@@ -76,7 +80,7 @@ void PointCloud::transformPointCloud(const Eigen::Matrix4f &T) {
 }
 
 void PointCloud::transformPointCloudCopy(
-    const Eigen::Matrix4f& T, PointCloud& copy) {
+    const Eigen::Matrix4f& T, PointCloud& copy) const {
   pcl::transformPointCloud (*cloud_, *copy.cloud_, T);
 }
 

@@ -15,6 +15,7 @@ namespace model {
 class PointCloud {
 
 public:
+  PointCloud();
   explicit PointCloud(common::PointCloud_tPtr cloud);
   explicit PointCloud(const std::string& ply);
 
@@ -26,7 +27,8 @@ public:
       std::vector<FunctionValue>* function_values) const;
 
   void transformPointCloud(const Eigen::Matrix4f &T);
-  void transformPointCloudCopy(const Eigen::Matrix4f& T, PointCloud& copy);
+  void transformPointCloudCopy(const Eigen::Matrix4f& T, 
+      PointCloud& copy) const;
 
   common::PointCloud_tPtr getRawCloud() const;
 
