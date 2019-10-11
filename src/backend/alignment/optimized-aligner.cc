@@ -4,6 +4,9 @@
 #include <nlopt.hpp>
 #include <cmath>
 
+DEFINE_double(nlopt_xtol, 1e-4, 
+    "Defines the tolerance for the optimization.");
+
 namespace alignment {
 
 static double myfunc(const std::vector<double>& x, 
@@ -28,7 +31,7 @@ common::Vector_t OptimizedAligner::alignRegistered(
   //lb[0] = -HUGE_VAL; lb[1] = 0;
   //opt.set_lower_bounds(lb);
   opt.set_min_objective(myfunc, &objective_);
-  opt.set_xtol_rel(1e-4);
+  opt.set_xtol_rel(FLAGS_nlopt_xtol);
 
   std::vector<double> t_init = {0.0, 0.0, 0.0};
   double solminf;

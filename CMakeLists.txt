@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.1.0)
 project(packlo)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS         "-Wall -Wextra -msse -msse2 -msse3 -msse4")
+set(CMAKE_CXX_FLAGS         "-Wall -Wextra -msse -msse2 -msse3 -msse4 -O3 -DNDEBUG -ffast-math")
 set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -Werror")
 
 list(APPEND CMAKE_FIND_ROOT_PATH ${CMAKE_SOURCE_DIR})
 find_package(NLOPT REQUIRED)
