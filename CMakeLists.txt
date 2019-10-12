@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1.0)
 project(packlo)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS         "-Wall -Wextra -msse -msse2 -msse3 -msse4 -O3 -DNDEBUG -ffast-math")
+set(CMAKE_CXX_FLAGS         "-Wall -Wextra -msse -msse2 -msse3 -msse4 -O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -Werror")
 
@@ -60,7 +60,9 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/correlation/spherical-correlation.cc
    src/backend/alignment/range-based-aligner.cc
    src/backend/alignment/optimized-aligner.cc
-   src/backend/alignment/objective.cc
+   src/backend/alignment/base-objective.cc
+   src/backend/alignment/function-objective.cc
+   src/backend/alignment/cloud-objective.cc
 
    src/visualization/debug-visualizer.cc
    src/visualization/plotty-visualizer.cc

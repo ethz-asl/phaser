@@ -1,4 +1,6 @@
 #include "packlo/backend/alignment/optimized-aligner.h"
+#include "packlo/backend/alignment/function-objective.h"
+#include "packlo/backend/alignment/cloud-objective.h"
 
 #include <glog/logging.h>
 #include <nlopt.hpp>
@@ -9,12 +11,17 @@ DEFINE_double(nlopt_xtol, 1e-4,
 
 namespace alignment {
 
-static double myfunc(const std::vector<double>& x, 
+static double objective_wrapper(const std::vector<double>& x, 
     std::vector<double>& grad, void *obj)
 {
-    Objective* objective = reinterpret_cast<Objective*>(obj);
+    BaseObjective* objective = reinterpret_cast<BaseObjective*>(obj);
     if (!grad.empty()) objective->calculateGrad(grad);
-    return objective->optimize(x, grad);
+    return objective->optimize(x);
+}
+
+OptimizedAligner::OptimizedAligner() {
+  //objective_ = std::make_unique<FunctionObjective>();
+  objective_ = std::make_unique<CloudObjective>();
 }
 
 common::Vector_t OptimizedAligner::alignRegistered(
@@ -23,14 +30,11 @@ common::Vector_t OptimizedAligner::alignRegistered(
     const model::PointCloud& cloud_reg,
     const std::vector<model::FunctionValue>& f_reg) {
 
-  objective_.setPrevious(cloud_prev, f_prev);
-  objective_.setCurrent(cloud_reg, f_reg);
+  objective_->setPrevious(cloud_prev, f_prev);
+  objective_->setCurrent(cloud_reg, f_reg);
 
   nlopt::opt opt(nlopt::LN_COBYLA, 3);
-  //std::vector<double> lb(2);
-  //lb[0] = -HUGE_VAL; lb[1] = 0;
-  //opt.set_lower_bounds(lb);
-  opt.set_min_objective(myfunc, &objective_);
+  opt.set_min_objective(objective_wrapper, &(*objective_));
   opt.set_xtol_rel(FLAGS_nlopt_xtol);
 
   std::vector<double> t_init = {0.0, 0.0, 0.0};

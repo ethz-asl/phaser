@@ -63,6 +63,8 @@ void FunctionValue::addIntensity(const double intensity) {
 }
 
 void FunctionValue::addPoint(const common::Point_t& point) {
+  //VLOG(1) << "add point: \n" << point; 
+
   points_->push_back(point);
 }
 

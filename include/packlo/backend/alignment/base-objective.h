@@ -7,11 +7,10 @@
 
 namespace alignment {
   
-class Objective {
+class BaseObjective {
   public:
-    double optimize(const std::vector<double>& x, 
-        std::vector<double>& grad);
-    void calculateGrad(std::vector<double>& grad);
+    virtual double optimize(const std::vector<double>& x) = 0;
+    virtual void calculateGrad(std::vector<double>& grad) = 0;
 
     void setPrevious(const model::PointCloud& cloud_prev, 
         const std::vector<model::FunctionValue>& f_prev);
@@ -19,7 +18,7 @@ class Objective {
     void setCurrent(const model::PointCloud& cloud_cur, 
         const std::vector<model::FunctionValue>& f_cur);
 
-  private:
+  protected:
     const model::PointCloud* cloud_prev_;
     const std::vector<model::FunctionValue>* f_prev_;
 

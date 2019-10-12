@@ -47,7 +47,6 @@ private:
   pcl::KdTreeFLANN<common::Point_t> kd_tree_; 
 
   bool kd_tree_is_initialized_;
-  const std::size_t kNeighbors = 1;
 };
 
 using PointCloudPtr = std::shared_ptr<PointCloud>;
