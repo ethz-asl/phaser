@@ -13,8 +13,14 @@ DEFINE_string(PlyWriteDirectory, "",
     "Defines the directory to store the point clouds.");
 DEFINE_string(PlyPrefix, "cloud", 
     "Defines the prefix name for the PLY.");
+DEFINE_int32(sampling_neighbors, 1, 
+    "Defines the number of neighbors for the sampling.");
 
 namespace model {
+
+PointCloud::PointCloud() 
+  : cloud_(new common::PointCloud_t), kd_tree_is_initialized_(false) {
+}
 
 PointCloud::PointCloud(common::PointCloud_tPtr cloud) 
   : cloud_(cloud), kd_tree_is_initialized_(false) {
@@ -42,13 +48,13 @@ void PointCloud::getNearestPoints(
     const std::vector<common::Point_t> &query_points, 
     std::vector<FunctionValue>* function_values) const {
   CHECK(kd_tree_is_initialized_);
-  std::vector<int> pointIdxNKNSearch(kNeighbors);
-  std::vector<float> pointNKNSquaredDistance(kNeighbors);
+  std::vector<int> pointIdxNKNSearch(FLAGS_sampling_neighbors);
+  std::vector<float> pointNKNSquaredDistance(FLAGS_sampling_neighbors);
 
   for (const common::Point_t& query_point : query_points) {
     // First, find the closest points. 
-    const int kd_tree_res = kd_tree_.nearestKSearch (query_point, kNeighbors,
-        pointIdxNKNSearch, pointNKNSquaredDistance);
+    const int kd_tree_res = kd_tree_.nearestKSearch (query_point, 
+        FLAGS_sampling_neighbors, pointIdxNKNSearch, pointNKNSquaredDistance);
     if (kd_tree_res <= 0) { 
       VLOG(2) << "Unable to find nearest neighbor. Skipping point.";
       continue;
@@ -56,7 +62,7 @@ void PointCloud::getNearestPoints(
     
     // Approximate the function value given the neighbors. 
     FunctionValue value;
-    for (size_t i = 0u; i < kNeighbors; ++i) {
+    for (size_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
       const int current_idx = pointIdxNKNSearch[i];
       const common::Point_t& point = cloud_->points[current_idx]; 
       const double dist = std::sqrt(point.x * point.x + 
@@ -76,7 +82,7 @@ void PointCloud::transformPointCloud(const Eigen::Matrix4f &T) {
 }
 
 void PointCloud::transformPointCloudCopy(
-    const Eigen::Matrix4f& T, PointCloud& copy) {
+    const Eigen::Matrix4f& T, PointCloud& copy) const {
   pcl::transformPointCloud (*cloud_, *copy.cloud_, T);
 }
 

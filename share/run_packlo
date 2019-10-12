@@ -6,6 +6,6 @@ rosrun packlo packlo \
     --v=3 \
 		--enable_debug=true \
 		--registration_algorithm=sph \
-		--spherical_bandwith=64 \
+		--spherical_bandwith=12 \
 		--PlyWriteDirectory="/home/berlukas/Documents/ply/" \
     $REST
