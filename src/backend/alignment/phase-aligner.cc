@@ -46,8 +46,8 @@ common::Vector_t PhaseAligner::alignRegistered(
   // correlate
   C = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * n_voxels);
   for (uint32_t i = 0u; i < n_voxels; ++i) {
-    C[i][0] = F[i][0] * G[i][0];
-    C[i][1] = F[i][1] * (-G[i][1]); // conj
+    C[i][0] = F[i][0] * G[i][0] - F[i][1] * (-G[i][1]); 
+    C[i][1] = F[i][0] * (-G[i][1]) + F[i][1] * G[i][0];
   }
 
   fftw_free(F);
@@ -64,6 +64,7 @@ common::Vector_t PhaseAligner::alignRegistered(
   // ifft
   fftw_execute(c_plan);
   int max = std::distance(c, std::max_element(c, c+n_voxels));
+  
   std::array<uint16_t, 3> xyz = ind2sub(max, FLAGS_phase_n_voxels, 
       FLAGS_phase_n_voxels);
 
@@ -71,7 +72,6 @@ common::Vector_t PhaseAligner::alignRegistered(
   fftw_cleanup();
   delete [] c;
 
-  VLOG(1) << "x: " << xyz[0] << " y: " << xyz[1] << " z: " << xyz[2];
   common::Vector_t res(
     computeTranslationFromIndex(static_cast<double>(xyz[0])),
     computeTranslationFromIndex(static_cast<double>(xyz[1])),
@@ -93,20 +93,20 @@ Eigen::VectorXd PhaseAligner::discretizePointcloud(
   igl::histc(data.row(1), edges, y_bins);
   igl::histc(data.row(2), edges, z_bins);
 
-  const std::size_t n_points = data.cols();
+  const uint32_t n_points = data.cols();
   const uint32_t n_voxels = FLAGS_phase_n_voxels*FLAGS_phase_n_voxels
       * FLAGS_phase_n_voxels;
   Eigen::VectorXd f = Eigen::VectorXd::Zero(n_voxels);
   Eigen::VectorXd hist = Eigen::VectorXd::Zero(n_voxels);
-  for (std::size_t i = 0u; i < n_points; ++i) {
-    std::size_t lin_index = sub2ind(x_bins(i), y_bins(i), z_bins(i), 
+  for (uint16_t i = 0u; i < n_points; ++i) {
+    const uint32_t lin_index = sub2ind(x_bins(i), y_bins(i), z_bins(i), 
         FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);
     f(lin_index) = f(lin_index) + cloud.pointAt(i).intensity;
     hist(lin_index) = hist(lin_index) + 1;
   }
 
-  VLOG(1) << "average";
   f = f.array() / hist.array();
+  f = f.unaryExpr([](double v) { return std::isfinite(v)? v : 0.0; });
   return f;
 }
 
@@ -119,9 +119,9 @@ std::size_t PhaseAligner::sub2ind(const std::size_t i, const std::size_t j,
 std::array<uint16_t, 3> PhaseAligner::ind2sub(const int lin_index, 
     const uint32_t rows, const uint32_t cols) const {
   std::array<uint16_t, 3> xyz; 
-  xyz[0] = lin_index % cols;
+  xyz[1] = lin_index % cols;
   const int updated_index = lin_index / cols;
-  xyz[1] = updated_index % rows;
+  xyz[0] = updated_index % rows;
   xyz[2] = updated_index / rows;
   return xyz;
 }

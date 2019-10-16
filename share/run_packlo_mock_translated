@@ -13,5 +13,5 @@ rosrun packlo packlo \
 		--mock_translate_z=0.0 \
     --phase_discretize_lower=-100 \
     --phase_discretize_upper=100 \
-    --phase_n_voxels=301 \
+    --phase_n_voxels=101 \
     $REST
