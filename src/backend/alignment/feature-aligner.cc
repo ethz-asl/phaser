@@ -1,13 +1,18 @@
 #include "packlo/backend/alignment/feature-aligner.h"
 #include <pcl/features/normal_3d.h>
 
+#include <glog/logging.h>
+
 namespace alignment {
 
-common::Vector_t FeatureAligner::alignRegistered(
+void FeatureAligner::alignRegistered(
     const model::PointCloud& cloud_prev, 
-    const std::vector<model::FunctionValue>& f_prev, 
+    const std::vector<model::FunctionValue>&, 
     const model::PointCloud& cloud_reg,
-    const std::vector<model::FunctionValue>& f_reg) {
+    const std::vector<model::FunctionValue>&, 
+    common::Vector_t* xyz) {
+  CHECK(xyz);
+
   pcl::PointCloud<pcl::PFHSignature125>::Ptr pfhs_prev (
       new pcl::PointCloud<pcl::PFHSignature125> ());
   pcl::PointCloud<pcl::PFHSignature125>::Ptr pfhs_reg (
@@ -15,8 +20,6 @@ common::Vector_t FeatureAligner::alignRegistered(
 
   calculatePFH(cloud_prev, pfhs_prev);
   calculatePFH(cloud_reg, pfhs_reg);
-
-  return common::Vector_t();
 }
 
 void FeatureAligner::calculatePFH(const model::PointCloud& cloud,
@@ -42,8 +45,8 @@ void FeatureAligner::calculatePFH(const model::PointCloud& cloud,
   pfh.compute (*output);
 }
 
-void FeatureAligner::calculateFPFH(const model::PointCloud& cloud,
-    pcl::PointCloud<pcl::FPFHSignature33>::Ptr output) {
+void FeatureAligner::calculateFPFH(const model::PointCloud&,
+    pcl::PointCloud<pcl::FPFHSignature33>::Ptr) {
   // try omp version
 }
 

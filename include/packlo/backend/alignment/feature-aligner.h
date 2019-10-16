@@ -8,11 +8,12 @@ namespace alignment {
 
 class FeatureAligner : public BaseAligner {
   public:
-    virtual common::Vector_t alignRegistered(
+    virtual void alignRegistered(
       const model::PointCloud& cloud_prev, 
       const std::vector<model::FunctionValue>& f_prev, 
       const model::PointCloud& cloud_reg,
-      const std::vector<model::FunctionValue>& f_reg) override;
+      const std::vector<model::FunctionValue>& f_reg, 
+      common::Vector_t* xyz) override;
   private: 
     void calculatePFH(const model::PointCloud& cloud, 
         pcl::PointCloud<pcl::PFHSignature125>::Ptr output);

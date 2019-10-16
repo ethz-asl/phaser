@@ -8,10 +8,10 @@ rosrun packlo packlo \
 		--registration_algorithm=sph-mock-translated \
 		--spherical_bandwith=128 \
     --sampling_neighbors=4 \
-		--mock_translate_x=4.0 \
-		--mock_translate_y=0.0 \
-		--mock_translate_z=0.0 \
+		--mock_translate_x=42.0 \
+		--mock_translate_y=48.0 \
+		--mock_translate_z=35.0 \
     --phase_discretize_lower=-100 \
     --phase_discretize_upper=100 \
-    --phase_n_voxels=101 \
+    --phase_n_voxels=123 \
     $REST

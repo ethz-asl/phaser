@@ -59,11 +59,13 @@ PhaseAligner::~PhaseAligner() {
   delete [] c_;
 }
 
-common::Vector_t PhaseAligner::alignRegistered(
+void PhaseAligner::alignRegistered(
     const model::PointCloud& cloud_prev, 
     const std::vector<model::FunctionValue>&, 
     const model::PointCloud& cloud_reg,
-    const std::vector<model::FunctionValue>&) {
+    const std::vector<model::FunctionValue>&, 
+    common::Vector_t* xyz) {
+  CHECK(xyz);
   discretizePointcloud(cloud_prev, f_, hist_);
   discretizePointcloud(cloud_reg, g_, hist_);
 
@@ -82,14 +84,11 @@ common::Vector_t PhaseAligner::alignRegistered(
 
   // Find the index that maximizes the correlation.
   const int max = std::distance(c_, std::max_element(c_, c_+n_voxels_));
-  std::array<uint16_t, 3> xyz = ind2sub(max, FLAGS_phase_n_voxels, 
+  std::array<uint16_t, 3> max_xyz = ind2sub(max, FLAGS_phase_n_voxels, 
       FLAGS_phase_n_voxels);
-
-  return common::Vector_t(
-    computeTranslationFromIndex(static_cast<double>(xyz[0])),
-    computeTranslationFromIndex(static_cast<double>(xyz[1])),
-    computeTranslationFromIndex(static_cast<double>(xyz[2]))
-  );
+  (*xyz)(0) = computeTranslationFromIndex(static_cast<double>(max_xyz[0]));
+  (*xyz)(1) = computeTranslationFromIndex(static_cast<double>(max_xyz[1]));
+  (*xyz)(2) = computeTranslationFromIndex(static_cast<double>(max_xyz[2]));
 }
 
 void PhaseAligner::discretizePointcloud(

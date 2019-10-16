@@ -1,6 +1,7 @@
 #include "packlo/backend/registration/mock/sph-registration-mock-translated.h"
 #include "packlo/common/translation-utils.h"
 #include "packlo/common/rotation-utils.h"
+#include "packlo/common/statistic-utils.h"
 #include "packlo/visualization/debug-visualizer.h"
 
 #include <glog/logging.h>
@@ -25,10 +26,8 @@ void SphRegistrationMockTranslated::registerPointCloud(
       FLAGS_mock_translate_z);
   syn_cloud.initialize_kd_tree();
 
-  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, syn_cloud);  
-    */
 
   sampler_.sampleUniformly(*cloud_prev, &f_values_);
   sampler_.sampleUniformly(syn_cloud, &h_values_);
@@ -36,17 +35,20 @@ void SphRegistrationMockTranslated::registerPointCloud(
     pertubFunctionValues(f_values_, FLAGS_mock_translate_x, 
         FLAGS_mock_translate_y, FLAGS_mock_translate_z);
 
-  common::Vector_t xyz = aligner_->alignRegistered(
-      *cloud_prev, f_values_, syn_cloud, syn_values);
+  common::Vector_t xyz;
+  const double duration_translation_f_ms = common::executeTimedFunction(
+      &alignment::BaseAligner::alignRegistered, 
+      &(*aligner_), *cloud_prev, f_values_, syn_cloud, syn_values, &xyz);
 
   CHECK(xyz.rows() == 3);
-  VLOG(1) << "estimated trans: " << xyz(0) << ", " << xyz(1) << ", " << xyz(2);
+  VLOG(1) << "Found translation: " << xyz.transpose();
+  VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
+    << "ms.";
   model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
       syn_cloud, xyz(0), xyz(1), xyz(2));
-  /*
+
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, reg_cloud);  
-    */
 }
 
 model::PointCloud SphRegistrationMockTranslated::pertubPointCloud(

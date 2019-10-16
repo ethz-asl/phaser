@@ -35,6 +35,7 @@ class SphRegistration : public BaseRegistration {
 		// Statistics
 		const std::string kSampleDurationKey = "Sampling";
 		const std::string kCorrelationDurationKey = "Correlation";
+		const std::string kTranslationDurationKey = "Translation";
 };
 
 } // namespace registration
