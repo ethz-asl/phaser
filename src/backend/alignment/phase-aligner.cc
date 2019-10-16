@@ -1,5 +1,18 @@
 #include "packlo/backend/alignment/phase-aligner.h"
-#include <pcl/features/normal_3d.h>
+
+#include <complex.h> // needs to be included before fftw
+
+#include "igl/histc.h"
+#include <fftw3.h>
+#include <glog/logging.h>
+
+
+DEFINE_double(phase_discretize_lower, -80,
+    "Specifies the lower bound for the discretization.");
+DEFINE_double(phase_discretize_upper, 80,
+    "Specifies the upper bound for the discretization.");
+DEFINE_double(phase_n_voxels, 81,
+    "Specifies the number of voxels for the discretization.");
 
 namespace alignment {
 
@@ -8,43 +21,120 @@ common::Vector_t PhaseAligner::alignRegistered(
     const std::vector<model::FunctionValue>& f_prev, 
     const model::PointCloud& cloud_reg,
     const std::vector<model::FunctionValue>& f_reg) {
-  pcl::PointCloud<pcl::PFHSignature125>::Ptr pfhs_prev (
-      new pcl::PointCloud<pcl::PFHSignature125> ());
-  pcl::PointCloud<pcl::PFHSignature125>::Ptr pfhs_reg (
-      new pcl::PointCloud<pcl::PFHSignature125> ());
+  Eigen::VectorXd f = discretizePointcloud(cloud_prev);
+  fftw_complex *F, *G, *C;
 
-  calculatePFH(cloud_prev, pfhs_prev);
-  calculatePFH(cloud_reg, pfhs_reg);
+  const uint32_t n_voxels = FLAGS_phase_n_voxels * FLAGS_phase_n_voxels
+      * FLAGS_phase_n_voxels;
 
-  return common::Vector_t();
+  // TODO make plan a member
+  F = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * n_voxels);
+  fftw_plan f_plan = fftw_plan_dft_r2c_3d(FLAGS_phase_n_voxels,
+      FLAGS_phase_n_voxels, FLAGS_phase_n_voxels,
+      f.data(), F, FFTW_ESTIMATE);
+
+  Eigen::VectorXd g = discretizePointcloud(cloud_reg);
+  G = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * n_voxels);
+  fftw_plan g_plan = fftw_plan_dft_r2c_3d(FLAGS_phase_n_voxels, 
+      FLAGS_phase_n_voxels, FLAGS_phase_n_voxels,
+      g.data(), G, FFTW_ESTIMATE);
+
+  // fft signals
+  fftw_execute(f_plan);
+  fftw_execute(g_plan);
+
+  // correlate
+  C = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * n_voxels);
+  for (uint32_t i = 0u; i < n_voxels; ++i) {
+    C[i][0] = F[i][0] * G[i][0];
+    C[i][1] = F[i][1] * (-G[i][1]); // conj
+  }
+
+  fftw_free(F);
+  fftw_free(G);
+  fftw_destroy_plan(f_plan);
+  fftw_destroy_plan(g_plan);
+
+  double* c;
+  c = new double[n_voxels];
+  fftw_plan c_plan = fftw_plan_dft_c2r_3d(FLAGS_phase_n_voxels,
+      FLAGS_phase_n_voxels, FLAGS_phase_n_voxels,
+      C, c, FFTW_ESTIMATE);
+
+  // ifft
+  fftw_execute(c_plan);
+  int max = std::distance(c, std::max_element(c, c+n_voxels));
+  std::array<uint16_t, 3> xyz = ind2sub(max, FLAGS_phase_n_voxels, 
+      FLAGS_phase_n_voxels);
+
+  fftw_destroy_plan(c_plan);
+  fftw_cleanup();
+  delete [] c;
+
+  VLOG(1) << "x: " << xyz[0] << " y: " << xyz[1] << " z: " << xyz[2];
+  common::Vector_t res(
+    computeTranslationFromIndex(static_cast<double>(xyz[0])),
+    computeTranslationFromIndex(static_cast<double>(xyz[1])),
+    computeTranslationFromIndex(static_cast<double>(xyz[2]))
+  );
+
+  return res;
 }
 
-void PhaseAligner::calculatePFH(const model::PointCloud& cloud,
-    pcl::PointCloud<pcl::PFHSignature125>::Ptr output) {
-  const common::PointCloud_tPtr input = cloud.getRawCloud();
+Eigen::VectorXd PhaseAligner::discretizePointcloud(
+    const model::PointCloud& cloud) const {
+  Eigen::MatrixXf data = cloud.getRawCloud()->getMatrixXfMap();
+  Eigen::VectorXf edges = Eigen::VectorXf::LinSpaced(FLAGS_phase_n_voxels,
+      FLAGS_phase_discretize_lower, FLAGS_phase_discretize_upper);
 
-  // Compute normals.
-  pcl::NormalEstimation<pcl::PointXYZI, pcl::Normal> ne;
-  ne.setInputCloud (input);
-  pcl::search::KdTree<pcl::PointXYZI>::Ptr tree (
-      new pcl::search::KdTree<pcl::PointXYZI> ());
-  ne.setSearchMethod (tree);
-  pcl::PointCloud<pcl::Normal>::Ptr normals (new pcl::PointCloud<pcl::Normal>);
-  ne.setRadiusSearch (0.03);
-  ne.compute (*normals);
+  // discretize the point cloud using an cartesian grid
+  Eigen::VectorXf x_bins, y_bins, z_bins;
+  igl::histc(data.row(0), edges, x_bins);
+  igl::histc(data.row(1), edges, y_bins);
+  igl::histc(data.row(2), edges, z_bins);
 
-  // Compute Point Feature Histograms (PFH)
-  pcl::PFHEstimation<pcl::PointXYZI, pcl::Normal, pcl::PFHSignature125> pfh;
-  pfh.setInputCloud(input);
-  pfh.setInputNormals (normals);
-  pfh.setSearchMethod (tree);
-  pfh.setRadiusSearch (0.05);
-  pfh.compute (*output);
+  const std::size_t n_points = data.cols();
+  const uint32_t n_voxels = FLAGS_phase_n_voxels*FLAGS_phase_n_voxels
+      * FLAGS_phase_n_voxels;
+  Eigen::VectorXd f = Eigen::VectorXd::Zero(n_voxels);
+  Eigen::VectorXd hist = Eigen::VectorXd::Zero(n_voxels);
+  for (std::size_t i = 0u; i < n_points; ++i) {
+    std::size_t lin_index = sub2ind(x_bins(i), y_bins(i), z_bins(i), 
+        FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);
+    f(lin_index) = f(lin_index) + cloud.pointAt(i).intensity;
+    hist(lin_index) = hist(lin_index) + 1;
+  }
+
+  VLOG(1) << "average";
+  f = f.array() / hist.array();
+  return f;
 }
 
-void PhaseAligner::calculateFPFH(const model::PointCloud& cloud,
-    pcl::PointCloud<pcl::FPFHSignature33>::Ptr output) {
-  // try omp version
+std::size_t PhaseAligner::sub2ind(const std::size_t i, const std::size_t j, 
+    const std::size_t k, const uint32_t rows, const uint32_t cols) 
+    const {
+  return (i * cols + j) + (rows * cols * k);
 }
 
-} // namespace alignment 
+std::array<uint16_t, 3> PhaseAligner::ind2sub(const int lin_index, 
+    const uint32_t rows, const uint32_t cols) const {
+  std::array<uint16_t, 3> xyz; 
+  xyz[0] = lin_index % cols;
+  const int updated_index = lin_index / cols;
+  xyz[1] = updated_index % rows;
+  xyz[2] = updated_index / rows;
+  return xyz;
+}
+
+double PhaseAligner::computeTranslationFromIndex(double index) {
+  static double n_voxels_half = FLAGS_phase_n_voxels / 2.0;
+  static double width = std::abs(FLAGS_phase_discretize_lower) +
+    std::abs(FLAGS_phase_discretize_upper);
+  if (index <= n_voxels_half) {
+    return (index*width) / FLAGS_phase_n_voxels;
+  } 
+  return (index-FLAGS_phase_n_voxels) * width/ FLAGS_phase_n_voxels;
+}
+
+}
+// namespace alignment 

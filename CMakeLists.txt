@@ -64,6 +64,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/alignment/function-objective.cc
    src/backend/alignment/cloud-objective.cc
    src/backend/alignment/phase-aligner.cc
+   src/backend/alignment/feature-aligner.cc
 
    src/visualization/debug-visualizer.cc
    src/visualization/plotty-visualizer.cc

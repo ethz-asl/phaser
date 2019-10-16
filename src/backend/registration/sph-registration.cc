@@ -1,6 +1,7 @@
 #include "packlo/backend/registration/sph-registration.h"
 #include "packlo/backend/alignment/range-based-aligner.h"
 #include "packlo/backend/alignment/optimized-aligner.h"
+#include "packlo/backend/alignment/phase-aligner.h"
 #include "packlo/common/statistic-utils.h"
 #include "packlo/common/rotation-utils.h"
 #include "packlo/common/translation-utils.h"
@@ -17,7 +18,8 @@ SphRegistration::SphRegistration()
     : BaseRegistration("SphRegistration"),
     sampler_(FLAGS_spherical_bandwith) {
   //aligner_ = std::make_unique<alignment::RangeBasedAligner>();
-  aligner_ = std::make_unique<alignment::OptimizedAligner>();
+  //aligner_ = std::make_unique<alignment::OptimizedAligner>();
+  aligner_ = std::make_unique<alignment::PhaseAligner>();
 }
 
 void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev, 
@@ -44,8 +46,8 @@ void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev,
   VLOG(1) << "Found translation: " << xyz.transpose();
   model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
       rot_cloud, xyz(0), xyz(1), xyz(2));
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*cloud_prev, reg_cloud);
+  //visualization::DebugVisualizer::getInstance()
+    //.visualizePointCloudDiff(*cloud_prev, reg_cloud);
 }
 
 void SphRegistration::getStatistics(
