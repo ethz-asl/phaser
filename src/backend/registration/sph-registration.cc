@@ -1,6 +1,7 @@
 #include "packlo/backend/registration/sph-registration.h"
 #include "packlo/backend/alignment/range-based-aligner.h"
 #include "packlo/backend/alignment/optimized-aligner.h"
+#include "packlo/backend/alignment/phase-aligner.h"
 #include "packlo/common/statistic-utils.h"
 #include "packlo/common/rotation-utils.h"
 #include "packlo/common/translation-utils.h"
@@ -17,7 +18,8 @@ SphRegistration::SphRegistration()
     : BaseRegistration("SphRegistration"),
     sampler_(FLAGS_spherical_bandwith) {
   //aligner_ = std::make_unique<alignment::RangeBasedAligner>();
-  aligner_ = std::make_unique<alignment::OptimizedAligner>();
+  //aligner_ = std::make_unique<alignment::OptimizedAligner>();
+  aligner_ = std::make_unique<alignment::PhaseAligner>();
 }
 
 void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev, 
@@ -37,15 +39,21 @@ void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev,
 
   CHECK(!f_values_.empty());
   CHECK(!h_values_.empty());
-  common::Vector_t xyz = aligner_->alignRegistered(*cloud_prev, f_values_, 
-      rot_cloud, h_values_);
+  common::Vector_t xyz;
+  const double duration_translation_f_ms = common::executeTimedFunction(
+      &alignment::BaseAligner::alignRegistered, 
+      &(*aligner_), *cloud_prev, f_values_, rot_cloud, h_values_, &xyz);
   CHECK(xyz.rows() == 3);
+  statistics_manager_.emplaceValue(kTranslationDurationKey, 
+      duration_translation_f_ms);
 
   VLOG(1) << "Found translation: " << xyz.transpose();
+  VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
+    << "ms.";
   model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
       rot_cloud, xyz(0), xyz(1), xyz(2));
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*cloud_prev, reg_cloud);
+  //visualization::DebugVisualizer::getInstance()
+    //.visualizePointCloudDiff(*cloud_prev, reg_cloud);
 }
 
 void SphRegistration::getStatistics(

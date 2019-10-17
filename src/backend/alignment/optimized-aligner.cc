@@ -24,11 +24,13 @@ OptimizedAligner::OptimizedAligner() {
   objective_ = std::make_unique<CloudObjective>();
 }
 
-common::Vector_t OptimizedAligner::alignRegistered(
+void OptimizedAligner::alignRegistered(
     const model::PointCloud& cloud_prev, 
     const std::vector<model::FunctionValue>& f_prev, 
     const model::PointCloud& cloud_reg,
-    const std::vector<model::FunctionValue>& f_reg) {
+    const std::vector<model::FunctionValue>& f_reg, 
+    common::Vector_t* xyz) {
+  CHECK(xyz);
 
   objective_->setPrevious(cloud_prev, f_prev);
   objective_->setCurrent(cloud_reg, f_reg);
@@ -48,7 +50,9 @@ common::Vector_t OptimizedAligner::alignRegistered(
     VLOG(1) << "Optimization Failed!";
   }
   
-  return common::Vector_t(t_init[0], t_init[1], t_init[2]);
+  (*xyz)(0) = t_init[0];
+  (*xyz)(1) = t_init[1];
+  (*xyz)(2) = t_init[2];
 }
 
 } // namespace alignment

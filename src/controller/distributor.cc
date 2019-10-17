@@ -88,7 +88,6 @@ void Distributor::preprocessPointCloud(
 
 void Distributor::updateStatistics() {
   VLOG(1) << "updating registrator";
-  //registrator_->updateStatistics();
 }
 
 void Distributor::getStatistics(
