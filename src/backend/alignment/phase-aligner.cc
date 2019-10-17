@@ -45,7 +45,6 @@ PhaseAligner::PhaseAligner() :
       C_, c_, FFTW_ESTIMATE);
 }
 
-
 PhaseAligner::~PhaseAligner() {
   fftw_free(F_);
   fftw_free(G_);
