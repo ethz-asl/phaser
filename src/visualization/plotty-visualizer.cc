@@ -11,11 +11,11 @@ PlottyVisualizer::PlottyVisualizer(){
 }
 
 void PlottyVisualizer::createPlotFor(const common::StatisticsManager& manager, 
-		std::string&& key) {
-	std::vector<double> data = manager.getValuesForKey(key);
-	if (data.empty()) return;
-	plotty::plot(data);
-	plotty::show();
+    std::string&& key) {
+  std::vector<double> data = manager.getValuesForKey(key);
+  if (data.empty()) return;
+  plotty::plot(data);
+  plotty::show();
 }
 
 } // namespace visualization

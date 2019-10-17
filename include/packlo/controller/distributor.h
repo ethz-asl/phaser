@@ -1,6 +1,6 @@
 #pragma once
 
-#include "packlo/common/datasource.h"
+#include "packlo/common/data/datasource-ros.h"
 #include "packlo/model/point-cloud.h"
 #include "packlo/backend/registration/base-registration.h"
 #include "packlo/common/statistics-manager.h"
@@ -12,25 +12,24 @@ namespace controller {
 class Distributor {
 
   public:
-    explicit Distributor(common::Datasource& ds);
+    explicit Distributor(data::DatasourcePtr& ds);
 
-		void updateStatistics();
-		void getStatistics(common::StatisticsManager*) const noexcept;
+    void updateStatistics();
+    void getStatistics(common::StatisticsManager*) const noexcept;
 
   private:
     void subscribeToTopics();
-		void initializeRegistrationAlgorithm(const std::string& type);
-    void pointCloudCallback(const sensor_msgs::PointCloud2ConstPtr& cloud);
-		model::PointCloud_tPtr preprocessPointCloud(
-				const sensor_msgs::PointCloud2ConstPtr& cloud);
+    void initializeRegistrationAlgorithm(const std::string& type);
+    void pointCloudCallback(const model::PointCloudPtr& cloud);
+    void preprocessPointCloud(const model::PointCloudPtr& cloud);
     
-    common::Datasource& ds_;
-		std::unique_ptr<registration::BaseRegistration> registrator_;
-		model::PointCloudPtr prev_point_cloud_;
+    data::DatasourcePtr ds_;
+    std::unique_ptr<registration::BaseRegistration> registrator_;
+    model::PointCloudPtr prev_point_cloud_;
 
-		// Statistics
-		const std::string kManagerReferenceName = "Distributor";
-		common::StatisticsManager statistics_manager_;
+    // Statistics
+    const std::string kManagerReferenceName = "Distributor";
+    common::StatisticsManager statistics_manager_;
 };
 
 }

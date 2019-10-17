@@ -2,8 +2,11 @@
 
 #include <pcl/point_types.h>
 #include <pcl/register_point_struct.h>
+#include <pcl/common/projection_matrix.h>
+#include <Eigen/Dense>
 
-//namespace common {
+// This has to be in global namespace 
+// otherwise PCL complains.
 
 struct OusterPointType {
   PCL_ADD_POINT4D
@@ -23,4 +26,11 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(OusterPointType,
     (uint16_t, reflectivity, reflectivity)
     (uint16_t, signal, intensity)
     (uint8_t, ring, ring))
-//}
+
+namespace common {
+  //using Point_t = ::OusterPointType;                                            
+  using Point_t = pcl::PointXYZI;                                                 
+  using PointCloud_t = pcl::PointCloud<Point_t>;                                  
+  using PointCloud_tPtr = pcl::PointCloud<Point_t>::Ptr; 
+  using Vector_t = Eigen::Vector3d;
+}

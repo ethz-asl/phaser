@@ -3,6 +3,7 @@
 #include "packlo/common/spherical-sampler.h"
 #include "packlo/backend/registration/base-registration.h"
 #include "packlo/backend/correlation/spherical-correlation.h"
+#include "packlo/backend/alignment/base-aligner.h"
 
 #include <array>
 
@@ -27,10 +28,14 @@ class SphRegistration : public BaseRegistration {
 
 		backend::SphericalCorrelation sph_corr_; 
 		common::SphericalSampler sampler_;
+		std::vector<model::FunctionValue> f_values_; 
+		std::vector<model::FunctionValue> h_values_;
+		alignment::BaseAlignerPtr aligner_; 
 
 		// Statistics
 		const std::string kSampleDurationKey = "Sampling";
 		const std::string kCorrelationDurationKey = "Correlation";
+		const std::string kTranslationDurationKey = "Translation";
 };
 
 } // namespace registration
