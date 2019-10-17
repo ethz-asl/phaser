@@ -37,9 +37,10 @@ void SphericalCorrelation::correlateSignals(
   VLOG(2) << "done, result: " << alpha << ", " << beta << ", " << gamma;
 
   // Get result
-  (*zyz)[0] = alpha;
-  (*zyz)[1] = beta;
-  (*zyz)[2] = gamma;
+  
+  (*zyz)[0] = std::fmod(alpha, two_pi_);
+  (*zyz)[1] = std::fmod(beta, two_pi_);
+  (*zyz)[2] = std::fmod(gamma, two_pi_);
 
   CHECK_NOTNULL(signal_values);
   convertSignalValues(signal_values, bw);

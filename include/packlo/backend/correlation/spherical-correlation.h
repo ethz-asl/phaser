@@ -29,6 +29,7 @@ class SphericalCorrelation {
     const std::string kReferenceName = "SPH-Correlation";
     const std::string kSignalKey = "signal_values";
     const std::string kCoeffKey = "signal_coeff";
+    const double two_pi_ = 2 * M_PI;
     common::StatisticsManager statistics_manager_;                              
 };
 
