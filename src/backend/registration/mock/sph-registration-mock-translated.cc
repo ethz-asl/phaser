@@ -26,8 +26,10 @@ void SphRegistrationMockTranslated::registerPointCloud(
       FLAGS_mock_translate_z);
   syn_cloud.initialize_kd_tree();
 
+  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, syn_cloud);  
+    */
 
   sampler_.sampleUniformly(*cloud_prev, &f_values_);
   sampler_.sampleUniformly(syn_cloud, &h_values_);
@@ -46,6 +48,9 @@ void SphRegistrationMockTranslated::registerPointCloud(
     << "ms.";
   model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
       syn_cloud, xyz(0), xyz(1), xyz(2));
+
+  const std::vector<double> corr = aligner_->getCorrelation();
+  eval_->evaluateCorrelationFromTranslation(corr);
 
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, reg_cloud);  

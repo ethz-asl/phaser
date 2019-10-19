@@ -2,6 +2,7 @@
 #include "packlo/backend/alignment/range-based-aligner.h"
 #include "packlo/backend/alignment/optimized-aligner.h"
 #include "packlo/backend/alignment/phase-aligner.h"
+#include "packlo/backend/correlation/z-score-eval.h"
 #include "packlo/common/statistic-utils.h"
 #include "packlo/common/rotation-utils.h"
 #include "packlo/common/translation-utils.h"
@@ -20,6 +21,7 @@ SphRegistration::SphRegistration()
   //aligner_ = std::make_unique<alignment::RangeBasedAligner>();
   //aligner_ = std::make_unique<alignment::OptimizedAligner>();
   aligner_ = std::make_unique<alignment::PhaseAligner>();
+  eval_ = std::make_unique<correlation::ZScoreEval>();
 }
 
 void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev, 
@@ -54,6 +56,8 @@ void SphRegistration::registerPointCloud(model::PointCloudPtr cloud_prev,
       rot_cloud, xyz(0), xyz(1), xyz(2));
   //visualization::DebugVisualizer::getInstance()
     //.visualizePointCloudDiff(*cloud_prev, reg_cloud);
+  const std::vector<double> corr = aligner_->getCorrelation();
+  eval_->evaluateCorrelationFromTranslation(corr);
 }
 
 void SphRegistration::getStatistics(
