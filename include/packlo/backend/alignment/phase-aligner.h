@@ -18,6 +18,8 @@ class PhaseAligner : public BaseAligner {
       const model::PointCloud& cloud_reg,
       const std::vector<model::FunctionValue>& f_reg, 
       common::Vector_t* xyz) override;
+
+    virtual std::vector<double> getCorrelation() const override;
   private: 
     void discretizePointcloud(
         const model::PointCloud& cloud, Eigen::VectorXd& f,

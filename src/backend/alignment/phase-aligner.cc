@@ -144,5 +144,9 @@ double PhaseAligner::computeTranslationFromIndex(double index) {
   return (index-FLAGS_phase_n_voxels) * width/ FLAGS_phase_n_voxels;
 }
 
+std::vector<double> PhaseAligner::getCorrelation() const {
+  return std::vector<double>(c_, c_+n_voxels_);
+}
+
 }
 // namespace alignment 

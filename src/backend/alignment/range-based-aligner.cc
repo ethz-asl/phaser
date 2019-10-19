@@ -24,4 +24,8 @@ void RangeBasedAligner::alignRegistered(
   *xyz = translation.array() / static_cast<double>(n_values); 
 }
 
+std::vector<double> RangeBasedAligner::getCorrelation() const {
+  return std::vector<double>();
+}
+
 } // namespace alignment

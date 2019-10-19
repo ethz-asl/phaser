@@ -55,4 +55,8 @@ void OptimizedAligner::alignRegistered(
   (*xyz)(2) = t_init[2];
 }
 
+std::vector<double> OptimizedAligner::getCorrelation() const {
+  return std::vector<double>();
+}
+
 } // namespace alignment

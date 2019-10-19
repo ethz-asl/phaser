@@ -16,6 +16,8 @@ class BaseAligner {
       const model::PointCloud& cloud_reg,
       const std::vector<model::FunctionValue>& f_reg,
       common::Vector_t* xyz) = 0;
+
+    virtual std::vector<double> getCorrelation() const = 0;
 };
 
 using BaseAlignerPtr = std::unique_ptr<BaseAligner>;

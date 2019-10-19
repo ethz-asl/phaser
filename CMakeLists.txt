@@ -58,6 +58,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/registration/mock/sph-registration-mock-translated.cc
    src/backend/registration/mock/sph-registration-mock-transformed.cc
    src/backend/correlation/spherical-correlation.cc
+   src/backend/correlation/z-score-eval.cc
    src/backend/alignment/range-based-aligner.cc
    src/backend/alignment/optimized-aligner.cc
    src/backend/alignment/base-objective.cc
