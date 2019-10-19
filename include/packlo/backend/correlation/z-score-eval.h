@@ -16,7 +16,8 @@ class ZScoreEval : public BaseEval {
         const std::vector<double>& corr) override;
 
   private:
-    void calculateSmoothedZScore(const std::vector<double>& input, 
+    void calculateSmoothedZScore(std::vector<double>& input,
+        const double lag, const double threshold, const double influence,
         std::vector<uint32_t>* signals) const;
     double mean(const double mean, const std::vector<double>& vec, uint32_t from,
         uint32_t to) const;
