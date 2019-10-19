@@ -1,7 +1,6 @@
 #include "packlo/backend/correlation/z-score-eval.h"
 
 #include <cmath>
-#include <cstdint>
 #include <numeric>
 #include <algorithm>
 
@@ -25,12 +24,19 @@ ZScoreEval::ZScoreEval() {
 
 void ZScoreEval::evaluateCorrelationFromTranslation(
       const std::vector<double>& corr) {
-    std::vector<bool> signals(corr.size(), false);
+    std::vector<uint32_t> signals;
     calculateSmoothedZScore(corr, &signals);
+
+    /*
+    auto it = signals.cbegin();
+    //auto isTrue = [] (const bool)
+    while (it != signals.cend());
+      it = std::find(it, signals.cend(), true);
+      */
 }
 
 void ZScoreEval::calculateSmoothedZScore(const std::vector<double>& input, 
-    std::vector<bool>* signals) const {
+    std::vector<uint32_t>* signals) const {
   const uint32_t n_input = input.size();
   if (n_input <= FLAGS_z_score_lag + 2) return;
 
@@ -49,7 +55,8 @@ void ZScoreEval::calculateSmoothedZScore(const std::vector<double>& input,
     const double currentinput = input[i];
     if (std::abs(currentinput - avgFilter[i - 1]) 
         > FLAGS_z_score_threshold * stdFilter[i - 1]) {
-      if (currentinput > avgFilter[i - 1]) (*signals)[i] = true; 
+      if (currentinput > avgFilter[i - 1])
+        signals->emplace_back(i);
       
       // Update influence with current data point.
       filteredY[i] = FLAGS_z_score_influence * currentinput 
@@ -59,7 +66,7 @@ void ZScoreEval::calculateSmoothedZScore(const std::vector<double>& input,
       filteredY[i] = currentinput;
 
     // Adjust the filters.
-    std::vector<double> subVec(filteredY.begin() + i - FLAGS_z_score_lag,
+    const std::vector<double> subVec(filteredY.begin() + i - FLAGS_z_score_lag,
         filteredY.begin() + i);
     const double m = mean(subVec);
     avgFilter[i] = m;
