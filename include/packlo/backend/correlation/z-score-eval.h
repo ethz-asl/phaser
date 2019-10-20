@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <set>
 
 namespace correlation {
 
@@ -18,9 +19,7 @@ class ZScoreEval : public BaseEval {
   private:
     void calculateSmoothedZScore(std::vector<double>& input,
         const double lag, const double threshold, const double influence,
-        std::vector<uint32_t>* signals) const;
-    double mean(const double mean, const std::vector<double>& vec, uint32_t from,
-        uint32_t to) const;
+        std::set<uint32_t>* signals) const;
     double stdDev(const double mean, const std::vector<double>& vec, 
         uint32_t from, uint32_t to) const;
 
