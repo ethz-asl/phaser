@@ -11,7 +11,7 @@
 // Good values: 500, 5.75, 0.05
 //              70, 3.75, 0.05
 //              210, 5.66, 0.05
-DEFINE_double(z_score_lag, 210, 
+DEFINE_double(z_score_lag_percentile, 210, 
     "The window used for smoothing the function.");
 DEFINE_double(z_score_threshold, 5.66, 
     "Defines the number of n-std requires to include a signal.");
@@ -23,7 +23,8 @@ DEFINE_double(z_score_filter_threshold, 0.105,
 namespace correlation {
 
 ZScoreEval::ZScoreEval() : manager_("z-score") {
-  CHECK_GT(FLAGS_z_score_lag, 0);
+  CHECK_GT(FLAGS_z_score_lag_percentile, 0);
+  CHECK_LT(FLAGS_z_score_lag_percentile, 1);
   CHECK_GT(FLAGS_z_score_threshold, 0);
   CHECK_GE(FLAGS_z_score_influence, 0);
   CHECK_LE(FLAGS_z_score_influence, 1.0);
@@ -46,8 +47,10 @@ void ZScoreEval::evaluateCorrelationFromTranslation(
           FLAGS_z_score_filter_threshold));
 
     // Find the peaks. 
-    calculateSmoothedZScore(n_corr_ds, FLAGS_z_score_lag, 
-        FLAGS_z_score_threshold, FLAGS_z_score_influence, &signals);
+    const uint32_t lag = n_corr_ds.size() * FLAGS_z_score_lag_percentile;
+    VLOG(1) << "Calculating z-scores using a " << lag << " window.";
+    calculateSmoothedZScore(n_corr_ds, lag, FLAGS_z_score_threshold,
+        FLAGS_z_score_influence, &signals);
     for (auto& signal : signals) {
       VLOG(1) << "peak at " << signal;
     }
