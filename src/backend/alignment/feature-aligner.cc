@@ -50,4 +50,8 @@ void FeatureAligner::calculateFPFH(const model::PointCloud&,
   // try omp version
 }
 
+std::vector<double> FeatureAligner::getCorrelation() const {
+  return std::vector<double>();
+}
+
 } // namespace alignment 

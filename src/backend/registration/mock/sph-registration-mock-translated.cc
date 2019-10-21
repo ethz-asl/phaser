@@ -17,17 +17,22 @@ namespace registration {
 
 void SphRegistrationMockTranslated::registerPointCloud(
     model::PointCloudPtr cloud_prev, 
-    model::PointCloudPtr) {
+    model::PointCloudPtr cloud_cur) {
   cloud_prev->initialize_kd_tree();
 
   model::PointCloud syn_cloud = pertubPointCloud(*cloud_prev, 
       FLAGS_mock_translate_x, 
       FLAGS_mock_translate_y, 
       FLAGS_mock_translate_z);
+  /*
+  model::PointCloud& syn_cloud = *cloud_cur;
+  */
   syn_cloud.initialize_kd_tree();
 
+  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, syn_cloud);  
+    */
 
   sampler_.sampleUniformly(*cloud_prev, &f_values_);
   sampler_.sampleUniformly(syn_cloud, &h_values_);
@@ -46,6 +51,9 @@ void SphRegistrationMockTranslated::registerPointCloud(
     << "ms.";
   model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
       syn_cloud, xyz(0), xyz(1), xyz(2));
+
+  const std::vector<double> corr = aligner_->getCorrelation();
+  eval_->evaluateCorrelationFromTranslation(corr);
 
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, reg_cloud);  

@@ -17,6 +17,8 @@ class OptimizedAligner : public BaseAligner {
       const model::PointCloud& cloud_reg,
       const std::vector<model::FunctionValue>& f_reg, 
       common::Vector_t* xyz) override;
+
+    virtual std::vector<double> getCorrelation() const override;
   private:
     std::unique_ptr<BaseObjective> objective_;
 };

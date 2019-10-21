@@ -45,16 +45,16 @@
  softFFTWCor2: simple wrapper for correlating two functions defined on the sphere;
               if efficiency is important to you, or want more control,
               e.g. want to correlate lots and lots of times without having
-	      reallocate tmp workspace, or change the bandwidth
-	      you want to correlate at, or correlate complex-valued
+        reallocate tmp workspace, or change the bandwidth
+        you want to correlate at, or correlate complex-valued
               functions, you should look at
 
-	      test_soft_fftw_correlate2.c
+        test_soft_fftw_correlate2.c
 
-	      as an example of how to do it. softFFTWCor2() is basically
-	      test_soft_fftw_correlate2.c turned into a wrapper, with
-	      some simplifying assumptions.
-	      
+        as an example of how to do it. softFFTWCor2() is basically
+        test_soft_fftw_correlate2.c turned into a wrapper, with
+        some simplifying assumptions.
+        
   bw: bandwidth of signal and pattern
 
   isReal: int defining whether or not the signal and pattern are
@@ -72,28 +72,28 @@
 
   alpha, beta, gamma: ptrs to doubles; at the end of the routine,
                will "contain" the angles alpha, beta, and gamma needed
-	       in order to rotate the SIGNAL to match the PATTERN; the
-	       order of rotation is:
+         in order to rotate the SIGNAL to match the PATTERN; the
+         order of rotation is:
 
                    1) rotate by gamma about the z-axis
                    2) rotate by beta about the y-axis
                    3) rotate by alpha about the z-axis.
-		   
-	       where
+       
+         where
              
-	           0 <= alpha, gamma < 2*pi
-	           0 <= beta <= pi
+             0 <= alpha, gamma < 2*pi
+             0 <= beta <= pi
 
 
 ***********************************/
 
 
 void softFFTWCor2( int bw,
-		   double *sig,
-		   double *pat,
-		   double *alpha, double *beta, double *gamma,
+       double *sig,
+       double *pat,
+       double *alpha, double *beta, double *gamma,
        double *maxval, double **signal_values,
-			 double **signal_coeff, int isReal )
+       double **signal_coeff, int isReal )
 {
   int i ;
   int n, bwIn, bwOut, degLim ;
@@ -121,7 +121,7 @@ void softFFTWCor2( int bw,
   degLim = bw - 1 ;
   n = 2 * bwIn ;
 
-	const int bwOutp3 = bwOut*bwOut*bwOut;
+  const int bwOutp3 = bwOut*bwOut*bwOut;
   tmpR = (double *) malloc( sizeof(double) * ( n * n ) );
   tmpI = (double *) malloc( sizeof(double) * ( n * n ) );
   so3Sig = fftw_malloc( sizeof(fftw_complex) * (8*bwOutp3) );
@@ -137,8 +137,8 @@ void softFFTWCor2( int bw,
   so3Coef = fftw_malloc( sizeof(fftw_complex) * ((4*bwOutp3-bwOut)/3) ) ;
   seminaive_naive_tablespace =
     (double *) malloc(sizeof(double) *
-		      (Reduced_Naive_TableSize(bwIn,bwIn) +
-		       Reduced_SpharmonicTableSize(bwIn,bwIn)));
+          (Reduced_Naive_TableSize(bwIn,bwIn) +
+           Reduced_SpharmonicTableSize(bwIn,bwIn)));
 
   weights = (double *) malloc(sizeof(double) * (4*bwIn));
 
@@ -154,7 +154,7 @@ void softFFTWCor2( int bw,
        (workspace3 == NULL) ||
        (sigCoefR == NULL) || (sigCoefI == NULL) ||
        (patCoefR == NULL) || (patCoefI == NULL) ||
-	   (so3Sig == NULL) )
+     (so3Sig == NULL) )
     {
       perror("Error in allocating memory");
       exit( 1 ) ;
@@ -163,7 +163,7 @@ void softFFTWCor2( int bw,
   /* create fftw plans for the S^2 transforms */
   /* first for the dct */
   dctPlan = fftw_plan_r2r_1d( 2*bwIn, weights, workspace3,
-			      FFTW_REDFT10, FFTW_ESTIMATE ) ;
+            FFTW_REDFT10, FFTW_ESTIMATE ) ;
 
   /* now for the fft */
   /* 
@@ -196,11 +196,11 @@ void softFFTWCor2( int bw,
   howmany_dims[0].os = 1 ;
 
   fftPlan = fftw_plan_guru_split_dft( rank, dims,
-				      howmany_rank, howmany_dims,
-				      tmpR, tmpI,
-				      (double *) workspace2,
-				      (double *) workspace2 + (n*n),
-				      FFTW_ESTIMATE );
+              howmany_rank, howmany_dims,
+              tmpR, tmpI,
+              (double *) workspace2,
+              (double *) workspace2 + (n*n),
+              FFTW_ESTIMATE );
 
   /* create plan for inverse SO(3) transform */
   n = 2 * bwOut ;
@@ -218,16 +218,16 @@ void softFFTWCor2( int bw,
   na[1] = n ;
 
   p1 = fftw_plan_many_dft( rank, na, howmany,
-			   workspace1, inembed,
-			   istride, idist,
-			   so3Sig, onembed,
-			   ostride, odist,
-			   FFTW_FORWARD, FFTW_ESTIMATE );
+         workspace1, inembed,
+         istride, idist,
+         so3Sig, onembed,
+         ostride, odist,
+         FFTW_FORWARD, FFTW_ESTIMATE );
 
 
   seminaive_naive_table = SemiNaive_Naive_Pml_Table(bwIn, bwIn,
-						    seminaive_naive_tablespace,
-						    (double *) workspace2);
+                seminaive_naive_tablespace,
+                (double *) workspace2);
 
 
   /* make quadrature weights for the S^2 transform */
@@ -238,46 +238,46 @@ void softFFTWCor2( int bw,
   if ( isReal )
     for ( i = 0 ; i < n * n ; i ++ )
       {
-	tmpR[i] = sig[i];
-	tmpI[i] = 0. ;
+  tmpR[i] = sig[i];
+  tmpI[i] = 0. ;
       }
   else
     for ( i = 0 ; i < n * n ; i ++ )
       {
-	tmpR[i] = sig[2*i];
-	tmpI[i] = sig[2*i+1] ;
+  tmpR[i] = sig[2*i];
+  tmpI[i] = sig[2*i+1] ;
       }
 
   /* spherical transform of SIGNAL */
   FST_semi_memo( tmpR, tmpI,
-		 sigCoefR, sigCoefI,
-		 bwIn, seminaive_naive_table,
-		 (double *) workspace2, isReal, bwIn,
-		 &dctPlan, &fftPlan,
-		 weights );
+     sigCoefR, sigCoefI,
+     bwIn, seminaive_naive_table,
+     (double *) workspace2, isReal, bwIn,
+     &dctPlan, &fftPlan,
+     weights );
 
   /* load PATTERN samples into temp array; note that I'm
      also providing 0s in the imaginary part */
   if ( isReal )
     for (i = 0 ; i < n * n ; i ++ )
       {
-	tmpR[i] = pat[i] ;
-	tmpI[i] = 0.  ;
+  tmpR[i] = pat[i] ;
+  tmpI[i] = 0.  ;
       }
   else
     for (i = 0 ; i < n * n ; i ++ )
       {
-	tmpR[i] = pat[2*i] ;
-	tmpI[i] = pat[2*i+1] ;
+  tmpR[i] = pat[2*i] ;
+  tmpI[i] = pat[2*i+1] ;
       }
 
   /* spherical transform of PATTERN */
   FST_semi_memo( tmpR, tmpI,
-		 patCoefR, patCoefI,
-		 bwIn, seminaive_naive_table,
-		 (double *) workspace2, isReal, bwIn,
-		 &dctPlan, &fftPlan,
-		 weights ) ;
+     patCoefR, patCoefI,
+     bwIn, seminaive_naive_table,
+     (double *) workspace2, isReal, bwIn,
+     &dctPlan, &fftPlan,
+     weights ) ;
 
   /* all done with the spherical transform, so free up
      some memory before continuing */
@@ -287,35 +287,35 @@ void softFFTWCor2( int bw,
 
   /* combine coefficients */
   so3CombineCoef_fftw( bwIn, bwOut, degLim,
-		       sigCoefR, sigCoefI,
-		       patCoefR, patCoefI,
-		       so3Coef ) ;
+           sigCoefR, sigCoefI,
+           patCoefR, patCoefI,
+           so3Coef ) ;
 
   /* now inverse so(3) */
   Inverse_SO3_Naive_fftw( bwOut,
-			  so3Coef,
-			  so3Sig,
-			  workspace1,
-			  workspace2,
-			  workspace3,
-			  &p1,
-			  isReal ) ;
+        so3Coef,
+        so3Sig,
+        workspace1,
+        workspace2,
+        workspace3,
+        &p1,
+        isReal ) ;
 
   /* now find max value */
   *maxval = 0.0 ;
   maxloc = 0 ;
   for (i = 0; i < 8*bwOut*bwOut*bwOut; ++i ) {
     tmpval = NORM( so3Sig[i] );
-		(*signal_values)[i] = tmpval;
+    (*signal_values)[i] = tmpval;
     if ( tmpval > *maxval ) {
       *maxval = tmpval;
       maxloc = i ;
     }
   }
 
-	for (i = 0; i < bwIn * bwIn; ++i) {
-		(*signal_coeff)[i] = patCoefR[i];
-	}
+  for (i = 0; i < bwIn * bwIn; ++i) {
+    (*signal_coeff)[i] = patCoefR[i];
+  }
 
   ii = floor( maxloc / (4.*bwOut*bwOut) );
   tmp = maxloc - (ii*4.*bwOut*bwOut);

@@ -82,7 +82,11 @@ void PhaseAligner::alignRegistered(
   fftw_execute(c_plan_);
 
   // Find the index that maximizes the correlation.
-  const int max = std::distance(c_, std::max_element(c_, c_+n_voxels_));
+  const auto max_corr = std::max_element(c_, c_+n_voxels_);
+  const int max = std::distance(c_, max_corr);
+  VLOG(1) << "Found max correlation at " << max 
+    << " with the value :" << *max_corr;
+
   std::array<uint16_t, 3> max_xyz = ind2sub(max, FLAGS_phase_n_voxels, 
       FLAGS_phase_n_voxels);
   (*xyz)(0) = computeTranslationFromIndex(static_cast<double>(max_xyz[0]));
@@ -142,6 +146,10 @@ double PhaseAligner::computeTranslationFromIndex(double index) {
     return (index*width) / FLAGS_phase_n_voxels;
   } 
   return (index-FLAGS_phase_n_voxels) * width/ FLAGS_phase_n_voxels;
+}
+
+std::vector<double> PhaseAligner::getCorrelation() const {
+  return std::vector<double>(c_, c_+n_voxels_);
 }
 
 }

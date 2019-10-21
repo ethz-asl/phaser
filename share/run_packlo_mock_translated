@@ -11,7 +11,11 @@ rosrun packlo packlo \
 		--mock_translate_x=42.0 \
 		--mock_translate_y=48.0 \
 		--mock_translate_z=35.0 \
-    --phase_discretize_lower=-100 \
-    --phase_discretize_upper=100 \
-    --phase_n_voxels=123 \
+    --phase_discretize_lower=-90 \
+    --phase_discretize_upper=90 \
+    --phase_n_voxels=201 \
+    --z_score_lag_percentile=0.15 \
+    --z_score_threshold=4.66 \
+    --z_score_influence=0.05 \
+    --z_score_filter_threshold=0.105 \
     $REST
