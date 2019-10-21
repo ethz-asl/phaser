@@ -49,11 +49,16 @@ void ZScoreEval::evaluateCorrelationFromTranslation(
     calculateSmoothedZScore(n_corr_ds, FLAGS_z_score_lag, 
         FLAGS_z_score_threshold, FLAGS_z_score_influence, &signals);
 
+    // Evaluate correlation. 
+    double mean, std;
+    std::tie(mean, std) = fitSmoothedNormalDist(signals, n_corr_ds);
+
     // Visualization.
     for (auto& ds : n_corr_ds) 
       manager_.emplaceValue("downsampled_corr", ds);
     visualization::PlottyVisualizer::getInstance()
      .createPlotFor(manager_, "downsampled_corr");
+    VLOG(1) << "finished z-score with var: " << std*std;
 }
 
 void ZScoreEval::calculateSmoothedZScore(std::vector<double>& input, 
@@ -104,7 +109,40 @@ double ZScoreEval::stdDev(const double mean,
       accum += val_sub_mean * val_sub_mean;
     } 
   }
+  VLOG(1) << "accum: " << accum;
   return std::sqrt(accum / (to-from-1u));
+}
+
+std::pair<double, double> ZScoreEval::fitSmoothedNormalDist(
+    const std::set<uint32_t>& signals, 
+    const std::vector<double>& input) const {
+  std::vector<double> peak_values; 
+  double sum2 = 0.0;  
+  //double max = (double)*std::max_element(signals.begin(), signals.end());
+  /*
+  for (const uint32_t& signal : signals) {
+    double norm_signal = ((double) signal) / max;
+    peak_values.emplace_back(norm_signal);
+    sum2 += norm_signal;
+  }
+  */
+  std::transform(signals.cbegin(), signals.cend(), 
+      std::back_inserter(peak_values), 
+      [&max] (const uint32_t& signal) {return ((double) signal) / max; });
+  VLOG(1) << "test accum: "
+    << std::accumulate(peak_values.begin(), peak_values.end(), 0.0);
+
+  for (double val : peak_values) {
+    VLOG(1) << " peak_values: " << val;
+  }
+  const uint32_t n_values = peak_values.size();
+  const double mean = 
+    std::accumulate(peak_values.cbegin(), peak_values.cend(), 0.0) / n_values;
+
+  VLOG(1) << "mean: " << mean;
+  const double std = stdDev(mean, peak_values, 0, n_values);
+  VLOG(1) << "std: " << std;
+  return std::make_pair(mean, std);
 }
 
 } // namespace correlation

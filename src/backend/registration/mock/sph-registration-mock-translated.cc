@@ -17,13 +17,16 @@ namespace registration {
 
 void SphRegistrationMockTranslated::registerPointCloud(
     model::PointCloudPtr cloud_prev, 
-    model::PointCloudPtr) {
+    model::PointCloudPtr cloud_cur) {
   cloud_prev->initialize_kd_tree();
 
+  /*
   model::PointCloud syn_cloud = pertubPointCloud(*cloud_prev, 
       FLAGS_mock_translate_x, 
       FLAGS_mock_translate_y, 
       FLAGS_mock_translate_z);
+  */
+  model::PointCloud& syn_cloud = *cloud_cur;
   syn_cloud.initialize_kd_tree();
 
   /*

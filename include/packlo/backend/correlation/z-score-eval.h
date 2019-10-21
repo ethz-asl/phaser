@@ -22,6 +22,9 @@ class ZScoreEval : public BaseEval {
         std::set<uint32_t>* signals) const;
     double stdDev(const double mean, const std::vector<double>& vec, 
         uint32_t from, uint32_t to) const;
+    std::pair<double, double> fitSmoothedNormalDist(
+        const std::set<uint32_t>& signals, 
+        const std::vector<double>& input) const;
 
     common::StatisticsManager manager_;
 };

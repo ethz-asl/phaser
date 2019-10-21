@@ -53,7 +53,7 @@ void Distributor::initializeRegistrationAlgorithm(const std::string& type) {
   else 
     LOG(FATAL) << "Unknown registration algorithm specified!";
 }
-
+static int test = 0;
 void Distributor::pointCloudCallback(
     const model::PointCloudPtr& cloud) {
   VLOG(1) << "received cloud in callback";
@@ -62,6 +62,7 @@ void Distributor::pointCloudCallback(
     prev_point_cloud_ = cloud;
     return;
   }
+  if (++test % 100 != 0) return;
   CHECK_NOTNULL(registrator_);
   registrator_->registerPointCloud(prev_point_cloud_, cloud);
   prev_point_cloud_ = cloud;
