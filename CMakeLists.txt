@@ -77,5 +77,12 @@ cs_add_executable(${PROJECT_NAME} tools/packlo-app.cc)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib
   fftw3 ${NLOPT_LIBRARIES})
 
+#############
+## TESTING ##
+#############
+
+catkin_add_gtest(test_sanity_check test/sanity-check/sanity-check-test.cc)
+target_link_libraries(test_sanity_check ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
+
 cs_install()
 cs_export()
