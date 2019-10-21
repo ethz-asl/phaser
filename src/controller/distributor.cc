@@ -62,7 +62,7 @@ void Distributor::pointCloudCallback(
     prev_point_cloud_ = cloud;
     return;
   }
-  if (++test % 100 != 0) return;
+  //if (++test % 100 != 0) return;
   CHECK_NOTNULL(registrator_);
   registrator_->registerPointCloud(prev_point_cloud_, cloud);
   prev_point_cloud_ = cloud;
