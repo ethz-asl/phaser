@@ -7,7 +7,8 @@ namespace registration {
 class SphRegistrationMockTranslated : public SphRegistration {
   public:
     virtual ~SphRegistrationMockTranslated() = default;
-    virtual void registerPointCloud(model::PointCloudPtr cloud_prev, 
+    virtual model::RegistrationResult registerPointCloud(
+        model::PointCloudPtr cloud_prev, 
         model::PointCloudPtr cloud_cur) override;
 
   private:

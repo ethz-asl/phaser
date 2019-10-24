@@ -8,7 +8,8 @@ class SphRegistrationMockRotated : public SphRegistration {
   public:
     SphRegistrationMockRotated();
     virtual ~SphRegistrationMockRotated() = default;
-    virtual void registerPointCloud(model::PointCloudPtr cloud_prev, 
+    virtual model::RegistrationResult registerPointCloud(
+        model::PointCloudPtr cloud_prev, 
         model::PointCloudPtr cloud_cur) override;
 
     void setRandomRotation(const double alpha_rad, const double beta_rad, 

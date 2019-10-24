@@ -12,7 +12,8 @@ void TranslationUtils::TranslateXYZ(
 }
 
 model::PointCloud TranslationUtils::TranslateXYZCopy(
-    model::PointCloud &cloud, const float x, const float y, const float z) {
+    const model::PointCloud &cloud,
+    const float x, const float y, const float z) {
   Eigen::Matrix4f T = createTransformationXYZ(x, y, z);
   common::PointCloud_tPtr copyCloud (new common::PointCloud_t);
   model::PointCloud copy (copyCloud);

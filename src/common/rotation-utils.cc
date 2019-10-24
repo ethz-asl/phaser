@@ -1,7 +1,8 @@
-#include <packlo/common/rotation-utils.h>
-#include <cmath>
+#include "packlo/common/rotation-utils.h"
 
 #include <glog/logging.h>
+
+#include <cmath>
 
 namespace common {
 
@@ -12,9 +13,9 @@ void RotationUtils::RotateAroundXYZ(model::PointCloud &cloud, const float alpha_
   cloud.transformPointCloud(T);
 }
 
-model::PointCloud RotationUtils::RotateAroundXYZCopy(model::PointCloud &cloud, 
-    const float alpha_rad, 
-    const float beta_rad, const float gamma_rad) {
+model::PointCloud RotationUtils::RotateAroundXYZCopy(
+    const model::PointCloud &cloud, 
+    const float alpha_rad, const float beta_rad, const float gamma_rad) {
   Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
                       createTransformationAroundY(beta_rad) * 
                       createTransformationAroundX(alpha_rad);
@@ -72,7 +73,8 @@ void RotationUtils::RotateAroundZYZ(model::PointCloud &cloud, const double alpha
   cloud.transformPointCloud(T);
 }
 
-model::PointCloud RotationUtils::RotateAroundZYZCopy(model::PointCloud &cloud,
+model::PointCloud RotationUtils::RotateAroundZYZCopy(
+    const model::PointCloud &cloud,
     const double alpha_rad, const double beta_rad, const double gamma_rad) {
   Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
    createTransformationAroundY(beta_rad) * createTransformationAroundZ(alpha_rad);

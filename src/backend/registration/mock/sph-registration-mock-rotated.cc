@@ -18,7 +18,7 @@ SphRegistrationMockRotated::SphRegistrationMockRotated()
       mock_beta_rad_(FLAGS_mock_rotate_beta_rad), 
       mock_gamma_rad_(FLAGS_mock_rotate_gamma_rad) {}
 
-void SphRegistrationMockRotated::registerPointCloud(
+model::RegistrationResult SphRegistrationMockRotated::registerPointCloud(
     model::PointCloudPtr cloud_prev, 
     model::PointCloudPtr) {
   cloud_prev->initialize_kd_tree();
@@ -37,6 +37,7 @@ void SphRegistrationMockRotated::registerPointCloud(
       syn_cloud, zyz[2], zyz[1], zyz[0]);
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, reg_cloud);  
+  return model::RegistrationResult(std::move(reg_cloud), std::move(zyz));
 }
 
 void SphRegistrationMockRotated::setRandomRotation(const double alpha_rad, 

@@ -15,7 +15,8 @@ class SphRegistration : public BaseRegistration {
 		SphRegistration();
 
 		virtual ~SphRegistration() = default;
-		virtual void registerPointCloud(model::PointCloudPtr cloud_prev, 
+		virtual model::RegistrationResult registerPointCloud(
+        model::PointCloudPtr cloud_prev, 
 				model::PointCloudPtr cloud_cur) override;
 
 		virtual void getStatistics(common::StatisticsManager* manager)
@@ -26,6 +27,14 @@ class SphRegistration : public BaseRegistration {
        const model::PointCloud& source,                                            
        const model::PointCloud& target,                                            
        std::array<double, 3>* const zyz);	
+
+    model::RegistrationResult estimateRotation(
+        model::PointCloudPtr cloud_prev, 
+				model::PointCloudPtr cloud_cur);
+
+    model::RegistrationResult estimateTranslation(
+        model::PointCloudPtr cloud_prev, 
+				model::PointCloudPtr rot_cloud);
 
 		backend::SphericalCorrelation sph_corr_; 
 		common::SphericalSampler sampler_;

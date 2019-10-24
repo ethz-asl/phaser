@@ -15,7 +15,7 @@ DEFINE_double(mock_translate_z, 5,
 
 namespace registration {
 
-void SphRegistrationMockTranslated::registerPointCloud(
+model::RegistrationResult SphRegistrationMockTranslated::registerPointCloud(
     model::PointCloudPtr cloud_prev, 
     model::PointCloudPtr cloud_cur) {
   cloud_prev->initialize_kd_tree();
@@ -57,6 +57,8 @@ void SphRegistrationMockTranslated::registerPointCloud(
 
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, reg_cloud);  
+
+  return model::RegistrationResult(std::move(reg_cloud), std::move(xyz));
 }
 
 model::PointCloud SphRegistrationMockTranslated::pertubPointCloud(

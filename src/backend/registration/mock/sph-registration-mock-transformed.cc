@@ -6,7 +6,7 @@
 
 namespace registration {
 
-void SphRegistrationMockTransformed::registerPointCloud(
+model::RegistrationResult SphRegistrationMockTransformed::registerPointCloud(
     model::PointCloudPtr cloud_prev, 
     model::PointCloudPtr) {
   cloud_prev->initialize_kd_tree();
@@ -29,6 +29,7 @@ void SphRegistrationMockTransformed::registerPointCloud(
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, reg_cloud);  
     */
+  return model::RegistrationResult();
 }
 
 } // namespace handler

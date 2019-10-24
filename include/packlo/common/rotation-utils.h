@@ -12,12 +12,12 @@ class RotationUtils {
 public:
   static void RotateAroundXYZ(model::PointCloud &cloud, const float alpha_rad, 
       const float beta_rad, const float gamma_rad);
-  static model::PointCloud RotateAroundXYZCopy(model::PointCloud &cloud,
+  static model::PointCloud RotateAroundXYZCopy(const model::PointCloud &cloud,
       const float alpha_rad, const float beta_rad, const float gamma_rad);
 
   static void RotateAroundZYZ(model::PointCloud &cloud, const double alpha_rad, 
       const double beta_rad, const double gamma_rad);
-  static model::PointCloud RotateAroundZYZCopy(model::PointCloud &cloud,
+  static model::PointCloud RotateAroundZYZCopy(const model::PointCloud &cloud,
       const double alpha_rad, const double beta_rad, const double gamma_rad);
 
   static std::vector<model::FunctionValue> RotateAroundZYZCopy(
