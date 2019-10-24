@@ -77,5 +77,32 @@ cs_add_executable(${PROJECT_NAME} tools/packlo-app.cc)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib
   fftw3 ${NLOPT_LIBRARIES})
 
+#############
+## TESTING ##
+#############
+
+# Sanity check.
+catkin_add_gtest(test_sanity_check test/sanity-check/sanity-check-test.cc)
+target_link_libraries(test_sanity_check
+  ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
+
+# Rotation estimation.
+catkin_add_gtest(test_rotation_alignment
+  test/rotation-alignment/rotation-alignment-test.cc)
+target_link_libraries(test_rotation_alignment
+  ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
+
+# Translation estimation.
+catkin_add_gtest(test_translation_alignment
+  test/translation-alignment/translation-alignment-test.cc)
+target_link_libraries(test_translation_alignment
+  ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
+
+# Transformation estimation.
+catkin_add_gtest(test_transformation_alignment
+  test/transformation-alignment/transformation-alignment-test.cc)
+target_link_libraries(test_transformation_alignment
+  ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
+
 cs_install()
 cs_export()
