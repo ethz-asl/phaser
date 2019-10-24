@@ -24,7 +24,7 @@ class Distributor {
     void preprocessPointCloud(const model::PointCloudPtr& cloud);
     
     data::DatasourcePtr ds_;
-    std::unique_ptr<registration::BaseRegistration> registrator_;
+    registration::BaseRegistrationPtr registrator_;
     model::PointCloudPtr prev_point_cloud_;
 
     // Statistics

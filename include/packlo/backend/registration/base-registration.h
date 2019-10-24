@@ -2,6 +2,7 @@
 
 #include "packlo/model/point-cloud.h"
 #include "packlo/common/statistics-manager.h"
+#include <memory>
 
 namespace registration {
 
@@ -23,5 +24,7 @@ class BaseRegistration {
 
     common::StatisticsManager statistics_manager_;
 };
+
+using BaseRegistrationPtr = std::unique_ptr<BaseRegistration>;
 
 } // namespace registration
