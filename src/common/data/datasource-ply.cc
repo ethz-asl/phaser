@@ -23,7 +23,7 @@ void DatasourcePly::startStreaming(const uint32_t number_of_clouds) {
   uint32_t n_clouds = 0;
   if (number_of_clouds == 0) n_clouds = clouds.size();
   else n_clouds = number_of_clouds;
-  for (uint32_t i = 0u; i < number_of_clouds; ++i) {
+  for (uint32_t i = 0u; i < n_clouds; ++i) {
     model::PointCloudPtr& cloud = clouds.at(i);
     for (auto& callback : callbacks_) {
       callback(cloud);

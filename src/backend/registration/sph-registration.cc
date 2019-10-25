@@ -116,4 +116,8 @@ void SphRegistration::correlatePointcloud(
       duration_correlation_ms);
 }
 
+void SphRegistration::setBandwith(const int bandwith) {
+  sampler_.initialize(bandwith);
+}
+
 } // namespace registration

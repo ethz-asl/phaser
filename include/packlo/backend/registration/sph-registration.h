@@ -22,12 +22,6 @@ class SphRegistration : public BaseRegistration {
 		virtual void getStatistics(common::StatisticsManager* manager)
 			const noexcept override;
 
-	protected:
-		void correlatePointcloud(                                          
-       const model::PointCloud& source,                                            
-       const model::PointCloud& target,                                            
-       std::array<double, 3>* const zyz);	
-
     model::RegistrationResult estimateRotation(
         model::PointCloudPtr cloud_prev, 
 				model::PointCloudPtr cloud_cur);
@@ -35,6 +29,15 @@ class SphRegistration : public BaseRegistration {
     model::RegistrationResult estimateTranslation(
         model::PointCloudPtr cloud_prev, 
 				model::PointCloudPtr rot_cloud);
+
+    void setBandwith(const int bandwith);
+
+	protected:
+		void correlatePointcloud(                                          
+       const model::PointCloud& source,                                            
+       const model::PointCloud& target,                                            
+       std::array<double, 3>* const zyz);	
+
 
 		backend::SphericalCorrelation sph_corr_; 
 		common::SphericalSampler sampler_;
