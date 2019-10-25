@@ -113,14 +113,14 @@ TEST_F(TranslationAlignmentTest, TranslationEasy) {
     }
    
     // Register the point clouds.
-    float initHausdorff = common::MetricUtils::HausdorffDistance(prev_cloud, cloud);
+    const float initHausdorff 
+      = common::MetricUtils::HausdorffDistance(prev_cloud, cloud);
     result = reg->estimateTranslation(prev_cloud, cloud);    
     ASSERT_TRUE(result.foundSolutionForTranslation());
 
     // Check that the Hausdorff distance decreased after the registration.
-    ASSERT_LE(common::MetricUtils::HausdorffDistance(prev_cloud, cloud),
-        initHausdorff);
-
+    ASSERT_LT(common::MetricUtils::HausdorffDistance(prev_cloud, 
+          result.getRegisteredCloud()), initHausdorff);
   });
   ds_->startStreaming(2);
 }

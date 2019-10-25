@@ -143,15 +143,16 @@ TEST_F(RotationAlignmentTest, RotationEasy) {
     }
    
     // Register the point clouds.
-    float initHausdorff = common::MetricUtils::HausdorffDistance(prev_cloud, cloud);
+    const float initHausdorff 
+      = common::MetricUtils::HausdorffDistance(prev_cloud, cloud);
     cloud->initialize_kd_tree();
     result = reg->estimateRotation(prev_cloud, cloud);    
     EXPECT_TRUE(result.foundSolutionForRotation());
 
     // Check that the Hausdorff distance decreased after the registration.
-    ASSERT_LE(common::MetricUtils::HausdorffDistance(prev_cloud, cloud),
-        initHausdorff);
-
+    ASSERT_LE(common::MetricUtils::HausdorffDistance(prev_cloud, 
+          result.getRegisteredCloud()), initHausdorff);
+    prev_cloud = result.getRegisteredCloud();
   });
   ds_->startStreaming();
 }
