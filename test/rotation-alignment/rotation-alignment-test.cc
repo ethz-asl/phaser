@@ -26,6 +26,7 @@ class RotationAlignmentTest : public ::testing::Test {
     virtual void SetUp() {
       ds_ = std::make_unique<data::DatasourcePly>();
     }
+
     registration::BaseRegistration* initializeRegistration(bool mocked) {
       if (mocked)
         registrator_ = std::make_unique<

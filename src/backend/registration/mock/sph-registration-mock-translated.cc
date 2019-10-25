@@ -15,15 +15,20 @@ DEFINE_double(mock_translate_z, 5,
 
 namespace registration {
 
+SphRegistrationMockTranslated::SphRegistrationMockTranslated()
+  : mock_trans_x_(FLAGS_mock_translate_x), 
+    mock_trans_y_(FLAGS_mock_translate_y), 
+    mock_trans_z_(FLAGS_mock_translate_z){}
+
 model::RegistrationResult SphRegistrationMockTranslated::registerPointCloud(
     model::PointCloudPtr cloud_prev, 
     model::PointCloudPtr cloud_cur) {
   cloud_prev->initialize_kd_tree();
 
   model::PointCloud syn_cloud = pertubPointCloud(*cloud_prev, 
-      FLAGS_mock_translate_x, 
-      FLAGS_mock_translate_y, 
-      FLAGS_mock_translate_z);
+      mock_trans_x_, 
+      mock_trans_y_, 
+      mock_trans_z_);
   /*
   model::PointCloud& syn_cloud = *cloud_cur;
   */
@@ -36,9 +41,11 @@ model::RegistrationResult SphRegistrationMockTranslated::registerPointCloud(
 
   sampler_.sampleUniformly(*cloud_prev, &f_values_);
   sampler_.sampleUniformly(syn_cloud, &h_values_);
-  std::vector<model::FunctionValue> syn_values = 
+  std::vector<model::FunctionValue> syn_values;
+  /*
     pertubFunctionValues(f_values_, FLAGS_mock_translate_x, 
         FLAGS_mock_translate_y, FLAGS_mock_translate_z);
+        */
 
   common::Vector_t xyz;
   const double duration_translation_f_ms = common::executeTimedFunction(
@@ -52,13 +59,23 @@ model::RegistrationResult SphRegistrationMockTranslated::registerPointCloud(
   model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
       syn_cloud, xyz(0), xyz(1), xyz(2));
 
+  /*
   const std::vector<double> corr = aligner_->getCorrelation();
   eval_->evaluateCorrelationFromTranslation(corr);
 
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, reg_cloud);  
+    */
 
   return model::RegistrationResult(std::move(reg_cloud), std::move(xyz));
+}
+
+void SphRegistrationMockTranslated::setRandomTranslation(
+    const double mock_trans_x, const double mock_trans_y,
+    const double mock_trans_z) {
+  mock_trans_x_ = mock_trans_x;
+  mock_trans_y_ = mock_trans_y;
+  mock_trans_z_ = mock_trans_z;
 }
 
 model::PointCloud SphRegistrationMockTranslated::pertubPointCloud(

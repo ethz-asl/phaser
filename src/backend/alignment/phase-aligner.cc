@@ -10,7 +10,7 @@ DEFINE_double(phase_discretize_lower, -80,
     "Specifies the lower bound for the discretization.");
 DEFINE_double(phase_discretize_upper, 80,
     "Specifies the upper bound for the discretization.");
-DEFINE_double(phase_n_voxels, 81,
+DEFINE_double(phase_n_voxels, 161,
     "Specifies the number of voxels for the discretization.");
 
 namespace alignment {
