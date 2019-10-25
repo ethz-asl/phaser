@@ -5,7 +5,7 @@ rosrun packlo packlo \
     --alsologtostderr=1 \
     --v=3 \
 		--enable_debug=true \
-		--registration_algorithm=sph \
+		--registration_algorithm="store_ply" \
 		--spherical_bandwith=64 \
 		--datasource="ply" \
 		--PlyReadDirectory="/home/berlukas/Documents/ply/" \

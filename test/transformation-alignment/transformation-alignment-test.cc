@@ -73,7 +73,7 @@ TEST_F(TransformationAlignmentTest, TransformEasySeparat) {
     // after the rotation estimation.
     const float rotated_hausdorff = common::MetricUtils::HausdorffDistance(
         prev_cloud, cloud);
-    ASSERT_LE(common::MetricUtils::HausdorffDistance(prev_cloud, 
+    ASSERT_LT(common::MetricUtils::HausdorffDistance(prev_cloud, 
           result.getRegisteredCloud()), init_hausdorff);
 
     // Check that the Hausdorff distance decreased 
@@ -81,7 +81,7 @@ TEST_F(TransformationAlignmentTest, TransformEasySeparat) {
     result.combine(reg.estimateTranslation(prev_cloud,
           result.getRegisteredCloud()));
     EXPECT_TRUE(result.foundSolutionForTranslation());
-    ASSERT_LE(common::MetricUtils::HausdorffDistance(prev_cloud, 
+    ASSERT_LT(common::MetricUtils::HausdorffDistance(prev_cloud, 
           result.getRegisteredCloud()), rotated_hausdorff);
     prev_cloud = result.getRegisteredCloud();
   });

@@ -19,12 +19,16 @@ DEFINE_bool(enable_debug, false,
 DEFINE_string(registration_algorithm, "sph", 
     "Defines the used algorithm for the point cloud registration.");
 
+DEFINE_string(app_mode, "registration", 
+    "Defines the operating mode.");
+
 namespace controller {
 
 Distributor::Distributor(data::DatasourcePtr& ds)
-    : ds_(ds), statistics_manager_(kManagerReferenceName) {
+    : ds_(ds), statistics_manager_(kManagerReferenceName), 
+    registration_algorithm_(FLAGS_registration_algorithm) {
   subscribeToTopics();
-  initializeRegistrationAlgorithm(FLAGS_registration_algorithm);
+  initializeRegistrationAlgorithm();
   ds_->startStreaming();
 }
 
@@ -36,33 +40,51 @@ void Distributor::subscribeToTopics() {
   }); 
 }
 
-void Distributor::initializeRegistrationAlgorithm(const std::string& type) {
-  if (type == "sph")
+void Distributor::initializeRegistrationAlgorithm() {
+  if (registration_algorithm_ == "sph")
     registrator_ = std::make_unique<registration::SphRegistration>();
-  else if (type == "sph-mock-rotated")
+  else if (registration_algorithm_ == "sph-mock-rotated")
     registrator_ 
       = std::make_unique<registration::SphRegistrationMockRotated>();
-  else if (type == "sph-mock-cutted")
+  else if (registration_algorithm_ == "sph-mock-cutted")
     registrator_ = std::make_unique<registration::SphRegistrationMockCutted>();
-  else if (type == "sph-mock-translated")
+  else if (registration_algorithm_ == "sph-mock-translated")
     registrator_ = std::make_unique<
       registration::SphRegistrationMockTranslated>();
-  else if (type == "sph-mock-transformed")
+  else if (registration_algorithm_ == "sph-mock-transformed")
     registrator_ = std::make_unique<
       registration::SphRegistrationMockTransformed>();
   else 
     LOG(FATAL) << "Unknown registration algorithm specified!";
 }
-static int test = 0;
+
+void Distributor::setRegistrationAlgorithm(std::string&& algorithm) {
+  registration_algorithm_ = algorithm;
+}
+
+void Distributor::setRegistrationAlgorithm(const std::string& algorithm) {
+  registration_algorithm_ = algorithm;
+}
+
+// TODO(lbern): should i just pass a different callback
 void Distributor::pointCloudCallback(
     const model::PointCloudPtr& cloud) {
   VLOG(1) << "received cloud in callback";
   preprocessPointCloud(cloud);
+  if (FLAGS_app_mode == "registration") 
+    registerPointCloud(cloud);
+  else if(FLAGS_app_mode == "store_ply")
+    cloud->writeToFile();
+  else
+    LOG(FATAL) << "Unknown applicaiton mode. Aborting.";
+}
+
+void Distributor::registerPointCloud(const model::PointCloudPtr& cloud) {
   if (prev_point_cloud_ == nullptr) {
     prev_point_cloud_ = cloud;
     return;
   }
-  //if (++test % 100 != 0) return;
+  
   CHECK_NOTNULL(registrator_);
   registrator_->registerPointCloud(prev_point_cloud_, cloud);
   prev_point_cloud_ = cloud;
