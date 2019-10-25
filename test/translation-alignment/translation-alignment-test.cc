@@ -61,7 +61,7 @@ TEST_F(TranslationAlignmentTest, TranslationSelfSingle) {
     CHECK(cloud);
     // Estimate the translation.
     result = reg->registerPointCloud(cloud, cloud);    
-    EXPECT_TRUE(result.foundSolutionForTranslation());
+    ASSERT_TRUE(result.foundSolutionForTranslation());
 
     // Get the result and compare it.
     EXPECT_NEAR_EIGEN(-trans_xyz, result.getTranslation(), 4.0);
@@ -87,7 +87,7 @@ TEST_F(TranslationAlignmentTest, TranslationSelfAll) {
 
     // Estimate the translation.
     result = reg->registerPointCloud(cloud, cloud);    
-    EXPECT_TRUE(result.foundSolutionForTranslation());
+    ASSERT_TRUE(result.foundSolutionForTranslation());
 
     // Get the result and compare it.
     EXPECT_NEAR_EIGEN(-trans_xyz, result.getTranslation(), 4.0);
@@ -100,7 +100,29 @@ TEST_F(TranslationAlignmentTest, TranslationSelfAll) {
 
 TEST_F(TranslationAlignmentTest, TranslationEasy) {
   CHECK(ds_);
+  registration::SphRegistration* reg = dynamic_cast<registration::
+    SphRegistration*>(initializeRegistration(false));
 
+  model::RegistrationResult result;
+  model::PointCloudPtr prev_cloud = nullptr;
+  ds_->subscribeToPointClouds([&] (const model::PointCloudPtr& cloud) {
+    CHECK(cloud);
+    if (prev_cloud == nullptr) {
+      prev_cloud = cloud;
+      return;
+    }
+   
+    // Register the point clouds.
+    float initHausdorff = common::MetricUtils::HausdorffDistance(prev_cloud, cloud);
+    result = reg->estimateTranslation(prev_cloud, cloud);    
+    ASSERT_TRUE(result.foundSolutionForTranslation());
+
+    // Check that the Hausdorff distance decreased after the registration.
+    ASSERT_LE(common::MetricUtils::HausdorffDistance(prev_cloud, cloud),
+        initHausdorff);
+
+  });
+  ds_->startStreaming(2);
 }
 
 } // namespace translation
