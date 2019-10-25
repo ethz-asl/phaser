@@ -2,6 +2,7 @@
 #include "packlo/backend/registration/sph-registration.h"
 #include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
 #include "packlo/common/metric-utils.h"
+#include "packlo/common/rotation-utils.h"
 
 #include <maplab-common/test/testing-entrypoint.h>
 #include <maplab-common/test/testing-predicates.h>
@@ -21,16 +22,6 @@ class RotationAlignmentTest : public ::testing::Test {
         generator_(std::chrono::system_clock::now()
             .time_since_epoch().count()) {}
 
-  private:
-    Eigen::Vector3d fromRotation(const double r11, const double r12,
-        const double r21, const double r31, const double r32) {
-      Eigen::Vector3d res;
-      res(0) = std::atan2(r31, r32);
-      res(1) = std::asin(r21);
-      res(2) = std::atan2(r11, r12);
-      return res;
-    }
-
   protected:
     virtual void SetUp() {
       ds_ = std::make_unique<data::DatasourcePly>();
@@ -43,18 +34,6 @@ class RotationAlignmentTest : public ::testing::Test {
         registrator_ = std::make_unique<registration::SphRegistration>();
       return registrator_.get();
     }
-    Eigen::Vector3d convertZYZtoXYZ(const std::array<double, 3>& zyz) {
-      Eigen::Quaterniond q = 
-        Eigen::AngleAxisd(zyz[0], Eigen::Vector3d::UnitZ())
-        * Eigen::AngleAxisd(zyz[1], Eigen::Vector3d::UnitY())
-        * Eigen::AngleAxisd(zyz[2], Eigen::Vector3d::UnitZ());
-      const double qw = q.w(), qx = q.x(), qy = q.y(), qz = q.z();
-      return fromRotation(-2*(qy*qz - qw*qx),
-                    qw*qw - qx*qx - qy*qy + qz*qz,
-                    2*(qx*qz + qw*qy),
-                   -2*(qx*qy - qw*qz),
-                    qw*qw + qx*qx - qy*qy - qz*qz);
-    }
 
     float getRandomAngle() {
       return distribution_(generator_); 
@@ -64,7 +43,6 @@ class RotationAlignmentTest : public ::testing::Test {
     registration::BaseRegistrationPtr registrator_;                             
     std::default_random_engine generator_;
     std::uniform_real_distribution<float> distribution_;
-    common::MetricUtils metrics_;
 };
 
 TEST_F(RotationAlignmentTest, RotationSelfSingle) {
@@ -83,9 +61,10 @@ TEST_F(RotationAlignmentTest, RotationSelfSingle) {
     EXPECT_TRUE(result.foundSolutionForRotation());
 
     // Convert result to xyz Euler angles and compare it.
-    Eigen::Vector3d xyz_rad = convertZYZtoXYZ(result.getRotation());
+    Eigen::Vector3d xyz_rad = common::RotationUtils::ConvertZYZtoXYZ(
+        result.getRotation());
     EXPECT_NEAR_EIGEN(-rot_xyz_rad, xyz_rad, 1);
-    ASSERT_LE(metrics_.calcHausdorffDistance(cloud,
+    ASSERT_LE(common::MetricUtils::HausdorffDistance(cloud,
           result.getRegisteredCloud()), 1.0);
   });
   ds_->startStreaming(1);
@@ -112,7 +91,7 @@ TEST_F(RotationAlignmentTest, RotationSelfAll) {
     EXPECT_TRUE(result.foundSolutionForRotation());
 
     // Check the result.
-    ASSERT_LE(metrics_.calcHausdorffDistance(cloud,
+    ASSERT_LE(common::MetricUtils::HausdorffDistance(cloud,
           result.getRegisteredCloud()), 2.0);
   });
   ds_->startStreaming();
@@ -139,8 +118,8 @@ TEST_F(RotationAlignmentTest, RotationHighBandwith) {
     EXPECT_TRUE(result.foundSolutionForRotation());
 
     // Check the result.
-    ASSERT_LE(metrics_.calcHausdorffDistance(cloud,
-          result.getRegisteredCloud()), 0.75);
+    ASSERT_LE(common::MetricUtils::HausdorffDistance(cloud,
+          result.getRegisteredCloud()), 0.9);
   });
   ds_->startStreaming(1);
 }
@@ -163,13 +142,13 @@ TEST_F(RotationAlignmentTest, RotationEasy) {
     }
    
     // Register the point clouds.
-    float initHausdorff = metrics_.calcHausdorffDistance(prev_cloud, cloud);
+    float initHausdorff = common::MetricUtils::HausdorffDistance(prev_cloud, cloud);
     cloud->initialize_kd_tree();
     result = reg->estimateRotation(prev_cloud, cloud);    
     EXPECT_TRUE(result.foundSolutionForRotation());
 
     // Check that the Hausdorff distance decreased after the registration.
-    ASSERT_LE(metrics_.calcHausdorffDistance(prev_cloud, cloud),
+    ASSERT_LE(common::MetricUtils::HausdorffDistance(prev_cloud, cloud),
         initHausdorff);
 
   });

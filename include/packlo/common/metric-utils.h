@@ -6,8 +6,8 @@ namespace common {
 
 class MetricUtils {
   public:
-    float calcHausdorffDistance(const model::PointCloudPtr& cloud_a,                   
-      const model::PointCloudPtr& cloud_b) const;
+    static float HausdorffDistance(const model::PointCloudPtr& cloud_a,                   
+      const model::PointCloudPtr& cloud_b);
 };
 
 } // namespace common

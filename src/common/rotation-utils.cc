@@ -36,6 +36,21 @@ std::vector<model::FunctionValue> RotationUtils::RotateAroundZYZCopy(
   return rotated_values;
 }
 
+Eigen::Vector3d RotationUtils::ConvertZYZtoXYZ(
+    const std::array<double, 3>& zyz) {         
+  Eigen::Quaterniond q =                                                    
+  Eigen::AngleAxisd(zyz[0], Eigen::Vector3d::UnitZ())                     
+    * Eigen::AngleAxisd(zyz[1], Eigen::Vector3d::UnitY())                   
+    * Eigen::AngleAxisd(zyz[2], Eigen::Vector3d::UnitZ());                  
+  const double qw = q.w(), qx = q.x(), qy = q.y(), qz = q.z();              
+  return fromRotation(
+    -2*(qy*qz - qw*qx),                                   
+    qw*qw - qx*qx - qy*qy + qz*qz,                              
+    2*(qx*qz + qw*qy),                                          
+    -2*(qx*qy - qw*qz),                                          
+    qw*qw + qx*qx - qy*qy - qz*qz);                             
+}    
+
 Eigen::Matrix4f RotationUtils::createTransformationAroundX(const float alpha_rad) {
   Eigen::Matrix4f T = Eigen::Matrix4f::Identity(); 
   T(1,1) = std::cos (alpha_rad);
@@ -82,6 +97,15 @@ model::PointCloud RotationUtils::RotateAroundZYZCopy(
   model::PointCloud copy (copyCloud);
   cloud.transformPointCloudCopy(T, copy);
   return copy;
+}
+
+Eigen::Vector3d RotationUtils::fromRotation(const double r11, const double r12,
+    const double r21, const double r31, const double r32) {
+  Eigen::Vector3d res;
+  res(0) = std::atan2(r31, r32);
+  res(1) = std::asin(r21);
+  res(2) = std::atan2(r11, r12);
+  return res;
 }
 
 }

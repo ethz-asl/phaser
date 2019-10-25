@@ -4,8 +4,8 @@
 
 namespace common {
 
-float MetricUtils::calcHausdorffDistance(const model::PointCloudPtr& cloud_a,                   
-    const model::PointCloudPtr& cloud_b) const {
+float MetricUtils::HausdorffDistance(const model::PointCloudPtr& cloud_a,                   
+    const model::PointCloudPtr& cloud_b) {
   // Compare A to B: sup_a inf_b d(a,b)
   pcl::search::KdTree<common::Point_t> tree_b;                              
   tree_b.setInputCloud (cloud_b->getRawCloud());                            
