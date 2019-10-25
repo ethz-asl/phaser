@@ -36,8 +36,10 @@ model::RegistrationResult SphRegistration::registerPointCloud(
 
   //visualization::DebugVisualizer::getInstance()
     //.visualizePointCloudDiff(*cloud_prev, reg_cloud);
+  /*
   const std::vector<double> corr = aligner_->getCorrelation();
   eval_->evaluateCorrelationFromTranslation(corr);
+  */
 
   return result;
 }

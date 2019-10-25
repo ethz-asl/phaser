@@ -32,6 +32,7 @@ PointCloud::PointCloud(const std::string& ply)
 }
 
 void PointCloud::initialize_kd_tree() {
+  if (kd_tree_is_initialized_) return;
   kd_tree_.setInputCloud(cloud_);
   kd_tree_is_initialized_ = true;
 }
