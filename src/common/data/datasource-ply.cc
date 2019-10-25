@@ -8,18 +8,31 @@ DEFINE_string(PlyReadDirectory, "",
 
 namespace data {
 
+DatasourcePly::DatasourcePly() : datasource_folder_(FLAGS_PlyReadDirectory) {}
+
 void DatasourcePly::subscribeToPointClouds(
     boost::function<void(const model::PointCloudPtr&)> func) {
   callbacks_.emplace_back(func);
 }
 
-void DatasourcePly::startStreaming() {
-  std::vector<model::PointCloudPtr> clouds = readPly(FLAGS_PlyReadDirectory); 
-  for (model::PointCloudPtr& cloud : clouds) {
+void DatasourcePly::startStreaming(const uint32_t number_of_clouds) {
+  VLOG(1) << "reading ply";
+  std::vector<model::PointCloudPtr> clouds = readPly(datasource_folder_); 
+  VLOG(1) << "reading ply done. size: " << clouds.size();
+  CHECK(!clouds.empty());
+  uint32_t n_clouds = 0;
+  if (number_of_clouds == 0) n_clouds = clouds.size();
+  else n_clouds = number_of_clouds;
+  for (uint32_t i = 0u; i < number_of_clouds; ++i) {
+    model::PointCloudPtr& cloud = clouds.at(i);
     for (auto& callback : callbacks_) {
       callback(cloud);
     }
   }
+}
+
+void DatasourcePly::setDatasetFolder(std::string&& datasource) {
+  datasource_folder_ = datasource;
 }
 
 std::vector<model::PointCloudPtr> DatasourcePly::readPly(

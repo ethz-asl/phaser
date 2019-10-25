@@ -1,6 +1,5 @@
-#include <packlo/common/data/datasource-ros.h>
+#include "packlo/common/data/datasource-ros.h"
 #include <pcl_conversions/pcl_conversions.h>
-
 #include <glog/logging.h>
 
 DEFINE_string(point_cloud_topic, "/os1_cloud_node/points", 
@@ -25,13 +24,16 @@ void DatasourceRos::subscribeToPointClouds(
     << FLAGS_point_cloud_topic;
 }
 
-void DatasourceRos::startStreaming() {
+void DatasourceRos::startStreaming(const uint32_t number_of_clouds) {
+  number_of_clouds_ = number_of_clouds;
   started_ = true;
 }
 
 void DatasourceRos::pointCloudCallback(
     const sensor_msgs::PointCloud2ConstPtr& msg) {
   if (!started_) return;
+  if (number_of_clouds_ != 0 
+      && ++processed_clouds_ > number_of_clouds_) return;
 
   common::PointCloud_tPtr input_cloud (new common::PointCloud_t);               
                                                                                    

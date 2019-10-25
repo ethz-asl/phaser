@@ -11,7 +11,7 @@ class BaseDatasource {
 	public:
     virtual void subscribeToPointClouds(
         boost::function<void(const model::PointCloudPtr&)> func) = 0;
-		virtual void startStreaming() = 0;
+		virtual void startStreaming(const uint32_t number_of_clouds = 0) = 0;
 
 	protected:
 		std::vector<boost::function<void(const model::PointCloudPtr&)>> callbacks_;

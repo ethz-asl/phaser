@@ -27,16 +27,20 @@ model::RegistrationResult SphRegistrationMockRotated::registerPointCloud(
       mock_alpha_rad_, mock_beta_rad_, mock_gamma_rad_);
   syn_cloud.initialize_kd_tree();
 
+  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, syn_cloud);  
+    */
 
   std::array<double, 3> zyz;
   correlatePointcloud(*cloud_prev, syn_cloud, &zyz);
   
   model::PointCloud reg_cloud = common::RotationUtils::RotateAroundZYZCopy(
       syn_cloud, zyz[2], zyz[1], zyz[0]);
+  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, reg_cloud);  
+    */
   return model::RegistrationResult(std::move(reg_cloud), std::move(zyz));
 }
 
