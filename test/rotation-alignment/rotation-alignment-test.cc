@@ -1,11 +1,10 @@
 #include "packlo/common/data/datasource-ply.h"
 #include "packlo/backend/registration/sph-registration.h"
 #include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
+#include "packlo/common/metric-utils.h"
 
 #include <maplab-common/test/testing-entrypoint.h>
 #include <maplab-common/test/testing-predicates.h>
-
-#include <pcl/search/kdtree.h>
 
 #include <gtest/gtest.h>
 #include <cmath>
@@ -23,8 +22,8 @@ class RotationAlignmentTest : public ::testing::Test {
             .time_since_epoch().count()) {}
 
   private:
-    Eigen::Vector3d fromRotation(const double r11, const double r12, const double r21,
-        const double r31, const double r32) {
+    Eigen::Vector3d fromRotation(const double r11, const double r12,
+        const double r21, const double r31, const double r32) {
       Eigen::Vector3d res;
       res(0) = std::atan2(r31, r32);
       res(1) = std::asin(r21);
@@ -61,46 +60,11 @@ class RotationAlignmentTest : public ::testing::Test {
       return distribution_(generator_); 
     }
 
-    double calcHausdorff(const model::PointCloudPtr& cloud_a, 
-        const model::PointCloudPtr& cloud_b) {
-      // compare A to B
-      pcl::search::KdTree<common::Point_t> tree_b;
-      tree_b.setInputCloud (cloud_b->getRawCloud());
-      float max_dist_a = -std::numeric_limits<float>::max();
-      for (const auto &point : cloud_a->getRawCloud()->points)
-      {
-        std::vector<int> indices (1);
-        std::vector<float> sqr_distances (1);
-
-        tree_b.nearestKSearch (point, 1, indices, sqr_distances);
-        if (sqr_distances[0] > max_dist_a)
-          max_dist_a = sqr_distances[0];
-      }
-
-      // compare B to A
-      pcl::search::KdTree<common::Point_t> tree_a;
-      tree_a.setInputCloud (cloud_a->getRawCloud());
-      float max_dist_b = -std::numeric_limits<float>::max();
-      for (const auto &point : cloud_b->getRawCloud()->points)
-      {
-        std::vector<int> indices (1);
-        std::vector<float> sqr_distances (1);
-
-        tree_a.nearestKSearch (point, 1, indices, sqr_distances);
-        if (sqr_distances[0] > max_dist_b)
-          max_dist_b = sqr_distances[0];
-      }
-
-      max_dist_a = std::sqrt (max_dist_a);
-      max_dist_b = std::sqrt (max_dist_b);
-
-      return std::max (max_dist_a, max_dist_b);
-    }
-
     data::DatasourcePlyPtr ds_;
     registration::BaseRegistrationPtr registrator_;                             
     std::default_random_engine generator_;
     std::uniform_real_distribution<float> distribution_;
+    common::MetricUtils metrics_;
 };
 
 TEST_F(RotationAlignmentTest, RotationSelfSingle) {
@@ -121,7 +85,8 @@ TEST_F(RotationAlignmentTest, RotationSelfSingle) {
     // Convert result to xyz Euler angles and compare it.
     Eigen::Vector3d xyz_rad = convertZYZtoXYZ(result.getRotation());
     EXPECT_NEAR_EIGEN(-rot_xyz_rad, xyz_rad, 1);
-    ASSERT_LE(calcHausdorff(cloud, result.getRegisteredCloud()), 1.0);
+    ASSERT_LE(metrics_.calcHausdorffDistance(cloud,
+          result.getRegisteredCloud()), 1.0);
   });
   ds_->startStreaming(1);
 }
@@ -147,7 +112,8 @@ TEST_F(RotationAlignmentTest, RotationSelfAll) {
     EXPECT_TRUE(result.foundSolutionForRotation());
 
     // Check the result.
-    ASSERT_LE(calcHausdorff(cloud, result.getRegisteredCloud()), 2.0);
+    ASSERT_LE(metrics_.calcHausdorffDistance(cloud,
+          result.getRegisteredCloud()), 2.0);
   });
   ds_->startStreaming();
 }
@@ -173,7 +139,8 @@ TEST_F(RotationAlignmentTest, RotationHighBandwith) {
     EXPECT_TRUE(result.foundSolutionForRotation());
 
     // Check the result.
-    ASSERT_LE(calcHausdorff(cloud, result.getRegisteredCloud()), 0.75);
+    ASSERT_LE(metrics_.calcHausdorffDistance(cloud,
+          result.getRegisteredCloud()), 0.75);
   });
   ds_->startStreaming(1);
 }
@@ -196,13 +163,14 @@ TEST_F(RotationAlignmentTest, RotationEasy) {
     }
    
     // Register the point clouds.
-    float initHausdorff = calcHausdorff(prev_cloud, cloud);
+    float initHausdorff = metrics_.calcHausdorffDistance(prev_cloud, cloud);
     cloud->initialize_kd_tree();
     result = reg->estimateRotation(prev_cloud, cloud);    
     EXPECT_TRUE(result.foundSolutionForRotation());
 
     // Check that the Hausdorff distance decreased after the registration.
-    ASSERT_LE(calcHausdorff(prev_cloud, cloud), initHausdorff);
+    ASSERT_LE(metrics_.calcHausdorffDistance(prev_cloud, cloud),
+        initHausdorff);
 
   });
   ds_->startStreaming();

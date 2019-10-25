@@ -50,6 +50,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/rotation-utils.cc
    src/common/translation-utils.cc
    src/common/statistics-manager.cc
+   src/common/metric-utils.cc
 
    src/controller/distributor.cc
    src/backend/registration/base-registration.cc
