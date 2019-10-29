@@ -10,7 +10,7 @@
 
 #include <glog/logging.h>
 
-DEFINE_int32(spherical_bandwith, 128, 
+DEFINE_int32(spherical_bandwith, 256, 
     "Defines the bandwith used for the spherical registration.");
 
 namespace registration {
@@ -34,8 +34,8 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
 
-  //visualization::DebugVisualizer::getInstance()
-    //.visualizePointCloudDiff(*cloud_prev, reg_cloud);
+  visualization::DebugVisualizer::getInstance()
+    .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
   /*
   const std::vector<double> corr = aligner_->getCorrelation();
   eval_->evaluateCorrelationFromTranslation(corr);

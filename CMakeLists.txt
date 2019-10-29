@@ -112,5 +112,11 @@ catkin_add_gtest(test_transformation_alignment
 target_link_libraries(test_transformation_alignment
   ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
 
+# Voxgraph transformation estimation.
+catkin_add_gtest(test_voxgraph_alignment
+  test/transformation-alignment/voxgraph-alignment-test.cc)
+target_link_libraries(test_voxgraph_alignment
+  ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
+
 cs_install()
 cs_export()
