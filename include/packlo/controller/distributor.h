@@ -17,15 +17,20 @@ class Distributor {
     void updateStatistics();
     void getStatistics(common::StatisticsManager*) const noexcept;
 
+    void setRegistrationAlgorithm(std::string&& algorithm);
+    void setRegistrationAlgorithm(const std::string& algorithm);
+    void initializeRegistrationAlgorithm();
+
   private:
     void subscribeToTopics();
-    void initializeRegistrationAlgorithm(const std::string& type);
     void pointCloudCallback(const model::PointCloudPtr& cloud);
+    void registerPointCloud(const model::PointCloudPtr& cloud);
     void preprocessPointCloud(const model::PointCloudPtr& cloud);
     
     data::DatasourcePtr ds_;
-    std::unique_ptr<registration::BaseRegistration> registrator_;
+    registration::BaseRegistrationPtr registrator_;
     model::PointCloudPtr prev_point_cloud_;
+    std::string registration_algorithm_;
 
     // Statistics
     const std::string kManagerReferenceName = "Distributor";

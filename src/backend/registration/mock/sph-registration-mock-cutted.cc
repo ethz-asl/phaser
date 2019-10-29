@@ -7,7 +7,7 @@
 
 namespace registration {
 
-void SphRegistrationMockCutted::registerPointCloud(
+model::RegistrationResult SphRegistrationMockCutted::registerPointCloud(
     model::PointCloudPtr cloud_prev, 
     model::PointCloudPtr) {
   common::Point_t min_pt, max_pt;
@@ -32,6 +32,7 @@ void SphRegistrationMockCutted::registerPointCloud(
   
   model::PointCloud reg_cloud = common::RotationUtils::RotateAroundZYZCopy(
       syn_cloud, zyz[2], zyz[1], zyz[0]);
+  return model::RegistrationResult(std::move(reg_cloud), std::move(zyz));
 }
 
 model::PointCloud SphRegistrationMockCutted::cutPointCloud(

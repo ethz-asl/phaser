@@ -6,11 +6,11 @@
 #include <fftw3.h>
 #include <glog/logging.h>
 
-DEFINE_double(phase_discretize_lower, -80,
+DEFINE_double(phase_discretize_lower, -250,
     "Specifies the lower bound for the discretization.");
-DEFINE_double(phase_discretize_upper, 80,
+DEFINE_double(phase_discretize_upper, 250,
     "Specifies the upper bound for the discretization.");
-DEFINE_double(phase_n_voxels, 81,
+DEFINE_double(phase_n_voxels, 361,
     "Specifies the number of voxels for the discretization.");
 
 namespace alignment {
@@ -102,7 +102,7 @@ void PhaseAligner::discretizePointcloud(
       FLAGS_phase_discretize_lower, FLAGS_phase_discretize_upper);
 
   // Discretize the point cloud using an cartesian grid.
-  Eigen::VectorXf x_bins, y_bins, z_bins;
+  Eigen::VectorXd x_bins, y_bins, z_bins;
   igl::histc(data.row(0), edges, x_bins);
   igl::histc(data.row(1), edges, y_bins);
   igl::histc(data.row(2), edges, z_bins);
@@ -111,9 +111,13 @@ void PhaseAligner::discretizePointcloud(
   f.setZero();
   hist.setZero();
   const uint32_t n_points = data.cols();
+  const uint32_t n_f = f.rows();
   for (uint16_t i = 0u; i < n_points; ++i) {
     const uint32_t lin_index = sub2ind(x_bins(i), y_bins(i), z_bins(i), 
         FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);
+    if (lin_index > n_f) {
+      continue;
+    }
     f(lin_index) = f(lin_index) + cloud.pointAt(i).intensity;
     hist(lin_index) = hist(lin_index) + 1;
   }

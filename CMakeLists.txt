@@ -1,10 +1,16 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(packlo)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS         "-Wall -Wextra -msse -msse2 -msse3 -msse4 -O3 -DNDEBUG")
-set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -Werror")
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
+if(COMPILER_SUPPORTS_CXX14)
+  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_FLAGS         "-Wall -Wextra -msse -msse2 -msse3 -msse4 -O3 -DNDEBUG")
+  set(CMAKE_CXX_FLAGS_DEBUG   "-O0 -g")
+  set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG -Werror")
+else()
+  message(FATAL_ERROR "The compiler does not support C++14.")
+endif()
 
 list(APPEND CMAKE_FIND_ROOT_PATH ${CMAKE_SOURCE_DIR})
 find_package(NLOPT REQUIRED)
@@ -40,6 +46,7 @@ cs_add_library(${PROJECT_NAME}_lib
 
    src/model/point-cloud.cc
    src/model/function-value.cc
+   src/model/registration-result.cc
 
    src/common/data/datasource-ros.cc
    src/common/data/datasource-ply.cc
@@ -49,6 +56,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/rotation-utils.cc
    src/common/translation-utils.cc
    src/common/statistics-manager.cc
+   src/common/metric-utils.cc
 
    src/controller/distributor.cc
    src/backend/registration/base-registration.cc
@@ -102,6 +110,12 @@ target_link_libraries(test_translation_alignment
 catkin_add_gtest(test_transformation_alignment
   test/transformation-alignment/transformation-alignment-test.cc)
 target_link_libraries(test_transformation_alignment
+  ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
+
+# Voxgraph transformation estimation.
+catkin_add_gtest(test_voxgraph_alignment
+  test/transformation-alignment/voxgraph-alignment-test.cc)
+target_link_libraries(test_voxgraph_alignment
   ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
 
 cs_install()

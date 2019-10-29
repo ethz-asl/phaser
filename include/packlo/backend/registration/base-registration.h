@@ -1,7 +1,9 @@
 #pragma once
 
 #include "packlo/model/point-cloud.h"
+#include "packlo/model/registration-result.h"
 #include "packlo/common/statistics-manager.h"
+#include <memory>
 
 namespace registration {
 
@@ -9,7 +11,8 @@ class BaseRegistration {
   public:
 
     virtual ~BaseRegistration() = default;
-    virtual void registerPointCloud(model::PointCloudPtr cloud_prev, 
+    virtual model::RegistrationResult registerPointCloud(
+        model::PointCloudPtr cloud_prev, 
         model::PointCloudPtr cloud_cur) = 0;
 
     virtual void getStatistics(common::StatisticsManager* manager)
@@ -23,5 +26,7 @@ class BaseRegistration {
 
     common::StatisticsManager statistics_manager_;
 };
+
+using BaseRegistrationPtr = std::unique_ptr<BaseRegistration>;
 
 } // namespace registration

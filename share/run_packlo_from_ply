@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+REST=$@
+
+rosrun packlo packlo \
+    --alsologtostderr=1 \
+    --v=3 \
+		--enable_debug=true \
+		--registration_algorithm="sph" \
+		--spherical_bandwith=128 \
+		--datasource="ply" \
+		--PlyReadDirectory="/home/berlukas/Documents/workspace/maplab/src/packlo/test/test-data/gonzen/easy-submaps/" \
+    $REST

@@ -48,7 +48,7 @@ std::vector<common::Point_t> SphericalSampler::convertCartesian(
   const float n_grid = static_cast<float>(grid.size()) / 25;
   const float step_distance = 0.00;
   VLOG(1) << "step distance = " << step_distance << " n: " << n_grid;
-  float dist = 10.0f;
+  float dist = 20.0f;
   for (const common::Point_t& p : grid) {
     common::Point_t cart_p;
     //VLOG(1) << "sin: " << std::sin(p.y) << " cos: " << std::cos(p.y);

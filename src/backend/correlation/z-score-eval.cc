@@ -11,9 +11,9 @@
 // Good values: 500, 5.75, 0.05
 //              70, 3.75, 0.05
 //              210, 5.66, 0.05
-DEFINE_double(z_score_lag_percentile, 210, 
+DEFINE_double(z_score_lag_percentile, 0.05, 
     "The window used for smoothing the function.");
-DEFINE_double(z_score_threshold, 5.66, 
+DEFINE_double(z_score_threshold, 4.66, 
     "Defines the number of n-std requires to include a signal.");
 DEFINE_double(z_score_influence, 0.05, 
     "The influence of the current data point to the lag mean.");

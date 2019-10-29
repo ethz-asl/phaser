@@ -12,7 +12,7 @@ class TranslationUtils {
 public:
   static void TranslateXYZ(model::PointCloud &cloud, const float x, 
       const float y, const float z);
-  static model::PointCloud TranslateXYZCopy(model::PointCloud &cloud,
+  static model::PointCloud TranslateXYZCopy(const model::PointCloud &cloud,
       const float x, const float y, const float z);
 
 private:
