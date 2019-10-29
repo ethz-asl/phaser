@@ -6,7 +6,7 @@
 #include <nlopt.hpp>
 #include <cmath>
 
-DEFINE_double(nlopt_xtol, 1e-4, 
+DEFINE_double(nlopt_xtol, 1e-5, 
     "Defines the tolerance for the optimization.");
 
 namespace alignment {

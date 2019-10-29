@@ -11,8 +11,6 @@ double CloudObjective::optimize(const std::vector<double>& x) {
   T(0,3) = x[0];
   T(1,3) = x[1];
   T(2,3) = x[2];
-  VLOG(1) << "in objective with: " 
-    << x[0] << ", " << x[1] << ", " << x[2];
 
   model::PointCloud transformed_cloud;
   cloud_cur_->transformPointCloudCopy(T, transformed_cloud);
@@ -26,20 +24,9 @@ double CloudObjective::optimize(const std::vector<double>& x) {
   transformed_points.conservativeResize(3, min_size);
   prev_points.conservativeResize(3, min_size);
 
-  /*
-  VLOG(1) << "function values: " << f_prev_->size() << " vs " << f_cur_->size();
-  VLOG(1) << "transformed: " << transformed_points.rows() << " rows and "
-    << transformed_points.cols() << " cols.\n" << transformed_points;
-  VLOG(1) << "----------------------------------------------------------------";
-  VLOG(1) << "prev_points: " << prev_points.rows() << " rows and "
-    << prev_points.cols() << " cols. \n" << prev_points;;
-  VLOG(1) << "----------------------------------------------------------------";
-  */
-
   CHECK(transformed_points.rows() == prev_points.rows());
   CHECK(transformed_points.cols() == prev_points.cols());
   float error = (prev_points.array() - transformed_points.array()).pow(2).sum();
-  VLOG(1) << "Current error: " << error;
   return (prev_points.array() - transformed_points.array()).pow(2).sum();
 }
 

@@ -10,7 +10,7 @@
 
 #include <glog/logging.h>
 
-DEFINE_int32(spherical_bandwith, 256, 
+DEFINE_int32(spherical_bandwith, 128, 
     "Defines the bandwith used for the spherical registration.");
 
 namespace registration {
@@ -19,8 +19,8 @@ SphRegistration::SphRegistration()
     : BaseRegistration("SphRegistration"),
     sampler_(FLAGS_spherical_bandwith) {
   //aligner_ = std::make_unique<alignment::RangeBasedAligner>();
-  //aligner_ = std::make_unique<alignment::OptimizedAligner>();
-  aligner_ = std::make_unique<alignment::PhaseAligner>();
+  aligner_ = std::make_unique<alignment::OptimizedAligner>();
+  //aligner_ = std::make_unique<alignment::PhaseAligner>();
   eval_ = std::make_unique<correlation::ZScoreEval>();
 }
 
@@ -29,9 +29,10 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   CHECK(cloud_prev);
   CHECK(cloud_cur);
   cloud_prev->initialize_kd_tree();
-  cloud_cur->initialize_kd_tree();
 
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
+  result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
+  result.combine(estimateRotation(cloud_prev, result.getRegisteredCloud()));
   result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
 
   visualization::DebugVisualizer::getInstance()
@@ -47,6 +48,7 @@ model::RegistrationResult SphRegistration::registerPointCloud(
 model::RegistrationResult SphRegistration::estimateRotation(
     model::PointCloudPtr cloud_prev, 
     model::PointCloudPtr cloud_cur) {
+  cloud_cur->initialize_kd_tree();
 
   std::array<double, 3> zyz;
   correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
