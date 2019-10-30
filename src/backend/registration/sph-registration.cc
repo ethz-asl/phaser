@@ -19,8 +19,8 @@ SphRegistration::SphRegistration()
     : BaseRegistration("SphRegistration"),
     sampler_(FLAGS_spherical_bandwith) {
   //aligner_ = std::make_unique<alignment::RangeBasedAligner>();
-  aligner_ = std::make_unique<alignment::OptimizedAligner>();
-  //aligner_ = std::make_unique<alignment::PhaseAligner>();
+  //aligner_ = std::make_unique<alignment::OptimizedAligner>();
+  aligner_ = std::make_unique<alignment::PhaseAligner>();
   eval_ = std::make_unique<correlation::ZScoreEval>();
 }
 
@@ -30,13 +30,16 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   CHECK(cloud_cur);
   cloud_prev->initialize_kd_tree();
 
+  //visualization::DebugVisualizer::getInstance()
+    //.visualizePointCloudDiff(*cloud_prev, *cloud_cur);
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
-  result.combine(estimateRotation(cloud_prev, result.getRegisteredCloud()));
-  result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
+  //result.combine(estimateRotation(cloud_prev, result.getRegisteredCloud()));
+  //result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
 
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
+
   /*
   const std::vector<double> corr = aligner_->getCorrelation();
   eval_->evaluateCorrelationFromTranslation(corr);
@@ -68,6 +71,8 @@ model::RegistrationResult SphRegistration::estimateRotation(
 model::RegistrationResult SphRegistration::estimateTranslation(
     model::PointCloudPtr cloud_prev, 
     model::PointCloudPtr rot_cloud) {
+  //visualization::DebugVisualizer::getInstance()
+    //.visualizePointCloudDiff(*cloud_prev, *rot_cloud);
   common::Vector_t xyz;
   const double duration_translation_f_ms = common::executeTimedFunction(
       &alignment::BaseAligner::alignRegistered, 
@@ -81,6 +86,7 @@ model::RegistrationResult SphRegistration::estimateTranslation(
     << "ms.";
   model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
       *rot_cloud, xyz(0), xyz(1), xyz(2));
+
   return model::RegistrationResult(std::move(reg_cloud), std::move(xyz));
 }
 

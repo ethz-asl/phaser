@@ -39,7 +39,7 @@ public:
   PointCloud clone() const;
 
   void initialize_kd_tree();
-  void writeToFile();
+  void writeToFile(std::string&& directory = "");
 
 private:
   void readFromFile(const std::string& ply);
@@ -47,6 +47,7 @@ private:
   pcl::KdTreeFLANN<common::Point_t> kd_tree_; 
 
   bool kd_tree_is_initialized_;
+  std::string ply_directory_;
 };
 
 using PointCloudPtr = std::shared_ptr<PointCloud>;

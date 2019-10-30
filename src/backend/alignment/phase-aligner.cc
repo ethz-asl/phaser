@@ -7,9 +7,9 @@
 #include <fftw3.h>
 #include <glog/logging.h>
 
-DEFINE_double(phase_discretize_lower, -250,
+DEFINE_double(phase_discretize_lower, -70,
     "Specifies the lower bound for the discretization.");
-DEFINE_double(phase_discretize_upper, 250,
+DEFINE_double(phase_discretize_upper, 70,
     "Specifies the upper bound for the discretization.");
 DEFINE_double(phase_n_voxels, 361,
     "Specifies the number of voxels for the discretization.");
@@ -66,6 +66,17 @@ void PhaseAligner::alignRegistered(
     const std::vector<model::FunctionValue>&, 
     common::Vector_t* xyz) {
   CHECK(xyz);
+  
+  /*
+  model::PointCloud cloud_prev_zero_meaned 
+    = common::PointCloudUtils::performZeroMeaning(cloud_prev);
+  model::PointCloud cloud_reg_zero_meaned 
+    = common::PointCloudUtils::performZeroMeaning(cloud_reg);
+
+  cloud_prev_zero_meaned.writeToFile("/home/berlukas/Documents/submaps/rot/");
+  cloud_reg_zero_meaned.writeToFile("/home/berlukas/Documents/submaps/rot/");
+    */
+
   discretizePointcloud(cloud_prev, f_, hist_);
   discretizePointcloud(cloud_reg, g_, hist_);
 
@@ -86,7 +97,7 @@ void PhaseAligner::alignRegistered(
   const auto max_corr = std::max_element(c_, c_+n_voxels_);
   const int max = std::distance(c_, max_corr);
   VLOG(1) << "Found max correlation at " << max 
-    << " with the value :" << *max_corr;
+    << " with the value:" << *max_corr;
 
   std::array<uint16_t, 3> max_xyz = ind2sub(max, FLAGS_phase_n_voxels, 
       FLAGS_phase_n_voxels);
@@ -150,7 +161,7 @@ double PhaseAligner::computeTranslationFromIndex(double index) {
   if (index <= n_voxels_half) {
     return (index*width) / FLAGS_phase_n_voxels;
   } 
-  return (index-FLAGS_phase_n_voxels) * width/ FLAGS_phase_n_voxels;
+  return ((index-FLAGS_phase_n_voxels) * width/ FLAGS_phase_n_voxels);
 }
 
 std::vector<double> PhaseAligner::getCorrelation() const {

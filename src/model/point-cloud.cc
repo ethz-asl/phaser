@@ -19,8 +19,8 @@ DEFINE_int32(sampling_neighbors, 1,
 namespace model {
 
 PointCloud::PointCloud() 
-  : cloud_(new common::PointCloud_t), kd_tree_is_initialized_(false) {
-}
+  : cloud_(new common::PointCloud_t), kd_tree_is_initialized_(false),
+  ply_directory_(FLAGS_PlyWriteDirectory) {}
 
 PointCloud::PointCloud(common::PointCloud_tPtr cloud) 
   : cloud_(cloud), kd_tree_is_initialized_(false) {
@@ -109,20 +109,22 @@ PointCloud PointCloud::clone() const {
   return PointCloud(cloned);
 }
 
-void PointCloud::writeToFile() {
-  CHECK(!FLAGS_PlyWriteDirectory.empty());
+void PointCloud::writeToFile(std::string&& directory) {
+  if (directory.empty()) directory = ply_directory_;
+  CHECK(!directory.empty());
   pcl::PLYWriter writer;
   std::vector<std::string> files;
-  data::FileSystemHelper::readDirectory(FLAGS_PlyWriteDirectory, &files); 
-  std::string file_name = FLAGS_PlyWriteDirectory + FLAGS_PlyPrefix 
+  data::FileSystemHelper::readDirectory(directory, &files); 
+  std::string file_name = directory + FLAGS_PlyPrefix 
        + std::to_string(files.size() + 1) + ".ply";
 
+  VLOG(2) << "Writing PLY file to: " << file_name;
   writer.write(file_name, *cloud_);
 }
 
 void PointCloud::readFromFile(const std::string& ply) {
   CHECK(!ply.empty());
-  VLOG(1) << "Reading PLY file from: " << ply;
+  VLOG(2) << "Reading PLY file from: " << ply;
   common::PointCloud_tPtr cloud (new common::PointCloud_t);
   pcl::PLYReader reader;
   reader.read(ply, *cloud); 
