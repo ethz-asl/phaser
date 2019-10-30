@@ -67,16 +67,6 @@ void PhaseAligner::alignRegistered(
     common::Vector_t* xyz) {
   CHECK(xyz);
   
-  /*
-  model::PointCloud cloud_prev_zero_meaned 
-    = common::PointCloudUtils::performZeroMeaning(cloud_prev);
-  model::PointCloud cloud_reg_zero_meaned 
-    = common::PointCloudUtils::performZeroMeaning(cloud_reg);
-
-  cloud_prev_zero_meaned.writeToFile("/home/berlukas/Documents/submaps/rot/");
-  cloud_reg_zero_meaned.writeToFile("/home/berlukas/Documents/submaps/rot/");
-    */
-
   discretizePointcloud(cloud_prev, f_, hist_);
   discretizePointcloud(cloud_reg, g_, hist_);
 
@@ -161,7 +151,7 @@ double PhaseAligner::computeTranslationFromIndex(double index) {
   if (index <= n_voxels_half) {
     return (index*width) / FLAGS_phase_n_voxels;
   } 
-  return ((index-FLAGS_phase_n_voxels) * width/ FLAGS_phase_n_voxels);
+  return (index-FLAGS_phase_n_voxels) * width/ FLAGS_phase_n_voxels;
 }
 
 std::vector<double> PhaseAligner::getCorrelation() const {

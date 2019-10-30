@@ -38,7 +38,6 @@ class SphRegistration : public BaseRegistration {
        const model::PointCloud& target,                                            
        std::array<double, 3>* const zyz);	
 
-
 		backend::SphericalCorrelation sph_corr_; 
 		common::SphericalSampler sampler_;
 		std::vector<model::FunctionValue> f_values_; 
@@ -50,6 +49,9 @@ class SphRegistration : public BaseRegistration {
 		const std::string kSampleDurationKey = "Sampling";
 		const std::string kCorrelationDurationKey = "Correlation";
 		const std::string kTranslationDurationKey = "Translation";
+
+  private:
+    void initializeAlgorithms();
 };
 
 } // namespace registration

@@ -12,16 +12,34 @@
 
 DEFINE_int32(spherical_bandwith, 128, 
     "Defines the bandwith used for the spherical registration.");
+DEFINE_string(alignment_algorithm, "phase",
+    "Sets the algorithm used for the translational alignment.");
+DEFINE_string(evaluation_algorithm, "zscore", 
+    "Defines the algorithm used for the evaluation of the correlations.");
 
 namespace registration {
 
 SphRegistration::SphRegistration() 
     : BaseRegistration("SphRegistration"),
     sampler_(FLAGS_spherical_bandwith) {
-  //aligner_ = std::make_unique<alignment::RangeBasedAligner>();
-  //aligner_ = std::make_unique<alignment::OptimizedAligner>();
-  aligner_ = std::make_unique<alignment::PhaseAligner>();
-  eval_ = std::make_unique<correlation::ZScoreEval>();
+  initializeAlgorithms();
+}
+
+void SphRegistration::initializeAlgorithms() {
+  // Initialize the translational alignment.
+  if (FLAGS_alignment_algorithm == "phase")
+    aligner_ = std::make_unique<alignment::PhaseAligner>();
+  else if (FLAGS_alignment_algorithm == "optimized")
+    aligner_ = std::make_unique<alignment::OptimizedAligner>();
+  else if (FLAGS_alignment_algorithm == "averaging")
+    aligner_ = std::make_unique<alignment::RangeBasedAligner>();
+  else
+    LOG(FATAL) << "Unknown alignment algorithm specificed.";
+
+  if (FLAGS_evaluation_algorithm == "zscore")
+    eval_ = std::make_unique<correlation::ZScoreEval>();
+  else
+    LOG(FATAL) << "Unknown evaluation algorithm specificed.";
 }
 
 model::RegistrationResult SphRegistration::registerPointCloud(
@@ -30,16 +48,13 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   CHECK(cloud_cur);
   cloud_prev->initialize_kd_tree();
 
-  //visualization::DebugVisualizer::getInstance()
-    //.visualizePointCloudDiff(*cloud_prev, *cloud_cur);
+  visualization::DebugVisualizer::getInstance()
+    .visualizePointCloudDiff(*cloud_prev, *cloud_cur);
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
-  //result.combine(estimateRotation(cloud_prev, result.getRegisteredCloud()));
-  //result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
 
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-
   /*
   const std::vector<double> corr = aligner_->getCorrelation();
   eval_->evaluateCorrelationFromTranslation(corr);
@@ -57,13 +72,6 @@ model::RegistrationResult SphRegistration::estimateRotation(
   correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
   model::PointCloud rot_cloud = common::RotationUtils::RotateAroundZYZCopy(
       *cloud_cur, zyz[2], zyz[1], zyz[0]);
-
-  /*
-  rot_cloud.initialize_kd_tree();
-  sampler_.sampleUniformly(rot_cloud, &h_values_);
-  CHECK(!f_values_.empty());
-  CHECK(!h_values_.empty());
-  */
 
   return model::RegistrationResult (std::move(rot_cloud), std::move(zyz));
 }
