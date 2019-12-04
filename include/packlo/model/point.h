@@ -1,56 +1,57 @@
 #pragma once
 
-#include <Eigen/Core>
-
 namespace model {
 
 template <typename T>
-class PointXYZ {
-  public: 
-    explicit PointXYZ(T x, T y, T z) 
-      : x_(x), y_(y), z_(z) {}
+class PointI {
+ public:
+  explicit PointI(T intensity) : intensity_(intensity) {}
 
-    T& x() { return x_; }
-    T x() const noexcept { return x_; }
+  T& intensity() {
+    return intensity_;
+  }
+  T intensity() const noexcept {
+    return intensity_;
+  }
 
-    T& y() { return y_; }
-    T y() const noexcept { return y_; }
-
-    T& z() { return z_; }
-    T z() const noexcept { return z_; }
-
-  private:
-    T x_;
-    T y_;
-    T z_;
+ private:
+  T intensity_;
 };
 
 template <typename T>
-class PointXYZI : public PointXYZ<T> {
-  public: 
-    explicit PointXYZI(T x, T y, T z, uint16_t i) 
-      : PointXYZ<T>(x,y,z), i_(i) {}
+class PointIS : public PointI<T> {
+ public:
+  explicit PointIS(T intensity, uint16_t semantic)
+      : PointI<T>(intensity), semantic_(semantic) {}
 
-    uint16_t& i() { return i_; }
-    uint16_t i() const noexcept { return i_; }
+  uint16_t& semantic() {
+    return semantic_;
+  }
+  uint16_t semantic() const noexcept {
+    return semantic_;
+  }
 
-  private:
-    uint16_t i_;
+ private:
+  uint16_t semantic_;
 };
 
 template <typename T>
-class PointXYZIR : public PointXYZI<T> {
-  public: 
-    explicit PointXYZIR(T x, T y, T z, uint16_t i, uint16_t range) 
-      : PointXYZI<T>(x,y,z, i), range_(range) {}
+class PointIST : public PointIS<T> {
+ public:
+  explicit PointIST(T intensity, uint16_t semantic, uint16_t track)
+      : PointIS<T>(intensity, semantic), track_(track) {}
 
-    uint16_t& range() { return range_; }
-    uint16_t range() const noexcept { return range_; }
+  uint16_t& track() {
+    return track_;
+  }
+  uint16_t track() const noexcept {
+    return track_;
+  }
 
-  private:
-    uint16_t range_;
+ private:
+  uint16_t track_;
 };
 
-using PointXYZIf = PointXYZI<float>;
+using PointI = PointI<uint16_t>;
 
 } // namespace model
