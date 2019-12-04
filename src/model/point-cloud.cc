@@ -83,8 +83,8 @@ void PointCloud::transformPointCloud(const Eigen::Matrix4f &T) {
 }
 
 void PointCloud::transformPointCloudCopy(
-    const Eigen::Matrix4f& T, PointCloud& copy) const {
-  pcl::transformPointCloud (*cloud_, *copy.cloud_, T);
+    const Eigen::Matrix4f& T, PointCloud* copy) const {
+  pcl::transformPointCloud(*cloud_, *(*copy).cloud_, T);
 }
 
 common::PointCloud_tPtr PointCloud::getRawCloud() const {

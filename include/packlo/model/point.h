@@ -1,28 +1,27 @@
-#pragma once
+#ifndef INCLUDE_PACKLO_MODEL_POINT_H_
+#define INCLUDE_PACKLO_MODEL_POINT_H_
 
 namespace model {
 
-template <typename T>
 class PointI {
  public:
-  explicit PointI(T intensity) : intensity_(intensity) {}
+  explicit PointI(uint16_t intensity) : intensity_(intensity) {}
 
-  T& intensity() {
+  uint16_t& intensity() {
     return intensity_;
   }
-  T intensity() const noexcept {
+  uint16_t intensity() const noexcept {
     return intensity_;
   }
 
  private:
-  T intensity_;
+  uint16_t intensity_;
 };
 
-template <typename T>
-class PointIS : public PointI<T> {
+class PointIS : public PointI {
  public:
-  explicit PointIS(T intensity, uint16_t semantic)
-      : PointI<T>(intensity), semantic_(semantic) {}
+  explicit PointIS(uint16_t intensity, uint16_t semantic)
+      : PointI(intensity), semantic_(semantic) {}
 
   uint16_t& semantic() {
     return semantic_;
@@ -35,11 +34,10 @@ class PointIS : public PointI<T> {
   uint16_t semantic_;
 };
 
-template <typename T>
-class PointIST : public PointIS<T> {
+class PointIST : public PointIS {
  public:
-  explicit PointIST(T intensity, uint16_t semantic, uint16_t track)
-      : PointIS<T>(intensity, semantic), track_(track) {}
+  explicit PointIST(uint16_t intensity, uint16_t semantic, uint16_t track)
+      : PointIS(intensity, semantic), track_(track) {}
 
   uint16_t& track() {
     return track_;
@@ -52,6 +50,6 @@ class PointIST : public PointIS<T> {
   uint16_t track_;
 };
 
-using PointI = PointI<uint16_t>;
+}  // namespace model
 
-} // namespace model
+#endif  // INCLUDE_PACKLO_MODEL_POINT_H_
