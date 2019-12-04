@@ -47,10 +47,14 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(
 namespace common {
 // using Point_t = ::OusterPointType;
 using Point_t = pcl::PointXYZI;
-// using Point_t = ::SemanticKITTIPointType;
 using PointCloud_t = pcl::PointCloud<Point_t>;
 using PointCloud_tPtr = pcl::PointCloud<Point_t>::Ptr;
+
+using ExtractedPoint_t = ::SemanticKITTIPointType;
+using ExtractedPointCloud_t = pcl::PointCloud<ExtractedPoint_t>;
+using ExtractedPointCloud_tPtr = pcl::PointCloud<ExtractedPoint_t>::Ptr;
+
 using Vector_t = Eigen::Vector3d;
-}
+}  // namespace common
 
 #endif  // INCLUDE_PACKLO_COMMON_POINT_TYPES_H_

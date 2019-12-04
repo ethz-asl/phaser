@@ -17,7 +17,7 @@ model::PointCloud TranslationUtils::TranslateXYZCopy(
   Eigen::Matrix4f T = createTransformationXYZ(x, y, z);
   common::PointCloud_tPtr copyCloud (new common::PointCloud_t);
   model::PointCloud copy (copyCloud);
-  cloud.transformPointCloudCopy(T, copy);
+  cloud.transformPointCloudCopy(T, &copy);
   return copy;
 }
 
