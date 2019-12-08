@@ -1,10 +1,11 @@
 #include "packlo/model/point-cloud.h"
 #include "packlo/common/data/file-system-helper.h"
 
-#include <pcl/kdtree/impl/kdtree_flann.hpp>
-#include <pcl/common/transforms.h>
 #include <pcl/common/io.h>
+#include <pcl/common/transforms.h>
+#include <pcl/filters/extract_indices.h>
 #include <pcl/io/ply_io.h>
+#include <pcl/kdtree/impl/kdtree_flann.hpp>
 
 #include <glog/logging.h>
 #include <chrono>
@@ -106,6 +107,10 @@ common::PointCloud_tPtr PointCloud::getRawCloud() const {
   return cloud_;
 }
 
+common::ExtractedPointCloud_tPtr PointCloud::getRawInfoCloud() const {
+  return cloud_info_;
+}
+
 common::Point_t& PointCloud::pointAt(const std::size_t idx) {
   CHECK_NOTNULL(cloud_);
   return cloud_->points[idx];
@@ -160,6 +165,28 @@ void PointCloud::writeToFile(std::string&& directory) {
 
   VLOG(2) << "Writing PLY file to: " << file_name;
   writer.write(file_name, *cloud_);
+}
+
+void PointCloud::updateInfo(const pcl::IndicesConstPtr indices) {
+  // Perform a manual deep copy of the elements,
+  // since pcl::ExtractIndices does not work off the shelf
+  // with custom point types.
+  common::ExtractedPointCloud_tPtr cloud_info_copy(
+      new common::ExtractedPointCloud_t);
+  VLOG(1) << "size: " << cloud_info_->points.size();
+  VLOG(1) << "size: " << indices->size();
+  const uint16_t n_points = cloud_info_->points.size();
+  for (uint16_t i = 0u; i < n_points; ++i) {
+    if (std::find(indices->begin(), indices->end(), i) != indices->end())
+      continue;
+    cloud_info_copy->points.emplace_back(cloud_info_->points.at(i));
+  }
+  VLOG(1) << "size: " << cloud_info_copy->points.size();
+  cloud_info_ = cloud_info_copy;
+}
+
+void PointCloud::updateCloud() {
+  pcl::copyPointCloud(*cloud_info_, *cloud_);
 }
 
 void PointCloud::readFromFile(const std::string& ply) {

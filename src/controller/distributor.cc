@@ -69,7 +69,7 @@ void Distributor::setRegistrationAlgorithm(const std::string& algorithm) {
 void Distributor::pointCloudCallback(
     const model::PointCloudPtr& cloud) {
   VLOG(1) << "received cloud in callback";
-  // preprocessPointCloud(cloud);
+  preprocessPointCloud(cloud);
   if (FLAGS_app_mode == "registration")
     registerPointCloud(cloud);
   else if (FLAGS_app_mode == "store_ply")
@@ -94,18 +94,22 @@ void Distributor::preprocessPointCloud(
   common::PointCloud_tPtr input_cloud = cloud->getRawCloud();
 
   // Why is this needed?
+  /*
   pcl::PassThrough<common::Point_t> pass;
   pass.setInputCloud(input_cloud);
   pass.setFilterFieldName("z");
   pass.setFilterLimits(0.0, 0.0);
   pass.setFilterLimitsNegative(true);
   pass.filter(*input_cloud);
+  cloud->updateInfo(pass.getRemovedIndices());
+  */
 
   // Only for speedup
   pcl::VoxelGrid<common::Point_t> avg;
   avg.setInputCloud(input_cloud);
   avg.setLeafSize(0.25f, 0.25f, 0.25f);
   avg.filter(*input_cloud);
+  cloud->updateInfo(avg.getRemovedIndices());
 }
 
 void Distributor::updateStatistics() {

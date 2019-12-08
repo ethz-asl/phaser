@@ -34,6 +34,7 @@ class PointCloud {
       const Eigen::Matrix4f& T, PointCloud* copy) const;
 
   common::PointCloud_tPtr getRawCloud() const;
+  common::ExtractedPointCloud_tPtr getRawInfoCloud() const;
 
   common::Point_t& pointAt(const std::size_t idx);
   const common::Point_t& pointAt(const std::size_t idx) const;
@@ -46,6 +47,9 @@ class PointCloud {
 
   void initialize_kd_tree();
   void writeToFile(std::string&& directory = "");
+
+  void updateInfo(const pcl::IndicesConstPtr indices);
+  void updateCloud();
 
  private:
   void convertInputPointCloud(common::ExtractedPointCloud_tPtr cloud);
