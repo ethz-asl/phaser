@@ -24,7 +24,9 @@ PointCloud::PointCloud()
       ply_directory_(FLAGS_PlyWriteDirectory) {}
 
 PointCloud::PointCloud(common::PointCloud_tPtr cloud)
-    : cloud_(cloud), kd_tree_is_initialized_(false) {}
+    : cloud_(cloud),
+      cloud_info_(new common::ExtractedPointCloud_t),
+      kd_tree_is_initialized_(false) {}
 
 PointCloud::PointCloud(common::ExtractedPointCloud_tPtr cloud)
     : cloud_(new common::PointCloud_t),
@@ -34,9 +36,9 @@ PointCloud::PointCloud(common::ExtractedPointCloud_tPtr cloud)
 }
 
 PointCloud::PointCloud(const std::string& ply)
-    : kd_tree_is_initialized_(false),
-      cloud_(new common::PointCloud_t),
-      cloud_info_(new common::ExtractedPointCloud_t) {
+    : cloud_(new common::PointCloud_t),
+      cloud_info_(new common::ExtractedPointCloud_t),
+      kd_tree_is_initialized_(false) {
   readFromFile(ply);
 }
 
@@ -97,6 +99,7 @@ void PointCloud::transformPointCloud(const Eigen::Matrix4f &T) {
 void PointCloud::transformPointCloudCopy(
     const Eigen::Matrix4f& T, PointCloud* copy) const {
   pcl::transformPointCloud(*cloud_, *(*copy).cloud_, T);
+  pcl::copyPointCloud(*cloud_info_, *(*copy).cloud_info_);
 }
 
 common::PointCloud_tPtr PointCloud::getRawCloud() const {
@@ -104,23 +107,28 @@ common::PointCloud_tPtr PointCloud::getRawCloud() const {
 }
 
 common::Point_t& PointCloud::pointAt(const std::size_t idx) {
+  CHECK_NOTNULL(cloud_);
   return cloud_->points[idx];
 }
 
 const common::Point_t& PointCloud::pointAt(const std::size_t idx) const {
+  CHECK_NOTNULL(cloud_);
   return cloud_->points[idx];
 }
 
 common::ExtractedPoint_t& PointCloud::pointInfoAt(const std::size_t idx) {
+  CHECK_NOTNULL(cloud_info_);
   return cloud_info_->points[idx];
 }
 
 const common::ExtractedPoint_t& PointCloud::pointInfoAt(
     const std::size_t idx) const {
+  CHECK_NOTNULL(cloud_info_);
   return cloud_info_->points[idx];
 }
 
 std::size_t PointCloud::size() const {
+  CHECK_NOTNULL(cloud_);
   return cloud_->points.size();
 }
 
@@ -130,12 +138,15 @@ void PointCloud::convertInputPointCloud(
   CHECK_NOTNULL(cloud_);
   pcl::copyPointCloud(*cloud, *cloud_info_);
   pcl::copyPointCloud(*cloud, *cloud_);
+  VLOG(1) << "pcl size: " << cloud_->points.size();
+  VLOG(1) << "pcl info size: " << cloud_info_->points.size();
 }
 
 PointCloud PointCloud::clone() const {
-  common::PointCloud_tPtr cloned(new common::PointCloud_t);
-  pcl::copyPointCloud(*cloud_, *cloned);
-  return PointCloud(cloned);
+  PointCloud cloned_cloud;
+  pcl::copyPointCloud(*cloud_info_, *cloned_cloud.cloud_info_);
+  pcl::copyPointCloud(*cloud_, *cloned_cloud.cloud_);
+  return cloned_cloud;
 }
 
 void PointCloud::writeToFile(std::string&& directory) {

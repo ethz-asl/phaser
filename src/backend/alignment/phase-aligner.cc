@@ -66,7 +66,7 @@ void PhaseAligner::alignRegistered(
     const model::PointCloud& cloud_reg,
     const std::vector<model::FunctionValue>&, common::Vector_t* xyz) {
   CHECK(xyz);
-  
+
   discretizePointcloud(cloud_prev, f_, hist_);
   discretizePointcloud(cloud_reg, g_, hist_);
 
@@ -159,5 +159,4 @@ std::vector<double> PhaseAligner::getCorrelation() const {
   return std::vector<double>(c_, c_+n_voxels_);
 }
 
-}
-// namespace alignment 
+}  // namespace alignment

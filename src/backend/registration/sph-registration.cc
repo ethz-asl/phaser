@@ -10,18 +10,19 @@
 
 #include <glog/logging.h>
 
-DEFINE_int32(spherical_bandwith, 128, 
+DEFINE_int32(
+    spherical_bandwith, 128,
     "Defines the bandwith used for the spherical registration.");
 DEFINE_string(alignment_algorithm, "phase",
     "Sets the algorithm used for the translational alignment.");
-DEFINE_string(evaluation_algorithm, "zscore", 
+DEFINE_string(
+    evaluation_algorithm, "zscore",
     "Defines the algorithm used for the evaluation of the correlations.");
 
 namespace registration {
 
-SphRegistration::SphRegistration() 
-    : BaseRegistration("SphRegistration"),
-    sampler_(FLAGS_spherical_bandwith) {
+SphRegistration::SphRegistration()
+    : BaseRegistration("SphRegistration"), sampler_(FLAGS_spherical_bandwith) {
   initializeAlgorithms();
 }
 
@@ -50,6 +51,8 @@ model::RegistrationResult SphRegistration::registerPointCloud(
 
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *cloud_cur);
+  VLOG(1) << "prev: " << cloud_prev->pointInfoAt(0).intensity;
+  VLOG(1) << "cur: " << cloud_cur->pointInfoAt(0).intensity;
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
 
@@ -64,8 +67,7 @@ model::RegistrationResult SphRegistration::registerPointCloud(
 }
 
 model::RegistrationResult SphRegistration::estimateRotation(
-    model::PointCloudPtr cloud_prev, 
-    model::PointCloudPtr cloud_cur) {
+    model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
   cloud_cur->initialize_kd_tree();
 
   std::array<double, 3> zyz;
@@ -77,17 +79,17 @@ model::RegistrationResult SphRegistration::estimateRotation(
 }
 
 model::RegistrationResult SphRegistration::estimateTranslation(
-    model::PointCloudPtr cloud_prev, 
-    model::PointCloudPtr rot_cloud) {
-  //visualization::DebugVisualizer::getInstance()
-    //.visualizePointCloudDiff(*cloud_prev, *rot_cloud);
+    model::PointCloudPtr cloud_prev, model::PointCloudPtr rot_cloud) {
+  VLOG(1) << "prev: " << cloud_prev->pointInfoAt(0).intensity;
+  VLOG(1) << "rot: " << rot_cloud->pointInfoAt(0).intensity;
+
   common::Vector_t xyz;
   const double duration_translation_f_ms = common::executeTimedFunction(
-      &alignment::BaseAligner::alignRegistered, 
-      &(*aligner_), *cloud_prev, f_values_, *rot_cloud, h_values_, &xyz);
-  CHECK(xyz.rows() == 3);
-  statistics_manager_.emplaceValue(kTranslationDurationKey, 
-      duration_translation_f_ms);
+      &alignment::BaseAligner::alignRegistered, &(*aligner_), *cloud_prev,
+      f_values_, *rot_cloud, h_values_, &xyz);
+  CHECK_EQ(xyz.rows(), 3);
+  statistics_manager_.emplaceValue(
+      kTranslationDurationKey, duration_translation_f_ms);
 
   VLOG(1) << "Found translation: " << xyz.transpose();
   VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
@@ -105,37 +107,35 @@ void SphRegistration::getStatistics(
 }
 
 void SphRegistration::correlatePointcloud(
-    const model::PointCloud& source, 
-    const model::PointCloud& target, 
+    const model::PointCloud& source, const model::PointCloud& target,
     std::array<double, 3>* const zyz) {
   CHECK(zyz);
 
   const double duration_sample_f_ms = common::executeTimedFunction(
-      &common::SphericalSampler::sampleUniformly, 
-      &sampler_, source, &f_values_);
+      &common::SphericalSampler::sampleUniformly, &sampler_, source,
+      &f_values_);
   const double duration_sample_h_ms = common::executeTimedFunction(
-      &common::SphericalSampler::sampleUniformly, 
-      &sampler_, target, &h_values_);
+      &common::SphericalSampler::sampleUniformly, &sampler_, target,
+      &h_values_);
   CHECK(f_values_.size() == h_values_.size());
 
   const double duration_correlation_ms = common::executeTimedFunction(
-      &backend::SphericalCorrelation::correlateSignals, 
-      &sph_corr_, f_values_, h_values_, 
-      sampler_.getInitializedBandwith(), zyz);
+      &backend::SphericalCorrelation::correlateSignals, &sph_corr_, f_values_,
+      h_values_, sampler_.getInitializedBandwith(), zyz);
 
   VLOG(1) << "Registered point cloud.\n"
-    << "Sampling took for f and h: [" << duration_sample_f_ms << "ms," 
-    << duration_sample_h_ms << "ms]. \n"
-    << "Correlation took: " << duration_correlation_ms << "ms.";
+          << "Sampling took for f and h: [" << duration_sample_f_ms << "ms,"
+          << duration_sample_h_ms << "ms]. \n"
+          << "Correlation took: " << duration_correlation_ms << "ms.";
 
   statistics_manager_.emplaceValue(kSampleDurationKey, duration_sample_f_ms);
   statistics_manager_.emplaceValue(kSampleDurationKey, duration_sample_h_ms);
-  statistics_manager_.emplaceValue(kCorrelationDurationKey, 
-      duration_correlation_ms);
+  statistics_manager_.emplaceValue(
+      kCorrelationDurationKey, duration_correlation_ms);
 }
 
 void SphRegistration::setBandwith(const int bandwith) {
   sampler_.initialize(bandwith);
 }
 
-} // namespace registration
+}  // namespace registration
