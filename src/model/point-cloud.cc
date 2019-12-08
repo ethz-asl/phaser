@@ -19,6 +19,7 @@ namespace model {
 
 PointCloud::PointCloud()
     : cloud_(new common::PointCloud_t),
+      cloud_info_(new common::ExtractedPointCloud_t),
       kd_tree_is_initialized_(false),
       ply_directory_(FLAGS_PlyWriteDirectory) {}
 
@@ -26,10 +27,16 @@ PointCloud::PointCloud(common::PointCloud_tPtr cloud)
     : cloud_(cloud), kd_tree_is_initialized_(false) {}
 
 PointCloud::PointCloud(common::ExtractedPointCloud_tPtr cloud)
-    : kd_tree_is_initialized_(false) {}
+    : cloud_(new common::PointCloud_t),
+      cloud_info_(new common::ExtractedPointCloud_t),
+      kd_tree_is_initialized_(false) {
+  convertInputPointCloud(cloud);
+}
 
 PointCloud::PointCloud(const std::string& ply)
-    : kd_tree_is_initialized_(false) {
+    : kd_tree_is_initialized_(false),
+      cloud_(new common::PointCloud_t),
+      cloud_info_(new common::ExtractedPointCloud_t) {
   readFromFile(ply);
 }
 
@@ -69,12 +76,15 @@ void PointCloud::getNearestPoints(
     for (size_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
       const int current_idx = pointIdxNKNSearch[i];
       const common::Point_t& point = cloud_->points[current_idx];
+      const common::ExtractedPoint_t point_info =
+          cloud_info_->points[current_idx];
+
       const double dist =
           std::sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
       value.addPoint(point);
       value.addRange(dist);
-      value.addIntensity(point.intensity);
-      value.addInterpolation(0.40f * point.intensity + 0.60f * dist);
+      value.addIntensity(point_info.intensity);
+      value.addInterpolation(0.40f * point_info.intensity + 0.60f * dist);
     }
     function_values->emplace_back(std::move(value));
   }
@@ -101,12 +111,24 @@ const common::Point_t& PointCloud::pointAt(const std::size_t idx) const {
   return cloud_->points[idx];
 }
 
+common::ExtractedPoint_t& PointCloud::pointInfoAt(const std::size_t idx) {
+  return cloud_info_->points[idx];
+}
+
+const common::ExtractedPoint_t& PointCloud::pointInfoAt(
+    const std::size_t idx) const {
+  return cloud_info_->points[idx];
+}
+
 std::size_t PointCloud::size() const {
   return cloud_->points.size();
 }
 
 void PointCloud::convertInputPointCloud(
     common::ExtractedPointCloud_tPtr cloud) {
+  CHECK_NOTNULL(cloud_info_);
+  CHECK_NOTNULL(cloud_);
+  pcl::copyPointCloud(*cloud, *cloud_info_);
   pcl::copyPointCloud(*cloud, *cloud_);
 }
 
@@ -132,10 +154,10 @@ void PointCloud::writeToFile(std::string&& directory) {
 void PointCloud::readFromFile(const std::string& ply) {
   CHECK(!ply.empty());
   VLOG(2) << "Reading PLY file from: " << ply;
-  common::PointCloud_tPtr cloud (new common::PointCloud_t);
+  common::ExtractedPointCloud_tPtr cloud(new common::ExtractedPointCloud_t);
   pcl::PLYReader reader;
   reader.read(ply, *cloud);
-  cloud_ = cloud;
+  convertInputPointCloud(cloud);
 }
 
 }  // namespace model

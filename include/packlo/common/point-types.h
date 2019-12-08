@@ -28,8 +28,7 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(OusterPointType,
     (uint16_t, signal, intensity)
     (uint8_t, ring, ring))
 
-struct SemanticKITTIPointType {
-  PCL_ADD_POINT4D
+struct SemanticKITTIInfoType {
   float semantic;
   float instance;
   float reflectivity;
@@ -38,19 +37,16 @@ struct SemanticKITTIPointType {
 } EIGEN_ALIGN16;
 
 POINT_CLOUD_REGISTER_POINT_STRUCT(
-    SemanticKITTIPointType,
-    (float, x,
-     x)(float, y,
-        y)(float, z, z)(float, semantic, semantic)(float, instance, instance)(
+    SemanticKITTIInfoType,
+    (float, semantic, semantic)(float, instance, instance)(
         float, reflectivity, reflectivity)(float, intensity, intensity))
 
 namespace common {
-// using Point_t = ::OusterPointType;
-using Point_t = pcl::PointXYZI;
+using Point_t = pcl::PointXYZ;
 using PointCloud_t = pcl::PointCloud<Point_t>;
 using PointCloud_tPtr = pcl::PointCloud<Point_t>::Ptr;
 
-using ExtractedPoint_t = ::SemanticKITTIPointType;
+using ExtractedPoint_t = ::SemanticKITTIInfoType;
 using ExtractedPointCloud_t = pcl::PointCloud<ExtractedPoint_t>;
 using ExtractedPointCloud_tPtr = pcl::PointCloud<ExtractedPoint_t>::Ptr;
 
