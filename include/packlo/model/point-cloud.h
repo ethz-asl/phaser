@@ -43,6 +43,7 @@ class PointCloud {
   const common::ExtractedPoint_t& pointInfoAt(const std::size_t idx) const;
 
   std::size_t size() const;
+  std::size_t sizeInfo() const;
   PointCloud clone() const;
 
   void initialize_kd_tree();

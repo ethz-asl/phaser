@@ -137,14 +137,17 @@ std::size_t PointCloud::size() const {
   return cloud_->points.size();
 }
 
+std::size_t PointCloud::sizeInfo() const {
+  CHECK_NOTNULL(cloud_info_);
+  return cloud_info_->points.size();
+}
+
 void PointCloud::convertInputPointCloud(
     common::ExtractedPointCloud_tPtr cloud) {
   CHECK_NOTNULL(cloud_info_);
   CHECK_NOTNULL(cloud_);
   pcl::copyPointCloud(*cloud, *cloud_info_);
   pcl::copyPointCloud(*cloud, *cloud_);
-  VLOG(1) << "pcl size: " << cloud_->points.size();
-  VLOG(1) << "pcl info size: " << cloud_info_->points.size();
 }
 
 PointCloud PointCloud::clone() const {
