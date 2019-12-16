@@ -51,8 +51,6 @@ model::RegistrationResult SphRegistration::registerPointCloud(
 
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *cloud_cur);
-  VLOG(1) << "prev: " << cloud_prev->pointInfoAt(0).intensity;
-  VLOG(1) << "cur: " << cloud_cur->pointInfoAt(0).intensity;
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
 
@@ -68,6 +66,7 @@ model::RegistrationResult SphRegistration::registerPointCloud(
 
 model::RegistrationResult SphRegistration::estimateRotation(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
+  VLOG(1) << "[SphRegistration] Estimating rotation...";
   cloud_cur->initialize_kd_tree();
 
   std::array<double, 3> zyz;
@@ -80,8 +79,7 @@ model::RegistrationResult SphRegistration::estimateRotation(
 
 model::RegistrationResult SphRegistration::estimateTranslation(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr rot_cloud) {
-  VLOG(1) << "prev: " << cloud_prev->pointInfoAt(0).intensity;
-  VLOG(1) << "rot: " << rot_cloud->pointInfoAt(0).intensity;
+  VLOG(1) << "[SphRegistration] Estimating translation...";
 
   common::Vector_t xyz;
   const double duration_translation_f_ms = common::executeTimedFunction(

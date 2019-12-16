@@ -19,6 +19,10 @@ namespace alignment {
 PhaseAligner::PhaseAligner()
     : n_voxels_(
           FLAGS_phase_n_voxels * FLAGS_phase_n_voxels * FLAGS_phase_n_voxels) {
+  VLOG(1) << "Initializing phase alignment with " << FLAGS_phase_n_voxels
+          << " voxels in [" << FLAGS_phase_discretize_lower << ", "
+          << FLAGS_phase_discretize_upper << "].";
+
   // Allocate memory for the FFT and IFFT.
   F_ =
       static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * n_voxels_));
@@ -71,7 +75,9 @@ void PhaseAligner::alignRegistered(
   discretizePointcloud(cloud_reg, g_, hist_);
 
   // Perform the two FFTs on the discretized signals.
+  VLOG(1) << "Performing FFT on the first point cloud.";
   fftw_execute(f_plan_);
+  VLOG(1) << "Performing FFT on the second point cloud.";
   fftw_execute(g_plan_);
 
   // Correlate the signals in the frequency domain.
@@ -81,6 +87,7 @@ void PhaseAligner::alignRegistered(
   }
 
   // Perform the IFFT on the correlation tensor.
+  VLOG(1) << "Performing IFFT on correlation.";
   fftw_execute(c_plan_);
 
   // Find the index that maximizes the correlation.
@@ -99,11 +106,13 @@ void PhaseAligner::alignRegistered(
 void PhaseAligner::discretizePointcloud(
     const model::PointCloud& cloud, Eigen::VectorXd& f,
     Eigen::VectorXd& hist) const {
+  VLOG(1) << "Discretizing point cloud...";
   Eigen::MatrixXf data = cloud.getRawCloud()->getMatrixXfMap();
   Eigen::VectorXf edges = Eigen::VectorXf::LinSpaced(FLAGS_phase_n_voxels,
       FLAGS_phase_discretize_lower, FLAGS_phase_discretize_upper);
 
   // Discretize the point cloud using an cartesian grid.
+  VLOG(1) << "Performing histogram counts.";
   Eigen::VectorXd x_bins, y_bins, z_bins;
   igl::histc(data.row(0), edges, x_bins);
   igl::histc(data.row(1), edges, y_bins);
@@ -114,19 +123,20 @@ void PhaseAligner::discretizePointcloud(
   hist.setZero();
   const uint32_t n_points = data.cols();
   const uint32_t n_f = f.rows();
-  for (uint16_t i = 0u; i < n_points; ++i) {
+  for (uint32_t i = 0u; i < n_points; ++i) {
     const uint32_t lin_index = sub2ind(
         x_bins(i), y_bins(i), z_bins(i), FLAGS_phase_n_voxels,
         FLAGS_phase_n_voxels);
     if (lin_index > n_f) {
       continue;
     }
-    f(lin_index) = f(lin_index) + cloud.pointInfoAt(i).intensity;
+    f(lin_index) = f(lin_index) + cloud.pointInfoAt(i).semantic;
     hist(lin_index) = hist(lin_index) + 1;
   }
 
   f = f.array() / hist.array();
   f = f.unaryExpr([](double v) { return std::isfinite(v)? v : 0.0; });
+  VLOG(1) << "done";
 }
 
 std::size_t PhaseAligner::sub2ind(
