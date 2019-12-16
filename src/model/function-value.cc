@@ -8,30 +8,31 @@
 namespace model {
 
 FunctionValue::FunctionValue()
-  : interpolation_(0.0), range_(0.0), intensity_(0.0), 
-    points_(new common::PointCloud_t) {}
+    : interpolation_(0.0),
+      range_(0.0),
+      intensity_(0.0),
+      points_(new common::PointCloud_t) {}
 
-FunctionValue::FunctionValue(double interpolation, 
-    double range, double intensity) 
-  : interpolation_(interpolation), 
-    range_(range), intensity_(intensity), 
-    points_(new common::PointCloud_t) {
-  
-}
+FunctionValue::FunctionValue(
+    double interpolation, double range, double intensity)
+    : interpolation_(interpolation),
+      range_(range),
+      intensity_(intensity),
+      points_(new common::PointCloud_t) {}
 
 double FunctionValue::getAveragedInterpolation() const noexcept {
-  return std::accumulate(interpolation_.cbegin(), interpolation_.cend(), 
-      0.0) / static_cast<double>(interpolation_.size());
+  return std::accumulate(interpolation_.cbegin(), interpolation_.cend(), 0.0) /
+         static_cast<double>(interpolation_.size());
 }
 
 double FunctionValue::getAveragedRange() const noexcept {
-  return std::accumulate(range_.cbegin(), range_.cend(), 
-      0.0) / static_cast<double>(range_.size());
+  return std::accumulate(range_.cbegin(), range_.cend(), 0.0) /
+         static_cast<double>(range_.size());
 }
 
 double FunctionValue::getAveragedIntensity() const noexcept {
-  return std::accumulate(intensity_.cbegin(), intensity_.cend(), 
-      0.0) / static_cast<double>(intensity_.size());
+  return std::accumulate(intensity_.cbegin(), intensity_.cend(), 0.0) /
+         static_cast<double>(intensity_.size());
 }
 
 common::Point_t FunctionValue::getAveragedPoint() const noexcept {
@@ -55,16 +56,21 @@ void FunctionValue::addInterpolation(const double interpolation) {
 
 void FunctionValue::addRange(const double range) {
   range_.emplace_back(range);
-
 }
 
 void FunctionValue::addIntensity(const double intensity) {
   intensity_.emplace_back(intensity);
 }
 
-void FunctionValue::addPoint(const common::Point_t& point) {
-  //VLOG(1) << "add point: \n" << point; 
+void FunctionValue::addSemanticClass(const uint16_t class_id) {
+  semantic_classes_.emplace_back(class_id);
+}
 
+void FunctionValue::addInstance(const uint16_t instance) {
+  semantic_instances_.emplace_back(instance);
+}
+
+void FunctionValue::addPoint(const common::Point_t& point) {
   points_->push_back(point);
 }
 
@@ -72,4 +78,4 @@ common::PointCloud_tPtr FunctionValue::getAllPoints() const {
   return points_;
 }
 
-} // namespace model
+}  // namespace model

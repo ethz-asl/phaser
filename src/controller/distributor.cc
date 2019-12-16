@@ -92,6 +92,7 @@ void Distributor::registerPointCloud(const model::PointCloudPtr& cloud) {
 void Distributor::preprocessPointCloud(
     const model::PointCloudPtr& cloud) {
   common::PointCloud_tPtr input_cloud = cloud->getRawCloud();
+  VLOG(1) << "preprocessing cloud of size: " << input_cloud->size();
 
   // Only for speedup
   pcl::VoxelGrid<common::Point_t> avg;
@@ -100,6 +101,7 @@ void Distributor::preprocessPointCloud(
   avg.filter(*input_cloud);
   cloud->updateInfo(avg.getRemovedIndices());
 
+  VLOG(1) << "after : " << input_cloud->size();
   CHECK_EQ(cloud->size(), cloud->sizeInfo());
 }
 

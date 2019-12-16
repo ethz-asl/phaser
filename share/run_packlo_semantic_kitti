@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+REST=$@
+
+rosrun packlo packlo \
+    --alsologtostderr=1 \
+    --v=3 \
+		--enable_debug=true \
+		--registration_algorithm=sph \
+		--point_cloud_topic=/semantic_cloud \
+		--spherical_bandwith=12 \
+    $REST
