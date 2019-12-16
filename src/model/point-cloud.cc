@@ -150,6 +150,13 @@ void PointCloud::convertInputPointCloud(
   CHECK_NOTNULL(cloud_);
   pcl::copyPointCloud(*cloud, *cloud_info_);
   pcl::copyPointCloud(*cloud, *cloud_);
+  /*
+  const uint16_t n_points = cloud->size();
+  for (uint16_t i = 0; i < n_points; ++i) {
+    const common::ExtractedPoint_t& p = cloud->points.at(i);
+    pcl::PointXYZ raw_point(p.x, p.y, p.z);
+    cloud_->push_back(raw_point);
+  }*/
 }
 
 PointCloud PointCloud::clone() const {
@@ -178,8 +185,8 @@ void PointCloud::updateInfo(const pcl::IndicesConstPtr indices) {
   // with custom point types.
   common::ExtractedPointCloud_tPtr cloud_info_copy(
       new common::ExtractedPointCloud_t);
-  VLOG(1) << "size: " << cloud_info_->points.size();
-  VLOG(1) << "size: " << indices->size();
+  VLOG(1) << "size info: " << cloud_info_->points.size();
+  VLOG(1) << "size indices: " << indices->size();
   const uint16_t n_points = cloud_info_->points.size();
   for (uint16_t i = 0u; i < n_points; ++i) {
     if (std::find(indices->begin(), indices->end(), i) != indices->end())

@@ -9,9 +9,10 @@
 #include "packlo/backend/registration/mock/sph-registration-mock-transformed.h"
 
 #include <glog/logging.h>
-#include <pcl_conversions/pcl_conversions.h>
 #include <pcl/filters/passthrough.h>
 #include <pcl/filters/voxel_grid.h>
+#include <pcl/keypoints/uniform_sampling.h>
+#include <pcl_conversions/pcl_conversions.h>
 
 DEFINE_bool(
     enable_debug, false, "Enables the debug mode for the registration.");
@@ -91,17 +92,6 @@ void Distributor::registerPointCloud(const model::PointCloudPtr& cloud) {
 
 void Distributor::preprocessPointCloud(
     const model::PointCloudPtr& cloud) {
-  common::PointCloud_tPtr input_cloud = cloud->getRawCloud();
-  VLOG(1) << "preprocessing cloud of size: " << input_cloud->size();
-
-  // Only for speedup
-  pcl::VoxelGrid<common::Point_t> avg;
-  avg.setInputCloud(input_cloud);
-  avg.setLeafSize(0.25f, 0.25f, 0.25f);
-  avg.filter(*input_cloud);
-  cloud->updateInfo(avg.getRemovedIndices());
-
-  VLOG(1) << "after : " << input_cloud->size();
   CHECK_EQ(cloud->size(), cloud->sizeInfo());
 }
 

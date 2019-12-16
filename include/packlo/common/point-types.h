@@ -29,6 +29,7 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(OusterPointType,
     (uint8_t, ring, ring))
 
 struct SemanticKITTIInfoType {
+  PCL_ADD_POINT4D
   float semantic;
   float instance;
   float reflectivity;
@@ -38,7 +39,9 @@ struct SemanticKITTIInfoType {
 
 POINT_CLOUD_REGISTER_POINT_STRUCT(
     SemanticKITTIInfoType,
-    (float, semantic, semantic)(float, instance, instance)(
+    (float, x,
+     x)(float, y,
+        y)(float, z, z)(float, semantic, semantic)(float, instance, instance)(
         float, reflectivity, reflectivity)(float, intensity, intensity))
 
 namespace common {
