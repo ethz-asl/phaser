@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 REST=$@
 
 rosrun packlo packlo \
@@ -6,7 +6,10 @@ rosrun packlo packlo \
     --v=3 \
 		--enable_debug=true \
 		--registration_algorithm="sph" \
-		--spherical_bandwith=128 \
 		--datasource="ply" \
 		--PlyReadDirectory="/home/berlukas/Documents/workspace/maplab/src/packlo/test/test-data/gonzen/easy-submaps/" \
+		--spherical_bandwith=150 \
+		--phase_n_voxels=350 \
+		--phase_discretize_lower=-70 \
+		--phase_discretize_upper=70 \
     $REST

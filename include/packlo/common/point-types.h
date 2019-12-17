@@ -49,8 +49,8 @@ using Point_t = pcl::PointXYZ;
 using PointCloud_t = pcl::PointCloud<Point_t>;
 using PointCloud_tPtr = pcl::PointCloud<Point_t>::Ptr;
 
-using ExtractedPoint_t = ::SemanticKITTIInfoType;
-// using ExtractedPoint_t = pcl::PointXYZI;
+// using ExtractedPoint_t = ::SemanticKITTIInfoType;
+using ExtractedPoint_t = pcl::PointXYZI;
 using ExtractedPointCloud_t = pcl::PointCloud<ExtractedPoint_t>;
 using ExtractedPointCloud_tPtr = pcl::PointCloud<ExtractedPoint_t>::Ptr;
 

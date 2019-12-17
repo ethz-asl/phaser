@@ -90,9 +90,9 @@ void PointCloud::getNearestPoints(
       value.addPoint(point);
       value.addRange(dist);
       value.addIntensity(point_info.intensity);
-      value.addSemanticClass(point_info.semantic);
-      value.addSemanticClass(point_info.instance);
-      value.addInterpolation(point_info.semantic);
+      // value.addSemanticClass(point_info.semantic);
+      // value.addInstance(point_info.instance);
+      value.addInterpolation(point_info.intensity);
     }
     function_values->emplace_back(std::move(value));
   }

@@ -130,7 +130,7 @@ void PhaseAligner::discretizePointcloud(
     if (lin_index > n_f) {
       continue;
     }
-    f(lin_index) = f(lin_index) + cloud.pointInfoAt(i).semantic;
+    f(lin_index) = f(lin_index) + cloud.pointInfoAt(i).intensity;
     hist(lin_index) = hist(lin_index) + 1;
   }
 
