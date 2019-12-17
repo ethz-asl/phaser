@@ -27,19 +27,22 @@ PointCloud::PointCloud()
 PointCloud::PointCloud(common::PointCloud_tPtr cloud)
     : cloud_(cloud),
       cloud_info_(new common::ExtractedPointCloud_t),
-      kd_tree_is_initialized_(false) {}
+      kd_tree_is_initialized_(false),
+      ply_directory_(FLAGS_PlyWriteDirectory) {}
 
 PointCloud::PointCloud(common::ExtractedPointCloud_tPtr cloud)
     : cloud_(new common::PointCloud_t),
       cloud_info_(new common::ExtractedPointCloud_t),
-      kd_tree_is_initialized_(false) {
+      kd_tree_is_initialized_(false),
+      ply_directory_(FLAGS_PlyWriteDirectory) {
   convertInputPointCloud(cloud);
 }
 
 PointCloud::PointCloud(const std::string& ply)
     : cloud_(new common::PointCloud_t),
       cloud_info_(new common::ExtractedPointCloud_t),
-      kd_tree_is_initialized_(false) {
+      kd_tree_is_initialized_(false),
+      ply_directory_(FLAGS_PlyWriteDirectory) {
   readFromFile(ply);
 }
 
@@ -176,7 +179,7 @@ void PointCloud::writeToFile(std::string&& directory) {
       directory + FLAGS_PlyPrefix + std::to_string(files.size() + 1) + ".ply";
 
   VLOG(2) << "Writing PLY file to: " << file_name;
-  writer.write(file_name, *cloud_);
+  writer.write(file_name, *cloud_info_);
 }
 
 void PointCloud::updateInfo(const pcl::IndicesConstPtr indices) {

@@ -15,7 +15,9 @@ void DatasourceRos::subscribeToPointClouds(
   // Create local callback.
   boost::function<void(const sensor_msgs::PointCloud2ConstPtr&)> callback =
       boost::bind(&DatasourceRos::pointCloudCallback, this, _1);
-  ros::Subscriber sub = nh_.subscribe(FLAGS_point_cloud_topic, 1, callback);
+  constexpr uint8_t kSubscriberQueueSize = 20;
+  ros::Subscriber sub =
+      nh_.subscribe(FLAGS_point_cloud_topic, kSubscriberQueueSize, callback);
 
   subscribers_.emplace_back(std::move(sub));
   callbacks_.emplace_back(func);
