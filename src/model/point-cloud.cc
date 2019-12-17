@@ -181,7 +181,7 @@ void PointCloud::writeToFile(std::string&& directory) {
       directory + FLAGS_PlyPrefix + std::to_string(files.size() + 1) + ".ply";
 
   VLOG(2) << "Writing PLY file to: " << file_name;
-  writer.write(file_name, *cloud_info_);
+  writer.write(file_name, *cloud_);
 }
 
 void PointCloud::updateInfo(const pcl::IndicesConstPtr indices) {
