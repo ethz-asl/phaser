@@ -19,7 +19,7 @@ class PointCloud {
  public:
   PointCloud();
   explicit PointCloud(common::PointCloud_tPtr cloud);
-  explicit PointCloud(common::ExtractedPointCloud_tPtr cloud);
+  // explicit PointCloud(common::ExtractedPointCloud_tPtr cloud);
   explicit PointCloud(const std::string& ply);
 
   common::PointCloud_t::iterator begin();

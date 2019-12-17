@@ -30,6 +30,7 @@ PointCloud::PointCloud(common::PointCloud_tPtr cloud)
       kd_tree_is_initialized_(false),
       ply_directory_(FLAGS_PlyWriteDirectory) {}
 
+/*
 PointCloud::PointCloud(common::ExtractedPointCloud_tPtr cloud)
     : cloud_(new common::PointCloud_t),
       cloud_info_(new common::ExtractedPointCloud_t),
@@ -37,6 +38,7 @@ PointCloud::PointCloud(common::ExtractedPointCloud_tPtr cloud)
       ply_directory_(FLAGS_PlyWriteDirectory) {
   convertInputPointCloud(cloud);
 }
+*/
 
 PointCloud::PointCloud(const std::string& ply)
     : cloud_(new common::PointCloud_t),
@@ -82,17 +84,17 @@ void PointCloud::getNearestPoints(
     for (size_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
       const int current_idx = pointIdxNKNSearch[i];
       const common::Point_t& point = cloud_->points[current_idx];
-      const common::ExtractedPoint_t point_info =
-          cloud_info_->points[current_idx];
+      // const common::ExtractedPoint_t point_info =
+      // cloud_info_->points[current_idx];
 
       const double dist =
           std::sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
       value.addPoint(point);
       value.addRange(dist);
-      value.addIntensity(point_info.intensity);
+      value.addIntensity(point.intensity);
       // value.addSemanticClass(point_info.semantic);
       // value.addInstance(point_info.instance);
-      value.addInterpolation(point_info.intensity);
+      value.addInterpolation(0.40f * point.intensity + 0.60f * dist);
     }
     function_values->emplace_back(std::move(value));
   }
@@ -207,10 +209,11 @@ void PointCloud::updateCloud() {
 void PointCloud::readFromFile(const std::string& ply) {
   CHECK(!ply.empty());
   VLOG(2) << "Reading PLY file from: " << ply;
-  common::ExtractedPointCloud_tPtr cloud(new common::ExtractedPointCloud_t);
+  // common::ExtractedPointCloud_tPtr cloud(new common::ExtractedPointCloud_t);
   pcl::PLYReader reader;
-  reader.read(ply, *cloud);
-  convertInputPointCloud(cloud);
+  reader.read(ply, *cloud_);
+  VLOG(2) << "Cloud size: " << cloud_->size();
+  // convertInputPointCloud(cloud);
 }
 
 }  // namespace model

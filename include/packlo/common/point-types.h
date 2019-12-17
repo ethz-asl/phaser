@@ -45,7 +45,7 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(
         float, reflectivity, reflectivity)(float, intensity, intensity))
 
 namespace common {
-using Point_t = pcl::PointXYZ;
+using Point_t = pcl::PointXYZI;
 using PointCloud_t = pcl::PointCloud<Point_t>;
 using PointCloud_tPtr = pcl::PointCloud<Point_t>::Ptr;
 
