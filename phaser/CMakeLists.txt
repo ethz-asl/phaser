@@ -84,7 +84,7 @@ cs_add_library(${PROJECT_NAME}_lib
 
 cs_add_executable(${PROJECT_NAME} app/packlo-app.cc)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib
-  fftw3 ${NLOPT_LIBRARIES})
+  ${NLOPT_LIBRARIES})
 
 #############
 ## TESTING ##
@@ -93,31 +93,31 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib
 # Sanity check.
 catkin_add_gtest(test_sanity_check test/sanity-check/sanity-check-test.cc)
 target_link_libraries(test_sanity_check
-  ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
+  ${PROJECT_NAME}_lib ${NLOPT_LIBRARIES})
 
 # Rotation estimation.
 catkin_add_gtest(test_rotation_alignment
   test/rotation-alignment/rotation-alignment-test.cc)
 target_link_libraries(test_rotation_alignment
-  ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
+  ${PROJECT_NAME}_lib ${NLOPT_LIBRARIES})
 
 # Translation estimation.
 catkin_add_gtest(test_translation_alignment
   test/translation-alignment/translation-alignment-test.cc)
 target_link_libraries(test_translation_alignment
-  ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
+  ${PROJECT_NAME}_lib ${NLOPT_LIBRARIES})
 
 # Transformation estimation.
 catkin_add_gtest(test_transformation_alignment
   test/transformation-alignment/transformation-alignment-test.cc)
 target_link_libraries(test_transformation_alignment
-  ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
+  ${PROJECT_NAME}_lib ${NLOPT_LIBRARIES})
 
 # Voxgraph transformation estimation.
 catkin_add_gtest(test_voxgraph_alignment
   test/transformation-alignment/voxgraph-alignment-test.cc)
 target_link_libraries(test_voxgraph_alignment
-  ${PROJECT_NAME}_lib fftw3 ${NLOPT_LIBRARIES})
+  ${PROJECT_NAME}_lib ${NLOPT_LIBRARIES})
 
 cs_install()
 cs_export()

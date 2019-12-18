@@ -25,6 +25,7 @@
 
   <depend>pcl_catkin</depend>
   <depend>opencv3_catkin</depend>
+  <depend>fftw3_catkin</depend>
 
   <depend>eigen_catkin</depend>
   <depend>eigen_checks</depend>
