@@ -20,6 +20,7 @@ void SphericalSampler::sampleUniformly(
     const model::PointCloud& cloud, std::vector<model::FunctionValue>* grid) {
   CHECK(is_initialized_);
   grid->clear();
+  model::PointCloud sphere = projection_.convertPointCloudCopy(cloud);
   cloud.getNearestPoints(cartesian_grid_, grid);
 }
 
