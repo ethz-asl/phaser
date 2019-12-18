@@ -79,6 +79,8 @@ cs_add_library(${PROJECT_NAME}_lib
    src/visualization/debug-visualizer.cc
    src/visualization/plotty-visualizer.cc
 
+   src/common/test/testing-entrypoint.cc
+   src/common/gflags-interface.cc
    src/packlo-node.cc
 )
 

@@ -1,9 +1,8 @@
 #include "packlo/backend/registration/sph-registration.h"
 #include "packlo/common/data/datasource-ply.h"
 #include "packlo/common/metric-utils.h"
-
-#include <maplab-common/test/testing-entrypoint.h>
-#include <maplab-common/test/testing-predicates.h>
+#include "packlo/common/test/testing-entrypoint.h"
+#include "packlo/common/test/testing-predicates.h"
 
 #include <gtest/gtest.h>
 #include <memory>

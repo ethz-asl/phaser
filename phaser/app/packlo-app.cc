@@ -1,10 +1,9 @@
-#include <packlo/packlo-node.h>
-#include <packlo/controller/distributor.h>
+#include "packlo/common/gflags-interface.h"
+#include "packlo/controller/distributor.h"
+#include "packlo/packlo-node.h"
 
 #include <ros/ros.h>
 #include <glog/logging.h>
-
-#include <maplab-ros-common/gflags-interface.h>                                 
 
 #include <thread>
 #include <chrono>
@@ -16,8 +15,8 @@ int main(int argc, char** argv) {
   google::InstallFailureSignalHandler();
 
   ros::NodeHandle nh, nh_private("~");
-  ros_common::parseGflagsFromRosParams(argv[0], nh_private);
-  
+  common::parseGflagsFromRosParams(argv[0], nh_private);
+
   packlo::PackloNode packlo_node(nh, nh_private);
   if (!packlo_node.run()) {
     ROS_FATAL("Failed to start running the packlo node!");
