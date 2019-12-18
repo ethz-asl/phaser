@@ -6,9 +6,9 @@
 namespace data {
 
 class FileSystemHelper {
-	public:
-		static void readDirectory(const std::string& directory,
-			std::vector<std::string>* files);
+ public:
+  static void readDirectory(
+      const std::string& directory, std::vector<std::string>* files);
 };
 
-} // namespace data
+}  // namespace data
