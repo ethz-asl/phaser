@@ -13,9 +13,8 @@ class TransformationAlignmentTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
-    ds_->setDatasetFolder(
-        "/home/berlukas/Documents/"
-        "workspace/maplab/src/packlo/test/test-data/arche/");
+    CHECK_NOTNULL(ds_);
+    ds_->setDatasetFolder("./test_clouds/arche/");
   }
 
   data::DatasourcePlyPtr ds_;

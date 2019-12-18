@@ -23,6 +23,8 @@ class RotationAlignmentTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
+    CHECK_NOTNULL(ds_);
+    ds_->setDatasetFolder("./test_clouds/arche/");
   }
 
   registration::BaseRegistration* initializeRegistration(bool mocked) {
@@ -52,8 +54,6 @@ TEST_F(RotationAlignmentTest, RotationSelfSingle) {
   reg->setRandomRotation(rot_xyz_rad(0), rot_xyz_rad(1), rot_xyz_rad(2));
 
   model::RegistrationResult result;
-  ds_->setDatasetFolder("/home/berlukas/Documents/"
-      "workspace/maplab/src/packlo/test/test-data/arche/");
   ds_->subscribeToPointClouds([&] (const model::PointCloudPtr& cloud) {
     CHECK(cloud);
     result = reg->registerPointCloud(cloud, cloud);
@@ -76,8 +76,6 @@ TEST_F(RotationAlignmentTest, RotationSelfAll) {
   reg->setBandwith(128);
 
   model::RegistrationResult result;
-  ds_->setDatasetFolder("/home/berlukas/Documents/"
-      "workspace/maplab/src/packlo/test/test-data/arche/");
   ds_->subscribeToPointClouds([&] (const model::PointCloudPtr& cloud) {
     CHECK(cloud);
     // Define a new random rotation for each incoming cloud.
@@ -103,8 +101,6 @@ TEST_F(RotationAlignmentTest, RotationHighBandwith) {
   reg->setBandwith(256);
 
   model::RegistrationResult result;
-  ds_->setDatasetFolder("/home/berlukas/Documents/"
-      "workspace/maplab/src/packlo/test/test-data/arche/");
   ds_->subscribeToPointClouds([&] (const model::PointCloudPtr& cloud) {
     CHECK(cloud);
     // Define a new random rotation for each incoming cloud.
@@ -129,8 +125,6 @@ TEST_F(RotationAlignmentTest, RotationEasy) {
     SphRegistration*>(initializeRegistration(false));
 
   model::RegistrationResult result;
-  ds_->setDatasetFolder("/home/berlukas/Documents/"
-      "workspace/maplab/src/packlo/test/test-data/arche/");
   model::PointCloudPtr prev_cloud = nullptr;
   ds_->subscribeToPointClouds([&] (const model::PointCloudPtr& cloud) {
     CHECK(cloud);

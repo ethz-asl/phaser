@@ -13,10 +13,7 @@ class VoxgraphAlignmentTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
-    ds_->setDatasetFolder(
-        "/home/berlukas/Documents/"
-        "workspace/maplab/src/packlo/test/test-data/gonzen/"
-        "easy-submaps/");
+    ds_->setDatasetFolder("./test_clouds/gonzen/easy-submaps/");
   }
 
   data::DatasourcePlyPtr ds_;

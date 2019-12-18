@@ -97,6 +97,12 @@ catkin_add_gtest(test_sanity_check test/sanity-check/sanity-check-test.cc)
 target_link_libraries(test_sanity_check
   ${PROJECT_NAME}_lib ${NLOPT_LIBRARIES})
 
+# Rotation estimation.
+catkin_add_gtest(test_rotation_alignment
+  test/rotation-alignment/rotation-alignment-test.cc)
+target_link_libraries(test_rotation_alignment
+  ${PROJECT_NAME}_lib ${NLOPT_LIBRARIES})
+phaser_import_test_maps(test_rotation_alignment)
 
 # Translation estimation.
 catkin_add_gtest(test_translation_alignment
@@ -105,6 +111,19 @@ target_link_libraries(test_translation_alignment
   ${PROJECT_NAME}_lib ${NLOPT_LIBRARIES})
 phaser_import_test_maps(test_translation_alignment)
 
+# Transformation estimation.
+catkin_add_gtest(test_transformation_alignment
+  test/transformation-alignment/transformation-alignment-test.cc)
+target_link_libraries(test_transformation_alignment
+  ${PROJECT_NAME}_lib ${NLOPT_LIBRARIES})
+phaser_import_test_maps(test_transformation_alignment)
+
+# Voxgraph transformation estimation.
+catkin_add_gtest(test_voxgraph_alignment
+  test/transformation-alignment/voxgraph-alignment-test.cc)
+target_link_libraries(test_voxgraph_alignment
+  ${PROJECT_NAME}_lib ${NLOPT_LIBRARIES})
+phaser_import_test_maps(test_voxgraph_alignment)
 
 cs_install()
 cs_export()
