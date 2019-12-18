@@ -108,6 +108,10 @@ void PointCloud::transformPointCloud(const Eigen::Matrix4f &T) {
 void PointCloud::transformPointCloudCopy(
     const Eigen::Matrix4f& T, PointCloud* copy) const {
   pcl::transformPointCloud(*cloud_, *(*copy).cloud_, T);
+
+  // Set the ranges to zero since they are outdated now.
+  copy->ranges_.clear();
+  copy->ranges_.resize(cloud_->size());
 }
 
 common::PointCloud_tPtr PointCloud::getRawCloud() const {

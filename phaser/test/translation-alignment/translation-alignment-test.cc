@@ -68,6 +68,7 @@ TEST_F(TranslationAlignmentTest, TranslationSelfSingle) {
   ds_->startStreaming(1);
 }
 
+/*
 TEST_F(TranslationAlignmentTest, TranslationSelfAll) {
   CHECK(ds_);
   registration::SphRegistrationMockTranslated* reg =
@@ -123,6 +124,7 @@ TEST_F(TranslationAlignmentTest, TranslationEasy) {
   });
   ds_->startStreaming(2);
 }
+*/
 
 }  // namespace translation
 
