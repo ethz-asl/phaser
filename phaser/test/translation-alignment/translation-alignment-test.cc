@@ -89,13 +89,14 @@ TEST_F(TranslationAlignmentTest, TranslationSelfAll) {
 
     // Get the result and compare it.
     EXPECT_NEAR_EIGEN(-trans_xyz, result.getTranslation(), 4.0);
-    EXPECT_NEAR_EIGEN(-trans_xyz, result.getTranslation(), 4.0);
     ASSERT_LE(common::MetricUtils::HausdorffDistance(cloud,
           result.getRegisteredCloud()), 5.0);
   });
   ds_->startStreaming();
 }
+*/
 
+/*
 TEST_F(TranslationAlignmentTest, TranslationEasy) {
   CHECK(ds_);
   registration::SphRegistration* reg = dynamic_cast<registration::

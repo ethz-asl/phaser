@@ -63,8 +63,10 @@ TEST_F(RotationAlignmentTest, RotationSelfSingle) {
     Eigen::Vector3d xyz_rad = common::RotationUtils::ConvertZYZtoXYZ(
         result.getRotation());
     EXPECT_NEAR_EIGEN(-rot_xyz_rad, xyz_rad, 1);
-    ASSERT_LE(common::MetricUtils::HausdorffDistance(cloud,
-          result.getRegisteredCloud()), 1.0);
+    ASSERT_LE(
+        common::MetricUtils::HausdorffDistance(
+            cloud, result.getRegisteredCloud()),
+        3.0);
   });
   ds_->startStreaming(1);
 }
@@ -88,8 +90,10 @@ TEST_F(RotationAlignmentTest, RotationSelfAll) {
     EXPECT_TRUE(result.foundSolutionForRotation());
 
     // Check the result.
-    ASSERT_LE(common::MetricUtils::HausdorffDistance(cloud,
-          result.getRegisteredCloud()), 2.0);
+    ASSERT_LE(
+        common::MetricUtils::HausdorffDistance(
+            cloud, result.getRegisteredCloud()),
+        3.0);
   });
   ds_->startStreaming();
 }
@@ -113,8 +117,10 @@ TEST_F(RotationAlignmentTest, RotationHighBandwith) {
     EXPECT_TRUE(result.foundSolutionForRotation());
 
     // Check the result.
-    ASSERT_LE(common::MetricUtils::HausdorffDistance(cloud,
-          result.getRegisteredCloud()), 0.9);
+    ASSERT_LE(
+        common::MetricUtils::HausdorffDistance(
+            cloud, result.getRegisteredCloud()),
+        2.0);
   });
   ds_->startStreaming(1);
 }

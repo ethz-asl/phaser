@@ -11,7 +11,7 @@
 #include <glog/logging.h>
 
 DEFINE_int32(
-    spherical_bandwith, 128,
+    spherical_bandwith, 70,
     "Defines the bandwith used for the spherical registration.");
 DEFINE_string(alignment_algorithm, "phase",
     "Sets the algorithm used for the translational alignment.");
