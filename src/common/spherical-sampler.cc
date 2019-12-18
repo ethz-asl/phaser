@@ -1,7 +1,7 @@
-#include <packlo/common/spherical-sampler.h>
+#include "packlo/common/spherical-sampler.h"
 #include <cmath>
-
 #include <glog/logging.h>
+#include "packlo/visualization/debug-visualizer.h"
 
 namespace common {
 
@@ -21,7 +21,9 @@ void SphericalSampler::sampleUniformly(
     const model::PointCloud& cloud, std::vector<model::FunctionValue>* grid) {
   CHECK(is_initialized_);
   grid->clear();
-  cloud.getNearestPoints(cartesian_grid_, grid);
+  model::PointCloud sphere = projection_.convertPointCloudCopy(cloud);
+  sphere.initialize_kd_tree();
+  sphere.getNearestPoints(cartesian_grid_, grid);
 }
 
 std::vector<common::Point_t> SphericalSampler::create2BwGrid(
@@ -47,7 +49,7 @@ std::vector<common::Point_t> SphericalSampler::convertCartesian(
   const float n_grid = static_cast<float>(grid.size()) / 25;
   const float step_distance = 0.00;
   VLOG(1) << "step distance = " << step_distance << " n: " << n_grid;
-  float dist = 15.0f;
+  float dist = 1.0f;
   for (const common::Point_t& p : grid) {
     common::Point_t cart_p;
     cart_p.x = dist*std::sin(p.x) * std::cos(p.y);

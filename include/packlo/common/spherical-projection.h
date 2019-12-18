@@ -1,22 +1,20 @@
-#pragma once 
+#ifndef INCLUDE_PACKLO_COMMON_SPHERICAL_PROJECTION_H_
+#define INCLUDE_PACKLO_COMMON_SPHERICAL_PROJECTION_H_
 
-#include <packlo/model/point-cloud.h>
+#include "packlo/model/point-cloud.h"
 
 namespace common {
 
 class SphericalProjection {
+ public:
+  void convertPointCloud(model::PointCloud* cloud);
+  model::PointCloud convertPointCloudCopy(const model::PointCloud& cloud);
 
-public:
-  static void convertPointCloud(model::PointCloud &cloud);
-  static model::PointCloud convertPointCloudCopy
-    (const model::PointCloud &cloud);
-
-private:
-  static void naiveProjection(const model::PointCloud &cloud_in,
-      model::PointCloud &cloud_out);
-
+ private:
+  void naiveProjection(
+      const model::PointCloud& cloud_in, model::PointCloud* cloud_out);
 };
 
-}
+}  // namespace common
 
-
+#endif  // INCLUDE_PACKLO_COMMON_SPHERICAL_PROJECTION_H_
