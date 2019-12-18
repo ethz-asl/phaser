@@ -5,7 +5,10 @@ rosrun packlo packlo \
     --alsologtostderr=1 \
     --v=3 \
 		--enable_debug=true \
-		--app_mode="store_ply" \
-		--PlyWriteDirectory="/home/berlukas/Documents/ply/" \
+		--registration_algorithm="sph" \
 		--point_cloud_topic="/semantic_cloud" \
+		--spherical_bandwith=88 \
+		--phase_n_voxels=250 \
+		--phase_discretize_lower=-50 \
+		--phase_discretize_upper=50 \
     $REST

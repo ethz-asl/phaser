@@ -1,34 +1,36 @@
-#pragma once
+#ifndef INCLUDE_PACKLO_MODEL_POINT_CLOUD_H_
+#define INCLUDE_PACKLO_MODEL_POINT_CLOUD_H_
 
 #include "packlo/common/point-types.h"
 #include "packlo/model/function-value.h"
+#include "packlo/model/point.h"
 
 #include <pcl/point_types.h>
 #include <pcl/common/projection_matrix.h>
 #include <pcl/kdtree/kdtree_flann.h>
 
 #include <memory>
+#include <string>
 #include <vector>
 
 namespace model {
 
 class PointCloud {
-
-public:
+ public:
   PointCloud();
   explicit PointCloud(common::PointCloud_tPtr cloud);
   explicit PointCloud(const std::string& ply);
 
-  common::PointCloud_t::iterator begin(); 
+  common::PointCloud_t::iterator begin();
   common::PointCloud_t::iterator end();
 
-   void getNearestPoints(
-      const std::vector<common::Point_t> &query_points, 
+  void getNearestPoints(
+      const std::vector<common::Point_t>& query_points,
       std::vector<FunctionValue>* function_values) const;
 
   void transformPointCloud(const Eigen::Matrix4f &T);
-  void transformPointCloudCopy(const Eigen::Matrix4f& T, 
-      PointCloud& copy) const;
+  void transformPointCloudCopy(
+      const Eigen::Matrix4f& T, PointCloud* copy) const;
 
   common::PointCloud_tPtr getRawCloud() const;
 
@@ -41,10 +43,11 @@ public:
   void initialize_kd_tree();
   void writeToFile(std::string&& directory = "");
 
-private:
+ private:
+  void convertInputPointCloud(common::ExtractedPointCloud_tPtr cloud);
   void readFromFile(const std::string& ply);
-  common::PointCloud_tPtr cloud_; 
-  pcl::KdTreeFLANN<common::Point_t> kd_tree_; 
+  common::PointCloud_tPtr cloud_;
+  pcl::KdTreeFLANN<common::Point_t> kd_tree_;
 
   bool kd_tree_is_initialized_;
   std::string ply_directory_;
@@ -52,4 +55,6 @@ private:
 
 using PointCloudPtr = std::shared_ptr<PointCloud>;
 
-}
+}  // namespace model
+
+#endif  // INCLUDE_PACKLO_MODEL_POINT_CLOUD_H_
