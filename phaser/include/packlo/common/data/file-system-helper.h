@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PACKLO_COMMON_DATA_FILE_SYSTEM_HELPER_H_
+#define PACKLO_COMMON_DATA_FILE_SYSTEM_HELPER_H_
 
 #include <vector>
 #include <string>
@@ -12,3 +13,5 @@ class FileSystemHelper {
 };
 
 }  // namespace data
+
+#endif  // PACKLO_COMMON_DATA_FILE_SYSTEM_HELPER_H_
