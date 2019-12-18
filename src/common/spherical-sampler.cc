@@ -1,6 +1,7 @@
 #include "packlo/common/spherical-sampler.h"
 #include <cmath>
 #include <glog/logging.h>
+#include "packlo/visualization/debug-visualizer.h"
 
 namespace common {
 
@@ -20,7 +21,9 @@ void SphericalSampler::sampleUniformly(
     const model::PointCloud& cloud, std::vector<model::FunctionValue>* grid) {
   CHECK(is_initialized_);
   grid->clear();
+  visualization::DebugVisualizer::getInstance().visualizePointCloud(cloud);
   model::PointCloud sphere = projection_.convertPointCloudCopy(cloud);
+  visualization::DebugVisualizer::getInstance().visualizePointCloud(sphere);
   cloud.getNearestPoints(cartesian_grid_, grid);
 }
 
