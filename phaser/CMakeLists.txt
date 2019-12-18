@@ -82,7 +82,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/packlo-node.cc
 )
 
-cs_add_executable(${PROJECT_NAME} tools/packlo-app.cc)
+cs_add_executable(${PROJECT_NAME} app/packlo-app.cc)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib
   fftw3 ${NLOPT_LIBRARIES})
 
