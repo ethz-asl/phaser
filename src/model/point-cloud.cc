@@ -20,29 +20,16 @@ namespace model {
 
 PointCloud::PointCloud()
     : cloud_(new common::PointCloud_t),
-      cloud_info_(new common::ExtractedPointCloud_t),
       kd_tree_is_initialized_(false),
       ply_directory_(FLAGS_PlyWriteDirectory) {}
 
 PointCloud::PointCloud(common::PointCloud_tPtr cloud)
     : cloud_(cloud),
-      cloud_info_(new common::ExtractedPointCloud_t),
       kd_tree_is_initialized_(false),
       ply_directory_(FLAGS_PlyWriteDirectory) {}
 
-/*
-PointCloud::PointCloud(common::ExtractedPointCloud_tPtr cloud)
-    : cloud_(new common::PointCloud_t),
-      cloud_info_(new common::ExtractedPointCloud_t),
-      kd_tree_is_initialized_(false),
-      ply_directory_(FLAGS_PlyWriteDirectory) {
-  convertInputPointCloud(cloud);
-}
-*/
-
 PointCloud::PointCloud(const std::string& ply)
     : cloud_(new common::PointCloud_t),
-      cloud_info_(new common::ExtractedPointCloud_t),
       kd_tree_is_initialized_(false),
       ply_directory_(FLAGS_PlyWriteDirectory) {
   readFromFile(ply);
@@ -81,20 +68,18 @@ void PointCloud::getNearestPoints(
 
     // Approximate the function value given the neighbors.
     FunctionValue value;
-    for (size_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
+    CHECK_GT(FLAGS_sampling_neighbors, 0);
+    for (int16_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
       const int current_idx = pointIdxNKNSearch[i];
       const common::Point_t& point = cloud_->points[current_idx];
-      // const common::ExtractedPoint_t point_info =
-      // cloud_info_->points[current_idx];
 
       const double dist =
           std::sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
       value.addPoint(point);
       value.addRange(dist);
       value.addIntensity(point.intensity);
-      // value.addSemanticClass(point_info.semantic);
-      // value.addInstance(point_info.instance);
-      value.addInterpolation(0.40f * point.intensity + 0.60f * dist);
+      value.addInterpolation(0.60f * point.intensity + 0.40f * dist);
+      // value.addInterpolation(point.intensity);
     }
     function_values->emplace_back(std::move(value));
   }
@@ -107,15 +92,10 @@ void PointCloud::transformPointCloud(const Eigen::Matrix4f &T) {
 void PointCloud::transformPointCloudCopy(
     const Eigen::Matrix4f& T, PointCloud* copy) const {
   pcl::transformPointCloud(*cloud_, *(*copy).cloud_, T);
-  pcl::copyPointCloud(*cloud_info_, *(*copy).cloud_info_);
 }
 
 common::PointCloud_tPtr PointCloud::getRawCloud() const {
   return cloud_;
-}
-
-common::ExtractedPointCloud_tPtr PointCloud::getRawInfoCloud() const {
-  return cloud_info_;
 }
 
 common::Point_t& PointCloud::pointAt(const std::size_t idx) {
@@ -128,45 +108,14 @@ const common::Point_t& PointCloud::pointAt(const std::size_t idx) const {
   return cloud_->points[idx];
 }
 
-common::ExtractedPoint_t& PointCloud::pointInfoAt(const std::size_t idx) {
-  CHECK_NOTNULL(cloud_info_);
-  return cloud_info_->points[idx];
-}
-
-const common::ExtractedPoint_t& PointCloud::pointInfoAt(
-    const std::size_t idx) const {
-  CHECK_NOTNULL(cloud_info_);
-  return cloud_info_->points[idx];
-}
-
 std::size_t PointCloud::size() const {
   CHECK_NOTNULL(cloud_);
   return cloud_->points.size();
 }
 
-std::size_t PointCloud::sizeInfo() const {
-  CHECK_NOTNULL(cloud_info_);
-  return cloud_info_->points.size();
-}
-
-void PointCloud::convertInputPointCloud(
-    common::ExtractedPointCloud_tPtr cloud) {
-  CHECK_NOTNULL(cloud_info_);
-  CHECK_NOTNULL(cloud_);
-  pcl::copyPointCloud(*cloud, *cloud_info_);
-  pcl::copyPointCloud(*cloud, *cloud_);
-  /*
-  const uint16_t n_points = cloud->size();
-  for (uint16_t i = 0; i < n_points; ++i) {
-    const common::ExtractedPoint_t& p = cloud->points.at(i);
-    pcl::PointXYZ raw_point(p.x, p.y, p.z);
-    cloud_->push_back(raw_point);
-  }*/
-}
 
 PointCloud PointCloud::clone() const {
   PointCloud cloned_cloud;
-  pcl::copyPointCloud(*cloud_info_, *cloned_cloud.cloud_info_);
   pcl::copyPointCloud(*cloud_, *cloned_cloud.cloud_);
   return cloned_cloud;
 }
@@ -182,28 +131,6 @@ void PointCloud::writeToFile(std::string&& directory) {
 
   VLOG(2) << "Writing PLY file to: " << file_name;
   writer.write(file_name, *cloud_);
-}
-
-void PointCloud::updateInfo(const pcl::IndicesConstPtr indices) {
-  // Perform a manual deep copy of the elements,
-  // since pcl::ExtractIndices does not work off the shelf
-  // with custom point types.
-  common::ExtractedPointCloud_tPtr cloud_info_copy(
-      new common::ExtractedPointCloud_t);
-  VLOG(1) << "size info: " << cloud_info_->points.size();
-  VLOG(1) << "size indices: " << indices->size();
-  const uint16_t n_points = cloud_info_->points.size();
-  for (uint16_t i = 0u; i < n_points; ++i) {
-    if (std::find(indices->begin(), indices->end(), i) != indices->end())
-      continue;
-    cloud_info_copy->points.emplace_back(cloud_info_->points.at(i));
-  }
-  VLOG(1) << "size: " << cloud_info_copy->points.size();
-  cloud_info_ = cloud_info_copy;
-}
-
-void PointCloud::updateCloud() {
-  pcl::copyPointCloud(*cloud_info_, *cloud_);
 }
 
 void PointCloud::readFromFile(const std::string& ply) {

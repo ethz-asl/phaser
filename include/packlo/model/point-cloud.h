@@ -19,7 +19,6 @@ class PointCloud {
  public:
   PointCloud();
   explicit PointCloud(common::PointCloud_tPtr cloud);
-  // explicit PointCloud(common::ExtractedPointCloud_tPtr cloud);
   explicit PointCloud(const std::string& ply);
 
   common::PointCloud_t::iterator begin();
@@ -34,29 +33,20 @@ class PointCloud {
       const Eigen::Matrix4f& T, PointCloud* copy) const;
 
   common::PointCloud_tPtr getRawCloud() const;
-  common::ExtractedPointCloud_tPtr getRawInfoCloud() const;
 
   common::Point_t& pointAt(const std::size_t idx);
   const common::Point_t& pointAt(const std::size_t idx) const;
 
-  common::ExtractedPoint_t& pointInfoAt(const std::size_t idx);
-  const common::ExtractedPoint_t& pointInfoAt(const std::size_t idx) const;
-
   std::size_t size() const;
-  std::size_t sizeInfo() const;
   PointCloud clone() const;
 
   void initialize_kd_tree();
   void writeToFile(std::string&& directory = "");
 
-  void updateInfo(const pcl::IndicesConstPtr indices);
-  void updateCloud();
-
  private:
   void convertInputPointCloud(common::ExtractedPointCloud_tPtr cloud);
   void readFromFile(const std::string& ply);
   common::PointCloud_tPtr cloud_;
-  common::ExtractedPointCloud_tPtr cloud_info_;
   pcl::KdTreeFLANN<common::Point_t> kd_tree_;
 
   bool kd_tree_is_initialized_;
