@@ -22,14 +22,14 @@ int main(int argc, char** argv) {
     ROS_FATAL("Failed to start running the packlo node!");
     ros::shutdown();
     return 1;
-	}
+  }
 
-  const std::atomic<bool>& end_of_days_signal_received 
-		= packlo_node.shouldExit();
+  const std::atomic<bool>& end_of_days_signal_received =
+      packlo_node.shouldExit();
   while (ros::ok() && !end_of_days_signal_received.load()) {
-		VLOG_EVERY_N(1, 10) << "\n" << packlo_node.updateAndPrintStatistics();
+    VLOG_EVERY_N(1, 10) << "\n" << packlo_node.updateAndPrintStatistics();
     std::this_thread::sleep_for(std::chrono::seconds(1));
-	}
+  }
 
   packlo_node.shutdown();
   return 0;

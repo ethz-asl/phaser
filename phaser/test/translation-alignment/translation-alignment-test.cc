@@ -14,52 +14,50 @@
 namespace translation {
 
 class TranslationAlignmentTest : public ::testing::Test {
-  public: 
-    TranslationAlignmentTest() 
-        : distribution_(0, 100), 
-        generator_(std::chrono::system_clock::now()
-            .time_since_epoch().count()) {}
+ public:
+  TranslationAlignmentTest()
+      : generator_(std::chrono::system_clock::now().time_since_epoch().count()),
+        distribution_(0, 100) {}
 
-  protected:
-    virtual void SetUp() {
-      ds_ = std::make_unique<data::DatasourcePly>();
-      ds_->setDatasetFolder("/home/berlukas/Documents/"
-          "workspace/maplab/src/packlo/test/test-data/arche/");
-    }
+ protected:
+  virtual void SetUp() {
+    ds_ = std::make_unique<data::DatasourcePly>();
+    ds_->setDatasetFolder("./test_clouds/arche/");
+  }
 
-    registration::BaseRegistration* initializeRegistration(bool mocked) {
-      if (mocked)
-        registrator_ = std::make_unique<
-          registration::SphRegistrationMockTranslated>();
-      else
-        registrator_ = std::make_unique<registration::SphRegistration>();
-      return registrator_.get();
-    }
+  registration::BaseRegistration* initializeRegistration(bool mocked) {
+    if (mocked)
+      registrator_ =
+          std::make_unique<registration::SphRegistrationMockTranslated>();
+    else
+      registrator_ = std::make_unique<registration::SphRegistration>();
+    return registrator_.get();
+  }
 
-    float getRandomTranslation() {
-      return distribution_(generator_); 
-    }
+  float getRandomTranslation() {
+    return distribution_(generator_);
+  }
 
-    data::DatasourcePlyPtr ds_;
-    registration::BaseRegistrationPtr registrator_;                             
-    std::default_random_engine generator_;
-    std::uniform_real_distribution<float> distribution_;
+  data::DatasourcePlyPtr ds_;
+  registration::BaseRegistrationPtr registrator_;
+  std::default_random_engine generator_;
+  std::uniform_real_distribution<float> distribution_;
 };
 
 TEST_F(TranslationAlignmentTest, TranslationSelfSingle) {
   CHECK(ds_);
-  registration::SphRegistrationMockTranslated* reg 
-    = dynamic_cast<registration::SphRegistrationMockTranslated*>(
-        initializeRegistration(true));
+  registration::SphRegistrationMockTranslated* reg =
+      dynamic_cast<registration::SphRegistrationMockTranslated*>(
+          initializeRegistration(true));
   // Define a random translation.
-  Eigen::Vector3d trans_xyz (12.9f, 33.1f, 21.5f);
+  Eigen::Vector3d trans_xyz(12.9f, 33.1f, 21.5f);
   reg->setRandomTranslation(trans_xyz(0), trans_xyz(1), trans_xyz(2));
 
   model::RegistrationResult result;
   ds_->subscribeToPointClouds([&] (const model::PointCloudPtr& cloud) {
     CHECK(cloud);
     // Estimate the translation.
-    result = reg->registerPointCloud(cloud, cloud);    
+    result = reg->registerPointCloud(cloud, cloud);
     ASSERT_TRUE(result.foundSolutionForTranslation());
 
     // Get the result and compare it.
@@ -72,20 +70,20 @@ TEST_F(TranslationAlignmentTest, TranslationSelfSingle) {
 
 TEST_F(TranslationAlignmentTest, TranslationSelfAll) {
   CHECK(ds_);
-  registration::SphRegistrationMockTranslated* reg 
-    = dynamic_cast<registration::SphRegistrationMockTranslated*>(
-        initializeRegistration(true));
+  registration::SphRegistrationMockTranslated* reg =
+      dynamic_cast<registration::SphRegistrationMockTranslated*>(
+          initializeRegistration(true));
 
   model::RegistrationResult result;
   ds_->subscribeToPointClouds([&] (const model::PointCloudPtr& cloud) {
     CHECK(cloud);
     // Define a new random translation for each cloud.
-    Eigen::Vector3d trans_xyz (getRandomTranslation(), 
-        getRandomTranslation(), getRandomTranslation());
+    Eigen::Vector3d trans_xyz(
+        getRandomTranslation(), getRandomTranslation(), getRandomTranslation());
     reg->setRandomTranslation(trans_xyz(0), trans_xyz(1), trans_xyz(2));
 
     // Estimate the translation.
-    result = reg->registerPointCloud(cloud, cloud);    
+    result = reg->registerPointCloud(cloud, cloud);
     ASSERT_TRUE(result.foundSolutionForTranslation());
 
     // Get the result and compare it.
@@ -110,20 +108,22 @@ TEST_F(TranslationAlignmentTest, TranslationEasy) {
       prev_cloud = cloud;
       return;
     }
-   
+
     // Register the point clouds.
-    const float initHausdorff 
-      = common::MetricUtils::HausdorffDistance(prev_cloud, cloud);
-    result = reg->estimateTranslation(prev_cloud, cloud);    
+    const float initHausdorff =
+        common::MetricUtils::HausdorffDistance(prev_cloud, cloud);
+    result = reg->estimateTranslation(prev_cloud, cloud);
     ASSERT_TRUE(result.foundSolutionForTranslation());
 
     // Check that the Hausdorff distance decreased after the registration.
-    ASSERT_LT(common::MetricUtils::HausdorffDistance(prev_cloud, 
-          result.getRegisteredCloud()), initHausdorff);
+    ASSERT_LT(
+        common::MetricUtils::HausdorffDistance(
+            prev_cloud, result.getRegisteredCloud()),
+        initHausdorff);
   });
   ds_->startStreaming(2);
 }
 
-} // namespace translation
+}  // namespace translation
 
 MAPLAB_UNITTEST_ENTRYPOINT

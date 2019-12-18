@@ -10,21 +10,22 @@
 namespace transformation {
 
 class VoxgraphAlignmentTest : public ::testing::Test {
-  protected:
-    virtual void SetUp() {
-      ds_ = std::make_unique<data::DatasourcePly>();
-      ds_->setDatasetFolder("/home/berlukas/Documents/"
-          "workspace/maplab/src/packlo/test/test-data/gonzen/"
-          "easy-submaps/");
-    }
+ protected:
+  virtual void SetUp() {
+    ds_ = std::make_unique<data::DatasourcePly>();
+    ds_->setDatasetFolder(
+        "/home/berlukas/Documents/"
+        "workspace/maplab/src/packlo/test/test-data/gonzen/"
+        "easy-submaps/");
+  }
 
-    data::DatasourcePlyPtr ds_;
+  data::DatasourcePlyPtr ds_;
 };
 
 TEST_F(VoxgraphAlignmentTest, TransformVoxgraphEasy) {
   CHECK(ds_);
-  registration::BaseRegistrationPtr reg = 
-    std::make_unique<registration::SphRegistration>();
+  registration::BaseRegistrationPtr reg =
+      std::make_unique<registration::SphRegistration>();
   model::RegistrationResult result;
   model::PointCloudPtr prev_cloud = nullptr;
   ds_->subscribeToPointClouds([&] (const model::PointCloudPtr& cloud) {
@@ -34,23 +35,24 @@ TEST_F(VoxgraphAlignmentTest, TransformVoxgraphEasy) {
       prev_cloud->initialize_kd_tree();
       return;
     }
-   
+
     // Register the point clouds.
-    const float initHausdorff 
-      = common::MetricUtils::HausdorffDistance(prev_cloud, cloud);
+    const float initHausdorff =
+        common::MetricUtils::HausdorffDistance(prev_cloud, cloud);
     cloud->initialize_kd_tree();
-    result = reg->registerPointCloud(prev_cloud, cloud);    
+    result = reg->registerPointCloud(prev_cloud, cloud);
     EXPECT_TRUE(result.foundSolutionForRotation());
     EXPECT_TRUE(result.foundSolutionForTranslation());
 
     // Check that the Hausdorff distance decreased after the registration.
-    ASSERT_LE(common::MetricUtils::HausdorffDistance(prev_cloud, 
-          result.getRegisteredCloud()), initHausdorff);
+    ASSERT_LE(
+        common::MetricUtils::HausdorffDistance(
+            prev_cloud, result.getRegisteredCloud()),
+        initHausdorff);
   });
   ds_->startStreaming();
 }
 
-
-} // namespace transformation
+}  // namespace transformation
 
 MAPLAB_UNITTEST_ENTRYPOINT

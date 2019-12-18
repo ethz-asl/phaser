@@ -27,4 +27,5 @@
 
   <depend>eigen_catkin</depend>
   <depend>eigen_checks</depend>
+  <depend>phaser_test_data</depend>
 </package>

@@ -1,10 +1,11 @@
 #include "packlo/common/data/datasource-ply.h"
 #include "packlo/common/data/file-system-helper.h"
 
+#include <boost/filesystem.hpp>
 #include <glog/logging.h>
 
-DEFINE_string(PlyReadDirectory, "", 
-    "Defines the directory to read the PLYs from.");
+DEFINE_string(
+    PlyReadDirectory, "", "Defines the directory to read the PLYs from.");
 
 namespace data {
 
@@ -16,13 +17,16 @@ void DatasourcePly::subscribeToPointClouds(
 }
 
 void DatasourcePly::startStreaming(const uint32_t number_of_clouds) {
-  VLOG(1) << "reading ply";
-  std::vector<model::PointCloudPtr> clouds = readPly(datasource_folder_); 
+  VLOG(1) << "path: " << boost::filesystem::current_path();
+  VLOG(1) << "reading ply from: " << datasource_folder_;
+  std::vector<model::PointCloudPtr> clouds = readPly(datasource_folder_);
   VLOG(1) << "reading ply done. size: " << clouds.size();
   CHECK(!clouds.empty());
   uint32_t n_clouds = 0;
-  if (number_of_clouds == 0) n_clouds = clouds.size();
-  else n_clouds = number_of_clouds;
+  if (number_of_clouds == 0)
+    n_clouds = clouds.size();
+  else
+    n_clouds = number_of_clouds;
   for (uint32_t i = 0u; i < n_clouds; ++i) {
     model::PointCloudPtr& cloud = clouds.at(i);
     for (auto& callback : callbacks_) {
@@ -40,16 +44,16 @@ std::vector<model::PointCloudPtr> DatasourcePly::readPly(
   std::vector<model::PointCloudPtr> clouds;
   if (directory.empty()) return clouds;
   std::vector<std::string> files;
-  FileSystemHelper::readDirectory(directory, &files); 
+  FileSystemHelper::readDirectory(directory, &files);
   if (files.empty()) return clouds;
 
   for (const std::string& ply : files) {
-    model::PointCloudPtr cur_cloud 
-      = std::make_shared<model::PointCloud>(directory + ply);
+    model::PointCloudPtr cur_cloud =
+        std::make_shared<model::PointCloud>(directory + ply);
     clouds.emplace_back(std::move(cur_cloud));
   }
 
   return clouds;
 }
 
-} // namespace data
+}  // namespace data
