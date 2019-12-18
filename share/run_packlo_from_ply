@@ -8,8 +8,8 @@ rosrun packlo packlo \
 		--registration_algorithm="sph" \
 		--datasource="ply" \
 		--PlyReadDirectory="/home/berlukas/Documents/workspace/maplab/src/packlo/test/test-data/gonzen/easy-submaps/" \
-		--spherical_bandwith=150 \
-		--phase_n_voxels=350 \
+		--spherical_bandwith=120 \
+		--phase_n_voxels=280 \
 		--phase_discretize_lower=-70 \
 		--phase_discretize_upper=70 \
     $REST

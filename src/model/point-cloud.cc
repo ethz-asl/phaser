@@ -15,6 +15,9 @@ DEFINE_string(
 DEFINE_string(PlyPrefix, "cloud", "Defines the prefix name for the PLY.");
 DEFINE_int32(
     sampling_neighbors, 1, "Defines the number of neighbors for the sampling.");
+DEFINE_double(
+    neighbor_max_distance, 5,
+    "Defines the maximum allowed distance to neighbors.");
 
 namespace model {
 
@@ -26,13 +29,26 @@ PointCloud::PointCloud()
 PointCloud::PointCloud(common::PointCloud_tPtr cloud)
     : cloud_(cloud),
       kd_tree_is_initialized_(false),
-      ply_directory_(FLAGS_PlyWriteDirectory) {}
+      ply_directory_(FLAGS_PlyWriteDirectory) {
+  ranges_.resize(cloud_->size());
+}
 
 PointCloud::PointCloud(const std::string& ply)
     : cloud_(new common::PointCloud_t),
       kd_tree_is_initialized_(false),
       ply_directory_(FLAGS_PlyWriteDirectory) {
   readFromFile(ply);
+  ranges_.resize(cloud_->size());
+}
+
+PointCloud::PointCloud(const std::vector<common::Point_t>& points)
+    : cloud_(new common::PointCloud_t),
+      kd_tree_is_initialized_(false),
+      ply_directory_(FLAGS_PlyWriteDirectory) {
+  for (const common::Point_t& point : points) {
+    cloud_->push_back(point);
+  }
+  ranges_.resize(cloud_->size());
 }
 
 void PointCloud::initialize_kd_tree() {
@@ -71,10 +87,10 @@ void PointCloud::getNearestPoints(
     CHECK_GT(FLAGS_sampling_neighbors, 0);
     for (int16_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
       const int current_idx = pointIdxNKNSearch[i];
+      const float current_dist = pointNKNSquaredDistance[i];
       const common::Point_t& point = cloud_->points[current_idx];
 
-      const double dist =
-          std::sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
+      const double dist = ranges_.at(current_idx);
       value.addPoint(point);
       value.addRange(dist);
       value.addIntensity(point.intensity);
@@ -117,7 +133,18 @@ std::size_t PointCloud::size() const {
 PointCloud PointCloud::clone() const {
   PointCloud cloned_cloud;
   pcl::copyPointCloud(*cloud_, *cloned_cloud.cloud_);
+  cloned_cloud.ranges_ = ranges_;
   return cloned_cloud;
+}
+
+void PointCloud::setRange(const double range, const uint32_t i) {
+  CHECK_LT(i, ranges_.size());
+  ranges_.at(i) = range;
+}
+
+double PointCloud::getRange(const uint32_t i) const {
+  CHECK_LT(i, ranges_.size());
+  return ranges_.at(i);
 }
 
 void PointCloud::writeToFile(std::string&& directory) {

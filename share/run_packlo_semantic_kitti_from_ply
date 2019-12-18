@@ -8,7 +8,7 @@ rosrun packlo packlo \
 		--registration_algorithm="sph" \
 		--PlyReadDirectory="/home/berlukas/Documents/workspace/maplab/src/packlo/test/test-data/kitti/1/" \
 		--datasource="ply" \
-		--spherical_bandwith=150 \
+		--spherical_bandwith=90 \
 		--phase_n_voxels=361 \
 		--phase_discretize_lower=-90 \
 		--phase_discretize_upper=90 \

@@ -20,6 +20,7 @@ class PointCloud {
   PointCloud();
   explicit PointCloud(common::PointCloud_tPtr cloud);
   explicit PointCloud(const std::string& ply);
+  explicit PointCloud(const std::vector<common::Point_t>& points);
 
   common::PointCloud_t::iterator begin();
   common::PointCloud_t::iterator end();
@@ -40,6 +41,9 @@ class PointCloud {
   std::size_t size() const;
   PointCloud clone() const;
 
+  void setRange(const double range, const uint32_t i);
+  double getRange(const uint32_t i) const;
+
   void initialize_kd_tree();
   void writeToFile(std::string&& directory = "");
 
@@ -51,6 +55,7 @@ class PointCloud {
 
   bool kd_tree_is_initialized_;
   std::string ply_directory_;
+  std::vector<double> ranges_;
 };
 
 using PointCloudPtr = std::shared_ptr<PointCloud>;
