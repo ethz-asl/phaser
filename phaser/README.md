@@ -1,3 +1,0 @@
-# Packet-based Lidar Odometry
-
-
