@@ -19,7 +19,7 @@ if [[ $(uname) == "Linux" ]]; then
       ros-kinetic-octomap-ros
   elif lsb_release -c 2> /dev/null | grep bionic > /dev/null ; then
     # Ubuntu 18.04 / ROS Melodic.
-    sudo apt-get install -y clang-format-6.0 \
+    sudo apt-get install -y clang-format-6.0 ros-melodic-pcl-conversions \
       ros-melodic-octomap libvtk7-jni libvtk7-java libvtk7-dev python-vtk6
   else
     echo "Unknown Ubuntu version. Couldn't install all necessary dependencies."
