@@ -75,7 +75,7 @@ TEST_F(RotationAlignmentTest, RotationSelfAll) {
   CHECK(ds_);
   registration::SphRegistrationMockRotated* reg = dynamic_cast<registration::
     SphRegistrationMockRotated*>(initializeRegistration(true));
-  reg->setBandwith(128);
+  reg->setBandwith(70);
 
   model::RegistrationResult result;
   ds_->subscribeToPointClouds([&] (const model::PointCloudPtr& cloud) {
@@ -102,7 +102,7 @@ TEST_F(RotationAlignmentTest, RotationHighBandwith) {
   CHECK(ds_);
   registration::SphRegistrationMockRotated* reg = dynamic_cast<registration::
     SphRegistrationMockRotated*>(initializeRegistration(true));
-  reg->setBandwith(256);
+  reg->setBandwith(100);
 
   model::RegistrationResult result;
   ds_->subscribeToPointClouds([&] (const model::PointCloudPtr& cloud) {
