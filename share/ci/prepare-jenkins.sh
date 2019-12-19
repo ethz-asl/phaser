@@ -20,7 +20,7 @@ if [[ $(uname) == "Linux" ]]; then
   elif lsb_release -c 2> /dev/null | grep bionic > /dev/null ; then
     # Ubuntu 18.04 / ROS Melodic.
     sudo apt-get install -y clang-format-6.0 ros-melodic-pcl-conversions \
-      ros-melodic-octomap
+      libpcl-dev ros-melodic-octomap
   else
     echo "Unknown Ubuntu version. Couldn't install all necessary dependencies."
   fi
