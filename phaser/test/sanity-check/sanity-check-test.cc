@@ -1,4 +1,4 @@
-#include "maplab-common/test/testing-entrypoint.h"
+#include "packlo/common/test/testing-entrypoint.h"
 
 #include <gtest/gtest.h>
 
