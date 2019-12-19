@@ -36,8 +36,8 @@ void DatasourceRos::pointCloudCallback(
   if (number_of_clouds_ != 0 && ++processed_clouds_ > number_of_clouds_)
     return;
 
-  common::ExtractedPointCloud_tPtr input_cloud(
-      new common::ExtractedPointCloud_t);
+  common::PointCloud_tPtr input_cloud(
+      new common::PointCloud_t);
 
   pcl::fromROSMsg(*msg, *input_cloud);
   model::PointCloudPtr cur_cloud =

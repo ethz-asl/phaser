@@ -3,7 +3,6 @@
 
 #include <pcl/common/io.h>
 #include <pcl/common/transforms.h>
-#include <pcl/filters/extract_indices.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/kdtree/impl/kdtree_flann.hpp>
 
@@ -167,7 +166,6 @@ void PointCloud::writeToFile(std::string&& directory) {
 void PointCloud::readFromFile(const std::string& ply) {
   CHECK(!ply.empty());
   VLOG(2) << "Reading PLY file from: " << ply;
-  // common::ExtractedPointCloud_tPtr cloud(new common::ExtractedPointCloud_t);
   pcl::PLYReader reader;
   reader.read(ply, *cloud_);
   VLOG(2) << "Cloud size: " << cloud_->size();

@@ -48,7 +48,6 @@ class PointCloud {
   void writeToFile(std::string&& directory = "");
 
  private:
-  void convertInputPointCloud(common::ExtractedPointCloud_tPtr cloud);
   void readFromFile(const std::string& ply);
   common::PointCloud_tPtr cloud_;
   pcl::KdTreeFLANN<common::Point_t> kd_tree_;
