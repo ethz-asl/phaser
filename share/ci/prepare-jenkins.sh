@@ -7,7 +7,7 @@ if [[ $(uname) == "Linux" ]]; then
     default-jre libreadline-dev libgtest-dev libglew-dev python-git pylint \
     checkstyle python-termcolor liblog4cplus-dev cimg-dev python-wstool \
     python-catkin-tools libssh2-1-dev libatlas3-base libv4l-dev python-scipy \
-    libnlopt-dev
+    libnlopt-dev libvtk5-dev python-vtk
 
   if lsb_release -c 2> /dev/null | grep trusty > /dev/null ; then
     # Ubuntu 14.04 / ROS Indigo.
