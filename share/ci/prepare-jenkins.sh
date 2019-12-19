@@ -7,7 +7,7 @@ if [[ $(uname) == "Linux" ]]; then
     default-jre libreadline-dev libgtest-dev libglew-dev python-git pylint \
     checkstyle python-termcolor liblog4cplus-dev cimg-dev python-wstool \
     python-catkin-tools libssh2-1-dev libatlas3-base libv4l-dev python-scipy \
-    libnlopt-dev libvtk7-jni libvtk7-java libvtk7-dev python-vtk6
+    libnlopt-dev 
 
   if lsb_release -c 2> /dev/null | grep trusty > /dev/null ; then
     # Ubuntu 14.04 / ROS Indigo.
@@ -20,7 +20,7 @@ if [[ $(uname) == "Linux" ]]; then
   elif lsb_release -c 2> /dev/null | grep bionic > /dev/null ; then
     # Ubuntu 18.04 / ROS Melodic.
     sudo apt-get install -y clang-format-6.0 \
-      ros-melodic-octomap
+      ros-melodic-octomap libvtk7-jni libvtk7-java libvtk7-dev python-vtk6
   else
     echo "Unknown Ubuntu version. Couldn't install all necessary dependencies."
   fi
