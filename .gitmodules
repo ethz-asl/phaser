@@ -1,3 +1,0 @@
-[submodule "lib/fftw3_catkin"]
-	path = lib/fftw3_catkin
-	url = git@github.com:ethz-asl/fftw3_catkin.git

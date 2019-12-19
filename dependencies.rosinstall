@@ -1,7 +1,35 @@
 - git:
-    local-name: maplab_dependencies
-    uri: https://github.com/ethz-asl/maplab_dependencies.git
-    version: develop
+    local-name: catkin_simple
+    uri: git@github.com:catkin/catkin_simple.git
+    version: master
+- git:
+    local-name: plotty
+    uri: git@github.com:ethz-asl/plotty.git
+    version: master
+- git:
+    local-name: gflags_catkin
+    uri: git@github.com:ethz-asl/gflags_catkin.git
+    version: master
+- git:
+    local-name: glog_catkin
+    uri: git@github.com:ethz-asl/glog_catkin.git
+    version: master
+- git:
+    local-name: eigen_catkin
+    uri: git@github.com:ethz-asl/eigen_catkin.git
+    version: master
+- git:
+    local-name: eigen_checks
+    uri: git@github.com:ethz-asl/eigen_checks.git
+    version: master
+- git:
+    local-name: opencv3_catkin
+    uri: git@github.com:ethz-asl/opencv3_catkin.git
+    version: master
+- git:
+    local-name: fftw3_catkin
+    uri: git@github.com:ethz-asl/fftw3_catkin.git
+    version: master
 - git:
     local-name: pcl_catkin
     uri: git@github.com:ethz-asl/pcl_catkin.git

@@ -29,7 +29,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "fftw3.h"
+#include <fftw3/fftw3.h>
 #include "soft/makeweights.h"
 #include "soft/so3_correlate_fftw.h"
 #include "soft/soft_fftw.h"

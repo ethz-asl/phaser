@@ -61,7 +61,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "fftw3.h"
+#include <fftw3/fftw3.h>
 #include "soft/makeweights.h"
 #include "soft/s2_primitive.h"
 #include "soft/s2_cospmls.h"

@@ -41,7 +41,7 @@
 #include <math.h>
 #include <string.h>
 
-#include "fftw3.h"
+#include <fftw3/fftw3.h>
 #include "soft/s2_primitive.h"
 #include "soft/FST_semi_memo.h"
 

@@ -38,7 +38,7 @@
 #include <math.h>
 #include <string.h>
 
-#include "fftw3.h"
+#include <fftw3/fftw3.h>
 #include "soft/makeweights.h"
 #include "soft/utils_so3.h"
 #include "soft/rotate_so3_utils.h"

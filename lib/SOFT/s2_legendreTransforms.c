@@ -35,7 +35,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>   /** for memcpy **/
-#include "fftw3.h"
+#include <fftw3/fftw3.h>
 
 #include "soft/s2_cospmls.h"
 

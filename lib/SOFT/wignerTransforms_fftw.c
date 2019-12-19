@@ -42,7 +42,7 @@
 
 #include <string.h>
 
-#include "fftw3.h"
+#include <fftw3/fftw3.h>
 #include "soft/utils_so3.h"
 #include "soft/utils_vec_cx.h"
 

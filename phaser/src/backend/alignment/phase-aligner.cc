@@ -4,7 +4,6 @@
 #include <complex.h>  // needs to be included before fftw
 
 #include "igl/histc.h"
-#include <fftw3.h>
 #include <glog/logging.h>
 
 DEFINE_double(

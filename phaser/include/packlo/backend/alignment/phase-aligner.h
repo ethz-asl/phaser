@@ -1,7 +1,7 @@
 #pragma once
 
 #include "packlo/backend/alignment/base-aligner.h"
-#include <fftw3.h>
+#include <fftw3/fftw3.h>
 
 #include <array>
 

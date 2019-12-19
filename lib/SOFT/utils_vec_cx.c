@@ -39,7 +39,7 @@
 
 ************************************************************************/
 
-#include "fftw3.h"
+#include <fftw3/fftw3.h>
 #include "soft/complex.h"
 #include "soft/utils_vec_cx.h"
 

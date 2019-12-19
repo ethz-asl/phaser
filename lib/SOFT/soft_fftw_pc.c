@@ -46,7 +46,7 @@
 /* the following is for memset */
 #include <string.h>
 #include <math.h>
-#include "fftw3.h"
+#include <fftw3/fftw3.h>
 
 
 #include "soft/utils_so3.h"
