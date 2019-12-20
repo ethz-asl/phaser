@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-catkin build packlo --no-deps --mem-limit 75% && catkin run_tests packlo --no-deps && catkin_test_results ~/Documents/workspace/maplab/build/packlo
+catkin build phaser_ros --no-deps --mem-limit 75% && catkin run_tests phaser_core --no-deps && catkin_test_results ../../build/phaser_core

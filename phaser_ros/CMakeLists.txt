@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(phaser_ros)
 
+find_package(catkin_simple REQUIRED)
+catkin_simple(ALL_DEPS_REQUIRED)
+
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
 if(COMPILER_SUPPORTS_CXX14)
@@ -11,18 +14,12 @@ if(COMPILER_SUPPORTS_CXX14)
 else()
   message(FATAL_ERROR "The compiler does not support C++14.")
 endif()
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-find_package(catkin_simple REQUIRED)
-catkin_simple(ALL_DEPS_REQUIRED)
 
 cs_add_library(${PROJECT_NAME}_lib
    src/visualization/debug-visualizer.cc
    src/visualization/plotty-visualizer.cc
 
-   src/common/test/testing-entrypoint.cc
-   src/common/gflags-interface.cc
    src/packlo-node.cc
 )
 

@@ -40,21 +40,6 @@ cs_add_library(${PROJECT_NAME}_lib
    lib/SOFT/soft_fftw.c
    lib/SOFT/wignerTransforms_fftw.c
 
-   src/model/point-cloud.cc
-   src/model/function-value.cc
-   src/model/registration-result.cc
-
-   src/common/data/datasource-ros.cc
-   src/common/data/datasource-ply.cc
-   src/common/data/file-system-helper.cc
-   src/common/spherical-projection.cc
-   src/common/spherical-sampler.cc
-   src/common/rotation-utils.cc
-   src/common/translation-utils.cc
-   src/common/statistics-manager.cc
-   src/common/metric-utils.cc
-   src/common/point-cloud-utils.cc
-
    src/controller/distributor.cc
    src/backend/registration/base-registration.cc
    src/backend/registration/sph-registration.cc
@@ -67,8 +52,6 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/alignment/range-based-aligner.cc
    src/backend/alignment/phase-aligner.cc
    src/backend/alignment/feature-aligner.cc
-
-   src/common/test/testing-entrypoint.cc
 )
 
 #############

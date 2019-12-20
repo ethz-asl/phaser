@@ -30,6 +30,9 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/statistics-manager.cc
    src/common/metric-utils.cc
    src/common/point-cloud-utils.cc
+   src/common/gflags-interface.cc
+
+   src/common/test/testing-entrypoint.cc
 )
 
 cs_install()

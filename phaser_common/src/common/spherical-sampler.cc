@@ -1,7 +1,6 @@
 #include "packlo/common/spherical-sampler.h"
 #include <cmath>
 #include <glog/logging.h>
-#include "packlo/visualization/debug-visualizer.h"
 
 namespace common {
 

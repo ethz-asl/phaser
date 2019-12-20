@@ -2,7 +2,6 @@
 #include "packlo/common/translation-utils.h"
 #include "packlo/common/rotation-utils.h"
 #include "packlo/common/statistic-utils.h"
-#include "packlo/visualization/debug-visualizer.h"
 
 #include <glog/logging.h>
 
@@ -28,16 +27,8 @@ model::RegistrationResult SphRegistrationMockTranslated::registerPointCloud(
   */
   syn_cloud.initialize_kd_tree();
 
-  /*
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*cloud_prev, syn_cloud);  
-    */
-
-  VLOG(1) << "sample prev";
   sampler_.sampleUniformly(*cloud_prev, &f_values_);
-  VLOG(1) << "sample syn";
   sampler_.sampleUniformly(syn_cloud, &h_values_);
-  VLOG(1) << "sample done";
   std::vector<model::FunctionValue> syn_values;
   /*
     pertubFunctionValues(f_values_, FLAGS_mock_translate_x, 
@@ -59,10 +50,7 @@ model::RegistrationResult SphRegistrationMockTranslated::registerPointCloud(
   /*
   const std::vector<double> corr = aligner_->getCorrelation();
   eval_->evaluateCorrelationFromTranslation(corr);
-
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*cloud_prev, reg_cloud);  
-    */
+  */
 
   return model::RegistrationResult(std::move(reg_cloud), std::move(xyz));
 }

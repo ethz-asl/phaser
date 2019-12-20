@@ -1,5 +1,4 @@
 #include "packlo/backend/correlation/z-score-eval.h"
-#include "packlo/visualization/plotty-visualizer.h"
 
 #include <cmath>
 #include <numeric>
@@ -58,12 +57,6 @@ void ZScoreEval::evaluateCorrelationFromTranslation(
     // Evaluate correlation. 
     double mean, std;
     std::tie(mean, std) = fitSmoothedNormalDist(signals, n_corr_ds);
-
-    // Visualization.
-    for (auto& ds : n_corr_ds) 
-      manager_.emplaceValue("downsampled_corr", ds);
-    visualization::PlottyVisualizer::getInstance()
-     .createPlotFor(manager_, "downsampled_corr");
     VLOG(1) << "finished z-score with var: " << std*std;
 }
 

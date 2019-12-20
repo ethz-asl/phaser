@@ -1,7 +1,6 @@
 #include "packlo/controller/distributor.h"
 #include "packlo/common/spherical-projection.h"
 #include "packlo/common/rotation-utils.h"
-#include "packlo/visualization/debug-visualizer.h"
 #include "packlo/backend/registration/sph-registration.h"
 #include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
 #include "packlo/backend/registration/mock/sph-registration-mock-cutted.h"
