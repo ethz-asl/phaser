@@ -56,8 +56,8 @@ std::pair<double, double> ZScoreEval::fitSmoothedNormalDist(
   // Normalize peak distances.
   std::transform(
       signals.cbegin(), signals.cend(), std::back_inserter(peak_values),
-      [&max](const uint32_t& signal) { 
-        return (static_cat<double>(signal)) / max; 
+      [&max](const uint32_t& signal) {
+        return (static_cat<double>(signal)) / max;
       });
 
   // Calculate mean distances.

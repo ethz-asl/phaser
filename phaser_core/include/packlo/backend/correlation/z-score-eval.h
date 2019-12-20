@@ -6,8 +6,9 @@
 #include "packlo/common/statistics-manager.h"
 
 #include <cstdint>
-#include <vector>
 #include <set>
+#include <utility>
+#include <vector>
 
 namespace correlation {
 
@@ -15,17 +16,12 @@ class ZScoreEval : public BaseEval {
  public:
   ZScoreEval();
 
-  virtual void evaluateCorrelationFromTranslation(
+  void evaluateCorrelationFromTranslation(
       const std::vector<double>& corr) override;
 
  private:
-  void calculateSmoothedZScore(std::vector<double>& input,
-      const double lag, const double threshold, const double influence,
-      std::set<uint32_t>* signals) const;
-  double stdDev(const double mean, const std::vector<double>& vec, 
-      uint32_t from, uint32_t to) const;
   std::pair<double, double> fitSmoothedNormalDist(
-      const std::set<uint32_t>& signals, 
+      const std::set<uint32_t>& signals,
       const std::vector<double>& input) const;
 
   common::StatisticsManager manager_;
