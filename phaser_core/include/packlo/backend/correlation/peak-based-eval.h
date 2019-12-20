@@ -1,5 +1,5 @@
-#ifndef INCLUDE_PACKLO_BACKEND_CORRELATION_PEAK_BASED_EVAL_H_
-#define INCLUDE_PACKLO_BACKEND_CORRELATION_PEAK_BASED_EVAL_H_
+#ifndef PACKLO_BACKEND_CORRELATION_PEAK_BASED_EVAL_H_
+#define PACKLO_BACKEND_CORRELATION_PEAK_BASED_EVAL_H_
 
 #include <vector>
 #include "packlo/backend/correlation/base-peak-extraction.h"
@@ -18,4 +18,4 @@ class PeakBasedEval {
 
 }  // namespace correlation
 
-#endif  // INCLUDE_PACKLO_BACKEND_CORRELATION_PEAK_BASED_EVAL_H_
+#endif  // PACKLO_BACKEND_CORRELATION_PEAK_BASED_EVAL_H_

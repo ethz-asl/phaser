@@ -51,6 +51,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/correlation/z-score-eval.cc
    src/backend/correlation/z-score-peak-extraction.cc
    src/backend/correlation/peak-based-eval.cc
+   src/backend/correlation/signal-analysis.cc
    src/backend/alignment/range-based-aligner.cc
    src/backend/alignment/phase-aligner.cc
    src/backend/alignment/feature-aligner.cc
