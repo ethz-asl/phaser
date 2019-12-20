@@ -66,7 +66,7 @@ TEST_F(RotationAlignmentTest, RotationSelfSingle) {
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             cloud, result.getRegisteredCloud()),
-        3.0);
+        3.4);
   });
   ds_->startStreaming(1);
 }
@@ -93,7 +93,7 @@ TEST_F(RotationAlignmentTest, RotationSelfAll) {
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             cloud, result.getRegisteredCloud()),
-        3.0);
+        3.5);
   });
   ds_->startStreaming();
 }
@@ -120,7 +120,7 @@ TEST_F(RotationAlignmentTest, RotationHighBandwith) {
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             cloud, result.getRegisteredCloud()),
-        2.0);
+        3.0);
   });
   ds_->startStreaming(1);
 }
