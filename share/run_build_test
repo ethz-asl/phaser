@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-catkin build packlo --no-deps --mem-limit 75% && catkin run_tests packlo --no-deps && catkin_test_results ~/Documents/workspace/maplab/build/packlo

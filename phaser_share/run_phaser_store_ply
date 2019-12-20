@@ -1,0 +1,11 @@
+#!/usr/bin/env zsh
+REST=$@
+
+rosrun packlo packlo \
+    --alsologtostderr=1 \
+    --v=3 \
+		--enable_debug=true \
+		--app_mode="store_ply" \
+		--PlyWriteDirectory="/home/berlukas/Documents/ply/" \
+		--point_cloud_topic="/semantic_cloud" \
+    $REST

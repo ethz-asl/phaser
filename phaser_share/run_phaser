@@ -1,0 +1,11 @@
+#!/usr/bin/env zsh
+REST=$@
+
+rosrun packlo packlo \
+    --alsologtostderr=1 \
+    --v=3 \
+		--enable_debug=true \
+		--registration_algorithm=sph \
+		--spherical_bandwith=12 \
+		--PlyWriteDirectory="/home/berlukas/Documents/ply/" \
+    $REST
