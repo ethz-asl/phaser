@@ -15,12 +15,15 @@ class GaussianMixture {
       const Eigen::MatrixXd& means, const std::vector<Eigen::MatrixXd>& covs,
       const Eigen::VectorXd& weights);
 
+  const Eigen::VectorXd& getMixtureMean() const;
+  const Eigen::MatrixXd& getMixtureCov() const;
+
  private:
   void initializeUniformWeights();
   std::pair<Eigen::VectorXd, Eigen::MatrixXd> calcMixutreParameters();
 
   // Components.
-  Eigen::VectorXd means_;
+  Eigen::MatrixXd means_;
   Eigen::MatrixXd cov;
   std::vector<Eigen::MatrixXd> covs_;
   Eigen::VectorXd weights_;

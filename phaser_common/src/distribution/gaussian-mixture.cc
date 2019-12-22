@@ -52,4 +52,12 @@ GaussianMixture::calcMixutreParameters() {
   return std::make_pair(std::move(sample_mean), std::move(cov));
 }
 
+const Eigen::VectorXd& GaussianMixture::getMixtureMean() const {
+  return mean_;
+}
+
+const Eigen::MatrixXd& GaussianMixture::getMixtureCov() const {
+  return cov_;
+}
+
 }  // namespace common
