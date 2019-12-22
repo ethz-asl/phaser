@@ -2,7 +2,7 @@
 
 namespace common {
 
-Gaussian::Gaussian(Eigen::VectorXd mu, Eigen::MatrixXd cov)
+Gaussian::Gaussian(const Eigen::VectorXd& mu, const Eigen::MatrixXd& cov)
     : mu_(mu), cov_(cov) {}
 
 Eigen::VectorXd& Gaussian::getMean() {

@@ -9,7 +9,7 @@ namespace common {
 
 class Gaussian : public BaseDistribution {
  public:
-  explicit Gaussian(Eigen::VectorXd mu, Eigen::MatrixXd cov);
+  explicit Gaussian(const Eigen::VectorXd& mu, const Eigen::MatrixXd& cov);
 
   Eigen::VectorXd& getMean();
   const Eigen::VectorXd& getMean() const;

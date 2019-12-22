@@ -35,6 +35,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/test/testing-entrypoint.cc
 
    src/distribution/gaussian.cc
+   src/distribution/gaussian-mixture.cc
 )
 
 cs_install()
