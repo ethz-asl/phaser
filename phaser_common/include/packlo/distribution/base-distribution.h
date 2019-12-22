@@ -1,5 +1,5 @@
-#ifndef BASE_DISTRIBUTION_H
-#define BASE_DISTRIBUTION_H
+#ifndef PACKLO_DISTRIBUTION_BASE_DISTRIBUTION_H_
+#define PACKLO_DISTRIBUTION_BASE_DISTRIBUTION_H_
 
 namespace common {
 
@@ -9,4 +9,4 @@ class BaseDistribution {
 
 }  // namespace common
 
-#endif  // BASE_DISTRIBUTION_H
+#endif  // PACKLO_DISTRIBUTION_BASE_DISTRIBUTION_H_

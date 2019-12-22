@@ -1,5 +1,5 @@
-#ifndef GAUSSIAN_H_
-#define GAUSSIAN_H_
+#ifndef PACKLO_DISTRIBUTION_GAUSSIAN_H_
+#define PACKLO_DISTRIBUTION_GAUSSIAN_H_
 
 #include <Eigen/Dense>
 #include "packlo/distribution/base-distribution.h"
@@ -13,4 +13,4 @@ class Gaussian : public BaseDistribution {
 
 }  // namespace common
 
-#endif  // GAUSSIAN_H_
+#endif  // PACKLO_DISTRIBUTION_GAUSSIAN_H_
