@@ -48,10 +48,8 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
 
-  /*
   const std::vector<double> corr = aligner_->getCorrelation();
   eval_->evaluateCorrelationFromTranslation(corr);
-  */
 
   return result;
 }
