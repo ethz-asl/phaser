@@ -26,7 +26,7 @@ void GaussianMixture::initializeUniformWeights() {
 
 std::pair<Eigen::VectorXd, Eigen::MatrixXd>
 GaussianMixture::calcMixutreParameters() {
-  CHECK(means_.rows() != 0);
+  CHECK_NE(means_.rows(), 0);
   CHECK_EQ(means_.cols(), covs_.size());
   CHECK_EQ(means_.cols(), weights_.rows());
   // Compute sample mean and covariance.
@@ -49,8 +49,7 @@ GaussianMixture::calcMixutreParameters() {
   }
   Eigen::MatrixXd cov = sum_cov + cov_mean;
 
-  return std::make_pair<Eigen::VectorXd, Eigen::MatrixXd>(
-      std::move(sample_mean), std::move(cov));
+  return std::make_pair(std::move(sample_mean), std::move(cov));
 }
 
 }  // namespace common
