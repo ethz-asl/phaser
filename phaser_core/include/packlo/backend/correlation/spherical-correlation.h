@@ -1,36 +1,42 @@
-#pragma once
+#ifndef PACKLO_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_
+#define PACKLO_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_
 
 #include "packlo/common/statistics-manager.h"
 #include "packlo/model/function-value.h"
 
-
-#include <vector>
 #include <array>
+#include <string>
+#include <vector>
 
 namespace backend {
 
 class SphericalCorrelation {
-  public:
-    SphericalCorrelation();
-    void correlateSignals(const std::vector<model::FunctionValue>& f1,
-      const std::vector<model::FunctionValue>& f2, const int bw, 
+ public:
+  SphericalCorrelation();
+  void correlateSignals(
+      const std::vector<model::FunctionValue>& f1,
+      const std::vector<model::FunctionValue>& f2, const int bw,
       std::array<double, 3>* const zyz);
 
-    void getStatistics(common::StatisticsManager* manager) const noexcept;
+  void getStatistics(common::StatisticsManager* manager) const noexcept;
 
-  private:
-    void convertSignalValues(double *signal_values, 
-        const int bw);
-    void convertSignalCoeff(double *signal_coeff, 
-        const int bw);
-    void retrieveInterpolation(const std::vector<model::FunctionValue>& f, 
-        std::vector<double>* interpolation);
+ private:
+  void convertSignalValues(double* signal_values, const int bw);
+  void convertSignalCoeff(double* signal_coeff, const int bw);
+  void retrieveInterpolation(
+      const std::vector<model::FunctionValue>& f,
+      std::vector<double>* interpolation);
+  void convertSO3toZYZ(
+      const uint32_t loc, const uint32_t bw,
+      std::array<double, 3>* const zyz) const;
 
-    const std::string kReferenceName = "SPH-Correlation";
-    const std::string kSignalKey = "signal_values";
-    const std::string kCoeffKey = "signal_coeff";
-    const double two_pi_ = 2 * M_PI;
-    common::StatisticsManager statistics_manager_;                              
+  const std::string kReferenceName = "SPH-Correlation";
+  const std::string kSignalKey = "signal_values";
+  const std::string kCoeffKey = "signal_coeff";
+  const double two_pi_ = 2 * M_PI;
+  common::StatisticsManager statistics_manager_;
 };
 
-} // namespace backend
+}  // namespace backend
+
+#endif  // PACKLO_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_
