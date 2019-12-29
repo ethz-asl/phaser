@@ -16,16 +16,21 @@ class ZScoreEval : public BaseEval {
  public:
   ZScoreEval();
 
-  void evaluateCorrelationFromTranslation(
-      const std::vector<double>& corr) override;
+  common::BaseDistributionPtr evaluateCorrelationFromTranslation(
+      const alignment::BaseAligner& corr) override;
 
   void evaluateCorrelationFromRotation(
       const std::vector<double>& corr) override;
 
  private:
+  void evaluateCorrelationVector(
+      const std::vector<double>& corr, std::set<uint32_t>* signals,
+      std::vector<double>* n_corr_ds);
   std::pair<double, double> fitSmoothedNormalDist(
       const std::set<uint32_t>& signals,
       const std::vector<double>& input) const;
+  std::pair<Eigen::VectorXd, Eigen::MatrixXd> fitTranslationalNormalDist(
+      const std::set<uint32_t>& signals) const;
 
   common::StatisticsManager manager_;
   ZScorePeakExtraction peak_extraction_;

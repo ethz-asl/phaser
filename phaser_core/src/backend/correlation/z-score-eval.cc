@@ -1,5 +1,6 @@
 #include "packlo/backend/correlation/z-score-eval.h"
 #include "packlo/backend/correlation/signal-analysis.h"
+#include "packlo/distribution/gaussian.h"
 
 #include <cmath>
 #include <numeric>
@@ -20,9 +21,24 @@ namespace correlation {
 
 ZScoreEval::ZScoreEval() : manager_("z-score") {}
 
-void ZScoreEval::evaluateCorrelationFromTranslation(
-      const std::vector<double>& corr) {
+common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromTranslation(
+    const alignment::BaseAligner& aligner) {
   std::set<uint32_t> signals;
+  std::vector<double> n_corr_ds;
+  evaluateCorrelationVector(aligner.getCorrelation(), &signals, &n_corr_ds);
+
+  // Evaluate correlation.
+  double mean, std;
+  std::tie(mean, std) = fitSmoothedNormalDist(signals, n_corr_ds);
+  VLOG(1) << "finished z-score with var: " << std * std;
+  // needs eigen vector
+  // auto test = std::make_shared<common::Gaussian>(mean, std);
+  return nullptr;
+}
+
+void ZScoreEval::evaluateCorrelationVector(
+    const std::vector<double>& corr, std::set<uint32_t>* signals,
+    std::vector<double>* n_corr_ds) {
   std::vector<double> n_corr;
 
   // Normalize correlation.
@@ -32,26 +48,20 @@ void ZScoreEval::evaluateCorrelationFromTranslation(
       [&](const double val) { return val / max; });
 
   // Filter values close to zero for speedup.
-  std::vector<double> n_corr_ds;
   std::copy_if(
-      n_corr.cbegin(), n_corr.cend(), std::back_inserter(n_corr_ds),
+      n_corr.cbegin(), n_corr.cend(), std::back_inserter(*n_corr_ds),
       std::bind(
           std::greater<double>(), std::placeholders::_1,
           FLAGS_z_score_filter_threshold));
 
-  peak_extraction_.extractPeaks(n_corr_ds, &signals);
-
-  // Evaluate correlation.
-  double mean, std;
-  std::tie(mean, std) = fitSmoothedNormalDist(signals, n_corr_ds);
-  VLOG(1) << "finished z-score with var: " << std * std;
+  peak_extraction_.extractPeaks(*n_corr_ds, signals);
 }
 
 std::pair<double, double> ZScoreEval::fitSmoothedNormalDist(
     const std::set<uint32_t>& signals, const std::vector<double>& input) const {
   if (signals.empty()) return std::make_pair(0.0, 0.0);
   std::vector<double> peak_values;
-  double max = static_cast<double>(input.size());
+  const double max = static_cast<double>(input.size());
 
   // Normalize peak distances.
   std::transform(
@@ -68,6 +78,10 @@ std::pair<double, double> ZScoreEval::fitSmoothedNormalDist(
   const double std = SignalAnalysis::stdDev(peak_values, mean, 0, n_values);
   return std::make_pair(mean, std);
 }
+
+std::pair<Eigen::VectorXd, Eigen::MatrixXd>
+ZScoreEval::fitTranslationalNormalDist(
+    const std::set<uint32_t>& signals) const {}
 
 void ZScoreEval::evaluateCorrelationFromRotation(
     const std::vector<double>& corr) {}
