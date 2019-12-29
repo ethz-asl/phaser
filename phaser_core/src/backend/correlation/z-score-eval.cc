@@ -1,4 +1,5 @@
 #include "packlo/backend/correlation/z-score-eval.h"
+#include "packlo/backend/alignment/phase-aligner.h"
 #include "packlo/backend/correlation/signal-analysis.h"
 #include "packlo/distribution/gaussian.h"
 
@@ -28,12 +29,10 @@ common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromTranslation(
   evaluateCorrelationVector(aligner.getCorrelation(), &signals, &n_corr_ds);
 
   // Evaluate correlation.
-  double mean, std;
-  std::tie(mean, std) = fitSmoothedNormalDist(signals, n_corr_ds);
-  VLOG(1) << "finished z-score with var: " << std * std;
-  // needs eigen vector
-  // auto test = std::make_shared<common::Gaussian>(mean, std);
-  return nullptr;
+  Eigen::VectorXd mean;
+  Eigen::MatrixXd cov;
+  std::tie(mean, cov) = fitTranslationalNormalDist(aligner, signals);
+  return std::make_shared<common::Gaussian>(std::move(mean), std::move(cov));
 }
 
 void ZScoreEval::evaluateCorrelationVector(
@@ -81,7 +80,32 @@ std::pair<double, double> ZScoreEval::fitSmoothedNormalDist(
 
 std::pair<Eigen::VectorXd, Eigen::MatrixXd>
 ZScoreEval::fitTranslationalNormalDist(
-    const std::set<uint32_t>& signals) const {}
+    const alignment::BaseAligner& aligner,
+    const std::set<uint32_t>& signals) const {
+  const alignment::PhaseAligner& phase =
+      dynamic_cast<const alignment::PhaseAligner&>(aligner);
+  const uint32_t n_signals = signals.size();
+  Eigen::ArrayXXd samples(3, n_signals);
+  uint32_t i = 0u;
+
+  // Extract translational estimates.
+  for (uint32_t signal_idx : signals) {
+    std::array<uint16_t, 3> xyz = phase.ind2sub(signal_idx);
+    samples(0, i) =
+        phase.computeTranslationFromIndex(static_cast<double>(xyz[0]));
+    samples(1, i) =
+        phase.computeTranslationFromIndex(static_cast<double>(xyz[1]));
+    samples(2, i) =
+        phase.computeTranslationFromIndex(static_cast<double>(xyz[2]));
+    ++i;
+  }
+  // Calculate mean and covariance.
+  Eigen::VectorXd mean = samples.rowwise().mean();
+  Eigen::VectorXd var =
+      ((samples.colwise() - mean.array()).square().rowwise().sum() /
+       (n_signals - 1));
+  return std::make_pair(mean, var.asDiagonal());
+}
 
 void ZScoreEval::evaluateCorrelationFromRotation(
     const std::vector<double>& corr) {}

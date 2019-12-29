@@ -30,6 +30,7 @@ class ZScoreEval : public BaseEval {
       const std::set<uint32_t>& signals,
       const std::vector<double>& input) const;
   std::pair<Eigen::VectorXd, Eigen::MatrixXd> fitTranslationalNormalDist(
+      const alignment::BaseAligner& aligner,
       const std::set<uint32_t>& signals) const;
 
   common::StatisticsManager manager_;

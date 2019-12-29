@@ -106,8 +106,11 @@ void PhaseAligner::alignRegistered(
 }
 
 void PhaseAligner::discretizePointcloud(
-    const model::PointCloud& cloud, Eigen::VectorXd& f,
-    Eigen::VectorXd& hist) const {
+    const model::PointCloud& cloud, Eigen::VectorXd* f,
+    Eigen::VectorXd* hist) const {
+  CHECK_NOTNULL(f);
+  CHECK_NOTNULL(hist);
+
   VLOG(1) << "Discretizing point cloud...";
   Eigen::MatrixXf data = cloud.getRawCloud()->getMatrixXfMap();
   Eigen::VectorXf edges = Eigen::VectorXf::LinSpaced(FLAGS_phase_n_voxels,
@@ -121,10 +124,10 @@ void PhaseAligner::discretizePointcloud(
   igl::histc(data.row(2), edges, z_bins);
 
   // Calculate an average function value for each voxel.
-  f.setZero();
-  hist.setZero();
+  f->setZero();
+  hist->setZero();
   const uint32_t n_points = data.cols();
-  const uint32_t n_f = f.rows();
+  const uint32_t n_f = f->rows();
   for (uint32_t i = 0u; i < n_points; ++i) {
     const uint32_t lin_index = sub2ind(
         x_bins(i), y_bins(i), z_bins(i), FLAGS_phase_n_voxels,
@@ -132,12 +135,12 @@ void PhaseAligner::discretizePointcloud(
     if (lin_index > n_f) {
       continue;
     }
-    f(lin_index) = f(lin_index) + cloud.pointAt(i).intensity;
-    hist(lin_index) = hist(lin_index) + 1;
+    (*f)(lin_index) = (*f)(lin_index) + cloud.pointAt(i).intensity;
+    (*hist)(lin_index) = (*hist)(lin_index) + 1;
   }
 
-  f = f.array() / hist.array();
-  f = f.unaryExpr([](double v) { return std::isfinite(v)? v : 0.0; });
+  *f = f->array() / hist->array();
+  *f = f->unaryExpr([](double v) { return std::isfinite(v) ? v : 0.0; });
   VLOG(1) << "done";
 }
 
@@ -145,6 +148,10 @@ std::size_t PhaseAligner::sub2ind(
     const std::size_t i, const std::size_t j, const std::size_t k,
     const uint32_t rows, const uint32_t cols) const {
   return (i * cols + j) + (rows * cols * k);
+}
+
+std::array<uint16_t, 3> PhaseAligner::ind2sub(const int lin_index) const {
+  return ind2sub(lin_index, FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);
 }
 
 std::array<uint16_t, 3> PhaseAligner::ind2sub(
@@ -157,7 +164,7 @@ std::array<uint16_t, 3> PhaseAligner::ind2sub(
   return xyz;
 }
 
-double PhaseAligner::computeTranslationFromIndex(double index) {
+double PhaseAligner::computeTranslationFromIndex(double index) const {
   static double n_voxels_half = FLAGS_phase_n_voxels / 2.0;
   static double width = std::abs(FLAGS_phase_discretize_lower) +
     std::abs(FLAGS_phase_discretize_upper);
