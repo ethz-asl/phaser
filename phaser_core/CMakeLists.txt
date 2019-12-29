@@ -49,6 +49,9 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/registration/mock/sph-registration-mock-transformed.cc
    src/backend/correlation/spherical-correlation.cc
    src/backend/correlation/z-score-eval.cc
+   src/backend/correlation/z-score-peak-extraction.cc
+   src/backend/correlation/peak-based-eval.cc
+   src/backend/correlation/signal-analysis.cc
    src/backend/alignment/range-based-aligner.cc
    src/backend/alignment/phase-aligner.cc
    src/backend/alignment/feature-aligner.cc
@@ -90,6 +93,13 @@ catkin_add_gtest(test_voxgraph_alignment
 target_link_libraries(test_voxgraph_alignment
   ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_voxgraph_alignment)
+
+# Uncertainty estimation.
+catkin_add_gtest(test_translation_gaussian
+  test/uncertainty-estimate/trans-gauss-test.cc)
+target_link_libraries(test_translation_gaussian
+  ${PROJECT_NAME}_lib)
+phaser_import_test_maps(test_translation_gaussian)
 
 cs_install()
 cs_export()

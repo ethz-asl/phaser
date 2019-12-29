@@ -93,7 +93,7 @@ TEST_F(RotationAlignmentTest, RotationSelfAll) {
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             cloud, result.getRegisteredCloud()),
-        3.5);
+        5.0);
   });
   ds_->startStreaming();
 }
