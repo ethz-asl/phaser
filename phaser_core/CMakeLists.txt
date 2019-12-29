@@ -94,5 +94,12 @@ target_link_libraries(test_voxgraph_alignment
   ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_voxgraph_alignment)
 
+# Uncertainty estimation.
+catkin_add_gtest(test_translation_gaussian
+  test/uncertainty-estimate/trans-gauss-test.cc)
+target_link_libraries(test_translation_gaussian
+  ${PROJECT_NAME}_lib)
+phaser_import_test_maps(test_translation_gaussian)
+
 cs_install()
 cs_export()
