@@ -7,6 +7,7 @@ namespace common {
 
 class BaseDistribution {
  public:
+  virtual ~BaseDistribution() = default;
 };
 
 using BaseDistributionPtr = std::shared_ptr<BaseDistribution>;

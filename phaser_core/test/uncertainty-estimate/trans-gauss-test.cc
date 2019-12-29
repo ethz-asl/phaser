@@ -3,6 +3,7 @@
 #include "packlo/common/metric-utils.h"
 #include "packlo/common/test/testing-entrypoint.h"
 #include "packlo/common/test/testing-predicates.h"
+#include "packlo/distribution/gaussian.h"
 
 #include <gtest/gtest.h>
 
@@ -13,7 +14,7 @@ class TransGaussTest : public ::testing::Test {
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
-    ds_->setDatasetFolder("./test_clouds/arche");
+    ds_->setDatasetFolder("./test_clouds/arche/");
     registrator_ = std::make_unique<registration::SphRegistration>();
   }
 
@@ -40,8 +41,15 @@ TEST_F(TransGaussTest, LowUncertainty) {
     prev_cloud = cloud;
     EXPECT_TRUE(result.foundSolutionForRotation());
     EXPECT_TRUE(result.foundSolutionForTranslation());
+
+    common::GaussianPtr uncertainty =
+        std::dynamic_pointer_cast<common::Gaussian>(
+            result.getUncertaintyEstimate());
+    VLOG(1) << " -------- -- ---- Mean estimate: \n"
+            << uncertainty->getMean() << "\n --------------- Cov: \n"
+            << uncertainty->getCov();
   });
-  ds_->startStreaming();
+  ds_->startStreaming(0);
 }
 
 }  // namespace uncertainty

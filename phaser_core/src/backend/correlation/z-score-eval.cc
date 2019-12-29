@@ -10,10 +10,6 @@
 
 #include <glog/logging.h>
 
-// Good values: 500, 5.75, 0.05
-//              70, 3.75, 0.05
-//              210, 5.66, 0.05
-
 DEFINE_double(
     z_score_filter_threshold, 0.105,
     "Removes all correlation input below this value.");
@@ -91,6 +87,10 @@ ZScoreEval::fitTranslationalNormalDist(
   const alignment::PhaseAligner& phase =
       dynamic_cast<const alignment::PhaseAligner&>(aligner);
   const uint32_t n_signals = signals.size();
+  if (n_signals == 0) {
+    return std::make_pair(
+        Eigen::VectorXd::Zero(3), Eigen::MatrixXd::Identity(3, 3));
+  }
   Eigen::ArrayXXd samples(3, n_signals);
   uint32_t i = 0u;
 
@@ -105,6 +105,8 @@ ZScoreEval::fitTranslationalNormalDist(
         phase.computeTranslationFromIndex(static_cast<double>(xyz[2]));
     ++i;
   }
+  VLOG(1) << samples;
+
   // Calculate mean and covariance.
   Eigen::VectorXd mean = samples.rowwise().mean();
   Eigen::VectorXd var =
