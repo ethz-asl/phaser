@@ -129,4 +129,8 @@ void SphRegistration::setBandwith(const int bandwith) {
   sampler_.initialize(bandwith);
 }
 
+correlation::BaseEval& SphRegistration::getEvaluation() {
+  return *eval_;
+}
+
 }  // namespace registration

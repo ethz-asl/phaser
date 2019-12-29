@@ -26,6 +26,8 @@ class ZScoreEval : public BaseEval {
   void evaluateCorrelationFromRotation(
       const std::vector<double>& corr) override;
 
+  ZScorePeakExtraction& getPeakExtraction();
+
  private:
   void evaluateCorrelationVector(
       const std::vector<double>& corr, std::set<uint32_t>* signals,

@@ -1,3 +1,4 @@
+#include "packlo/backend/correlation/z-score-eval.h"
 #include "packlo/backend/registration/sph-registration.h"
 #include "packlo/common/data/datasource-ply.h"
 #include "packlo/common/metric-utils.h"
@@ -16,14 +17,18 @@ class TransGaussTest : public ::testing::Test {
     CHECK_NOTNULL(ds_);
     ds_->setDatasetFolder("./test_clouds/arche/");
     registrator_ = std::make_unique<registration::SphRegistration>();
+    z_score_eval_ =
+        dynamic_cast<correlation::ZScoreEval*>(&registrator_->getEvaluation());
   }
 
   data::DatasourcePlyPtr ds_;
-  registration::BaseRegistrationPtr registrator_;
+  registration::SphRegistrationPtr registrator_;
+  correlation::ZScoreEval* z_score_eval_;
 };
 
 TEST_F(TransGaussTest, LowUncertainty) {
   CHECK(ds_);
+  z_score_eval_->getPeakExtraction().getScoreThreshold() = 5.45;
 
   model::RegistrationResult result;
   model::PointCloudPtr prev_cloud = nullptr;
@@ -45,9 +50,8 @@ TEST_F(TransGaussTest, LowUncertainty) {
     common::GaussianPtr uncertainty =
         std::dynamic_pointer_cast<common::Gaussian>(
             result.getUncertaintyEstimate());
-    VLOG(1) << " -------- -- ---- Mean estimate: \n"
-            << uncertainty->getMean() << "\n --------------- Cov: \n"
-            << uncertainty->getCov();
+    const Eigen::MatrixXd& cov = uncertainty->getCov();
+    EXPECT_LT(cov.trace(), 15);
   });
   ds_->startStreaming(0);
 }

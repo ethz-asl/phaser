@@ -105,7 +105,6 @@ ZScoreEval::fitTranslationalNormalDist(
         phase.computeTranslationFromIndex(static_cast<double>(xyz[2]));
     ++i;
   }
-  VLOG(1) << samples;
 
   // Calculate mean and covariance.
   Eigen::VectorXd mean = samples.rowwise().mean();
@@ -113,6 +112,10 @@ ZScoreEval::fitTranslationalNormalDist(
       ((samples.colwise() - mean.array()).square().rowwise().sum() /
        (n_signals - 1));
   return std::make_pair(mean, var.asDiagonal());
+}
+
+ZScorePeakExtraction& ZScoreEval::getPeakExtraction() {
+  return peak_extraction_;
 }
 
 void ZScoreEval::evaluateCorrelationFromRotation(
