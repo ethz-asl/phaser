@@ -28,23 +28,24 @@ void SphericalCorrelation::correlateSignals(
   retrieveInterpolation(f2, &averaged_pattern);
 
   // Start signal correlation process
-  double *signal_values;
   double *signal_coeff;
+  double* signal_values;
   softFFTWCor2(
       bw, averaged_signal.data(), averaged_pattern.data(), &alpha, &beta,
       &gamma, &maxcoeff, &signal_values, &signal_coeff, is_real);
   VLOG(2) << "done, result: " << alpha << ", " << beta << ", " << gamma;
+  const uint32_t len_corr = 8 * bw * bw * bw;
+  corr_.assign(signal_values, signal_values + len_corr);
 
   // Get result
-
   (*zyz)[0] = std::fmod(alpha, two_pi_);
   (*zyz)[1] = std::fmod(beta, two_pi_);
   (*zyz)[2] = std::fmod(gamma, two_pi_);
 
-  CHECK_NOTNULL(signal_values);
-  convertSignalValues(signal_values, bw);
+  // CHECK_NOTNULL(signal_values);
+  // convertSignalValues(signal_values, bw);
   // convertSignalCoeff(signal_coeff, bw);
-  delete [] signal_values;
+  // delete [] signal_values;
   delete [] signal_coeff;
 }
 
@@ -79,6 +80,10 @@ void SphericalCorrelation::retrieveInterpolation(
       [](const model::FunctionValue& interp) {
         return interp.getAveragedInterpolation();
       });
+}
+
+std::vector<double> SphericalCorrelation::getCorrelation() const noexcept {
+  return corr_;
 }
 
 }  // namespace backend

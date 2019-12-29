@@ -114,26 +114,35 @@ void softFFTWCor2( int bw,
   fftw_plan dctPlan, fftPlan ;
   int howmany_rank ;
   fftw_iodim dims[1], howmany_dims[1];
-
   
   bwIn = bw ;
   bwOut = bw ;
   degLim = bw - 1 ;
   n = 2 * bwIn ;
 
-  const int bwOutp3 = bwOut*bwOut*bwOut;
+  if (signal_values != NULL) {
+    if (*signal_values != NULL) {
+      free(*signal_values);
+    }
+  }
+
+  const int bwOutp2 = bwOut * bwOut;
+  const int bwOutp3 = bwOutp2 * bwOut;
+  const int so3bw = 8 * bwOutp3;
+  const int bwInp2 = bwIn * bwIn;
   tmpR = (double *) malloc( sizeof(double) * ( n * n ) );
   tmpI = (double *) malloc( sizeof(double) * ( n * n ) );
-  so3Sig = fftw_malloc( sizeof(fftw_complex) * (8*bwOutp3) );
-  *signal_values = (double *) malloc( sizeof(double) * (8*bwOutp3) ) ;
-  *signal_coeff = (double *) malloc( sizeof(double) * bwIn * bwIn ) ;
-  workspace1 = fftw_malloc( sizeof(fftw_complex) * (8*bwOutp3) );
-  workspace2 = fftw_malloc( sizeof(fftw_complex) * ((14*bwIn*bwIn) + (48 * bwIn)));
+  so3Sig = fftw_malloc(sizeof(fftw_complex) * (so3bw));
+  *signal_values = (double*)malloc(sizeof(double) * (so3bw));
+  *signal_coeff = (double*)malloc(sizeof(double) * bwInp2);
+  workspace1 = fftw_malloc(sizeof(fftw_complex) * (so3bw));
+  workspace2 =
+      fftw_malloc(sizeof(fftw_complex) * ((14 * bwInp2) + (48 * bwIn)));
   workspace3 = (double *) malloc( sizeof(double) * (12*n + n*bwIn));
-  sigCoefR = (double *) malloc( sizeof(double) * bwIn * bwIn ) ;
-  sigCoefI = (double *) malloc( sizeof(double) * bwIn * bwIn ) ;
-  patCoefR = (double *) malloc( sizeof(double) * bwIn * bwIn ) ;
-  patCoefI = (double *) malloc( sizeof(double) * bwIn * bwIn ) ;
+  sigCoefR = (double*)malloc(sizeof(double) * bwInp2);
+  sigCoefI = (double*)malloc(sizeof(double) * bwInp2);
+  patCoefR = (double*)malloc(sizeof(double) * bwInp2);
+  patCoefI = (double*)malloc(sizeof(double) * bwInp2);
   so3Coef = fftw_malloc( sizeof(fftw_complex) * ((4*bwOutp3-bwOut)/3) ) ;
   seminaive_naive_tablespace =
     (double *) malloc(sizeof(double) *
@@ -304,7 +313,7 @@ void softFFTWCor2( int bw,
   /* now find max value */
   *maxval = 0.0 ;
   maxloc = 0 ;
-  for (i = 0; i < 8*bwOut*bwOut*bwOut; ++i ) {
+  for (i = 0; i < so3bw; ++i) {
     tmpval = NORM( so3Sig[i] );
     (*signal_values)[i] = tmpval;
     if ( tmpval > *maxval ) {
@@ -317,18 +326,17 @@ void softFFTWCor2( int bw,
     (*signal_coeff)[i] = patCoefR[i];
   }
 
-  ii = floor( maxloc / (4.*bwOut*bwOut) );
-  tmp = maxloc - (ii*4.*bwOut*bwOut);
+  ii = floor(maxloc / (4. * bwOutp2));
+  tmp = maxloc - (ii * 4. * bwOutp2);
   jj = floor( tmp / (2.*bwOut) );
-  tmp = maxloc - (ii *4*bwOut*bwOut) - jj*(2*bwOut);
-  kk = tmp ;
+  tmp = maxloc - (ii * 4 * bwOutp2) - jj * (2 * bwOut);
+  kk = tmp;
 
   *alpha = M_PI*jj/((double) bwOut) ;
   *beta =  M_PI*(2*ii+1)/(4.*bwOut) ;
   *gamma = M_PI*kk/((double) bwOut) ;
 
   /* clean up */
-
   fftw_destroy_plan( p1 );
   fftw_destroy_plan( fftPlan );
   fftw_destroy_plan( dctPlan );
@@ -345,5 +353,4 @@ void softFFTWCor2( int bw,
   fftw_free( so3Sig ) ;
   free( tmpI );
   free( tmpR );
-
 }

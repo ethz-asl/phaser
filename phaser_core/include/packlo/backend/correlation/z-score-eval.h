@@ -19,6 +19,9 @@ class ZScoreEval : public BaseEval {
   void evaluateCorrelationFromTranslation(
       const std::vector<double>& corr) override;
 
+  void evaluateCorrelationFromRotation(
+      const std::vector<double>& corr) override;
+
  private:
   std::pair<double, double> fitSmoothedNormalDist(
       const std::set<uint32_t>& signals,

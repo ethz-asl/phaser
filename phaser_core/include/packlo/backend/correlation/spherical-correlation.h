@@ -19,6 +19,7 @@ class SphericalCorrelation {
       std::array<double, 3>* const zyz);
 
   void getStatistics(common::StatisticsManager* manager) const noexcept;
+  std::vector<double> getCorrelation() const noexcept;
 
  private:
   void convertSignalValues(double* signal_values, const int bw);
@@ -34,6 +35,7 @@ class SphericalCorrelation {
   const std::string kSignalKey = "signal_values";
   const std::string kCoeffKey = "signal_coeff";
   const double two_pi_ = 2 * M_PI;
+  std::vector<double> corr_;
   common::StatisticsManager statistics_manager_;
 };
 

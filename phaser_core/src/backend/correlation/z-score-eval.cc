@@ -69,4 +69,7 @@ std::pair<double, double> ZScoreEval::fitSmoothedNormalDist(
   return std::make_pair(mean, std);
 }
 
+void ZScoreEval::evaluateCorrelationFromRotation(
+    const std::vector<double>& corr) {}
+
 }  // namespace correlation
