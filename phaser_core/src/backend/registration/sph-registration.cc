@@ -45,12 +45,14 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   CHECK(cloud_cur);
   cloud_prev->initialize_kd_tree();
 
+  // Register the point cloud.
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
 
-  eval_->evaluateCorrelationFromTranslation(*aligner_);
-  const std::vector<double> corr_rot = sph_corr_.getCorrelation();
-  eval_->evaluateCorrelationFromRotation(corr_rot);
+  // Evaluate the resul.
+  common::BaseDistributionPtr uncertainty =
+      eval_->evaluateCorrelation(*aligner_, sph_corr_);
+  result.setUncertaintyEstimate(uncertainty);
 
   return result;
 }

@@ -13,7 +13,7 @@ class TransGaussTest : public ::testing::Test {
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
-    ds_->setDatasetFolder("./test_clouds/arche/");
+    ds_->setDatasetFolder("./test_clouds/arche");
     registrator_ = std::make_unique<registration::SphRegistration>();
   }
 
@@ -39,6 +39,7 @@ TEST_F(TransGaussTest, LowUncertainty) {
     result = registrator_->registerPointCloud(prev_cloud, cloud);
     prev_cloud = cloud;
     EXPECT_TRUE(result.foundSolutionForRotation());
+    EXPECT_TRUE(result.foundSolutionForTranslation());
   });
   ds_->startStreaming();
 }

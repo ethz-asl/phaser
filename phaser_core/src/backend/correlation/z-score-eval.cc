@@ -22,6 +22,12 @@ namespace correlation {
 
 ZScoreEval::ZScoreEval() : manager_("z-score") {}
 
+common::BaseDistributionPtr ZScoreEval::evaluateCorrelation(
+    const alignment::BaseAligner& aligner,
+    const backend::SphericalCorrelation&) {
+  return evaluateCorrelationFromTranslation(aligner);
+}
+
 common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromTranslation(
     const alignment::BaseAligner& aligner) {
   std::set<uint32_t> signals;

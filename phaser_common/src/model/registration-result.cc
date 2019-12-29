@@ -2,18 +2,18 @@
 
 namespace model {
 
-RegistrationResult::RegistrationResult() 
-    : found_solution_for_rotation_(false), 
-    found_solution_for_translation_(false) { }
+RegistrationResult::RegistrationResult()
+    : found_solution_for_rotation_(false),
+      found_solution_for_translation_(false) {}
 
-RegistrationResult::RegistrationResult(model::PointCloud&& reg_cloud, 
-    std::array<double, 3>&& rotation) 
+RegistrationResult::RegistrationResult(
+    model::PointCloud&& reg_cloud, std::array<double, 3>&& rotation)
     : rotation_(rotation), found_solution_for_rotation_(true) {
   reg_cloud_ = std::make_shared<model::PointCloud>(reg_cloud);
 }
 
-RegistrationResult::RegistrationResult(model::PointCloud&& reg_cloud, 
-    common::Vector_t&& translation) 
+RegistrationResult::RegistrationResult(
+    model::PointCloud&& reg_cloud, common::Vector_t&& translation)
     : translation_(translation), found_solution_for_translation_(true) {
   reg_cloud_ = std::make_shared<model::PointCloud>(reg_cloud);
 }
@@ -49,4 +49,14 @@ bool RegistrationResult::foundSolutionForTranslation() const {
   return found_solution_for_translation_;
 }
 
-} // namespace model
+void RegistrationResult::setUncertaintyEstimate(
+    const common::BaseDistributionPtr& uncertainty) {
+  uncertainty_ = uncertainty;
+}
+
+common::BaseDistributionPtr RegistrationResult::getUncertaintyEstimate() const
+    noexcept {
+  return uncertainty_;
+}
+
+}  // namespace model

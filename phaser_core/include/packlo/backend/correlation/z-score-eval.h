@@ -16,8 +16,12 @@ class ZScoreEval : public BaseEval {
  public:
   ZScoreEval();
 
+  common::BaseDistributionPtr evaluateCorrelation(
+      const alignment::BaseAligner& aligner,
+      const backend::SphericalCorrelation& sph) override;
+
   common::BaseDistributionPtr evaluateCorrelationFromTranslation(
-      const alignment::BaseAligner& corr) override;
+      const alignment::BaseAligner& aligner) override;
 
   void evaluateCorrelationFromRotation(
       const std::vector<double>& corr) override;
