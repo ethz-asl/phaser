@@ -29,12 +29,7 @@ common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromTranslation(
   std::set<uint32_t> signals;
   std::vector<double> n_corr_ds;
   evaluateCorrelationVector(aligner.getCorrelation(), &signals, &n_corr_ds);
-
-  // Evaluate correlation.
-  Eigen::VectorXd mean;
-  Eigen::MatrixXd cov;
-  std::tie(mean, cov) = fitTranslationalNormalDist(aligner, signals);
-  return std::make_shared<common::Gaussian>(std::move(mean), std::move(cov));
+  return evaluatePeakBasedCorrelation(aligner, signals, n_corr_ds);
 }
 
 void ZScoreEval::evaluateCorrelationVector(

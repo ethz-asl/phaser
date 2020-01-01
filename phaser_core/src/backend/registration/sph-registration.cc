@@ -1,9 +1,9 @@
 #include "packlo/backend/registration/sph-registration.h"
-#include "packlo/backend/alignment/range-based-aligner.h"
 #include "packlo/backend/alignment/phase-aligner.h"
-#include "packlo/backend/correlation/z-score-eval.h"
-#include "packlo/common/statistic-utils.h"
+#include "packlo/backend/alignment/range-based-aligner.h"
+#include "packlo/backend/correlation/gaussian-peak-based-eval.h"
 #include "packlo/common/rotation-utils.h"
+#include "packlo/common/statistic-utils.h"
 #include "packlo/common/translation-utils.h"
 
 #include <glog/logging.h>
@@ -14,7 +14,7 @@ DEFINE_int32(
 DEFINE_string(alignment_algorithm, "phase",
     "Sets the algorithm used for the translational alignment.");
 DEFINE_string(
-    evaluation_algorithm, "zscore",
+    evaluation_algorithm, "gaussian",
     "Defines the algorithm used for the evaluation of the correlations.");
 
 namespace registration {
@@ -33,8 +33,8 @@ void SphRegistration::initializeAlgorithms() {
   else
     LOG(FATAL) << "Unknown alignment algorithm specificed.";
 
-  if (FLAGS_evaluation_algorithm == "zscore")
-    eval_ = std::make_unique<correlation::ZScoreEval>();
+  if (FLAGS_evaluation_algorithm == "gaussian")
+    eval_ = std::make_unique<correlation::GaussianPeakBasedEval>();
   else
     LOG(FATAL) << "Unknown evaluation algorithm specificed.";
 }

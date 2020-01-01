@@ -28,6 +28,10 @@ class ZScoreEval : public BaseEval {
 
   ZScorePeakExtraction& getPeakExtraction();
 
+  virtual common::BaseDistributionPtr evaluatePeakBasedCorrelation(
+      const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
+      const std::vector<double>& normalized_corr) const = 0;
+
  private:
   void evaluateCorrelationVector(
       const std::vector<double>& corr, std::set<uint32_t>* signals,
