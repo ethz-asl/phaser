@@ -19,6 +19,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/model/point-cloud.cc
    src/model/function-value.cc
    src/model/registration-result.cc
+   src/model/gmm-parameters.cc
 
    src/common/data/datasource-ros.cc
    src/common/data/datasource-ply.cc
