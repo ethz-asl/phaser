@@ -9,13 +9,11 @@
 #include <cassert>
 #include <iostream>
 
-template <typename DerivedX, typename DerivedE, typename DerivedN, typename DerivedB>
-IGL_INLINE void igl::histc(
-  const Eigen::MatrixBase<DerivedX > & X,
-  const Eigen::MatrixBase<DerivedE > & E,
-  Eigen::PlainObjectBase<DerivedN > & N,
-  Eigen::PlainObjectBase<DerivedB > & B)
-{
+template <
+    typename DerivedX, typename DerivedE, typename DerivedN, typename DerivedB>
+inline void igl::histc(
+    const Eigen::MatrixBase<DerivedX>& X, const Eigen::MatrixBase<DerivedE>& E,
+    Eigen::PlainObjectBase<DerivedN>& N, Eigen::PlainObjectBase<DerivedB>& B) {
   histc(X,E,B);
   const int n = E.size();
   const int m = X.size();
@@ -34,11 +32,9 @@ IGL_INLINE void igl::histc(
 }
 
 template <typename DerivedX, typename DerivedE, typename DerivedB>
-IGL_INLINE void igl::histc(
-  const Eigen::MatrixBase<DerivedX > & X,
-  const Eigen::MatrixBase<DerivedE > & E,
-  Eigen::PlainObjectBase<DerivedB > & B)
-{
+inline void igl::histc(
+    const Eigen::MatrixBase<DerivedX>& X, const Eigen::MatrixBase<DerivedE>& E,
+    Eigen::PlainObjectBase<DerivedB>& B) {
   const int m = X.size();
   using namespace std;
   assert( 
@@ -85,11 +81,9 @@ IGL_INLINE void igl::histc(
 }
 
 template <typename DerivedE>
-IGL_INLINE void igl::histc(
-    const typename DerivedE::Scalar & x,
-    const Eigen::MatrixBase<DerivedE > & E,
-    typename DerivedE::Index & b)
-{
+inline void igl::histc(
+    const typename DerivedE::Scalar& x, const Eigen::MatrixBase<DerivedE>& E,
+    typename DerivedE::Index& b) {
   Eigen::Matrix<typename DerivedE::Scalar,1,1> X;
   X(0) = x;
   Eigen::Matrix<typename DerivedE::Index,1,1> B;

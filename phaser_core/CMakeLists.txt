@@ -18,24 +18,15 @@ find_package(catkin_simple REQUIRED)
 catkin_simple(ALL_DEPS_REQUIRED)
 
 cs_add_library(${PROJECT_NAME}_lib
-   lib/SOFT/csecond.c
    lib/SOFT/s2_legendreTransforms.c
-   lib/SOFT/soft_fftw_nt.c
-   lib/SOFT/wrap_s2_rotate_fftw.c
    lib/SOFT/makeweights.c
    lib/SOFT/s2_primitive.c
-   lib/SOFT/soft_fftw_pc.c
-   lib/SOFT/wrap_soft_fftw.c
    lib/SOFT/makeWigner.c
-   lib/SOFT/s2_semi_fly.c
    lib/SOFT/utils_so3.c
    lib/SOFT/wrap_soft_fftw_cor2.c
-   lib/SOFT/rotate_so3_fftw.c
    lib/SOFT/s2_semi_memo.c
    lib/SOFT/utils_vec_cx.c
-   lib/SOFT/rotate_so3_utils.c
    lib/SOFT/so3_correlate_fftw.c
-   lib/SOFT/wignerTransforms.c
    lib/SOFT/s2_cospmls.c
    lib/SOFT/soft_fftw.c
    lib/SOFT/wignerTransforms_fftw.c
