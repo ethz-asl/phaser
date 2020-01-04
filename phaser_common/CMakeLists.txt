@@ -43,6 +43,11 @@ cs_add_library(${PROJECT_NAME}_lib
 ## TESTING ##
 #############
 
+# Gaussian
+catkin_add_gtest(test_gaussian test/distribution/gaussian-test.cc)
+target_link_libraries(test_gaussian
+  ${PROJECT_NAME}_lib)
+
 # Gaussian Mixture
 catkin_add_gtest(test_gaussian_mixture test/distribution/gaussian-mixture-test.cc)
 target_link_libraries(test_gaussian_mixture

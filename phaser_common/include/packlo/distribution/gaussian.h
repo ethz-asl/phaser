@@ -12,6 +12,8 @@ namespace common {
 class Gaussian : public BaseDistribution {
  public:
   explicit Gaussian(const Eigen::VectorXd& mu, const Eigen::MatrixXd& cov);
+  explicit Gaussian(const Eigen::MatrixXd& samples,
+    const Eigen::VectorXd& weights);
   virtual ~Gaussian() = default;
 
   Eigen::VectorXd& getMean();
@@ -23,6 +25,9 @@ class Gaussian : public BaseDistribution {
   std::pair<Eigen::VectorXd, Eigen::MatrixXd> getParameters() const;
 
  private:
+  void setMeanAndCov(const Eigen::MatrixXd& samples,
+     const Eigen::VectorXd& weights);
+
   Eigen::VectorXd mu_;
   Eigen::MatrixXd cov_;
 };

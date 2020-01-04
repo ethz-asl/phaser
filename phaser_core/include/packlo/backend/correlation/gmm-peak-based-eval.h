@@ -21,9 +21,12 @@ class GmmPeakBasedEval : public ZScoreEval {
  private:
   model::GmmParameters fitTranslationalGmmDistribution(
       const alignment::BaseAligner& aligner,
-      const std::set<uint32_t>& signals) const;
+      const std::set<uint32_t>& signals,
+      const std::vector<double>& n_corr) const;
   void retrievePeakNeighbors(
-      const uint32_t index, Eigen::ArrayXXd* samples,
+      const uint32_t index, const std::vector<double>& n_corr,
+      const alignment::BaseAligner& aligner,
+      Eigen::MatrixXd* samples,
       Eigen::VectorXd* gaussian_weights) const;
 };
 
