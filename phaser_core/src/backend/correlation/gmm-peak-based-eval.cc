@@ -1,7 +1,9 @@
 #include "packlo/backend/correlation/gmm-peak-based-eval.h"
 #include "packlo/backend/alignment/phase-aligner.h"
+#include "packlo/distribution/gaussian.h"
 
 #include <glog/logging.h>
+#include <vector>
 
 namespace correlation {
 
@@ -23,13 +25,13 @@ model::GmmParameters GmmPeakBasedEval::fitTranslationalGmmDistribution(
   if (n_signals == 0) {
     return model::GmmParameters();
   }
+  std::vector<common::Gaussian> peak_gaussians;
   for (uint32_t i = 0; i < n_signals; ++i) {
     Eigen::MatrixXd samples(3, 2 * FLAGS_gmm_peak_neighbors + 1);
     Eigen::VectorXd weights(2 * FLAGS_gmm_peak_neighbors + 1);
     retrievePeakNeighbors(i, n_corr, aligner, &samples, &weights);
-
+    peak_gaussians.emplace_back(common::Gaussian(samples, weights));
   }
-  uint32_t i = 0u;
 }
 
 void GmmPeakBasedEval::retrievePeakNeighbors(
@@ -49,8 +51,8 @@ void GmmPeakBasedEval::retrievePeakNeighbors(
 
   CHECK_EQ(samples->cols(), 2*FLAGS_gmm_peak_neighbors + 1);
   CHECK_EQ(gaussian_weights->rows(), 2*FLAGS_gmm_peak_neighbors + 1);
-  CHECK(start >= 0);
-  CHECK(end < n_signals);
+  CHECK_GE(start, 0);
+  CHECK_LT(end, n_signals);
   const uint32_t local_max_energy  = n_corr.at(index);
   for (uint32_t i = start; i < end; ++i) {
     std::array<uint16_t, 3> xyz = phase.ind2sub(i);
