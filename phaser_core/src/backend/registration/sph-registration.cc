@@ -27,6 +27,14 @@ SphRegistration::SphRegistration()
       evaluation_algorithm_(FLAGS_evaluation_algorithm) {
   initializeAlgorithms();
 }
+SphRegistration::SphRegistration(
+    std::string&& alignment_algorithm, std::string&& evaluation_algorithm)
+    : BaseRegistration("SphRegistration"),
+      sampler_(FLAGS_spherical_bandwith),
+      alignment_algorithm_(alignment_algorithm),
+      evaluation_algorithm_(evaluation_algorithm) {
+  initializeAlgorithms();
+}
 
 void SphRegistration::initializeAlgorithms() {
   // Initialize the translational alignment.
