@@ -54,6 +54,8 @@ class SphRegistration : public BaseRegistration {
 
  private:
   void initializeAlgorithms();
+  std::string alignment_algorithm_;
+  std::string evaluation_algorithm_;
 };
 
 using SphRegistrationPtr = std::unique_ptr<SphRegistration>;

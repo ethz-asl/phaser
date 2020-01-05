@@ -5,10 +5,17 @@
 namespace common {
 
 Gaussian::Gaussian(const Eigen::VectorXd& mu, const Eigen::MatrixXd& cov)
-    : mu_(mu), cov_(cov) {}
+    : mu_(mu), cov_(cov) {
+  CHECK_EQ(mu_.rows(), 3);
+  CHECK_EQ(cov_.rows(), 3);
+  CHECK_EQ(cov_.cols(), 3);
+}
 
 Gaussian::Gaussian(const Eigen::MatrixXd& samples,
     const Eigen::VectorXd& weights) {
+  CHECK_GT(samples.cols(), 0);
+  CHECK_GT(samples.rows(), 0);
+  CHECK_EQ(samples.cols(), weights.rows());
   setMeanAndCov(samples, weights);
 }
 
@@ -37,9 +44,8 @@ void Gaussian::setMeanAndCov(const Eigen::MatrixXd& samples,
   mu_ = samples * weights;
   Eigen::MatrixXd zero_mean_samples = samples.colwise() - mu_;
   Eigen::MatrixXd sqrt_weights = weights.transpose().array().sqrt();
-  Eigen::MatrixXd weighted_samples
-    = zero_mean_samples.cwiseProduct(
-      sqrt_weights.replicate( zero_mean_samples.rows(), 1));
+  Eigen::MatrixXd weighted_samples = zero_mean_samples.cwiseProduct(
+      sqrt_weights.replicate(zero_mean_samples.rows(), 1));
   cov_ = weighted_samples * weighted_samples.transpose();
 }
 
