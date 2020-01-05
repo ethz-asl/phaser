@@ -13,25 +13,29 @@ DEFINE_int32(
 
 common::BaseDistributionPtr GmmPeakBasedEval::evaluatePeakBasedCorrelation(
     const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
-    const std::vector<double>& n_corr) const {}
-
-model::GmmParameters GmmPeakBasedEval::fitTranslationalGmmDistribution(
-    const alignment::BaseAligner& aligner,
-    const std::set<uint32_t>& signals,
     const std::vector<double>& n_corr) const {
-  const alignment::PhaseAligner& phase =
-      dynamic_cast<const alignment::PhaseAligner&>(aligner);
+  common::GaussianMixturePtr gmm = std::make_shared<common::GaussianMixture>(
+      fitTranslationalGmmDistribution(aligner, signals, n_corr));
+  return std::dynamic_pointer_cast<common::BaseDistribution>(gmm);
+}
+
+common::GaussianMixture GmmPeakBasedEval::fitTranslationalGmmDistribution(
+    const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
+    const std::vector<double>& n_corr) const {
   const uint32_t n_signals = signals.size();
-  if (n_signals == 0) {
-    return model::GmmParameters();
-  }
+  CHECK_GT(n_signals, 0);
+
   std::vector<common::Gaussian> peak_gaussians;
+  Eigen::VectorXd gm_weights = Eigen::VectorXd::Zero(n_signals);
   for (uint32_t i = 0; i < n_signals; ++i) {
     Eigen::MatrixXd samples(3, 2 * FLAGS_gmm_peak_neighbors + 1);
     Eigen::VectorXd weights(2 * FLAGS_gmm_peak_neighbors + 1);
     retrievePeakNeighbors(i, n_corr, aligner, &samples, &weights);
     peak_gaussians.emplace_back(common::Gaussian(samples, weights));
+    gm_weights(i) = n_corr.at(i);
   }
+  gm_weights = gm_weights.array() / gm_weights.array().sum();
+  return common::GaussianMixture(peak_gaussians, gm_weights);
 }
 
 void GmmPeakBasedEval::retrievePeakNeighbors(

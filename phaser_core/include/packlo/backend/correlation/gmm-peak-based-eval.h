@@ -3,6 +3,7 @@
 
 #include "packlo/backend/alignment/base-aligner.h"
 #include "packlo/backend/correlation/z-score-eval.h"
+#include "packlo/distribution/gaussian-mixture.h"
 #include "packlo/model/gmm-parameters.h"
 
 #include <Eigen/Dense>
@@ -19,9 +20,8 @@ class GmmPeakBasedEval : public ZScoreEval {
       const std::vector<double>& normalized_corr) const override;
 
  private:
-  model::GmmParameters fitTranslationalGmmDistribution(
-      const alignment::BaseAligner& aligner,
-      const std::set<uint32_t>& signals,
+  common::GaussianMixture fitTranslationalGmmDistribution(
+      const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
       const std::vector<double>& n_corr) const;
   void retrievePeakNeighbors(
       const uint32_t index, const std::vector<double>& n_corr,
