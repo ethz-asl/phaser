@@ -18,24 +18,15 @@ find_package(catkin_simple REQUIRED)
 catkin_simple(ALL_DEPS_REQUIRED)
 
 cs_add_library(${PROJECT_NAME}_lib
-   lib/SOFT/csecond.c
    lib/SOFT/s2_legendreTransforms.c
-   lib/SOFT/soft_fftw_nt.c
-   lib/SOFT/wrap_s2_rotate_fftw.c
    lib/SOFT/makeweights.c
    lib/SOFT/s2_primitive.c
-   lib/SOFT/soft_fftw_pc.c
-   lib/SOFT/wrap_soft_fftw.c
    lib/SOFT/makeWigner.c
-   lib/SOFT/s2_semi_fly.c
    lib/SOFT/utils_so3.c
    lib/SOFT/wrap_soft_fftw_cor2.c
-   lib/SOFT/rotate_so3_fftw.c
    lib/SOFT/s2_semi_memo.c
    lib/SOFT/utils_vec_cx.c
-   lib/SOFT/rotate_so3_utils.c
    lib/SOFT/so3_correlate_fftw.c
-   lib/SOFT/wignerTransforms.c
    lib/SOFT/s2_cospmls.c
    lib/SOFT/soft_fftw.c
    lib/SOFT/wignerTransforms_fftw.c
@@ -50,6 +41,8 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/correlation/spherical-correlation.cc
    src/backend/correlation/z-score-eval.cc
    src/backend/correlation/z-score-peak-extraction.cc
+   src/backend/correlation/gaussian-peak-based-eval.cc
+   src/backend/correlation/gmm-peak-based-eval.cc
    src/backend/correlation/peak-based-eval.cc
    src/backend/correlation/signal-analysis.cc
    src/backend/alignment/range-based-aligner.cc
@@ -100,6 +93,12 @@ catkin_add_gtest(test_translation_gaussian
 target_link_libraries(test_translation_gaussian
   ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_translation_gaussian)
+
+catkin_add_gtest(test_translation_gm
+  test/uncertainty-estimate/trans-gm-test.cc)
+target_link_libraries(test_translation_gm
+  ${PROJECT_NAME}_lib)
+phaser_import_test_maps(test_translation_gm)
 
 cs_install()
 cs_export()

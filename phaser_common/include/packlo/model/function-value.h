@@ -1,8 +1,7 @@
-#ifndef INCLUDE_PACKLO_MODEL_FUNCTION_VALUE_H_
-#define INCLUDE_PACKLO_MODEL_FUNCTION_VALUE_H_
+#ifndef PACKLO_MODEL_FUNCTION_VALUE_H_
+#define PACKLO_MODEL_FUNCTION_VALUE_H_
 
 #include "packlo/common/point-types.h"
-
 
 #include <Eigen/Dense>
 #include <vector>
@@ -39,4 +38,4 @@ class FunctionValue {
 
 }  // namespace model
 
-#endif  // INCLUDE_PACKLO_MODEL_FUNCTION_VALUE_H_
+#endif  // PACKLO_MODEL_FUNCTION_VALUE_H_

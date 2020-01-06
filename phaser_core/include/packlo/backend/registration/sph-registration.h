@@ -17,6 +17,8 @@ namespace registration {
 class SphRegistration : public BaseRegistration {
  public:
   SphRegistration();
+  explicit SphRegistration(
+      std::string&& alignment_algorithm, std::string&& evaluation_algorithm);
 
   virtual ~SphRegistration() = default;
   model::RegistrationResult registerPointCloud(
@@ -54,6 +56,8 @@ class SphRegistration : public BaseRegistration {
 
  private:
   void initializeAlgorithms();
+  std::string alignment_algorithm_;
+  std::string evaluation_algorithm_;
 };
 
 using SphRegistrationPtr = std::unique_ptr<SphRegistration>;

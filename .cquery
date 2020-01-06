@@ -1,0 +1,14 @@
+# Driver
+/usr/bin/clang++-5.0
+
+# Language
+-xc++
+-std=c++14
+
+# Includes
+-I/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_common/include
+-I/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_core/include
+-I/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_ros/include
+-I/home/berlukas/Documents/workspace/phaser_ws/devel/include
+-I/home/berlukas/Documents/workspace/phaser_ws/devel/include/pcl-1.9
+-I/usr/include/eigen3

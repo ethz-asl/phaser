@@ -4,20 +4,20 @@
 #include "packlo/common/metric-utils.h"
 #include "packlo/common/test/testing-entrypoint.h"
 #include "packlo/common/test/testing-predicates.h"
-#include "packlo/distribution/gaussian.h"
+#include "packlo/distribution/gaussian-mixture.h"
 
 #include <gtest/gtest.h>
 
 namespace uncertainty {
 
-class TransGaussTest : public ::testing::Test {
+class TransGMTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
     ds_->setDatasetFolder("./test_clouds/arche/");
     registrator_ =
-        std::make_unique<registration::SphRegistration>("phase", "gaussian");
+        std::make_unique<registration::SphRegistration>("phase", "gmm");
     z_score_eval_ =
         dynamic_cast<correlation::ZScoreEval*>(&registrator_->getEvaluation());
   }
@@ -27,7 +27,7 @@ class TransGaussTest : public ::testing::Test {
   correlation::ZScoreEval* z_score_eval_;
 };
 
-TEST_F(TransGaussTest, LowUncertainty) {
+TEST_F(TransGMTest, LowUncertainty) {
   CHECK(ds_);
   z_score_eval_->getPeakExtraction().getScoreThreshold() = 5.45;
 
@@ -48,11 +48,12 @@ TEST_F(TransGaussTest, LowUncertainty) {
     EXPECT_TRUE(result.foundSolutionForRotation());
     EXPECT_TRUE(result.foundSolutionForTranslation());
 
-    common::GaussianPtr uncertainty =
-        std::dynamic_pointer_cast<common::Gaussian>(
+    common::GaussianMixturePtr uncertainty =
+        std::dynamic_pointer_cast<common::GaussianMixture>(
             result.getUncertaintyEstimate());
-    const Eigen::MatrixXd& cov = uncertainty->getCov();
-    EXPECT_LT(cov.trace(), 15);
+    const Eigen::MatrixXd& cov = uncertainty->getMixtureCov();
+    VLOG(1) << "------------------------- Uncertainty:\n" << cov;
+    EXPECT_LT(cov.trace(), 1.0);
   });
   ds_->startStreaming(0);
 }

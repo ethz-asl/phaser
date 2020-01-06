@@ -1,9 +1,10 @@
 #include "packlo/backend/registration/sph-registration.h"
-#include "packlo/backend/alignment/range-based-aligner.h"
 #include "packlo/backend/alignment/phase-aligner.h"
-#include "packlo/backend/correlation/z-score-eval.h"
-#include "packlo/common/statistic-utils.h"
+#include "packlo/backend/alignment/range-based-aligner.h"
+#include "packlo/backend/correlation/gaussian-peak-based-eval.h"
+#include "packlo/backend/correlation/gmm-peak-based-eval.h"
 #include "packlo/common/rotation-utils.h"
+#include "packlo/common/statistic-utils.h"
 #include "packlo/common/translation-utils.h"
 
 #include <glog/logging.h>
@@ -14,27 +15,40 @@ DEFINE_int32(
 DEFINE_string(alignment_algorithm, "phase",
     "Sets the algorithm used for the translational alignment.");
 DEFINE_string(
-    evaluation_algorithm, "zscore",
+    evaluation_algorithm, "gaussian",
     "Defines the algorithm used for the evaluation of the correlations.");
 
 namespace registration {
 
 SphRegistration::SphRegistration()
-    : BaseRegistration("SphRegistration"), sampler_(FLAGS_spherical_bandwith) {
+    : BaseRegistration("SphRegistration"),
+      sampler_(FLAGS_spherical_bandwith),
+      alignment_algorithm_(FLAGS_alignment_algorithm),
+      evaluation_algorithm_(FLAGS_evaluation_algorithm) {
+  initializeAlgorithms();
+}
+SphRegistration::SphRegistration(
+    std::string&& alignment_algorithm, std::string&& evaluation_algorithm)
+    : BaseRegistration("SphRegistration"),
+      sampler_(FLAGS_spherical_bandwith),
+      alignment_algorithm_(alignment_algorithm),
+      evaluation_algorithm_(evaluation_algorithm) {
   initializeAlgorithms();
 }
 
 void SphRegistration::initializeAlgorithms() {
   // Initialize the translational alignment.
-  if (FLAGS_alignment_algorithm == "phase")
+  if (alignment_algorithm_ == "phase")
     aligner_ = std::make_unique<alignment::PhaseAligner>();
-  else if (FLAGS_alignment_algorithm == "averaging")
+  else if (alignment_algorithm_ == "averaging")
     aligner_ = std::make_unique<alignment::RangeBasedAligner>();
   else
     LOG(FATAL) << "Unknown alignment algorithm specificed.";
 
-  if (FLAGS_evaluation_algorithm == "zscore")
-    eval_ = std::make_unique<correlation::ZScoreEval>();
+  if (evaluation_algorithm_ == "gaussian")
+    eval_ = std::make_unique<correlation::GaussianPeakBasedEval>();
+  else if (evaluation_algorithm_ == "gmm")
+    eval_ = std::make_unique<correlation::GmmPeakBasedEval>();
   else
     LOG(FATAL) << "Unknown evaluation algorithm specificed.";
 }

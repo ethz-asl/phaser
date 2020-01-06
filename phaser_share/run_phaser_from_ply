@@ -7,7 +7,7 @@ rosrun packlo packlo \
 		--enable_debug=true \
 		--registration_algorithm="sph" \
 		--datasource="ply" \
-		--PlyReadDirectory="/home/berlukas/Documents/workspace/maplab/src/phaser/phaser/test/test-data/gonzen/easy-submaps/" \
+		--PlyReadDirectory="/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_test_data/test_clouds/gonzen/easy-submaps/" \
 		--spherical_bandwith=120 \
 		--phase_n_voxels=280 \
 		--phase_discretize_lower=-70 \

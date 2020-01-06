@@ -3,8 +3,9 @@
 
 #include <complex.h>  // needs to be included before fftw
 
-#include "igl/histc.h"
+#include <gflags/gflags.h>
 #include <glog/logging.h>
+#include "igl/histc.h"
 
 DEFINE_double(
     phase_discretize_lower, -50,
@@ -171,6 +172,7 @@ double PhaseAligner::computeTranslationFromIndex(double index) const {
   if (index <= n_voxels_half) {
     return (index*width) / FLAGS_phase_n_voxels;
   }
+
   return (index-FLAGS_phase_n_voxels) * width/ FLAGS_phase_n_voxels;
 }
 
