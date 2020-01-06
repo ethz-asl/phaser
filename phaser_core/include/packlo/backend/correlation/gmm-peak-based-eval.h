@@ -20,14 +20,16 @@ class GmmPeakBasedEval : public ZScoreEval {
       const std::vector<double>& normalized_corr) const override;
 
  private:
-  common::GaussianMixture fitTranslationalGmmDistribution(
+  void calculateStartEndNeighbor(
+      const uint32_t index, const uint32_t n_corr, uint32_t* start,
+      uint32_t* end) const;
+  void fitTranslationalGmmDistribution(
       const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
-      const std::vector<double>& n_corr) const;
+      const std::vector<double>& n_corr, common::GaussianMixturePtr gm) const;
   void retrievePeakNeighbors(
-      const uint32_t index, const std::vector<double>& n_corr,
-      const alignment::BaseAligner& aligner,
-      Eigen::MatrixXd* samples,
-      Eigen::VectorXd* gaussian_weights) const;
+      const uint32_t start, const uint32_t end,
+      const std::vector<double>& n_corr, const alignment::BaseAligner& aligner,
+      Eigen::MatrixXd* samples, Eigen::VectorXd* gaussian_weights) const;
 };
 
 }  // namespace correlation

@@ -13,6 +13,7 @@ namespace common {
 
 class GaussianMixture : public BaseDistribution {
  public:
+  GaussianMixture() = default;
   explicit GaussianMixture(
       const Eigen::MatrixXd& means, const std::vector<Eigen::MatrixXd>& covs);
   explicit GaussianMixture(
@@ -21,6 +22,9 @@ class GaussianMixture : public BaseDistribution {
   explicit GaussianMixture(
       const std::vector<Gaussian>& gaussians, const Eigen::VectorXd& weights);
   virtual ~GaussianMixture() = default;
+
+  void initializeFromGaussians(
+      const std::vector<Gaussian>& gaussians, const Eigen::VectorXd& weights);
 
   const Eigen::VectorXd& getMixtureMean() const;
   const Eigen::MatrixXd& getMixtureCov() const;

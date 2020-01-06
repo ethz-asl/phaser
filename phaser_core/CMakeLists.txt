@@ -94,5 +94,11 @@ target_link_libraries(test_translation_gaussian
   ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_translation_gaussian)
 
+catkin_add_gtest(test_translation_gm
+  test/uncertainty-estimate/trans-gm-test.cc)
+target_link_libraries(test_translation_gm
+  ${PROJECT_NAME}_lib)
+phaser_import_test_maps(test_translation_gm)
+
 cs_install()
 cs_export()

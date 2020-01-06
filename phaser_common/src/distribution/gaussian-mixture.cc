@@ -21,6 +21,17 @@ GaussianMixture::GaussianMixture(
 GaussianMixture::GaussianMixture(
     const std::vector<Gaussian>& gaussians, const Eigen::VectorXd& weights)
     : means_(Eigen::MatrixXd::Zero(3, gaussians.size())), weights_(weights) {
+  VLOG(1) << "before mean";
+  setMeansAndCovsFromGaussians(gaussians);
+  VLOG(1) << "after mean";
+  std::tie(mean_, cov_) = calcMixutreParameters();
+  VLOG(1) << "after set";
+}
+
+void GaussianMixture::initializeFromGaussians(
+    const std::vector<Gaussian>& gaussians, const Eigen::VectorXd& weights) {
+  means_ = Eigen::MatrixXd::Zero(3, gaussians.size());
+  weights_ = weights;
   setMeansAndCovsFromGaussians(gaussians);
   std::tie(mean_, cov_) = calcMixutreParameters();
 }
