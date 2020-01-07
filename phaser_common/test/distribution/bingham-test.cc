@@ -86,27 +86,22 @@ TEST_F(BinghamTest, fitWeightedQuaternionTest) {
   EXPECT_NEAR_EIGEN(bingham.mode(), true_mode, 1e-4);
 }
 
-/*
 TEST_F(BinghamTest, sampleDeterministicTest) {
-  Eigen::MatrixXd samples(4, 3);
-  samples << 0.956937406927354, 0.960768653534504, 0.957187982859276,
-      0.058856783978165, 0.065511336552757, 0.050483920758591,
-      0.168490940966118, 0.177531610326744, 0.190308650775464,
-      0.228948642746032, 0.202766827916600, 0.212191320874942;
-
-  common::Bingham bingham = common::Bingham::fit(samples);
+  Eigen::MatrixXd M = Eigen::MatrixXd::Identity(2, 2);
+  Eigen::Vector2d Z(-3, 0);
+  common::Bingham bingham(Z, M);
   Eigen::MatrixXd deterministic_samples;
   Eigen::RowVectorXd deterministic_weights;
   bingham.sampleDeterministic(&deterministic_samples, &deterministic_weights);
 
-  Eigen::MatrixXd true_samples(2,3);
+  Eigen::MatrixXd true_samples(2, 3);
   Eigen::RowVector3d true_weights(0.3333333, 0.3333333, 0.3333333);
   true_samples << 0, 0.550363580623329, -0.550363580623329,
     1, 0.834925103900624, 0.834925103900624;
 
   EXPECT_NEAR_EIGEN(deterministic_weights, true_weights, 1e-4);
   EXPECT_NEAR_EIGEN(deterministic_samples, true_samples, 1e-4);
-}*/
+}
 
 }  // namespace common
 
