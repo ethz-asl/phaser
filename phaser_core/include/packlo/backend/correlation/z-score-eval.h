@@ -14,7 +14,9 @@ namespace correlation {
 
 class ZScoreEval : public BaseEval {
  public:
-  ZScoreEval();
+  ZScoreEval(
+      const alignment::BaseAligner& aligner,
+      const backend::SphericalCorrelation& sph);
 
   common::BaseDistributionPtr evaluateCorrelation(
       const alignment::BaseAligner& aligner,

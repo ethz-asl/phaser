@@ -28,7 +28,7 @@ void SphericalCorrelation::correlateSignals(
   retrieveInterpolation(f2, &averaged_pattern);
 
   // Start signal correlation process
-  double *signal_coeff;
+  double* signal_coeff;
   double* signal_values;
   softFFTWCor2(
       bw, averaged_signal.data(), averaged_pattern.data(), &alpha, &beta,
@@ -45,7 +45,7 @@ void SphericalCorrelation::correlateSignals(
   // CHECK_NOTNULL(signal_values);
   // convertSignalValues(signal_values, bw);
   // convertSignalCoeff(signal_coeff, bw);
-  // delete [] signal_values;
+  delete[] signal_values;
   delete [] signal_coeff;
 }
 

@@ -45,10 +45,13 @@ void SphRegistration::initializeAlgorithms() {
   else
     LOG(FATAL) << "Unknown alignment algorithm specificed.";
 
+  CHECK_NOTNULL(aligner_);
   if (evaluation_algorithm_ == "gaussian")
-    eval_ = std::make_unique<correlation::GaussianPeakBasedEval>();
+    eval_ = std::make_unique<correlation::GaussianPeakBasedEval>(
+        *aligner_, sph_corr_);
   else if (evaluation_algorithm_ == "gmm")
-    eval_ = std::make_unique<correlation::GmmPeakBasedEval>();
+    eval_ =
+        std::make_unique<correlation::GmmPeakBasedEval>(*aligner_, sph_corr_);
   else
     LOG(FATAL) << "Unknown evaluation algorithm specificed.";
 }
@@ -78,6 +81,8 @@ model::RegistrationResult SphRegistration::estimateRotation(
 
   std::array<double, 3> zyz;
   correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
+  std::vector<double> rot_corr = sph_corr_.getCorrelation();
+
   model::PointCloud rot_cloud = common::RotationUtils::RotateAroundZYZCopy(
       *cloud_cur, zyz[2], zyz[1], zyz[0]);
 

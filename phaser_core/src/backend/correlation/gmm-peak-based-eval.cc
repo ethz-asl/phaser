@@ -12,6 +12,11 @@ DEFINE_int32(
     gmm_peak_neighbors, 2,
     "Determines the number of neighbors used for the GMM calculation.");
 
+GmmPeakBasedEval::GmmPeakBasedEval(
+    const alignment::BaseAligner& aligner,
+    const backend::SphericalCorrelation& sph)
+    : ZScoreEval(aligner, sph) {}
+
 common::BaseDistributionPtr GmmPeakBasedEval::evaluatePeakBasedCorrelation(
     const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
     const std::vector<double>& n_corr) const {

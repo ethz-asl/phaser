@@ -4,6 +4,11 @@
 
 namespace correlation {
 
+GaussianPeakBasedEval::GaussianPeakBasedEval(
+    const alignment::BaseAligner& aligner,
+    const backend::SphericalCorrelation& sph)
+    : ZScoreEval(aligner, sph) {}
+
 common::BaseDistributionPtr GaussianPeakBasedEval::evaluatePeakBasedCorrelation(
     const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
     const std::vector<double>&) const {

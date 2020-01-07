@@ -15,6 +15,9 @@ namespace correlation {
 
 class GmmPeakBasedEval : public ZScoreEval {
  public:
+  GmmPeakBasedEval(
+      const alignment::BaseAligner& aligner,
+      const backend::SphericalCorrelation& sph);
   common::BaseDistributionPtr evaluatePeakBasedCorrelation(
       const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
       const std::vector<double>& normalized_corr) const override;

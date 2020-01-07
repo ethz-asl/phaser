@@ -38,6 +38,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/registration/mock/sph-registration-mock-cutted.cc
    src/backend/registration/mock/sph-registration-mock-translated.cc
    src/backend/registration/mock/sph-registration-mock-transformed.cc
+   src/backend/correlation/base-eval.cc
    src/backend/correlation/spherical-correlation.cc
    src/backend/correlation/z-score-eval.cc
    src/backend/correlation/z-score-peak-extraction.cc
