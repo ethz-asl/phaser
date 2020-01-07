@@ -32,11 +32,15 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/metric-utils.cc
    src/common/point-cloud-utils.cc
    src/common/gflags-interface.cc
+   src/common/math-utils.cc
 
    src/common/test/testing-entrypoint.cc
 
    src/distribution/gaussian.cc
    src/distribution/gaussian-mixture.cc
+   src/distribution/bingham.cc
+   src/distribution/bingham-mle.cc
+   src/distribution/bingham-normalization-constant.cc
 )
 
 #############
