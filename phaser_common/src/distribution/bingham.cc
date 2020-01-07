@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <boost/math/special_functions/bessel.hpp>
 #include <cassert>
+#include <glog/logging.h>
 #include <iostream>
 #include <vector>
 
@@ -204,11 +205,19 @@ void Bingham::sampleDeterministic(
 
     auto end = dim - 1;
     (*samples)(0, end) = 1;  // sample at mode
+    VLOG(1) << "samples: " << *samples;
+    VLOG(1) << "end: " << end;
+    VLOG(1) << "S: " << S;
+    VLOG(1) << "Z: " << Z;
 
     auto offset = (1 - lambda) * (S(S.rows() - 1, S.cols() - 1) / end);
-    for (std::size_t i = 0; i < end; ++i) {
+    VLOG(1) << "offset: " << offset;
+    for (std::size_t i = 0u; i < end; ++i) {
       p(i) = S(i, i) + offset;
       alpha(i) = std::asin(std::sqrt(S(i, i) / p(i)));
+      VLOG(1) << "p: " << p(i);
+      VLOG(1) << "alpha: " << alpha(i);
+      VLOG(1) << "S: " << S(i, i);
       (*samples)(2 * i + 1, end) = std::cos(alpha(i));
       (*samples)(2 * i + 2, end) = std::cos(alpha(i));
       (*samples)(2 * i + 1, i) = std::sin(alpha(i));
@@ -216,6 +225,7 @@ void Bingham::sampleDeterministic(
       (*weights)(2 * i + 1) = p(i) / 2.0;
       (*weights)(2 * i + 2) = p(i) / 2.0;
     }
+    VLOG(1) << "samples: " << *samples;
     (*weights)(0) = 1.0 - weights->segment(1, 2 * dim - 2).sum();
     *weights = *weights / weights->norm();
     *samples = (M * samples->transpose()).eval();
@@ -254,7 +264,7 @@ Bingham Bingham::fitToMoment(const Eigen::MatrixXd& S) {
 
   Z_ordered = (Z_ordered - Z_ordered(Z_ordered.rows() - 1) *
                                Eigen::VectorXd::Ones(Z_ordered.rows()))
-                  .eval();  // last entry schould be zero.
+                  .eval();
 
   Bingham bingham(Z_ordered, M_ordered);
   return bingham;

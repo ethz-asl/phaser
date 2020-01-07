@@ -1,5 +1,6 @@
 #include "packlo/distribution/bingham-mle.h"
 #include <Eigen/Dense>
+#include <glog/logging.h>
 #include <iostream>
 #include "packlo/distribution/bingham-normalization-constant.h"
 
