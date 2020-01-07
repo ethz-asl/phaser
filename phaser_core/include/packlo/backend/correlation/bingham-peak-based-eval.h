@@ -1,23 +1,20 @@
-#ifndef PACKLO_BACKEND_CORRELATION_GMM_PEAK_BASED_EVAL_H_
-#define PACKLO_BACKEND_CORRELATION_GMM_PEAK_BASED_EVAL_H_
+#ifndef PACKLO_BACKEND_CORRELATION_BINGHAM_PEAK_BASED_EVAL_H_
+#define PACKLO_BACKEND_CORRELATION_BINGHAM_PEAK_BASED_EVAL_H_
 
 #include "packlo/backend/alignment/base-aligner.h"
 #include "packlo/backend/correlation/z-score-eval.h"
-#include "packlo/distribution/gaussian-mixture.h"
-#include "packlo/model/gmm-parameters.h"
 
-#include <Eigen/Dense>
 #include <set>
-#include <utility>
 #include <vector>
 
 namespace correlation {
 
-class GmmPeakBasedEval : public ZScoreEval {
+class BinghamPeakBasedEval : public ZScoreEval {
  public:
-  GmmPeakBasedEval(
+  BinghamPeakBasedEval(
       const alignment::BaseAligner& aligner,
       const backend::SphericalCorrelation& sph);
+
   common::BaseDistributionPtr evaluatePeakBasedCorrelation(
       const alignment::BaseAligner& aligner,
       const backend::SphericalCorrelation& sph,
@@ -25,18 +22,22 @@ class GmmPeakBasedEval : public ZScoreEval {
       const std::vector<double>& normalized_corr) const override;
 
  private:
+  void fitRotationalBinghamDistribution(
+      const backend::SphericalCorrelation& sph,
+      const std::set<uint32_t>& signals,
+      const std::vector<double>& norm_corr) const;
+
   void calculateStartEndNeighbor(
       const uint32_t index, const uint32_t n_corr, uint32_t* start,
       uint32_t* end) const;
-  void fitTranslationalGmmDistribution(
-      const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
-      const std::vector<double>& n_corr, common::GaussianMixturePtr gm) const;
+
   void retrievePeakNeighbors(
       const uint32_t start, const uint32_t end,
-      const std::vector<double>& n_corr, const alignment::BaseAligner& aligner,
-      Eigen::MatrixXd* samples, Eigen::VectorXd* gaussian_weights) const;
+      const std::vector<double>& norm_corr,
+      const backend::SphericalCorrelation& sph, Eigen::MatrixXd* samples,
+      Eigen::RowVectorXd* weights) const;
 };
 
 }  // namespace correlation
 
-#endif  // PACKLO_BACKEND_CORRELATION_GMM_PEAK_BASED_EVAL_H_
+#endif  // PACKLO_BACKEND_CORRELATION_BINGHAM_PEAK_BASED_EVAL_H_

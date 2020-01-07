@@ -19,8 +19,8 @@ class BaseEval {
       const alignment::BaseAligner& aligner,
       const backend::SphericalCorrelation& sph) = 0;
 
-  virtual common::BaseDistributionPtr evaluateCorrelationFromTranslation(
-      const alignment::BaseAligner& aligner) = 0;
+  virtual common::BaseDistributionPtr evaluateCorrelationFromTranslation() = 0;
+  virtual common::BaseDistributionPtr evaluateCorrelationFromRotation() = 0;
 
   virtual void evaluateCorrelationFromRotation(
       const std::vector<double>& corr) = 0;

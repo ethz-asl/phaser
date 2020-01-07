@@ -15,8 +15,11 @@ class GaussianPeakBasedEval : public ZScoreEval {
   GaussianPeakBasedEval(
       const alignment::BaseAligner& aligner,
       const backend::SphericalCorrelation& sph);
+
   common::BaseDistributionPtr evaluatePeakBasedCorrelation(
-      const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
+      const alignment::BaseAligner& aligner,
+      const backend::SphericalCorrelation& sph,
+      const std::set<uint32_t>& signals,
       const std::vector<double>& normalized_corr) const override;
 
  private:

@@ -10,7 +10,8 @@ GaussianPeakBasedEval::GaussianPeakBasedEval(
     : ZScoreEval(aligner, sph) {}
 
 common::BaseDistributionPtr GaussianPeakBasedEval::evaluatePeakBasedCorrelation(
-    const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
+    const alignment::BaseAligner& aligner,
+    const backend::SphericalCorrelation& sph, const std::set<uint32_t>& signals,
     const std::vector<double>&) const {
   Eigen::VectorXd mean;
   Eigen::MatrixXd cov;

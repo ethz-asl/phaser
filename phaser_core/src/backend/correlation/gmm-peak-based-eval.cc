@@ -18,7 +18,8 @@ GmmPeakBasedEval::GmmPeakBasedEval(
     : ZScoreEval(aligner, sph) {}
 
 common::BaseDistributionPtr GmmPeakBasedEval::evaluatePeakBasedCorrelation(
-    const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
+    const alignment::BaseAligner& aligner,
+    const backend::SphericalCorrelation& sph, const std::set<uint32_t>& signals,
     const std::vector<double>& n_corr) const {
   common::GaussianMixturePtr gmm = std::make_shared<common::GaussianMixture>();
   fitTranslationalGmmDistribution(aligner, signals, n_corr, gmm);
@@ -35,7 +36,7 @@ void GmmPeakBasedEval::fitTranslationalGmmDistribution(
   std::vector<common::Gaussian> peak_gaussians;
   Eigen::VectorXd gm_weights = Eigen::VectorXd::Zero(n_signals);
   uint32_t start, end;
-  for (uint32_t i = 0; i < n_signals; ++i) {
+  for (uint32_t i = 0u; i < n_signals; ++i) {
     calculateStartEndNeighbor(i, n_corr, &start, &end);
     const uint32_t num_elements = end - start + 1;
     Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(3, num_elements);
@@ -53,6 +54,8 @@ void GmmPeakBasedEval::fitTranslationalGmmDistribution(
 void GmmPeakBasedEval::calculateStartEndNeighbor(
     const uint32_t index, const uint32_t n_corr, uint32_t* start,
     uint32_t* end) const {
+  CHECK_NOTNULL(start);
+  CHECK_NOTNULL(end);
   *start = FLAGS_gmm_peak_neighbors > index ? index
                                             : index - FLAGS_gmm_peak_neighbors;
   *end = FLAGS_gmm_peak_neighbors + index > n_corr
@@ -70,15 +73,14 @@ void GmmPeakBasedEval::retrievePeakNeighbors(
   const alignment::PhaseAligner& phase =
       dynamic_cast<const alignment::PhaseAligner&>(aligner);
 
-  CHECK_GT(n_signals, 0);
-  CHECK_GE(start, 0);
+  CHECK_GT(n_signals, 0u);
+  CHECK_GE(start, 0u);
   CHECK_LT(end, n_signals);
   CHECK_LE(start, end);
 
-  const uint32_t num_elements = end - start + 1;
-  Eigen::VectorXd weights = Eigen::VectorXd::Zero(num_elements);
+  const uint32_t num_elements = end - start + 1u;
   VLOG(1) << "Checking neighbors from " << start << " to " << end;
-  std::size_t k = 0;
+  std::size_t k = 0u;
   for (uint32_t i = start; i <= end; ++i) {
     std::array<uint16_t, 3> xyz = phase.ind2sub(i);
     (*samples)(0, k) =

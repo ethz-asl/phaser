@@ -40,14 +40,20 @@ std::vector<model::FunctionValue> RotationUtils::RotateAroundZYZCopy(
 
 Eigen::Vector3d RotationUtils::ConvertZYZtoXYZ(
     const std::array<double, 3>& zyz) {
-  Eigen::Quaterniond q = Eigen::AngleAxisd(zyz[0], Eigen::Vector3d::UnitZ()) *
-                         Eigen::AngleAxisd(zyz[1], Eigen::Vector3d::UnitY()) *
-                         Eigen::AngleAxisd(zyz[2], Eigen::Vector3d::UnitZ());
+  Eigen::Quaterniond q = ConvertZYZtoQuaternion(zyz);
   const double qw = q.w(), qx = q.x(), qy = q.y(), qz = q.z();
   return fromRotation(
       -2 * (qy * qz - qw * qx), qw * qw - qx * qx - qy * qy + qz * qz,
       2 * (qx * qz + qw * qy), -2 * (qx * qy - qw * qz),
       qw * qw + qx * qx - qy * qy - qz * qz);
+}
+
+Eigen::Quaterniond RotationUtils::ConvertZYZtoQuaternion(
+    const std::array<double, 3>& zyz) {
+  Eigen::Quaterniond q = Eigen::AngleAxisd(zyz[0], Eigen::Vector3d::UnitZ()) *
+                         Eigen::AngleAxisd(zyz[1], Eigen::Vector3d::UnitY()) *
+                         Eigen::AngleAxisd(zyz[2], Eigen::Vector3d::UnitZ());
+  return q;
 }
 
 Eigen::Matrix4f RotationUtils::createTransformationAroundX(
