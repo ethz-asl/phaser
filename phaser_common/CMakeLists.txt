@@ -20,6 +20,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/model/function-value.cc
    src/model/registration-result.cc
    src/model/gmm-parameters.cc
+   src/model/state.cc
 
    src/common/data/datasource-ros.cc
    src/common/data/datasource-ply.cc
@@ -33,6 +34,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/point-cloud-utils.cc
    src/common/gflags-interface.cc
    src/common/math-utils.cc
+   src/common/dual-quaternion.cc
 
    src/common/test/testing-entrypoint.cc
 

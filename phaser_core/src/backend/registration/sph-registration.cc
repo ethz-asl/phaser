@@ -81,7 +81,6 @@ model::RegistrationResult SphRegistration::estimateRotation(
 
   std::array<double, 3> zyz;
   correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
-  std::vector<double> rot_corr = sph_corr_.getCorrelation();
 
   model::PointCloud rot_cloud = common::RotationUtils::RotateAroundZYZCopy(
       *cloud_cur, zyz[2], zyz[1], zyz[0]);
