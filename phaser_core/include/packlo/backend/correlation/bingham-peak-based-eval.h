@@ -3,6 +3,7 @@
 
 #include "packlo/backend/alignment/base-aligner.h"
 #include "packlo/backend/correlation/z-score-eval.h"
+#include "packlo/distribution/bingham.h"
 
 #include <set>
 #include <vector>
@@ -22,7 +23,7 @@ class BinghamPeakBasedEval : public ZScoreEval {
       const std::vector<double>& normalized_corr) const override;
 
  private:
-  void fitRotationalBinghamDistribution(
+  common::Bingham fitRotationalBinghamDistribution(
       const backend::SphericalCorrelation& sph,
       const std::set<uint32_t>& signals,
       const std::vector<double>& norm_corr) const;

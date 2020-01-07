@@ -1,6 +1,7 @@
 #include "packlo/backend/registration/sph-registration.h"
 #include "packlo/backend/alignment/phase-aligner.h"
 #include "packlo/backend/alignment/range-based-aligner.h"
+#include "packlo/backend/correlation/bingham-peak-based-eval.h"
 #include "packlo/backend/correlation/gaussian-peak-based-eval.h"
 #include "packlo/backend/correlation/gmm-peak-based-eval.h"
 #include "packlo/common/rotation-utils.h"
@@ -52,6 +53,9 @@ void SphRegistration::initializeAlgorithms() {
   else if (evaluation_algorithm_ == "gmm")
     eval_ =
         std::make_unique<correlation::GmmPeakBasedEval>(*aligner_, sph_corr_);
+  else if (evaluation_algorithm_ == "bingham")
+    eval_ = std::make_unique<correlation::BinghamPeakBasedEval>(
+        *aligner_, sph_corr_);
   else
     LOG(FATAL) << "Unknown evaluation algorithm specificed.";
 }

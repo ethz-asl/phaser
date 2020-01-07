@@ -19,10 +19,12 @@ common::BaseDistributionPtr BinghamPeakBasedEval::evaluatePeakBasedCorrelation(
     const alignment::BaseAligner& aligner,
     const backend::SphericalCorrelation& sph, const std::set<uint32_t>& signals,
     const std::vector<double>& normalized_corr) const {
-  return nullptr;
+  common::BinghamPtr bingham = std::make_shared<common::Bingham>(
+      fitRotationalBinghamDistribution(sph, signals, normalized_corr));
+  return bingham;
 }
 
-void BinghamPeakBasedEval::fitRotationalBinghamDistribution(
+common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
     const backend::SphericalCorrelation& sph, const std::set<uint32_t>& signals,
     const std::vector<double>& norm_corr) const {
   const uint32_t n_signals = signals.size();
@@ -35,6 +37,11 @@ void BinghamPeakBasedEval::fitRotationalBinghamDistribution(
 
   uint32_t start, end;
   calculateStartEndNeighbor(*max_signal, n_corr, &start, &end);
+  const uint32_t num_elements = end - start + 1u;
+  Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(3, num_elements);
+  Eigen::RowVectorXd weights = Eigen::RowVectorXd::Zero(num_elements);
+  retrievePeakNeighbors(start, end, norm_corr, sph, &samples, &weights);
+  return common::Bingham::fit(samples, weights);
 }
 
 void BinghamPeakBasedEval::calculateStartEndNeighbor(
@@ -64,7 +71,6 @@ void BinghamPeakBasedEval::retrievePeakNeighbors(
   CHECK_LT(end, n_signals);
   CHECK_LE(start, end);
 
-  const uint32_t num_elements = end - start + 1u;
   VLOG(1) << "Checking neighbors from " << start << " to " << end;
   std::size_t k = 0u;
   for (uint32_t i = start; i <= end; ++i) {

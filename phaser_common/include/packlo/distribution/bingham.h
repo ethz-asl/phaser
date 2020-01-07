@@ -8,11 +8,14 @@
 #ifndef PACKLO_DISTRIBUTION_BINGHAM_H_
 #define PACKLO_DISTRIBUTION_BINGHAM_H_
 
+#include "packlo/distribution/base-distribution.h"
+
 #include <Eigen/Dense>
+#include <memory>
 
 namespace common {
 
-class Bingham {
+class Bingham : public BaseDistribution {
  private:
   Eigen::MatrixXd M;      // Rotation matric
   Eigen::VectorXd Z;      // Concentration matrix
@@ -219,6 +222,8 @@ class Bingham {
    */
   Eigen::VectorXd computeDF();
 };
+
+using BinghamPtr = std::shared_ptr<Bingham>;
 
 }  // namespace common
 

@@ -78,7 +78,6 @@ void GmmPeakBasedEval::retrievePeakNeighbors(
   CHECK_LT(end, n_signals);
   CHECK_LE(start, end);
 
-  const uint32_t num_elements = end - start + 1u;
   VLOG(1) << "Checking neighbors from " << start << " to " << end;
   std::size_t k = 0u;
   for (uint32_t i = start; i <= end; ++i) {
