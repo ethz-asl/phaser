@@ -57,5 +57,10 @@ catkin_add_gtest(test_gaussian_mixture test/distribution/gaussian-mixture-test.c
 target_link_libraries(test_gaussian_mixture
   ${PROJECT_NAME}_lib)
 
+# Bingham
+catkin_add_gtest(test_bingham test/distribution/bingham-test.cc)
+target_link_libraries(test_bingham
+  ${PROJECT_NAME}_lib)
+
 cs_install()
 cs_export()
