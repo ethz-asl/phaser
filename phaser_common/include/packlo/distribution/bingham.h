@@ -137,7 +137,7 @@ class Bingham : public BaseDistribution {
    * @param samples Samples to be drawn
    * @param n Numbers of the samples
    */
-  void sample(Eigen::MatrixXd* samples, const std::size_t n);
+  void sample(Eigen::MatrixXd* samples, const uint16_t n) const;
 
   /**
    * @brief Random sampling according to Glover's method from libBingham based
@@ -148,7 +148,7 @@ class Bingham : public BaseDistribution {
    * @param samples Samples to be drawn
    * @param n Number of samples
    */
-  void sampleGlover(Eigen::MatrixXd* samples, const std::size_t n);
+  void sampleGlover(Eigen::MatrixXd* samples, const uint16_t n) const;
 
   /**
    * @brief Computes deterministic samples of a Bingham distribution which are

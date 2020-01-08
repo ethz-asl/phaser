@@ -27,9 +27,9 @@ Eigen::VectorXd BinghamOptMLE::compute(const Eigen::VectorXd& omega) {
   VLOG(1) << "starting to optimize";
   try {
     nlopt::result result = opt.optimize(t_init, solminf);
-    VLOG(1) << "Optimization succeeded with " << static_cast<int>(result);
+    VLOG(3) << "Optimization succeeded with " << static_cast<int>(result);
   } catch (std::exception& e) {
-    VLOG(1) << "Optimization Failed!";
+    LOG(FATAL) << "Optimization Failed!";
   }
   return Eigen::Vector4d(t_init[0], t_init[1], t_init[2], 0);
 }

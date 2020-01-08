@@ -109,11 +109,11 @@ Eigen::MatrixXd Bingham::moment() const {
   return (S + S.transpose()) / 2;
 }
 
-void Bingham::sample(Eigen::MatrixXd* samples, const std::size_t n) {
+void Bingham::sample(Eigen::MatrixXd* samples, const uint16_t n) const {
   sampleGlover(samples, n);
 }
 
-void Bingham::sampleGlover(Eigen::MatrixXd* samples, const std::size_t n) {
+void Bingham::sampleGlover(Eigen::MatrixXd* samples, const uint16_t n) const {
   // The implementation has a bug because it just repeats the previos sample if
   // a sample is rejected.
   //   -> actually that behaviour seems to be coherent with the description of

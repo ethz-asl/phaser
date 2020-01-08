@@ -42,6 +42,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/distribution/gaussian-mixture.cc
    src/distribution/bingham.cc
    src/distribution/bingham-mle.cc
+   src/distribution/bingham-mixture.cc
    src/distribution/bingham-normalization-constant.cc
    src/distribution/bingham-objective.cc
    src/distribution/bingham-opt-mle.cc
@@ -64,6 +65,11 @@ target_link_libraries(test_gaussian_mixture
 # Bingham
 catkin_add_gtest(test_bingham test/distribution/bingham-test.cc)
 target_link_libraries(test_bingham
+  ${PROJECT_NAME}_lib)
+
+# Bingham Mixture
+catkin_add_gtest(test_bingham_mixture test/distribution/bingham-mixture-test.cc)
+target_link_libraries(test_bingham_mixture
   ${PROJECT_NAME}_lib)
 
 cs_install()
