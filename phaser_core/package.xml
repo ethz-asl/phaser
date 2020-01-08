@@ -16,6 +16,7 @@
   <depend>pcl_catkin</depend>
   <depend>opencv3_catkin</depend>
   <depend>fftw3_catkin</depend>
+  <depend>nlopt</depend>
 
   <depend>phaser_test_data</depend>
   <depend>phaser_common</depend>

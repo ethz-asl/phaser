@@ -57,7 +57,7 @@ int BinghamMLE::compute(int dim, double* in, double* res) {
     res[i] = 1 / (2 * in[i]);
 
   // Main optimization loop.
-  for (i = 0; i <= 1000; i++) {
+  for (i = 0; i <= 1; i++) {
     // Set maximum entry to be zero.
     eRes.array() = eRes.array() + (-eRes.minCoeff());
 
@@ -99,7 +99,7 @@ int BinghamMLE::compute(int dim, double* in, double* res) {
     eRes = eRes - (objFunJacobian.transpose() * objFunJacobian).inverse() *
                       objFunJacobian.transpose() * objFun;
 
-    if (fabs(oldNorm - normObjFun) <= 1e-10)
+    if (fabs(oldNorm - normObjFun) <= 1e-4)
       break;
   }
 

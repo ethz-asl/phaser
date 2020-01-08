@@ -293,10 +293,20 @@ Bingham Bingham::fit(const Eigen::MatrixXd& samples) {
 }
 
 double Bingham::computeF() {
+  return Bingham::computeF(Z, mode());
+}
+
+Eigen::VectorXd Bingham::computeDF() {
+  return Bingham::computeDF(Z, mode());
+}
+
+double Bingham::computeF(
+    const Eigen::VectorXd& Z, const Eigen::VectorXd& mode) {
   const auto dim = Z.rows();
 
   if (dim == 2) {
     const auto val = (Z(0) - Z(1)) / 2;
+    const double S2 = MathUtils::computeUnitSphereSurface(1);
     return std::exp(Z(1)) * S2 * boost::math::cyl_bessel_i(0.0, val) *
            std::exp(val);
   } else {
@@ -313,7 +323,8 @@ double Bingham::computeF() {
   }
 }
 
-Eigen::VectorXd Bingham::computeDF() {
+Eigen::VectorXd Bingham::computeDF(
+    const Eigen::VectorXd& Z, const Eigen::VectorXd& mode) {
   const auto dim = Z.rows();
   Eigen::VectorXd dF(dim);
 
@@ -321,6 +332,7 @@ Eigen::VectorXd Bingham::computeDF() {
     const auto val = (Z(0) - Z(1)) / 2;
     const auto b1 = boost::math::cyl_bessel_i(1, val);
     const auto b0 = boost::math::cyl_bessel_i(0, val);
+    const double S2 = MathUtils::computeUnitSphereSurface(1);
     dF(0) = S2 / 2 * (b1 + b0) * std::exp((Z(0) + Z(1)) / 2);
     dF(1) = S2 / 2 * (-b1 + b0) * std::exp((Z(0) + Z(1)) / 2);
   } else {
