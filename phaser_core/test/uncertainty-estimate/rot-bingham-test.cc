@@ -53,9 +53,7 @@ TEST_F(RotBinghamTest, LowUncertainty) {
     CHECK_NOTNULL(uncertainty);
     const Eigen::MatrixXd& cov = uncertainty->moment();
     VLOG(1) << "------------------------- Uncertainty bingham:\n" << cov;
-    /*
-    EXPECT_LT(cov.trace(), 1.0);
-    */
+    EXPECT_LE(cov.trace(), 1.2);
   });
   ds_->startStreaming(0);
 }
