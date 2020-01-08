@@ -17,4 +17,5 @@
   <depend>pcl_catkin</depend>
   <depend>opencv3_catkin</depend>
   <depend>fftw3_catkin</depend>
+  <depend>nlopt</depend>
 </package>

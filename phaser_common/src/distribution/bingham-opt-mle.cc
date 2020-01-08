@@ -19,7 +19,7 @@ Eigen::VectorXd BinghamOptMLE::compute(const Eigen::VectorXd& omega) {
 
   nlopt::opt opt(nlopt::LN_COBYLA, 3);
   opt.set_min_objective(objective_wrapper, &objective);
-  opt.set_xtol_rel(1e-3);
+  opt.set_xtol_rel(1e-4);
 
   std::vector<double> t_init = {-1.0, -1.0, -1.0};
 
@@ -31,6 +31,7 @@ Eigen::VectorXd BinghamOptMLE::compute(const Eigen::VectorXd& omega) {
   } catch (std::exception& e) {
     VLOG(1) << "Optimization Failed!";
   }
+  return Eigen::Vector4d(t_init[0], t_init[1], t_init[2], 0);
 }
 
 }  // namespace common

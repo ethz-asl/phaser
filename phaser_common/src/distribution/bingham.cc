@@ -2,6 +2,7 @@
 #include "packlo/common/math-utils.h"
 #include "packlo/distribution/bingham-mle.h"
 #include "packlo/distribution/bingham-normalization-constant.h"
+#include "packlo/distribution/bingham-opt-mle.h"
 
 #include <algorithm>
 #include <boost/math/special_functions/bessel.hpp>
@@ -234,14 +235,20 @@ void Bingham::sampleDeterministic(
   return;
 }
 
-Bingham Bingham::fitToMoment(const Eigen::MatrixXd& S) {
+Bingham Bingham::fitToMoment(
+    const Eigen::MatrixXd& S, const std::string& option) {
   auto eigenV = MathUtils::getSortedEigenVectorsAndValues(S);
   Eigen::VectorXd omega = eigenV.second;
   Eigen::MatrixXd mM = eigenV.first;
 
   double norm = omega.sum();
   omega = omega / norm;  // assure that entries sum to one.
-  Eigen::VectorXd res = BinghamMLE::compute(&omega);
+  Eigen::VectorXd res;
+  if (option == "default") {
+    res = BinghamOptMLE::compute(omega);
+  } else if (option == "gaussnewton") {
+    res = BinghamMLE::compute(&omega);
+  }
 
   /* This reordering shouldn't be necessary. However, it can
      become necessary as a consequence of numerical errors when

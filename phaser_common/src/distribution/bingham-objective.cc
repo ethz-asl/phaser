@@ -10,7 +10,6 @@ BinghamObjective::BinghamObjective(const Eigen::Vector4d& omega)
 
 double BinghamObjective::optimize(const std::vector<double>& x) {
   CHECK_EQ(x.size(), 3);
-  const std::size_t d = 4;
 
   Eigen::Vector4d Z(x[0], x[1], x[2], 0.0);
   const double a = Bingham::computeF(Z);

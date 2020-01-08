@@ -12,6 +12,7 @@
 
 #include <Eigen/Dense>
 #include <memory>
+#include <string>
 
 namespace common {
 
@@ -176,7 +177,8 @@ class Bingham : public BaseDistribution {
    * @param S(dxd matrix) Second moment matrix
    * @return A Bingham distribution
    */
-  static Bingham fitToMoment(const Eigen::MatrixXd& S);
+  static Bingham fitToMoment(
+      const Eigen::MatrixXd& S, const std::string& option = "default");
 
   /**
    * @brief Approximating a Bingham distribution with weighted samples
