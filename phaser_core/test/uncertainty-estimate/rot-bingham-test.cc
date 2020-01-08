@@ -4,20 +4,20 @@
 #include "packlo/common/metric-utils.h"
 #include "packlo/common/test/testing-entrypoint.h"
 #include "packlo/common/test/testing-predicates.h"
-#include "packlo/distribution/gaussian-mixture.h"
+#include "packlo/distribution/bingham.h"
 
 #include <gtest/gtest.h>
 
 namespace uncertainty {
 
-class TransGMTest : public ::testing::Test {
+class RotBinghamTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
     ds_->setDatasetFolder("./test_clouds/arche/");
     registrator_ =
-        std::make_unique<registration::SphRegistration>("phase", "gmm");
+        std::make_unique<registration::SphRegistration>("phase", "bingham");
     z_score_eval_ =
         dynamic_cast<correlation::ZScoreEval*>(&registrator_->getEvaluation());
   }
@@ -27,7 +27,7 @@ class TransGMTest : public ::testing::Test {
   correlation::ZScoreEval* z_score_eval_;
 };
 
-TEST_F(TransGMTest, LowUncertainty) {
+TEST_F(RotBinghamTest, LowUncertainty) {
   CHECK(ds_);
   z_score_eval_->getPeakExtraction().getScoreThreshold() = 5.45;
 
@@ -48,12 +48,12 @@ TEST_F(TransGMTest, LowUncertainty) {
     EXPECT_TRUE(result.foundSolutionForRotation());
     EXPECT_TRUE(result.foundSolutionForTranslation());
 
-    common::GaussianMixturePtr uncertainty =
-        std::dynamic_pointer_cast<common::GaussianMixture>(
-            result.getUncertaintyEstimate());
-    const Eigen::MatrixXd& cov = uncertainty->getMixtureCov();
-    VLOG(1) << "------------------------- Uncertainty:\n" << cov;
-    EXPECT_LT(cov.trace(), 10.0);
+    common::BinghamPtr uncertainty = std::dynamic_pointer_cast<common::Bingham>(
+        result.getUncertaintyEstimate());
+    CHECK_NOTNULL(uncertainty);
+    const Eigen::MatrixXd& cov = uncertainty->moment();
+    VLOG(1) << "------------------------- Uncertainty bingham:\n" << cov;
+    EXPECT_LE(cov.trace(), 1.2);
   });
   ds_->startStreaming(0);
 }

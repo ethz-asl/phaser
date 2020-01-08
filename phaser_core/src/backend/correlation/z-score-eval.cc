@@ -16,20 +16,29 @@ DEFINE_double(
 
 namespace correlation {
 
-ZScoreEval::ZScoreEval() : manager_("z-score") {}
+ZScoreEval::ZScoreEval(
+    const alignment::BaseAligner& aligner,
+    const backend::SphericalCorrelation& sph)
+    : manager_("z-score"), BaseEval(aligner, sph) {}
 
 common::BaseDistributionPtr ZScoreEval::evaluateCorrelation(
     const alignment::BaseAligner& aligner,
     const backend::SphericalCorrelation&) {
-  return evaluateCorrelationFromTranslation(aligner);
+  return evaluateCorrelationFromTranslation();
 }
 
-common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromTranslation(
-    const alignment::BaseAligner& aligner) {
+common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromTranslation() {
   std::set<uint32_t> signals;
   std::vector<double> n_corr_ds;
-  evaluateCorrelationVector(aligner.getCorrelation(), &signals, &n_corr_ds);
-  return evaluatePeakBasedCorrelation(aligner, signals, n_corr_ds);
+  evaluateCorrelationVector(aligner_.getCorrelation(), &signals, &n_corr_ds);
+  return evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
+}
+
+common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromRotation() {
+  std::set<uint32_t> signals;
+  std::vector<double> n_corr_ds;
+  evaluateCorrelationVector(sph_.getCorrelation(), &signals, &n_corr_ds);
+  return evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
 }
 
 void ZScoreEval::evaluateCorrelationVector(

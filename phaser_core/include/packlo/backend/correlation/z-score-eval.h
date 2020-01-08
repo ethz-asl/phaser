@@ -14,14 +14,16 @@ namespace correlation {
 
 class ZScoreEval : public BaseEval {
  public:
-  ZScoreEval();
+  ZScoreEval(
+      const alignment::BaseAligner& aligner,
+      const backend::SphericalCorrelation& sph);
 
   common::BaseDistributionPtr evaluateCorrelation(
       const alignment::BaseAligner& aligner,
       const backend::SphericalCorrelation& sph) override;
 
-  common::BaseDistributionPtr evaluateCorrelationFromTranslation(
-      const alignment::BaseAligner& aligner) override;
+  common::BaseDistributionPtr evaluateCorrelationFromTranslation() override;
+  common::BaseDistributionPtr evaluateCorrelationFromRotation() override;
 
   void evaluateCorrelationFromRotation(
       const std::vector<double>& corr) override;
@@ -29,7 +31,9 @@ class ZScoreEval : public BaseEval {
   ZScorePeakExtraction& getPeakExtraction();
 
   virtual common::BaseDistributionPtr evaluatePeakBasedCorrelation(
-      const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
+      const alignment::BaseAligner& aligner,
+      const backend::SphericalCorrelation& sph,
+      const std::set<uint32_t>& signals,
       const std::vector<double>& normalized_corr) const = 0;
 
  private:

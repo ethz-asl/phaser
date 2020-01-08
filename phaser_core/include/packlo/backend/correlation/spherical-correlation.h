@@ -20,6 +20,7 @@ class SphericalCorrelation {
 
   void getStatistics(common::StatisticsManager* manager) const noexcept;
   std::vector<double> getCorrelation() const noexcept;
+  std::array<double, 3> getZYZFromIndex(const uint32_t index) const noexcept;
 
  private:
   void convertSignalValues(double* signal_values, const int bw);
@@ -35,6 +36,7 @@ class SphericalCorrelation {
   const std::string kSignalKey = "signal_values";
   const std::string kCoeffKey = "signal_coeff";
   const double two_pi_ = 2 * M_PI;
+  uint32_t bw_;
   std::vector<double> corr_;
   common::StatisticsManager statistics_manager_;
 };
