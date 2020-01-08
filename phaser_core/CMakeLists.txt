@@ -46,6 +46,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/correlation/gaussian-peak-based-eval.cc
    src/backend/correlation/gmm-peak-based-eval.cc
    src/backend/correlation/bingham-peak-based-eval.cc
+   src/backend/correlation/bmm-peak-based-eval.cc
    src/backend/correlation/peak-based-eval.cc
    src/backend/correlation/signal-analysis.cc
 
@@ -109,6 +110,12 @@ catkin_add_gtest(test_rotation_bingham
 target_link_libraries(test_rotation_bingham
   ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_rotation_bingham)
+
+catkin_add_gtest(test_rotation_bmm
+  test/uncertainty-estimate/rot-bmm-test.cc)
+target_link_libraries(test_rotation_bmm
+  ${PROJECT_NAME}_lib)
+phaser_import_test_maps(test_rotation_bmm)
 
 cs_install()
 cs_export()

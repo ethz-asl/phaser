@@ -35,8 +35,9 @@ void GmmPeakBasedEval::fitTranslationalGmmDistribution(
   VLOG(1) << "Checking " << n_signals << " signals for evaluation";
   std::vector<common::Gaussian> peak_gaussians;
   Eigen::VectorXd gm_weights = Eigen::VectorXd::Zero(n_signals);
-  uint32_t start, end;
-  for (uint32_t i = 0u; i < n_signals; ++i) {
+  uint32_t start, end, k = 0;
+  // for (uint32_t i = 0u; i < n_signals; ++i) {
+  for (uint32_t i : signals) {
     calculateStartEndNeighbor(i, n_corr, &start, &end);
     const uint32_t num_elements = end - start + 1;
     Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(3, num_elements);
@@ -44,13 +45,15 @@ void GmmPeakBasedEval::fitTranslationalGmmDistribution(
 
     retrievePeakNeighbors(start, end, norm_corr, aligner, &samples, &weights);
     peak_gaussians.emplace_back(common::Gaussian(samples, weights));
-    gm_weights(i) = norm_corr.at(i);
+    gm_weights(k) = norm_corr.at(i);
+    ++k;
   }
   gm_weights = gm_weights.array() / gm_weights.array().sum();
   // auto test = std::make_shared<common::GaussianMixture>(peak_gaussians,
   // gm_weights);
   gm->initializeFromGaussians(peak_gaussians, gm_weights);
 }
+
 void GmmPeakBasedEval::calculateStartEndNeighbor(
     const uint32_t index, const uint32_t n_corr, uint32_t* start,
     uint32_t* end) const {
