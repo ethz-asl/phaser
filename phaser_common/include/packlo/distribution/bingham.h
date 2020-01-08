@@ -194,10 +194,9 @@ class Bingham : public BaseDistribution {
    */
   static Bingham fit(const Eigen::MatrixXd& samples);
 
-  static double computeF(const Eigen::VectorXd& Z, const Eigen::VectorXd& mode);
+  static double computeF(const Eigen::VectorXd& Z);
 
-  static Eigen::VectorXd computeDF(
-      const Eigen::VectorXd& Z, const Eigen::VectorXd& mode);
+  static Eigen::VectorXd computeDF(const Eigen::VectorXd& Z);
 
  private:
   /**

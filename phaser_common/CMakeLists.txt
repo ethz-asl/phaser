@@ -43,6 +43,8 @@ cs_add_library(${PROJECT_NAME}_lib
    src/distribution/bingham.cc
    src/distribution/bingham-mle.cc
    src/distribution/bingham-normalization-constant.cc
+   src/distribution/bingham-objective.cc
+   src/distribution/bingham-opt-mle.cc
 )
 
 #############

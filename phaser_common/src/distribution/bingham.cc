@@ -293,15 +293,14 @@ Bingham Bingham::fit(const Eigen::MatrixXd& samples) {
 }
 
 double Bingham::computeF() {
-  return Bingham::computeF(Z, mode());
+  return Bingham::computeF(Z);
 }
 
 Eigen::VectorXd Bingham::computeDF() {
-  return Bingham::computeDF(Z, mode());
+  return Bingham::computeDF(Z);
 }
 
-double Bingham::computeF(
-    const Eigen::VectorXd& Z, const Eigen::VectorXd& mode) {
+double Bingham::computeF(const Eigen::VectorXd& Z) {
   const auto dim = Z.rows();
 
   if (dim == 2) {
@@ -323,8 +322,7 @@ double Bingham::computeF(
   }
 }
 
-Eigen::VectorXd Bingham::computeDF(
-    const Eigen::VectorXd& Z, const Eigen::VectorXd& mode) {
+Eigen::VectorXd Bingham::computeDF(const Eigen::VectorXd& Z) {
   const auto dim = Z.rows();
   Eigen::VectorXd dF(dim);
 
