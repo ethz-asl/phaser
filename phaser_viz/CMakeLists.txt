@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0)
-project(phaser_ros)
+project(phaser_viz)
 
 find_package(catkin_simple REQUIRED)
 catkin_simple(ALL_DEPS_REQUIRED)
@@ -17,11 +17,9 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 cs_add_library(${PROJECT_NAME}_lib
-   src/packlo-node.cc
+   src/visualization/debug-visualizer.cc
+   src/visualization/plotty-visualizer.cc
 )
-
-cs_add_executable(${PROJECT_NAME} app/packlo-app.cc)
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
 
 cs_install()
 cs_export()

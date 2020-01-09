@@ -35,7 +35,8 @@ ZScorePeakExtraction::ZScorePeakExtraction()
 void ZScorePeakExtraction::extractPeaks(
     const std::vector<double>& corr, std::set<uint32_t>* peaks) {
   const uint32_t lag = corr.size() * lag_percentile_;
-  VLOG(1) << "Calculating z-scores using a " << lag << " window.";
+  VLOG(1) << "Calculating z-scores (" << corr.size() << " ) using a " << lag
+          << " window.";
   std::vector<double> input(corr);
   calculateSmoothedZScore(&input, lag, score_threshold_, influence_, peaks);
   /*

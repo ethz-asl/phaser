@@ -3,6 +3,8 @@
 #include "packlo/backend/correlation/signal-analysis.h"
 #include "packlo/distribution/gaussian.h"
 
+#include "packlo/visualization/plotty-visualizer.h"
+
 #include <cmath>
 #include <numeric>
 #include <algorithm>
@@ -59,6 +61,7 @@ void ZScoreEval::evaluateCorrelationVector(
           std::greater<double>(), std::placeholders::_1,
           FLAGS_z_score_filter_threshold));
 
+  visualization::PlottyVisualizer::getInstance().createPlotFor(*n_corr_ds);
   peak_extraction_.extractPeaks(*n_corr_ds, signals);
 }
 

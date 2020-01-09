@@ -8,8 +8,9 @@ rosrun phaser_ros phaser_ros \
 		--registration_algorithm="sph" \
 		--datasource="ply" \
 		--PlyReadDirectory="/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_test_data/test_clouds/gonzen/easy-submaps/" \
-		--spherical_bandwith=70 \
+		--spherical_bandwith=51 \
 		--phase_n_voxels=280 \
 		--phase_discretize_lower=-70 \
 		--phase_discretize_upper=70 \
+    --z_score_filter_threshold=0.1
     $REST
