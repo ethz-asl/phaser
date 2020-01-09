@@ -48,6 +48,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/correlation/bingham-peak-based-eval.cc
    src/backend/correlation/bmm-peak-based-eval.cc
    src/backend/correlation/peak-based-eval.cc
+   src/backend/correlation/phase-correlation-eval.cc
    src/backend/correlation/signal-analysis.cc
 
    src/backend/alignment/range-based-aligner.cc

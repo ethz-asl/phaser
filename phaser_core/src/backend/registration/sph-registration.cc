@@ -17,8 +17,11 @@ DEFINE_int32(
 DEFINE_string(alignment_algorithm, "phase",
     "Sets the algorithm used for the translational alignment.");
 DEFINE_string(
-    evaluation_algorithm, "gaussian",
-    "Defines the algorithm used for the evaluation of the correlations.");
+    rot_evaluation_algorithm, "gaussian",
+    "Defines the algorithm used for the evaluation of the rot correlations.");
+DEFINE_string(
+    pos_evaluation_algorithm, "bingham",
+    "Defines the algorithm used for the evaluation of the pos correlations.");
 
 namespace registration {
 
@@ -26,15 +29,18 @@ SphRegistration::SphRegistration()
     : BaseRegistration("SphRegistration"),
       sampler_(FLAGS_spherical_bandwith),
       alignment_algorithm_(FLAGS_alignment_algorithm),
-      evaluation_algorithm_(FLAGS_evaluation_algorithm) {
+      rot_evaluation_algorithm_(FLAGS_rot_evaluation_algorithm),
+      pos_evaluation_algorithm_(FLAGS_pos_evaluation_algorithm) {
   initializeAlgorithms();
 }
 SphRegistration::SphRegistration(
-    std::string&& alignment_algorithm, std::string&& evaluation_algorithm)
+    std::string&& alignment_algorithm, std::string&& rot_evaluation_algorithm,
+    std::string&& pos_evaluation_algorithm)
     : BaseRegistration("SphRegistration"),
       sampler_(FLAGS_spherical_bandwith),
       alignment_algorithm_(alignment_algorithm),
-      evaluation_algorithm_(evaluation_algorithm) {
+      rot_evaluation_algorithm_(rot_evaluation_algorithm),
+      pos_evaluation_algorithm_(pos_evaluation_algorithm) {
   initializeAlgorithms();
 }
 
@@ -46,22 +52,27 @@ void SphRegistration::initializeAlgorithms() {
     aligner_ = std::make_unique<alignment::RangeBasedAligner>();
   else
     LOG(FATAL) << "Unknown alignment algorithm specificed.";
-
   CHECK_NOTNULL(aligner_);
-  if (evaluation_algorithm_ == "gaussian")
+
+  // Positional evaluation
+  if (pos_evaluation_algorithm_ == "gaussian")
     eval_ = std::make_unique<correlation::GaussianPeakBasedEval>(
         *aligner_, sph_corr_);
-  else if (evaluation_algorithm_ == "gmm")
+  else if (pos_evaluation_algorithm_ == "gmm")
     eval_ =
         std::make_unique<correlation::GmmPeakBasedEval>(*aligner_, sph_corr_);
-  else if (evaluation_algorithm_ == "bingham")
+  else
+    LOG(FATAL) << "Unknown pos evaluation algorithm specificed.";
+
+  // Rotational evaluation
+  if (rot_evaluation_algorithm_ == "bingham")
     eval_ = std::make_unique<correlation::BinghamPeakBasedEval>(
         *aligner_, sph_corr_);
-  else if (evaluation_algorithm_ == "bmm")
+  else if (rot_evaluation_algorithm_ == "bmm")
     eval_ =
         std::make_unique<correlation::BmmPeakBasedEval>(*aligner_, sph_corr_);
   else
-    LOG(FATAL) << "Unknown evaluation algorithm specificed.";
+    LOG(FATAL) << "Unknown rot evaluation algorithm specificed.";
 }
 
 model::RegistrationResult SphRegistration::registerPointCloud(
@@ -72,7 +83,8 @@ model::RegistrationResult SphRegistration::registerPointCloud(
 
   // Register the point cloud.
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
-  result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
+  // result.combine(estimateTranslation(cloud_prev,
+  // result.getRegisteredCloud()));
 
   // Evaluate the resul.
   common::BaseDistributionPtr uncertainty =
@@ -89,6 +101,7 @@ model::RegistrationResult SphRegistration::estimateRotation(
 
   std::array<double, 3> zyz;
   correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
+  common::BaseDistributionPtr rot = eval_->evaluateCorrelationFromRotation();
 
   model::PointCloud rot_cloud = common::RotationUtils::RotateAroundZYZCopy(
       *cloud_cur, zyz[2], zyz[1], zyz[0]);

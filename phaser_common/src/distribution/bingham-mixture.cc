@@ -24,6 +24,10 @@ BinghamMixture::BinghamMixture(
   calcMixtureParametersGlover();
 }
 
+Eigen::VectorXd BinghamMixture::getEstimate() const {
+  return mode_;
+}
+
 const Eigen::VectorXd& BinghamMixture::getMixtureMode() const {
   return mode_;
 }
