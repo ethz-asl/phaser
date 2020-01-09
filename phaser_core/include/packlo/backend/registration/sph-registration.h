@@ -1,11 +1,12 @@
 #ifndef PACKLO_BACKEND_REGISTRATION_SPH_REGISTRATION_H_
 #define PACKLO_BACKEND_REGISTRATION_SPH_REGISTRATION_H_
 
-#include "packlo/common/spherical-sampler.h"
-#include "packlo/backend/registration/base-registration.h"
-#include "packlo/backend/correlation/spherical-correlation.h"
-#include "packlo/backend/correlation/base-eval.h"
 #include "packlo/backend/alignment/base-aligner.h"
+#include "packlo/backend/correlation/base-eval.h"
+#include "packlo/backend/correlation/phase-correlation-eval.h"
+#include "packlo/backend/correlation/spherical-correlation.h"
+#include "packlo/backend/registration/base-registration.h"
+#include "packlo/common/spherical-sampler.h"
 
 #include <array>
 #include <memory>
@@ -36,7 +37,8 @@ class SphRegistration : public BaseRegistration {
 
   void setBandwith(const int bandwith);
 
-  correlation::BaseEval& getEvaluation();
+  const correlation::BaseEval& getRotEvaluation() const;
+  const correlation::BaseEval& getPosEvaluation() const;
 
  protected:
   void correlatePointcloud(
@@ -48,7 +50,7 @@ class SphRegistration : public BaseRegistration {
   std::vector<model::FunctionValue> f_values_;
   std::vector<model::FunctionValue> h_values_;
   alignment::BaseAlignerPtr aligner_;
-  correlation::BaseEvalPtr eval_;
+  correlation::PhaseCorrelationEvalPtr correlation_eval_;
 
   // Statistics
   const std::string kSampleDurationKey = "Sampling";

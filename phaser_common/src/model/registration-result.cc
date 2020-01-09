@@ -1,4 +1,5 @@
 #include "packlo/model/registration-result.h"
+#include "packlo/common/rotation-utils.h"
 
 namespace model {
 
@@ -29,8 +30,11 @@ model::PointCloudPtr RegistrationResult::getRegisteredCloud() const {
   return reg_cloud_;
 }
 
-const std::array<double, 3>& RegistrationResult::getRotation() const {
-  return rotation_;
+std::array<double, 3> RegistrationResult::getRotation() const {
+  common::DualQuaternion dq = current_state_.getCurrentState();
+  Eigen::Quaterniond q = dq.getRotation();
+  Eigen::Vector3d res = common::RotationUtils::ConvertQuaternionToXYZ(q);
+  return {res(0), res(1), res(2)};
 }
 
 const common::Vector_t& RegistrationResult::getTranslation() const {
@@ -49,14 +53,24 @@ bool RegistrationResult::foundSolutionForTranslation() const {
   return found_solution_for_translation_;
 }
 
-void RegistrationResult::setUncertaintyEstimate(
+void RegistrationResult::setRotUncertaintyEstimate(
     const common::BaseDistributionPtr& uncertainty) {
-  uncertainty_ = uncertainty;
+  current_state_.setRotationalDistribution(uncertainty);
 }
 
-common::BaseDistributionPtr RegistrationResult::getUncertaintyEstimate() const
-    noexcept {
-  return uncertainty_;
+void RegistrationResult::setPosUncertaintyEstimate(
+    const common::BaseDistributionPtr& uncertainty) {
+  current_state_.setTranslationalDistribution(uncertainty);
+}
+
+common::BaseDistributionPtr RegistrationResult::getRotUncertaintyEstimate()
+    const noexcept {
+  return current_state_.getRotationalDistribution();
+}
+
+common::BaseDistributionPtr RegistrationResult::getPosUncertaintyEstimate()
+    const noexcept {
+  return current_state_.getTranslationalDistribution();
 }
 
 }  // namespace model

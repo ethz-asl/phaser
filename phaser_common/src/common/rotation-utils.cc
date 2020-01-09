@@ -41,6 +41,11 @@ std::vector<model::FunctionValue> RotationUtils::RotateAroundZYZCopy(
 Eigen::Vector3d RotationUtils::ConvertZYZtoXYZ(
     const std::array<double, 3>& zyz) {
   Eigen::Quaterniond q = ConvertZYZtoQuaternion(zyz);
+  return ConvertQuaternionToXYZ(q);
+}
+
+Eigen::Vector3d RotationUtils::ConvertQuaternionToXYZ(
+    const Eigen::Quaterniond& q) {
   const double qw = q.w(), qx = q.x(), qy = q.y(), qz = q.z();
   return fromRotation(
       -2 * (qy * qz - qw * qx), qw * qw - qx * qx - qy * qy + qz * qz,
