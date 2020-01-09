@@ -15,8 +15,8 @@ class PhaseCorrelationEval {
   common::BaseDistributionPtr calcRotationUncertainty();
   common::BaseDistributionPtr calcTranslationUncertainty();
 
-  const BaseEval& getRotationEval() const;
-  const BaseEval& getPositionEval() const;
+  BaseEval& getRotationEval();
+  BaseEval& getPositionEval();
 
  private:
   BaseEvalPtr rotation_eval_;

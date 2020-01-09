@@ -175,11 +175,11 @@ void SphRegistration::setBandwith(const int bandwith) {
   sampler_.initialize(bandwith);
 }
 
-const correlation::BaseEval& SphRegistration::getRotEvaluation() const {
+correlation::BaseEval& SphRegistration::getRotEvaluation() {
   return correlation_eval_->getRotationEval();
 }
 
-const correlation::BaseEval& SphRegistration::getPosEvaluation() const {
+correlation::BaseEval& SphRegistration::getPosEvaluation() {
   return correlation_eval_->getPositionEval();
 }
 

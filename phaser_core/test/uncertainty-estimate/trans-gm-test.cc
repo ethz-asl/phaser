@@ -16,10 +16,10 @@ class TransGMTest : public ::testing::Test {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
     ds_->setDatasetFolder("./test_clouds/arche/");
-    registrator_ =
-        std::make_unique<registration::SphRegistration>("phase", "gmm");
-    z_score_eval_ =
-        dynamic_cast<correlation::ZScoreEval*>(&registrator_->getEvaluation());
+    registrator_ = std::make_unique<registration::SphRegistration>(
+        "phase", "bingham", "gmm");
+    z_score_eval_ = dynamic_cast<correlation::ZScoreEval*>(
+        &registrator_->getPosEvaluation());
   }
 
   data::DatasourcePlyPtr ds_;
@@ -50,7 +50,7 @@ TEST_F(TransGMTest, LowUncertainty) {
 
     common::GaussianMixturePtr uncertainty =
         std::dynamic_pointer_cast<common::GaussianMixture>(
-            result.getUncertaintyEstimate());
+            result.getPosUncertaintyEstimate());
     const Eigen::MatrixXd& cov = uncertainty->getMixtureCov();
     VLOG(1) << "------------------------- Uncertainty:\n" << cov;
     EXPECT_LT(cov.trace(), 10.0);

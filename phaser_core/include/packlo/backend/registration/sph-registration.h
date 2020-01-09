@@ -37,8 +37,8 @@ class SphRegistration : public BaseRegistration {
 
   void setBandwith(const int bandwith);
 
-  const correlation::BaseEval& getRotEvaluation() const;
-  const correlation::BaseEval& getPosEvaluation() const;
+  correlation::BaseEval& getRotEvaluation();
+  correlation::BaseEval& getPosEvaluation();
 
  protected:
   void correlatePointcloud(

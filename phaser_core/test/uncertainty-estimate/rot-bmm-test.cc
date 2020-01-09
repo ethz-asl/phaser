@@ -16,10 +16,10 @@ class RotBinghamMixtureTest : public ::testing::Test {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
     ds_->setDatasetFolder("./test_clouds/arche/");
-    registrator_ =
-        std::make_unique<registration::SphRegistration>("phase", "bmm");
-    z_score_eval_ =
-        dynamic_cast<correlation::ZScoreEval*>(&registrator_->getEvaluation());
+    registrator_ = std::make_unique<registration::SphRegistration>(
+        "phase", "gauss", "bmm");
+    z_score_eval_ = dynamic_cast<correlation::ZScoreEval*>(
+        &registrator_->getRotEvaluation());
   }
 
   data::DatasourcePlyPtr ds_;
@@ -50,7 +50,7 @@ TEST_F(RotBinghamMixtureTest, LowUncertainty) {
 
     common::BinghamMixturePtr uncertainty =
         std::dynamic_pointer_cast<common::BinghamMixture>(
-            result.getUncertaintyEstimate());
+            result.getRotUncertaintyEstimate());
     CHECK_NOTNULL(uncertainty);
     const Eigen::MatrixXd& cov = uncertainty->getMixtureS2();
     VLOG(1) << "------------------------- Uncertainty bingham:\n" << cov;
