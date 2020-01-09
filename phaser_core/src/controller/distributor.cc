@@ -30,7 +30,7 @@ Distributor::Distributor(data::DatasourcePtr& ds)
       registration_algorithm_(FLAGS_registration_algorithm) {
   subscribeToTopics();
   initializeRegistrationAlgorithm();
-  ds_->startStreaming();
+  ds_->startStreaming(0);
 }
 
 void Distributor::subscribeToTopics() {

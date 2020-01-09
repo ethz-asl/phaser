@@ -17,7 +17,7 @@ class RotBinghamTest : public ::testing::Test {
     CHECK_NOTNULL(ds_);
     ds_->setDatasetFolder("./test_clouds/arche/");
     registrator_ = std::make_unique<registration::SphRegistration>(
-        "phase", "bingham", "gauss");
+        "phase", "bingham", "gaussian");
     z_score_eval_ = dynamic_cast<correlation::ZScoreEval*>(
         &registrator_->getRotEvaluation());
   }

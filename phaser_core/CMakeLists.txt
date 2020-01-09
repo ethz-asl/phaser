@@ -106,17 +106,5 @@ target_link_libraries(test_translation_gm
   ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_translation_gm)
 
-catkin_add_gtest(test_rotation_bingham
-  test/uncertainty-estimate/rot-bingham-test.cc)
-target_link_libraries(test_rotation_bingham
-  ${PROJECT_NAME}_lib)
-phaser_import_test_maps(test_rotation_bingham)
-
-catkin_add_gtest(test_rotation_bmm
-  test/uncertainty-estimate/rot-bmm-test.cc)
-target_link_libraries(test_rotation_bmm
-  ${PROJECT_NAME}_lib)
-phaser_import_test_maps(test_rotation_bmm)
-
 cs_install()
 cs_export()

@@ -4,8 +4,8 @@
 namespace model {
 
 RegistrationResult::RegistrationResult()
-    : found_solution_for_rotation_(false),
-      found_solution_for_translation_(false) {}
+    : found_solution_for_rotation_(true),
+      found_solution_for_translation_(true) {}
 
 RegistrationResult::RegistrationResult(
     model::PointCloud&& reg_cloud, std::array<double, 3>&& rotation)
@@ -31,6 +31,7 @@ model::PointCloudPtr RegistrationResult::getRegisteredCloud() const {
 }
 
 std::array<double, 3> RegistrationResult::getRotation() const {
+  return rotation_;
   common::DualQuaternion dq = current_state_.getCurrentState();
   Eigen::Quaterniond q = dq.getRotation();
   Eigen::Vector3d res = common::RotationUtils::ConvertQuaternionToXYZ(q);

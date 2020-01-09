@@ -165,6 +165,7 @@ void PointCloud::writeToFile(std::string&& directory) {
 
 void PointCloud::readFromFile(const std::string& ply) {
   CHECK(!ply.empty());
+  CHECK_NOTNULL(cloud_);
   VLOG(2) << "Reading PLY file from: " << ply;
   pcl::PLYReader reader;
   reader.read(ply, *cloud_);
