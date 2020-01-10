@@ -2,8 +2,8 @@
 #include <plotty/matplotlibcpp.hpp>
 
 #include <Eigen/Dense>
-#include <glog/logging.h>
 #include <fstream>
+#include <glog/logging.h>
 
 namespace visualization {
 
@@ -27,7 +27,8 @@ void PlottyVisualizer::createPlotFor(const std::vector<double>& data) {
 
 void PlottyVisualizer::storeToFile(const std::vector<double>& data) {
   std::ofstream outFile("data.txt");
-  for (const double &e : data) outFile << e << "\n";
+  for (const double& e : data)
+    outFile << e << "\n";
 }
 
 }  // namespace visualization

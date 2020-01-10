@@ -2,6 +2,12 @@
 #include "packlo/backend/alignment/phase-aligner.h"
 #include "packlo/distribution/gaussian.h"
 
+#include <glog/logging.h>
+
+DEFINE_int32(
+    gaussian_peak_neighbors, 5,
+    "Determines the number of neighbors used for the Bingham calculation.");
+
 namespace correlation {
 
 GaussianPeakBasedEval::GaussianPeakBasedEval(
@@ -12,45 +18,84 @@ GaussianPeakBasedEval::GaussianPeakBasedEval(
 common::BaseDistributionPtr GaussianPeakBasedEval::evaluatePeakBasedCorrelation(
     const alignment::BaseAligner& aligner,
     const backend::SphericalCorrelation& sph, const std::set<uint32_t>& signals,
-    const std::vector<double>&) const {
-  Eigen::VectorXd mean;
-  Eigen::MatrixXd cov;
-  std::tie(mean, cov) = fitTranslationalNormalDist(aligner, signals);
-  return std::make_shared<common::Gaussian>(std::move(mean), std::move(cov));
+    const std::vector<double>& norm_corr) const {
+  common::GaussianPtr gaussian = std::make_shared<common::Gaussian>(
+      fitTranslationalNormalDist(aligner, signals, norm_corr));
+  return gaussian;
 }
 
-std::pair<Eigen::VectorXd, Eigen::MatrixXd>
-GaussianPeakBasedEval::fitTranslationalNormalDist(
-    const alignment::BaseAligner& aligner,
-    const std::set<uint32_t>& signals) const {
-  const alignment::PhaseAligner& phase =
-      dynamic_cast<const alignment::PhaseAligner&>(aligner);
-  const uint32_t n_signals = signals.size();
-  if (n_signals == 0) {
-    return std::make_pair(
-        Eigen::VectorXd::Zero(3), Eigen::MatrixXd::Identity(3, 3));
-  }
-  Eigen::ArrayXXd samples(3, n_signals);
-  uint32_t i = 0u;
+void GaussianPeakBasedEval::calculateStartEndNeighbor(
+    const uint32_t index, const uint32_t n_corr, uint32_t* start,
+    uint32_t* end) const {
+  CHECK_NOTNULL(start);
+  CHECK_NOTNULL(end);
+  *start = FLAGS_gaussian_peak_neighbors > index
+               ? index
+               : index - FLAGS_gaussian_peak_neighbors;
+  *end = FLAGS_gaussian_peak_neighbors + index > n_corr
+             ? index
+             : index + FLAGS_gaussian_peak_neighbors;
+}
 
-  // Extract translational estimates.
-  for (uint32_t signal_idx : signals) {
-    std::array<uint16_t, 3> xyz = phase.ind2sub(signal_idx);
-    samples(0, i) =
-        phase.computeTranslationFromIndex(static_cast<double>(xyz[0]));
-    samples(1, i) =
-        phase.computeTranslationFromIndex(static_cast<double>(xyz[1]));
-    samples(2, i) =
-        phase.computeTranslationFromIndex(static_cast<double>(xyz[2]));
-    ++i;
-  }
+common::Gaussian GaussianPeakBasedEval::fitTranslationalNormalDist(
+    const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
+    const std::vector<double>& norm_corr) const {
+  const uint32_t n_signals = signals.size();
+  const uint32_t n_corr = norm_corr.size();
+  CHECK_NE(n_signals, 0);
+  VLOG(1) << "Checking " << n_signals << " signals for evaluation";
+
+  // Find the max signal.
+  std::set<uint32_t>::iterator max_signal = std::max_element(
+      signals.begin(), signals.end(),
+      [&norm_corr](const uint32_t lhs, const uint32_t rhs) {
+        return norm_corr[lhs] < norm_corr[rhs];
+      });
+  CHECK(max_signal != signals.end());
+
+  // Retrieve max peak neigbhors.
+  uint32_t start, end;
+  calculateStartEndNeighbor(*max_signal, n_corr, &start, &end);
+  const uint32_t num_elements = end - start + 1u;
+  Eigen::ArrayXXd samples = Eigen::MatrixXd::Zero(4, num_elements);
+  Eigen::VectorXd weights = Eigen::VectorXd::Zero(num_elements);
+  retrievePeakNeighbors(start, end, norm_corr, aligner, &samples, &weights);
 
   // Calculate mean and covariance.
+  /*
   Eigen::VectorXd mean = samples.rowwise().mean();
   Eigen::VectorXd var =
       ((samples.colwise() - mean.array()).square().rowwise().sum() /
        (n_signals - 1));
-  return std::make_pair(mean, var.asDiagonal());
+       */
+  // return std::make_pair(mean, var.asDiagonal());
+  return common::Gaussian(samples, weights);
+}
+
+void GaussianPeakBasedEval::retrievePeakNeighbors(
+    const uint32_t start, const uint32_t end,
+    const std::vector<double>& norm_corr, const alignment::BaseAligner& aligner,
+    Eigen::ArrayXXd* samples, Eigen::VectorXd* weights) const {
+  const alignment::PhaseAligner& phase =
+      dynamic_cast<const alignment::PhaseAligner&>(aligner);
+
+  // Extract translational estimates.
+  uint32_t k = 0u;
+  for (uint32_t i = start; i <= end; ++i) {
+    std::array<uint16_t, 3> xyz = phase.ind2sub(i);
+    (*samples)(0, k) =
+        phase.computeTranslationFromIndex(static_cast<double>(xyz[0]));
+    (*samples)(1, k) =
+        phase.computeTranslationFromIndex(static_cast<double>(xyz[1]));
+    (*samples)(2, k) =
+        phase.computeTranslationFromIndex(static_cast<double>(xyz[2]));
+    (*weights)(k) = norm_corr.at(i);
+    ++k;
+  }
+  const double weight_sum = weights->array().sum();
+  CHECK_GT(weight_sum, 0);
+  (*weights) = weights->array() / weight_sum;
+  VLOG(1) << "gaussian weights: \n" << weights->transpose();
 }
 
 }  // namespace correlation

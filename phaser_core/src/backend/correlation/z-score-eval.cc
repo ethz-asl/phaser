@@ -42,7 +42,7 @@ common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromRotation() {
 void ZScoreEval::evaluateCorrelationVector(
     const std::vector<double>& corr, std::set<uint32_t>* signals,
     std::vector<double>* n_corr_ds) {
-  //std::vector<double> n_corr;
+  // std::vector<double> n_corr;
 
   // Normalize correlation.
   double max = *std::max_element(corr.cbegin(), corr.cend());
@@ -59,7 +59,7 @@ void ZScoreEval::evaluateCorrelationVector(
           FLAGS_z_score_filter_threshold));
   */
 
-  visualization::PlottyVisualizer::getInstance().createPlotFor(*n_corr_ds);
+  // visualization::PlottyVisualizer::getInstance().createPlotFor(*n_corr_ds);
   peak_extraction_.extractPeaks(*n_corr_ds, signals);
 }
 

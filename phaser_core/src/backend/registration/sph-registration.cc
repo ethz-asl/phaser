@@ -8,6 +8,7 @@
 #include "packlo/common/rotation-utils.h"
 #include "packlo/common/statistic-utils.h"
 #include "packlo/common/translation-utils.h"
+#include "packlo/visualization/debug-visualizer.h"
 
 #include <glog/logging.h>
 
@@ -88,14 +89,27 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   cloud_prev->initialize_kd_tree();
 
   // Register the point cloud.
+  /*
+  visualization::DebugVisualizer::getInstance()
+    .visualizePointCloudDiff(*cloud_prev, *cloud_cur);
+  */
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
+  /*
+  visualization::DebugVisualizer::getInstance()
+    .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
+  */
   result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
+
+  /*
+  visualization::DebugVisualizer::getInstance()
+    .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
+  */
 
   // Evaluate the resul.
   // result.setRotUncertaintyEstimate(
   // correlation_eval_->calcRotationUncertainty());
-  result.setPosUncertaintyEstimate(
-      correlation_eval_->calcTranslationUncertainty());
+  // result.setPosUncertaintyEstimate(
+  // correlation_eval_->calcTranslationUncertainty());
   return result;
 }
 
@@ -115,9 +129,10 @@ model::RegistrationResult SphRegistration::estimateRotation(
       correlation_eval_->calcRotationUncertainty();
   Eigen::VectorXd b_est = rot->getEstimate();
 
-  VLOG(1) << "corr est: " << common::RotationUtils::ConvertZYZtoXYZ(zyz).transpose();
-  VLOG(1) << "bingham est: " << common::RotationUtils::ConvertQuaternionToXYZ(
-    b_est).transpose();
+  VLOG(1) << "corr est: "
+          << common::RotationUtils::ConvertZYZtoXYZ(zyz).transpose();
+  VLOG(1) << "bingham est: "
+          << common::RotationUtils::ConvertQuaternionToXYZ(b_est).transpose();
 
   model::PointCloud rot_cloud = common::RotationUtils::RotateAroundZYZCopy(
       *cloud_cur, zyz[2], zyz[1], zyz[0]);
@@ -136,8 +151,12 @@ model::RegistrationResult SphRegistration::estimateTranslation(
   CHECK_EQ(xyz.rows(), 3);
   statistics_manager_.emplaceValue(
       kTranslationDurationKey, duration_translation_f_ms);
+  common::BaseDistributionPtr pos =
+      correlation_eval_->calcTranslationUncertainty();
+  Eigen::VectorXd g_est = pos->getEstimate();
 
   VLOG(1) << "Found translation: " << xyz.transpose();
+  VLOG(1) << "Gaussian translation: " << g_est.transpose();
   VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
     << "ms.";
   model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(

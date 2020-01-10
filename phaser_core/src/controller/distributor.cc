@@ -1,11 +1,12 @@
 #include "packlo/controller/distributor.h"
-#include "packlo/common/spherical-projection.h"
-#include "packlo/common/rotation-utils.h"
-#include "packlo/backend/registration/sph-registration.h"
-#include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
 #include "packlo/backend/registration/mock/sph-registration-mock-cutted.h"
-#include "packlo/backend/registration/mock/sph-registration-mock-translated.h"
+#include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
 #include "packlo/backend/registration/mock/sph-registration-mock-transformed.h"
+#include "packlo/backend/registration/mock/sph-registration-mock-translated.h"
+#include "packlo/backend/registration/sph-registration.h"
+#include "packlo/common/rotation-utils.h"
+#include "packlo/common/spherical-projection.h"
+#include "packlo/common/statistic-utils.h"
 
 #include <glog/logging.h>
 #include <pcl/filters/passthrough.h>
@@ -69,7 +70,7 @@ void Distributor::setRegistrationAlgorithm(const std::string& algorithm) {
 void Distributor::pointCloudCallback(
     const model::PointCloudPtr& cloud) {
   VLOG(1) << "received cloud in callback";
-  preprocessPointCloud(cloud);
+  // preprocessPointCloud(cloud);
   if (FLAGS_app_mode == "registration")
     registerPointCloud(cloud);
   else if (FLAGS_app_mode == "store_ply")
@@ -85,7 +86,11 @@ void Distributor::registerPointCloud(const model::PointCloudPtr& cloud) {
   }
 
   CHECK_NOTNULL(registrator_);
-  registrator_->registerPointCloud(prev_point_cloud_, cloud);
+  const double duration_sample_f_ms = common::executeTimedFunction(
+      &registration::BaseRegistration::registerPointCloud, &(*registrator_),
+      prev_point_cloud_, cloud);
+  // registrator_->registerPointCloud(prev_point_cloud_, cloud);
+  VLOG(1) << "Full registration took: " << duration_sample_f_ms << "ms.";
   prev_point_cloud_ = cloud;
 }
 

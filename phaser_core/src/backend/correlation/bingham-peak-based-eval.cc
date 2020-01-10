@@ -37,8 +37,8 @@ common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
   const uint32_t n_corr = norm_corr.size();
   CHECK_NE(n_signals, 0);
   VLOG(1) << "Checking " << n_signals << " signals for evaluation";
-  std::set<uint32_t>::iterator max_signal =
-      std::max_element(signals.begin(), signals.end(),
+  std::set<uint32_t>::iterator max_signal = std::max_element(
+      signals.begin(), signals.end(),
       [&norm_corr](const uint32_t lhs, const uint32_t rhs) {
         return norm_corr[lhs] < norm_corr[rhs];
       });
@@ -50,7 +50,7 @@ common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
   Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(4, num_elements);
   Eigen::RowVectorXd weights = Eigen::RowVectorXd::Zero(num_elements);
   retrievePeakNeighbors(start, end, norm_corr, sph, &samples, &weights);
-  //VLOG(1) << "bingham samples:\n" << samples << "\nweights:\n" << weights;
+  // VLOG(1) << "bingham samples:\n" << samples << "\nweights:\n" << weights;
   return common::Bingham::fit(samples, weights);
 }
 

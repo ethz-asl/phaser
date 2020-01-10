@@ -55,7 +55,7 @@ Eigen::Vector3d RotationUtils::ConvertQuaternionToXYZ(
 
 Eigen::Vector3d RotationUtils::ConvertQuaternionToXYZ(
     const Eigen::Vector4d& q) {
-  Eigen::Quaterniond e_q (q(0), q(1), q(2), q(3));
+  Eigen::Quaterniond e_q(q(0), q(1), q(2), q(3));
   return ConvertQuaternionToXYZ(e_q);
 }
 
