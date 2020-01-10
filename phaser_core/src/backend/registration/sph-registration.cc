@@ -89,21 +89,15 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   cloud_prev->initialize_kd_tree();
 
   // Register the point cloud.
-  /*
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*cloud_prev, *cloud_cur);
-  */
+  // visualization::DebugVisualizer::getInstance()
+  // .visualizePointCloudDiff(*cloud_prev, *cloud_cur);
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
-  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-  */
   result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
 
-  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-  */
 
   // Evaluate the resul.
   // result.setRotUncertaintyEstimate(
@@ -118,25 +112,18 @@ model::RegistrationResult SphRegistration::estimateRotation(
   VLOG(1) << "[SphRegistration] Estimating rotation...";
   cloud_cur->initialize_kd_tree();
 
+  // Correlate point cloud and get uncertainty measure.
   std::array<double, 3> zyz;
   correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
-  /*
-  result.setRotUncertaintyEstimate(
-      correlation_eval_->calcRotationUncertainty());
-  zyz = result.getRotation();
-  */
   common::BaseDistributionPtr rot =
       correlation_eval_->calcRotationUncertainty();
-  Eigen::VectorXd b_est = rot->getEstimate();
+  Eigen::VectorXd b_est =
+      common::RotationUtils::ConvertQuaternionToXYZ(rot->getEstimate());
 
-  VLOG(1) << "corr est: "
-          << common::RotationUtils::ConvertZYZtoXYZ(zyz).transpose();
-  VLOG(1) << "bingham est: "
-          << common::RotationUtils::ConvertQuaternionToXYZ(b_est).transpose();
+  common::RotationUtils::RotateAroundXYZ(
+      cloud_cur, b_est(0), b_est(1), b_est(2));
 
-  model::PointCloud rot_cloud = common::RotationUtils::RotateAroundZYZCopy(
-      *cloud_cur, zyz[2], zyz[1], zyz[0]);
-  model::RegistrationResult result(std::move(rot_cloud), std::move(zyz));
+  model::RegistrationResult result(std::move(*cloud_cur), std::move(zyz));
   return result;
 }
 
@@ -159,9 +146,13 @@ model::RegistrationResult SphRegistration::estimateTranslation(
   VLOG(1) << "Gaussian translation: " << g_est.transpose();
   VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
     << "ms.";
-  model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
-      *rot_cloud, xyz(0), xyz(1), xyz(2));
+  /*
+model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
+    *rot_cloud, xyz(0), xyz(1), xyz(2));
+    */
 
+  model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
+      *rot_cloud, g_est(0), g_est(1), g_est(2));
   return model::RegistrationResult(std::move(reg_cloud), std::move(xyz));
 }
 

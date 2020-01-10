@@ -12,8 +12,17 @@ namespace common {
 
 class RotationUtils {
  public:
+  static void RotateAroundZYX(
+      model::PointCloud* cloud, const float alpha_rad, const float beta_rad,
+      const float gamma_rad);
+  static model::PointCloud RotateAroundZYXCopy(
+      const model::PointCloud& cloud, const float alpha_rad,
+      const float beta_rad, const float gamma_rad);
   static void RotateAroundXYZ(
       model::PointCloud* cloud, const float alpha_rad, const float beta_rad,
+      const float gamma_rad);
+  static void RotateAroundXYZ(
+      model::PointCloudPtr cloud, const float alpha_rad, const float beta_rad,
       const float gamma_rad);
   static model::PointCloud RotateAroundXYZCopy(
       const model::PointCloud& cloud, const float alpha_rad,
