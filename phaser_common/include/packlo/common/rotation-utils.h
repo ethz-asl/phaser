@@ -34,6 +34,7 @@ class RotationUtils {
   static Eigen::Quaterniond ConvertZYZtoQuaternion(
       const std::array<double, 3>& zyz);
   static Eigen::Vector3d ConvertQuaternionToXYZ(const Eigen::Quaterniond& q);
+  static Eigen::Vector3d ConvertQuaternionToXYZ(const Eigen::Vector4d& q);
 
   static Eigen::MatrixXd ConvertQuaternionsToMatrix(
       const std::vector<Eigen::Quaterniond>& quaternions);

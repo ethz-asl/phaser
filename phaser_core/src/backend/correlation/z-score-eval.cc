@@ -12,10 +12,6 @@
 
 #include <glog/logging.h>
 
-DEFINE_double(
-    z_score_filter_threshold, 0.105,
-    "Removes all correlation input below this value.");
-
 namespace correlation {
 
 ZScoreEval::ZScoreEval(
@@ -46,20 +42,22 @@ common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromRotation() {
 void ZScoreEval::evaluateCorrelationVector(
     const std::vector<double>& corr, std::set<uint32_t>* signals,
     std::vector<double>* n_corr_ds) {
-  std::vector<double> n_corr;
+  //std::vector<double> n_corr;
 
   // Normalize correlation.
   double max = *std::max_element(corr.cbegin(), corr.cend());
   std::transform(
-      corr.begin(), corr.end(), std::back_inserter(n_corr),
+      corr.begin(), corr.end(), std::back_inserter(*n_corr_ds),
       [&](const double val) { return val / max; });
 
   // Filter values close to zero for speedup.
+  /*
   std::copy_if(
       n_corr.cbegin(), n_corr.cend(), std::back_inserter(*n_corr_ds),
       std::bind(
           std::greater<double>(), std::placeholders::_1,
           FLAGS_z_score_filter_threshold));
+  */
 
   visualization::PlottyVisualizer::getInstance().createPlotFor(*n_corr_ds);
   peak_extraction_.extractPeaks(*n_corr_ds, signals);

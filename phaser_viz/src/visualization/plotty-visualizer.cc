@@ -3,6 +3,7 @@
 
 #include <Eigen/Dense>
 #include <glog/logging.h>
+#include <fstream>
 
 namespace visualization {
 
@@ -22,6 +23,11 @@ void PlottyVisualizer::createPlotFor(const std::vector<double>& data) {
     return;
   plotty::plot(data);
   plotty::show();
+}
+
+void PlottyVisualizer::storeToFile(const std::vector<double>& data) {
+  std::ofstream outFile("data.txt");
+  for (const double &e : data) outFile << e << "\n";
 }
 
 }  // namespace visualization

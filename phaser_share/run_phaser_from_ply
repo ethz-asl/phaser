@@ -12,5 +12,7 @@ rosrun phaser_ros phaser_ros \
 		--phase_n_voxels=280 \
 		--phase_discretize_lower=-70 \
 		--phase_discretize_upper=70 \
-    --z_score_filter_threshold=0.1
+    --z_score_filter_threshold=0.4 \
+    --z_score_lag_max=500 \
+    --z_score_threshold=3.0 \
     $REST

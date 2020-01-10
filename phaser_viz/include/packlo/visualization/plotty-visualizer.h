@@ -1,9 +1,9 @@
 #ifndef PACKLO_VISUALIZATION_PLOTTY_VISUALIZER_H_
 #define PACKLO_VISUALIZATION_PLOTTY_VISUALIZER_H_
 
-#include "packlo/common/statistics-manager.h"
 #include <string>
 #include <vector>
+#include "packlo/common/statistics-manager.h"
 
 namespace visualization {
 
@@ -15,6 +15,7 @@ class PlottyVisualizer {
       const common::StatisticsManager& manager, std::string&& key);
   void createPlotFor(const std::vector<double>& data);
 
+  void storeToFile(const std::vector<double>& data);
   // Singleton instance
   static inline void init() {
     PlottyVisualizer::getInstance();

@@ -53,6 +53,12 @@ Eigen::Vector3d RotationUtils::ConvertQuaternionToXYZ(
       qw * qw + qx * qx - qy * qy - qz * qz);
 }
 
+Eigen::Vector3d RotationUtils::ConvertQuaternionToXYZ(
+    const Eigen::Vector4d& q) {
+  Eigen::Quaterniond e_q (q(0), q(1), q(2), q(3));
+  return ConvertQuaternionToXYZ(e_q);
+}
+
 Eigen::Quaterniond RotationUtils::ConvertZYZtoQuaternion(
     const std::array<double, 3>& zyz) {
   Eigen::Quaterniond q = Eigen::AngleAxisd(zyz[0], Eigen::Vector3d::UnitZ()) *

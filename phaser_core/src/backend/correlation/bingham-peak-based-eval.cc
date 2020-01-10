@@ -5,7 +5,7 @@
 #include <glog/logging.h>
 
 DEFINE_int32(
-    bingham_peak_neighbors, 2,
+    bingham_peak_neighbors, 10,
     "Determines the number of neighbors used for the Bingham calculation.");
 
 namespace correlation {
@@ -38,7 +38,10 @@ common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
   CHECK_NE(n_signals, 0);
   VLOG(1) << "Checking " << n_signals << " signals for evaluation";
   std::set<uint32_t>::iterator max_signal =
-      std::max_element(signals.begin(), signals.end());
+      std::max_element(signals.begin(), signals.end(),
+      [&norm_corr](const uint32_t lhs, const uint32_t rhs) {
+        return norm_corr[lhs] < norm_corr[rhs];
+      });
   CHECK(max_signal != signals.end());
 
   uint32_t start, end;
@@ -47,7 +50,7 @@ common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
   Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(4, num_elements);
   Eigen::RowVectorXd weights = Eigen::RowVectorXd::Zero(num_elements);
   retrievePeakNeighbors(start, end, norm_corr, sph, &samples, &weights);
-  VLOG(1) << "bingham samples:\n" << samples << "\nweights:\n" << weights;
+  //VLOG(1) << "bingham samples:\n" << samples << "\nweights:\n" << weights;
   return common::Bingham::fit(samples, weights);
 }
 

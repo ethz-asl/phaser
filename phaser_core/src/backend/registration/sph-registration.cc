@@ -114,8 +114,10 @@ model::RegistrationResult SphRegistration::estimateRotation(
   common::BaseDistributionPtr rot =
       correlation_eval_->calcRotationUncertainty();
   Eigen::VectorXd b_est = rot->getEstimate();
-  VLOG(1) << "corr est: " << zyz[0] << ", " << zyz[1] << ", " << zyz[2];
-  VLOG(1) << "bingham est: " << b_est.transpose();
+
+  VLOG(1) << "corr est: " << common::RotationUtils::ConvertZYZtoXYZ(zyz).transpose();
+  VLOG(1) << "bingham est: " << common::RotationUtils::ConvertQuaternionToXYZ(
+    b_est).transpose();
 
   model::PointCloud rot_cloud = common::RotationUtils::RotateAroundZYZCopy(
       *cloud_cur, zyz[2], zyz[1], zyz[0]);
