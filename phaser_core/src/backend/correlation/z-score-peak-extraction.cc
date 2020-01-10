@@ -12,10 +12,10 @@
 DEFINE_double(
     z_score_lag_percentile, 0.05,
     "The window used for smoothing the function.");
+DEFINE_int32(
+    z_score_lag_max, 20, "The window used for smoothing the function.");
 DEFINE_double(
-    z_score_lag_max, 1000, "The window used for smoothing the function.");
-DEFINE_double(
-    z_score_threshold, 5.33,
+    z_score_threshold, 4.33,
     "Defines the number of n-std requires to include a signal.");
 DEFINE_double(
     z_score_influence, 0.05,
@@ -30,7 +30,8 @@ ZScorePeakExtraction::ZScorePeakExtraction()
     : manager_("z-score"),
       lag_percentile_(FLAGS_z_score_lag_percentile),
       score_threshold_(FLAGS_z_score_threshold),
-      influence_(FLAGS_z_score_influence) {
+      influence_(FLAGS_z_score_influence),
+      lag_max_(FLAGS_z_score_lag_max) {
   CHECK_GT(lag_percentile_, 0);
   CHECK_LT(lag_percentile_, 1);
   CHECK_GT(score_threshold_, 0);
@@ -40,16 +41,12 @@ ZScorePeakExtraction::ZScorePeakExtraction()
 
 void ZScorePeakExtraction::extractPeaks(
     const std::vector<double>& corr, std::set<uint32_t>* peaks) {
-  const uint32_t lag =
-      std::min(FLAGS_z_score_lag_max, corr.size() * lag_percentile_);
+  const double lag =
+      std::min(lag_max_, static_cast<uint32_t>(corr.size() * lag_percentile_));
   VLOG(1) << "Calculating z-scores (" << corr.size() << " ) using a " << lag
           << " window.";
   std::vector<double> input(corr);
   calculateSmoothedZScore(&input, lag, score_threshold_, influence_, peaks);
-  /*
-  for (auto& signal : *peaks) {
-    VLOG(1) << "peak at " << signal;
-  }*/
 }
 
 void ZScorePeakExtraction::calculateSmoothedZScore(
@@ -136,6 +133,14 @@ double ZScorePeakExtraction::getInfluence() const {
 
 double& ZScorePeakExtraction::getInfluence() {
   return influence_;
+}
+
+uint32_t ZScorePeakExtraction::getMaxLag() const {
+  return lag_max_;
+}
+
+uint32_t& ZScorePeakExtraction::getMaxLag() {
+  return lag_max_;
 }
 
 }  // namespace correlation

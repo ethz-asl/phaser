@@ -1,6 +1,8 @@
 #include "packlo/model/registration-result.h"
 #include "packlo/common/rotation-utils.h"
 
+#include <glog/logging.h>
+
 namespace model {
 
 RegistrationResult::RegistrationResult()
@@ -19,11 +21,19 @@ RegistrationResult::RegistrationResult(
   reg_cloud_ = std::make_shared<model::PointCloud>(reg_cloud);
 }
 
+RegistrationResult::RegistrationResult(model::PointCloudPtr reg_cloud)
+    : reg_cloud_(reg_cloud) {}
+
 RegistrationResult RegistrationResult::combine(RegistrationResult&& other) {
   reg_cloud_ = other.reg_cloud_;
   found_solution_for_rotation_ |= other.found_solution_for_rotation_;
   found_solution_for_translation_ |= other.found_solution_for_translation_;
+  // current_state_ = other.current_state_;
   return *this;
+}
+
+void RegistrationResult::setRegisteredCloud(model::PointCloudPtr reg_cloud) {
+  reg_cloud_ = reg_cloud;
 }
 
 model::PointCloudPtr RegistrationResult::getRegisteredCloud() const {
@@ -62,6 +72,7 @@ void RegistrationResult::setRotUncertaintyEstimate(
 void RegistrationResult::setPosUncertaintyEstimate(
     const common::BaseDistributionPtr& uncertainty) {
   current_state_.setTranslationalDistribution(uncertainty);
+  uncertainty_ = uncertainty;
 }
 
 common::BaseDistributionPtr RegistrationResult::getRotUncertaintyEstimate()
@@ -71,6 +82,10 @@ common::BaseDistributionPtr RegistrationResult::getRotUncertaintyEstimate()
 
 common::BaseDistributionPtr RegistrationResult::getPosUncertaintyEstimate()
     const noexcept {
+  if (uncertainty_ != nullptr)
+    VLOG(1) << "u not null";
+  else
+    VLOG(1) << "u  null";
   return current_state_.getTranslationalDistribution();
 }
 

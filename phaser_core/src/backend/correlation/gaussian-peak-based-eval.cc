@@ -62,13 +62,6 @@ common::Gaussian GaussianPeakBasedEval::fitTranslationalNormalDist(
   retrievePeakNeighbors(start, end, norm_corr, aligner, &samples, &weights);
 
   // Calculate mean and covariance.
-  /*
-  Eigen::VectorXd mean = samples.rowwise().mean();
-  Eigen::VectorXd var =
-      ((samples.colwise() - mean.array()).square().rowwise().sum() /
-       (n_signals - 1));
-       */
-  // return std::make_pair(mean, var.asDiagonal());
   return common::Gaussian(samples, weights);
 }
 
@@ -95,7 +88,6 @@ void GaussianPeakBasedEval::retrievePeakNeighbors(
   const double weight_sum = weights->array().sum();
   CHECK_GT(weight_sum, 0);
   (*weights) = weights->array() / weight_sum;
-  VLOG(1) << "gaussian weights: \n" << weights->transpose();
 }
 
 }  // namespace correlation

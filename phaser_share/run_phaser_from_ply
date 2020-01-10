@@ -8,7 +8,7 @@ rosrun phaser_ros phaser_ros \
 		--registration_algorithm="sph" \
 		--datasource="ply" \
 		--PlyReadDirectory="/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_test_data/test_clouds/kitti/1/" \
-		--spherical_bandwith=21 \
+		--spherical_bandwith=71 \
 		--phase_n_voxels=51 \
 		--phase_discretize_lower=-30 \
 		--phase_discretize_upper=30 \

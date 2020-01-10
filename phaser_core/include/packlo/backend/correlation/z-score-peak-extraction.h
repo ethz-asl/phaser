@@ -27,6 +27,9 @@ class ZScorePeakExtraction : public BasePeakExtraction {
   double getInfluence() const;
   double& getInfluence();
 
+  uint32_t getMaxLag() const;
+  uint32_t& getMaxLag();
+
  private:
   void calculateSmoothedZScore(
       std::vector<double>* input, const double lag, const double threshold,
@@ -36,6 +39,7 @@ class ZScorePeakExtraction : public BasePeakExtraction {
   double lag_percentile_;
   double score_threshold_;
   double influence_;
+  uint32_t lag_max_;
 };
 
 }  // namespace correlation

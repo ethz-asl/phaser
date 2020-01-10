@@ -34,6 +34,7 @@ TEST_F(TransGaussTest, LowUncertainty) {
   model::RegistrationResult result;
   model::PointCloudPtr prev_cloud = nullptr;
   ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
+    VLOG(1) << "------------------------";
     CHECK(cloud);
     if (prev_cloud == nullptr) {
       prev_cloud = cloud;
@@ -44,15 +45,24 @@ TEST_F(TransGaussTest, LowUncertainty) {
     // Register the point clouds.
     cloud->initialize_kd_tree();
     result = registrator_->registerPointCloud(prev_cloud, cloud);
+    VLOG(1) << "------------------------";
     prev_cloud = cloud;
     EXPECT_TRUE(result.foundSolutionForRotation());
     EXPECT_TRUE(result.foundSolutionForTranslation());
+    VLOG(1) << "------------------------";
 
+    auto rot = result.getRotUncertaintyEstimate();
+    CHECK_NOTNULL(rot);
+    auto pos = result.getPosUncertaintyEstimate();
+    CHECK_NOTNULL(pos);
     common::GaussianPtr uncertainty =
         std::dynamic_pointer_cast<common::Gaussian>(
             result.getPosUncertaintyEstimate());
+    VLOG(1) << "cov------------------------";
+    CHECK_NOTNULL(uncertainty);
     const Eigen::MatrixXd& cov = uncertainty->getCov();
     EXPECT_LT(cov.trace(), 15);
+    VLOG(1) << "cov2------------------------";
   });
   ds_->startStreaming(0);
 }

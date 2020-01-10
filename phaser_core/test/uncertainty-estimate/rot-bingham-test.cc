@@ -30,6 +30,7 @@ class RotBinghamTest : public ::testing::Test {
 TEST_F(RotBinghamTest, LowUncertainty) {
   CHECK(ds_);
   z_score_eval_->getPeakExtraction().getScoreThreshold() = 5.45;
+  z_score_eval_->getPeakExtraction().getMaxLag() = 100;
 
   model::RegistrationResult result;
   model::PointCloudPtr prev_cloud = nullptr;

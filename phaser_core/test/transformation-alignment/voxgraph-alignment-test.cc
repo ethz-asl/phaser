@@ -47,7 +47,7 @@ TEST_F(VoxgraphAlignmentTest, TransformVoxgraphEasy) {
             prev_cloud, result.getRegisteredCloud()),
         initHausdorff);
   });
-  ds_->startStreaming();
+  ds_->startStreaming(1);
 }
 
 }  // namespace transformation

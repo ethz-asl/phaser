@@ -92,18 +92,16 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   // visualization::DebugVisualizer::getInstance()
   // .visualizePointCloudDiff(*cloud_prev, *cloud_cur);
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
+  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-  result.combine(estimateTranslation(cloud_prev, result.getRegisteredCloud()));
+    */
+  estimateTranslation(cloud_prev, &result);
 
+  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-
-  // Evaluate the resul.
-  // result.setRotUncertaintyEstimate(
-  // correlation_eval_->calcRotationUncertainty());
-  // result.setPosUncertaintyEstimate(
-  // correlation_eval_->calcTranslationUncertainty());
+    */
   return result;
 }
 
@@ -124,14 +122,16 @@ model::RegistrationResult SphRegistration::estimateRotation(
       cloud_cur, b_est(0), b_est(1), b_est(2));
 
   model::RegistrationResult result(std::move(*cloud_cur), std::move(zyz));
+  result.setRotUncertaintyEstimate(rot);
   return result;
 }
 
-model::RegistrationResult SphRegistration::estimateTranslation(
-    model::PointCloudPtr cloud_prev, model::PointCloudPtr rot_cloud) {
+void SphRegistration::estimateTranslation(
+    model::PointCloudPtr cloud_prev, model::RegistrationResult* result) {
   VLOG(1) << "[SphRegistration] Estimating translation...";
 
   common::Vector_t xyz;
+  model::PointCloudPtr rot_cloud = result->getRegisteredCloud();
   const double duration_translation_f_ms = common::executeTimedFunction(
       &alignment::BaseAligner::alignRegistered, &(*aligner_), *cloud_prev,
       f_values_, *rot_cloud, h_values_, &xyz);
@@ -142,18 +142,13 @@ model::RegistrationResult SphRegistration::estimateTranslation(
       correlation_eval_->calcTranslationUncertainty();
   Eigen::VectorXd g_est = pos->getEstimate();
 
-  VLOG(1) << "Found translation: " << xyz.transpose();
   VLOG(1) << "Gaussian translation: " << g_est.transpose();
   VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
     << "ms.";
-  /*
-model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
-    *rot_cloud, xyz(0), xyz(1), xyz(2));
-    */
 
-  model::PointCloud reg_cloud = common::TranslationUtils::TranslateXYZCopy(
-      *rot_cloud, g_est(0), g_est(1), g_est(2));
-  return model::RegistrationResult(std::move(reg_cloud), std::move(xyz));
+  common::TranslationUtils::TranslateXYZ(
+      rot_cloud, g_est(0), g_est(1), g_est(2));
+  result->setPosUncertaintyEstimate(pos);
 }
 
 void SphRegistration::getStatistics(

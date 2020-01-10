@@ -32,8 +32,8 @@ class SphRegistration : public BaseRegistration {
   model::RegistrationResult estimateRotation(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur);
 
-  model::RegistrationResult estimateTranslation(
-      model::PointCloudPtr cloud_prev, model::PointCloudPtr rot_cloud);
+  void estimateTranslation(
+      model::PointCloudPtr cloud_prev, model::RegistrationResult* result);
 
   void setBandwith(const int bandwith);
 

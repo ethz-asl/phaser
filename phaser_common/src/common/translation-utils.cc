@@ -6,9 +6,15 @@
 namespace common {
 
 void TranslationUtils::TranslateXYZ(
-    model::PointCloud &cloud, const float x, const float y, const float z)  {
+    model::PointCloudPtr cloud, const float x, const float y, const float z) {
   Eigen::Matrix4f T = createTransformationXYZ(x, y, z);
-  cloud.transformPointCloud(T);
+  cloud->transformPointCloud(T);
+}
+
+void TranslationUtils::TranslateXYZ(
+    model::PointCloud* cloud, const float x, const float y, const float z) {
+  Eigen::Matrix4f T = createTransformationXYZ(x, y, z);
+  cloud->transformPointCloud(T);
 }
 
 model::PointCloud TranslationUtils::TranslateXYZCopy(
