@@ -25,13 +25,17 @@ DEFINE_string(app_mode, "registration", "Defines the operating mode.");
 
 namespace controller {
 
-Distributor::Distributor(data::DatasourcePtr& ds)
+Distributor::Distributor(const data::DatasourcePtr& ds)
     : ds_(ds),
       statistics_manager_(kManagerReferenceName),
       registration_algorithm_(FLAGS_registration_algorithm) {
   subscribeToTopics();
   initializeRegistrationAlgorithm();
   ds_->startStreaming(0);
+}
+
+void Distributor::shutdown() {
+  experiment_handler_->shutdown();
 }
 
 void Distributor::subscribeToTopics() {
@@ -56,6 +60,11 @@ void Distributor::initializeRegistrationAlgorithm() {
       registration::SphRegistrationMockTransformed>();
   else
     LOG(FATAL) << "Unknown registration algorithm specified!";
+
+  if (FLAGS_app_mode == "experiment1") {
+    experiment_handler_ = std::make_unique<experiments::ExperimentHandler>(
+        std::move(registrator_));
+  }
 }
 
 void Distributor::setRegistrationAlgorithm(std::string&& algorithm) {
@@ -69,12 +78,13 @@ void Distributor::setRegistrationAlgorithm(const std::string& algorithm) {
 // TODO(lbern): should i just pass a different callback
 void Distributor::pointCloudCallback(
     const model::PointCloudPtr& cloud) {
-  VLOG(1) << "received cloud in callback";
   // preprocessPointCloud(cloud);
   if (FLAGS_app_mode == "registration")
     registerPointCloud(cloud);
   else if (FLAGS_app_mode == "store_ply")
     cloud->writeToFile();
+  else if (FLAGS_app_mode == "experiment1")
+    experiment_handler_->runExperiment1(cloud);
   else
     LOG(FATAL) << "Unknown applicaiton mode. Aborting.";
 }

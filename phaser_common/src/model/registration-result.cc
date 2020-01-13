@@ -41,15 +41,20 @@ model::PointCloudPtr RegistrationResult::getRegisteredCloud() const {
 }
 
 std::array<double, 3> RegistrationResult::getRotation() const {
-  return rotation_;
-  common::DualQuaternion dq = current_state_.getCurrentState();
-  Eigen::Quaterniond q = dq.getRotation();
-  Eigen::Vector3d res = common::RotationUtils::ConvertQuaternionToXYZ(q);
+  const common::DualQuaternion dq = current_state_.getCurrentState();
+  const Eigen::Quaterniond q = dq.getRotation();
+  const Eigen::Vector3d res = common::RotationUtils::ConvertQuaternionToXYZ(q);
   return {res(0), res(1), res(2)};
 }
 
 const common::Vector_t& RegistrationResult::getTranslation() const {
-  return translation_;
+  const common::DualQuaternion dq = current_state_.getCurrentState();
+  return dq.getTranslation();
+}
+
+Eigen::VectorXd RegistrationResult::getStateAsVec() const {
+  const common::DualQuaternion dq = current_state_.getCurrentState();
+  return dq.asVec();
 }
 
 bool RegistrationResult::foundSolution() const {
@@ -82,10 +87,6 @@ common::BaseDistributionPtr RegistrationResult::getRotUncertaintyEstimate()
 
 common::BaseDistributionPtr RegistrationResult::getPosUncertaintyEstimate()
     const noexcept {
-  if (uncertainty_ != nullptr)
-    VLOG(1) << "u not null";
-  else
-    VLOG(1) << "u  null";
   return current_state_.getTranslationalDistribution();
 }
 

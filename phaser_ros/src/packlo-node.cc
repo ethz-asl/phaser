@@ -11,11 +11,11 @@ namespace packlo {
 DEFINE_string(datasource, "bag",
   "Defines the datasource to use for packlo.");
 
-PackloNode::PackloNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private) 
-    :spinner_(1), node_handle_(nh), node_handle_private_(nh_private) {
+PackloNode::PackloNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private)
+    : spinner_(1), node_handle_(nh), node_handle_private_(nh_private) {
   should_exit_.store(false);
   initializeDatasource(FLAGS_datasource);
-  
+
   CHECK_NOTNULL(ds_);
   dist_ = std::make_unique<controller::Distributor>(ds_);
 }
@@ -36,7 +36,7 @@ std::string PackloNode::updateAndPrintStatistics() {
   for (common::StatisticsManager manager : managers) {
   }
   */
-  //dist_->updateStatistics();
+  // dist_->updateStatistics();
   common::StatisticsManager manager("main");
   dist_->getStatistics(&manager);
   visualization::PlottyVisualizer::getInstance()
@@ -46,7 +46,6 @@ std::string PackloNode::updateAndPrintStatistics() {
 }
 
 void PackloNode::shutdown() {
-
 }
 
 void PackloNode::initializeDatasource(const std::string& type) {
@@ -60,11 +59,10 @@ void PackloNode::initializeDatasource(const std::string& type) {
 
 std::vector<common::StatisticsManager> PackloNode::retrieveStatistics()
     const noexcept {
-  std::vector<common::StatisticsManager> managers; 
-//  managers.emplace_back(dist_->getStatistics());
+  std::vector<common::StatisticsManager> managers;
+  //  managers.emplace_back(dist_->getStatistics());
 
   return managers;
 }
 
-} // namespace packlo
-
+}  // namespace packlo

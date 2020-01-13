@@ -26,6 +26,7 @@ class RegistrationResult {
 
   std::array<double, 3> getRotation() const;
   const common::Vector_t& getTranslation() const;
+  Eigen::VectorXd getStateAsVec() const;
 
   bool foundSolution() const;
   bool foundSolutionForRotation() const;
