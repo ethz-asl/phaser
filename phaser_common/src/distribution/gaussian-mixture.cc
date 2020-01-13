@@ -25,6 +25,10 @@ GaussianMixture::GaussianMixture(
   std::tie(mean_, cov_) = calcMixutreParameters();
 }
 
+Eigen::VectorXd GaussianMixture::getEstimate() const {
+  return mean_;
+}
+
 void GaussianMixture::initializeFromGaussians(
     const std::vector<Gaussian>& gaussians, const Eigen::VectorXd& weights) {
   means_ = Eigen::MatrixXd::Zero(3, gaussians.size());

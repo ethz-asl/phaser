@@ -3,6 +3,7 @@
 
 #include "packlo/backend/alignment/base-aligner.h"
 #include "packlo/backend/correlation/z-score-eval.h"
+#include "packlo/distribution/gaussian.h"
 
 #include <set>
 #include <utility>
@@ -20,12 +21,21 @@ class GaussianPeakBasedEval : public ZScoreEval {
       const alignment::BaseAligner& aligner,
       const backend::SphericalCorrelation& sph,
       const std::set<uint32_t>& signals,
-      const std::vector<double>& normalized_corr) const override;
+      const std::vector<double>& norm_corr) const override;
 
  private:
-  std::pair<Eigen::VectorXd, Eigen::MatrixXd> fitTranslationalNormalDist(
-      const alignment::BaseAligner& aligner,
-      const std::set<uint32_t>& signals) const;
+  common::Gaussian fitTranslationalNormalDist(
+      const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
+      const std::vector<double>& norm_corr) const;
+
+  void calculateStartEndNeighbor(
+      const uint32_t index, const uint32_t n_corr, uint32_t* start,
+      uint32_t* end) const;
+
+  void retrievePeakNeighbors(
+      const uint32_t start, const uint32_t end,
+      const std::vector<double>& norm_corr, const alignment::BaseAligner& sph,
+      Eigen::ArrayXXd* samples, Eigen::VectorXd* weights) const;
 };
 
 }  // namespace correlation

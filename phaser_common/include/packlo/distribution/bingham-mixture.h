@@ -15,6 +15,8 @@ class BinghamMixture : public BaseDistribution {
   explicit BinghamMixture(
       const std::vector<Bingham>& binghams, const Eigen::VectorXd& weights);
 
+  Eigen::VectorXd getEstimate() const override;
+
   uint16_t getSampleSize() const noexcept;
   uint16_t& getSampleSize();
 

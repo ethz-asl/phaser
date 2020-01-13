@@ -19,6 +19,10 @@ Gaussian::Gaussian(const Eigen::MatrixXd& samples,
   setMeanAndCov(samples, weights);
 }
 
+Eigen::VectorXd Gaussian::getEstimate() const {
+  return mu_;
+}
+
 Eigen::VectorXd& Gaussian::getMean() {
   return mu_;
 }

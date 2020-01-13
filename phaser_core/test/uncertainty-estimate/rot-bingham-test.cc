@@ -16,10 +16,10 @@ class RotBinghamTest : public ::testing::Test {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
     ds_->setDatasetFolder("./test_clouds/arche/");
-    registrator_ =
-        std::make_unique<registration::SphRegistration>("phase", "bingham");
-    z_score_eval_ =
-        dynamic_cast<correlation::ZScoreEval*>(&registrator_->getEvaluation());
+    registrator_ = std::make_unique<registration::SphRegistration>(
+        "phase", "bingham", "gaussian");
+    z_score_eval_ = dynamic_cast<correlation::ZScoreEval*>(
+        &registrator_->getRotEvaluation());
   }
 
   data::DatasourcePlyPtr ds_;
@@ -30,6 +30,7 @@ class RotBinghamTest : public ::testing::Test {
 TEST_F(RotBinghamTest, LowUncertainty) {
   CHECK(ds_);
   z_score_eval_->getPeakExtraction().getScoreThreshold() = 5.45;
+  z_score_eval_->getPeakExtraction().getMaxLag() = 100;
 
   model::RegistrationResult result;
   model::PointCloudPtr prev_cloud = nullptr;
@@ -49,7 +50,7 @@ TEST_F(RotBinghamTest, LowUncertainty) {
     EXPECT_TRUE(result.foundSolutionForTranslation());
 
     common::BinghamPtr uncertainty = std::dynamic_pointer_cast<common::Bingham>(
-        result.getUncertaintyEstimate());
+        result.getRotUncertaintyEstimate());
     CHECK_NOTNULL(uncertainty);
     const Eigen::MatrixXd& cov = uncertainty->moment();
     VLOG(1) << "------------------------- Uncertainty bingham:\n" << cov;

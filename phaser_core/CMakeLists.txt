@@ -48,6 +48,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/correlation/bingham-peak-based-eval.cc
    src/backend/correlation/bmm-peak-based-eval.cc
    src/backend/correlation/peak-based-eval.cc
+   src/backend/correlation/phase-correlation-eval.cc
    src/backend/correlation/signal-analysis.cc
 
    src/backend/alignment/range-based-aligner.cc
@@ -99,11 +100,11 @@ target_link_libraries(test_translation_gaussian
   ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_translation_gaussian)
 
-catkin_add_gtest(test_translation_gm
-  test/uncertainty-estimate/trans-gm-test.cc)
-target_link_libraries(test_translation_gm
-  ${PROJECT_NAME}_lib)
-phaser_import_test_maps(test_translation_gm)
+#catkin_add_gtest(test_translation_gm
+  #test/uncertainty-estimate/trans-gm-test.cc)
+#target_link_libraries(test_translation_gm
+  #${PROJECT_NAME}_lib)
+#phaser_import_test_maps(test_translation_gm)
 
 catkin_add_gtest(test_rotation_bingham
   test/uncertainty-estimate/rot-bingham-test.cc)
@@ -111,11 +112,11 @@ target_link_libraries(test_rotation_bingham
   ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_rotation_bingham)
 
-catkin_add_gtest(test_rotation_bmm
-  test/uncertainty-estimate/rot-bmm-test.cc)
-target_link_libraries(test_rotation_bmm
-  ${PROJECT_NAME}_lib)
-phaser_import_test_maps(test_rotation_bmm)
+#catkin_add_gtest(test_rotation_bmm
+#test/uncertainty-estimate/rot-bmm-test.cc)
+#target_link_libraries(test_rotation_bmm
+#${PROJECT_NAME}_lib)
+#phaser_import_test_maps(test_rotation_bmm)
 
 cs_install()
 cs_export()

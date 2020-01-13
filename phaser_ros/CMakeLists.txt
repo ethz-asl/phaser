@@ -17,9 +17,6 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 cs_add_library(${PROJECT_NAME}_lib
-   src/visualization/debug-visualizer.cc
-   src/visualization/plotty-visualizer.cc
-
    src/packlo-node.cc
 )
 

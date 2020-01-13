@@ -23,6 +23,8 @@ class GaussianMixture : public BaseDistribution {
       const std::vector<Gaussian>& gaussians, const Eigen::VectorXd& weights);
   virtual ~GaussianMixture() = default;
 
+  Eigen::VectorXd getEstimate() const override;
+
   void initializeFromGaussians(
       const std::vector<Gaussian>& gaussians, const Eigen::VectorXd& weights);
 

@@ -18,4 +18,5 @@
 
   <depend>phaser_core</depend>
   <depend>phaser_common</depend>
+  <depend>phaser_viz</depend>
 </package>

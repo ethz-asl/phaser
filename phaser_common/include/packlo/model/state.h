@@ -13,12 +13,15 @@ class State {
 
   common::DualQuaternion getCurrentState() const;
 
-  const common::Gaussian& getTranslationalDistribution() const;
-  const common::Bingham& getRotationalDistribution() const;
+  void setRotationalDistribution(common::BaseDistributionPtr rot_dist);
+  void setTranslationalDistribution(common::BaseDistributionPtr pos_dist);
+
+  common::BaseDistributionPtr getRotationalDistribution() const;
+  common::BaseDistributionPtr getTranslationalDistribution() const;
 
  private:
-  common::Gaussian trans_distribution_;
-  common::Bingham rot_distribution_;
+  common::BaseDistributionPtr rot_distribution_;
+  common::BaseDistributionPtr trans_distribution_;
 };
 
 }  // namespace model

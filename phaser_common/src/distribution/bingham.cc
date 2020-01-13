@@ -21,6 +21,10 @@ Bingham::Bingham(const Eigen::VectorXd& vZ, const Eigen::MatrixXd& mM)
       dF(computeDF()),
       dim(M.rows()) {}
 
+Eigen::VectorXd Bingham::getEstimate() const {
+  return mode();
+}
+
 Eigen::MatrixXd Bingham::gaussianCovariance(bool angle) {
   if (angle) {
     auto m = mode();

@@ -15,6 +15,7 @@ class Gaussian : public BaseDistribution {
   explicit Gaussian(const Eigen::MatrixXd& samples,
     const Eigen::VectorXd& weights);
   virtual ~Gaussian() = default;
+  Eigen::VectorXd getEstimate() const override;
 
   Eigen::VectorXd& getMean();
   const Eigen::VectorXd& getMean() const;

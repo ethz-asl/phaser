@@ -19,6 +19,7 @@ void SphericalCorrelation::correlateSignals(
     const std::vector<model::FunctionValue>& f2, const int bw,
     std::array<double, 3>* const zyz) {
   bw_ = bw;
+  VLOG(1) << "Starting the correlation with a " << bw << " bandwidth";
   double alpha, beta, gamma, maxcoeff = 0.0;
   constexpr int is_real = 1;
 
