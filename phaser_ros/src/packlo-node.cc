@@ -5,6 +5,7 @@
 #include "packlo/visualization/plotty-visualizer.h"
 
 #include <glog/logging.h>
+#include <ros/ros.h>
 
 namespace packlo {
 
@@ -37,15 +38,18 @@ std::string PackloNode::updateAndPrintStatistics() {
   }
   */
   // dist_->updateStatistics();
+  /*
   common::StatisticsManager manager("main");
   dist_->getStatistics(&manager);
   visualization::PlottyVisualizer::getInstance()
     .createPlotFor(manager, "signal_values");
+    */
 
   return "";
 }
 
 void PackloNode::shutdown() {
+  dist_->shutdown();
 }
 
 void PackloNode::initializeDatasource(const std::string& type) {

@@ -48,8 +48,12 @@ std::vector<model::PointCloudPtr> DatasourcePly::readPly(
   if (files.empty()) return clouds;
 
   for (const std::string& ply : files) {
+    const std::string& path_to_ply = directory + ply;
+    boost::filesystem::path p(path_to_ply);
+    if (p.extension() != ".ply")
+      continue;
     model::PointCloudPtr cur_cloud =
-        std::make_shared<model::PointCloud>(directory + ply);
+        std::make_shared<model::PointCloud>(path_to_ply);
     clouds.emplace_back(std::move(cur_cloud));
   }
 

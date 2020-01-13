@@ -92,16 +92,12 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   // visualization::DebugVisualizer::getInstance()
   // .visualizePointCloudDiff(*cloud_prev, *cloud_cur);
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
-  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-    */
   estimateTranslation(cloud_prev, &result);
 
-  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-    */
   return result;
 }
 
@@ -117,9 +113,17 @@ model::RegistrationResult SphRegistration::estimateRotation(
       correlation_eval_->calcRotationUncertainty();
   Eigen::VectorXd b_est =
       common::RotationUtils::ConvertQuaternionToXYZ(rot->getEstimate());
+  Eigen::VectorXd corr_est = common::RotationUtils::ConvertZYZtoXYZ(zyz);
 
+  VLOG(1) << "Corr rotation: " << corr_est.transpose();
+  VLOG(1) << "Bingham rotation: " << b_est.transpose();
   common::RotationUtils::RotateAroundXYZ(
       cloud_cur, b_est(0), b_est(1), b_est(2));
+
+  /*
+  common::RotationUtils::RotateAroundXYZ(
+      cloud_cur, corr_est(0), corr_est(1), corr_est(2));
+      */
 
   model::RegistrationResult result(std::move(*cloud_cur), std::move(zyz));
   result.setRotUncertaintyEstimate(rot);
@@ -142,12 +146,17 @@ void SphRegistration::estimateTranslation(
       correlation_eval_->calcTranslationUncertainty();
   Eigen::VectorXd g_est = pos->getEstimate();
 
+  VLOG(1) << "Corr translation: " << xyz.transpose();
   VLOG(1) << "Gaussian translation: " << g_est.transpose();
   VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
     << "ms.";
 
   common::TranslationUtils::TranslateXYZ(
       rot_cloud, g_est(0), g_est(1), g_est(2));
+  /*
+common::TranslationUtils::TranslateXYZ(
+  rot_cloud, xyz(0), xyz(1), xyz(2));
+    */
   result->setPosUncertaintyEstimate(pos);
 }
 

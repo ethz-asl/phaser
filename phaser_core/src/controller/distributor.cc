@@ -62,8 +62,7 @@ void Distributor::initializeRegistrationAlgorithm() {
     LOG(FATAL) << "Unknown registration algorithm specified!";
 
   if (FLAGS_app_mode == "experiment1") {
-    experiment_handler_ = std::make_unique<experiments::ExperimentHandler>(
-        std::move(registrator_));
+    experiment_handler_ = std::make_unique<experiments::ExperimentHandler>();
   }
 }
 

@@ -3,6 +3,7 @@
 
 #include <pcl/common/io.h>
 #include <pcl/common/transforms.h>
+#include <pcl/features/normal_3d.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/kdtree/impl/kdtree_flann.hpp>
 
@@ -93,7 +94,7 @@ void PointCloud::getNearestPoints(
       value.addPoint(point);
       value.addRange(dist);
       value.addIntensity(point.intensity);
-      value.addInterpolation(0.50f * point.intensity + 0.50f * dist);
+      value.addInterpolation(0.25f * point.intensity + 0.75f * dist);
       // value.addInterpolation(point.intensity);
     }
     function_values->emplace_back(std::move(value));

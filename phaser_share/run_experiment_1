@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+REST=$@
+
+rosrun phaser_ros phaser_ros \
+    --alsologtostderr=1 \
+    --v=3 \
+		--enable_debug=true \
+		--registration_algorithm="sph" \
+		--datasource="ply" \
+		--PlyReadDirectory="/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_experimental/phaser_prototype/ply/" \
+    --app_mode="experiment1" \
+		--spherical_bandwith=101 \
+		--phase_n_voxels=108 \
+		--phase_discretize_lower=-40 \
+		--phase_discretize_upper=70 \
+    --gaussian_peak_neighbors=2 \
+    --bingham_peak_neighbors=3 \
+    --z_score_filter_threshold=0.4 \
+    --z_score_lag_max=15 \
+    --z_score_threshold=3.0 \
+    $REST

@@ -5,7 +5,11 @@
 namespace model {
 
 common::DualQuaternion State::getCurrentState() const {
-  return common::DualQuaternion();
+  Eigen::VectorXd b_est = rot_distribution_->getEstimate();
+  Eigen::VectorXd g_est = trans_distribution_->getEstimate();
+  Eigen::VectorXd dq(8);
+  dq << b_est, 0, g_est.block(0, 0, 3, 1);
+  return common::DualQuaternion(dq);
 }
 
 void State::setRotationalDistribution(common::BaseDistributionPtr rot_dist) {
@@ -13,10 +17,6 @@ void State::setRotationalDistribution(common::BaseDistributionPtr rot_dist) {
 }
 
 void State::setTranslationalDistribution(common::BaseDistributionPtr pos_dist) {
-  if (pos_dist != nullptr)
-    VLOG(1) << "setting pos dist";
-  else
-    VLOG(1) << "setting null pos dist";
   trans_distribution_ = pos_dist;
 }
 
@@ -25,10 +25,6 @@ common::BaseDistributionPtr State::getRotationalDistribution() const {
 }
 
 common::BaseDistributionPtr State::getTranslationalDistribution() const {
-  if (trans_distribution_ != nullptr)
-    VLOG(1) << "NOT NULL";
-  else
-    VLOG(1) << " NULL";
   return trans_distribution_;
 }
 
