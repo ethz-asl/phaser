@@ -31,7 +31,11 @@ Within the caktin workspace
 Building the project:
 
 ```
-  catkin build
+  catkin build phaser_ros
 ```
 
+Build and run tests: 
 
+```
+  catkin run_tests phaser_core
+```
