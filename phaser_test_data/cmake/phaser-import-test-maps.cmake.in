@@ -1,0 +1,14 @@
+SET(PHASER_IMPORT_TEST_MAPS "test_clouds")
+if("@DEVELSPACE@" STREQUAL "TRUE")
+  set(PHASER_TEST_DATA_DIR "@CMAKE_CURRENT_SOURCE_DIR@")
+else()
+  set(PHASER_TEST_DATA_DIR "@CMAKE_INSTALL_PREFIX@/@CATKIN_PACKAGE_SHARE_DESTINATION@")
+endif()
+add_custom_target(${PHASER_IMPORT_TEST_MAPS})
+add_custom_command(TARGET ${PHASER_IMPORT_TEST_MAPS}
+                   COMMAND rm -rf test_clouds &&
+                   cp -r ${PHASER_TEST_DATA_DIR}/test_clouds .)
+
+function(phaser_import_test_maps test_target)
+  add_dependencies(${test_target} ${PHASER_IMPORT_TEST_MAPS})
+endfunction()
