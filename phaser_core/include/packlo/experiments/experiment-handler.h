@@ -31,7 +31,7 @@ class ExperimentHandler {
   model::PointCloudPtr prev_point_cloud_;
   std::vector<Eigen::VectorXd> states_;
   Eigen::MatrixXd gt_;
-  uint16_t n_registered = 0u;
+  uint16_t n_registered_ = 0u;
 };
 
 using ExperimentHandlerPtr = std::unique_ptr<ExperimentHandler>;

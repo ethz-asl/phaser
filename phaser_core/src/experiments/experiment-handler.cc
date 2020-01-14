@@ -31,20 +31,23 @@ void ExperimentHandler::runExperiment1(const model::PointCloudPtr& cloud) {
     return;
   }
   // Register the point clouds.
+  VLOG(2) << " === Ground truth =============================";
+  VLOG(2) << gt_.col(n_registered_).transpose();
   translateToSensorFrame(cloud);
   model::RegistrationResult result =
       registrator_->estimateRotation(prev_point_cloud_, cloud);
   translateToOdomFrame(cloud);
   registrator_->estimateTranslation(prev_point_cloud_, &result);
+
   /*
-visualization::DebugVisualizer::getInstance()
-  .visualizePointCloudDiff(*prev_point_cloud_, *result.getRegisteredCloud());
-*/
+  visualization::DebugVisualizer::getInstance()
+    .visualizePointCloudDiff(*prev_point_cloud_, *result.getRegisteredCloud());
+    */
   appendResult(result);
 
   // Wait for the next pair.
   prev_point_cloud_ = nullptr;
-  ++n_registered;
+  ++n_registered_;
 }
 
 void ExperimentHandler::readTruth() {
@@ -96,7 +99,7 @@ void ExperimentHandler::writeResultsToFile() {
 
 void ExperimentHandler::translateToSensorFrame(
     const model::PointCloudPtr& cloud) {
-  Eigen::Vector3d t_vec = gt_.block(3, n_registered, 6, 1);
+  Eigen::Vector3d t_vec = gt_.block(3, n_registered_, 3, 1);
   VLOG(1) << "t_vec: " << t_vec;
   common::TranslationUtils::TranslateXYZ(
       cloud, -t_vec(0), -t_vec(1), -t_vec(2));
@@ -104,7 +107,7 @@ void ExperimentHandler::translateToSensorFrame(
 
 void ExperimentHandler::translateToOdomFrame(
     const model::PointCloudPtr& cloud) {
-  Eigen::Vector3d t_vec = gt_.block(3, n_registered, 6, 1);
+  Eigen::Vector3d t_vec = gt_.block(3, n_registered_, 3, 1);
   VLOG(1) << "t_vec odom: " << t_vec;
   common::TranslationUtils::TranslateXYZ(cloud, t_vec(0), t_vec(1), t_vec(2));
 }

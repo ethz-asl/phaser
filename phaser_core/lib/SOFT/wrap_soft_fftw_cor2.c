@@ -1,11 +1,11 @@
 /***************************************************************************
   **************************************************************************
-  
+
   SOFT: SO(3) Fourier Transforms
   Version 2.0
 
   Copyright (c) 2003, 2004, 2007 Peter Kostelec, Dan Rockmore
-  
+
   This file is part of SOFT.
 
   SOFT is free software; you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
   See the accompanying LICENSE file for details.
-  
+
   ************************************************************************
   ************************************************************************/
 
@@ -42,11 +42,10 @@
 
 /****************************************
 
- softFFTWCor2: simple wrapper for correlating two functions defined on the sphere;
-              if efficiency is important to you, or want more control,
-              e.g. want to correlate lots and lots of times without having
-        reallocate tmp workspace, or change the bandwidth
-        you want to correlate at, or correlate complex-valued
+ softFFTWCor2: simple wrapper for correlating two functions defined on the
+sphere; if efficiency is important to you, or want more control, e.g. want to
+correlate lots and lots of times without having reallocate tmp workspace, or
+change the bandwidth you want to correlate at, or correlate complex-valued
               functions, you should look at
 
         test_soft_fftw_correlate2.c
@@ -54,7 +53,7 @@
         as an example of how to do it. softFFTWCor2() is basically
         test_soft_fftw_correlate2.c turned into a wrapper, with
         some simplifying assumptions.
-        
+
   bw: bandwidth of signal and pattern
 
   isReal: int defining whether or not the signal and pattern are
@@ -78,15 +77,14 @@
                    1) rotate by gamma about the z-axis
                    2) rotate by beta about the y-axis
                    3) rotate by alpha about the z-axis.
-       
+
          where
-             
+
              0 <= alpha, gamma < 2*pi
              0 <= beta <= pi
 
 
 ***********************************/
-
 
 void softFFTWCor2( int bw,
        double *sig,
@@ -114,7 +112,7 @@ void softFFTWCor2( int bw,
   fftw_plan dctPlan, fftPlan ;
   int howmany_rank ;
   fftw_iodim dims[1], howmany_dims[1];
-  
+
   bwIn = bw ;
   bwOut = bw ;
   degLim = bw - 1 ;
@@ -175,7 +173,7 @@ void softFFTWCor2( int bw,
             FFTW_REDFT10, FFTW_ESTIMATE ) ;
 
   /* now for the fft */
-  /* 
+  /*
      IMPORTANT NOTE!!! READ THIS!!!
 
      Now to make the fft plans.
@@ -321,7 +319,8 @@ void softFFTWCor2( int bw,
       maxloc = i ;
     }
   }
-
+  printf("found maximum at: %d", maxloc);
+  *maxval = maxloc;
   for (i = 0; i < bwIn * bwIn; ++i) {
     (*signal_coeff)[i] = patCoefR[i];
   }

@@ -77,7 +77,7 @@ void Distributor::setRegistrationAlgorithm(const std::string& algorithm) {
 // TODO(lbern): should i just pass a different callback
 void Distributor::pointCloudCallback(
     const model::PointCloudPtr& cloud) {
-  // preprocessPointCloud(cloud);
+  preprocessPointCloud(cloud);
   if (FLAGS_app_mode == "registration")
     registerPointCloud(cloud);
   else if (FLAGS_app_mode == "store_ply")
@@ -110,7 +110,7 @@ void Distributor::preprocessPointCloud(
   pcl::PassThrough<common::Point_t> pass;
   pass.setInputCloud(input_cloud);
   pass.setFilterFieldName("z");
-  pass.setFilterLimits(0.0, 0.0);
+  pass.setFilterLimits(0.0, 2.0);
   pass.setFilterLimitsNegative(true);
   pass.filter(*input_cloud);
 

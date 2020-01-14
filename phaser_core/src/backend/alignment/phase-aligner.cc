@@ -96,11 +96,12 @@ void PhaseAligner::alignRegistered(
   // Find the index that maximizes the correlation.
   const auto max_corr = std::max_element(c_, c_+n_voxels_);
   const int max = std::distance(c_, max_corr);
-  VLOG(1) << "Found max correlation at " << max
-          << " with the value:" << *max_corr;
 
   std::array<uint16_t, 3> max_xyz =
       ind2sub(max, FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);
+  VLOG(1) << "Found max correlation at " << max
+          << " with the value:" << *max_corr << " with index: " << max_xyz[0]
+          << " " << max_xyz[1] << " " << max_xyz[2];
   (*xyz)(0) = computeTranslationFromIndex(static_cast<double>(max_xyz[0]));
   (*xyz)(1) = computeTranslationFromIndex(static_cast<double>(max_xyz[1]));
   (*xyz)(2) = computeTranslationFromIndex(static_cast<double>(max_xyz[2]));
