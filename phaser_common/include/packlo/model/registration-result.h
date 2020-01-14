@@ -18,13 +18,14 @@ class RegistrationResult {
   explicit RegistrationResult(
       model::PointCloud&& reg_cloud, common::Vector_t&& rotation);
   explicit RegistrationResult(model::PointCloudPtr reg_cloud);
+  explicit RegistrationResult(model::PointCloud&& reg_cloud);
 
   RegistrationResult combine(RegistrationResult&& other);
 
   model::PointCloudPtr getRegisteredCloud() const;
   void setRegisteredCloud(model::PointCloudPtr reg_cloud);
 
-  std::array<double, 3> getRotation() const;
+  Eigen::Vector3d getRotation() const;
   const common::Vector_t& getTranslation() const;
   Eigen::VectorXd getStateAsVec() const;
 

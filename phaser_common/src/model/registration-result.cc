@@ -24,6 +24,10 @@ RegistrationResult::RegistrationResult(
 RegistrationResult::RegistrationResult(model::PointCloudPtr reg_cloud)
     : reg_cloud_(reg_cloud) {}
 
+RegistrationResult::RegistrationResult(model::PointCloud&& reg_cloud) {
+  reg_cloud_ = std::make_shared<model::PointCloud>(reg_cloud);
+}
+
 RegistrationResult RegistrationResult::combine(RegistrationResult&& other) {
   reg_cloud_ = other.reg_cloud_;
   found_solution_for_rotation_ |= other.found_solution_for_rotation_;
@@ -40,11 +44,10 @@ model::PointCloudPtr RegistrationResult::getRegisteredCloud() const {
   return reg_cloud_;
 }
 
-std::array<double, 3> RegistrationResult::getRotation() const {
+Eigen::Vector3d RegistrationResult::getRotation() const {
   const common::DualQuaternion dq = current_state_.getCurrentState();
   const Eigen::Quaterniond q = dq.getRotation();
-  const Eigen::Vector3d res = common::RotationUtils::ConvertQuaternionToXYZ(q);
-  return {res(0), res(1), res(2)};
+  return common::RotationUtils::ConvertQuaternionToXYZ(q);
 }
 
 const common::Vector_t& RegistrationResult::getTranslation() const {

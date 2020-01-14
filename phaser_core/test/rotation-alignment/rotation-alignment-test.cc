@@ -61,8 +61,7 @@ TEST_F(RotationAlignmentTest, RotationSelfSingle) {
     EXPECT_TRUE(result.foundSolutionForRotation());
 
     // Convert result to xyz Euler angles and compare it.
-    Eigen::Vector3d xyz_rad = common::RotationUtils::ConvertZYZtoXYZ(
-        result.getRotation());
+    Eigen::Vector3d xyz_rad = result.getRotation();
     EXPECT_NEAR_EIGEN(-rot_xyz_rad, xyz_rad, 1);
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
@@ -94,7 +93,7 @@ TEST_F(RotationAlignmentTest, RotationSelfAll) {
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             cloud, result.getRegisteredCloud()),
-        5.0);
+        15.0);
   });
   ds_->startStreaming();
 }
@@ -121,7 +120,7 @@ TEST_F(RotationAlignmentTest, RotationHighBandwith) {
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             cloud, result.getRegisteredCloud()),
-        3.0);
+        10.0);
   });
   ds_->startStreaming(1);
 }
@@ -159,7 +158,7 @@ TEST_F(RotationAlignmentTest, RotationEasy) {
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             prev_cloud, result.getRegisteredCloud()),
-        40.0);
+        50.0);
     prev_cloud = result.getRegisteredCloud();
   });
   ds_->startStreaming();

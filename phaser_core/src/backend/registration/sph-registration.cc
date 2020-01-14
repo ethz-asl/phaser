@@ -92,12 +92,16 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   // visualization::DebugVisualizer::getInstance()
   // .visualizePointCloudDiff(*cloud_prev, *cloud_cur);
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
+  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
+    */
   estimateTranslation(cloud_prev, &result);
 
+  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
+    */
   return result;
 }
 

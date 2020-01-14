@@ -5,10 +5,14 @@
 namespace model {
 
 common::DualQuaternion State::getCurrentState() const {
-  Eigen::VectorXd b_est = rot_distribution_->getEstimate();
-  Eigen::VectorXd g_est = trans_distribution_->getEstimate();
+  Eigen::Vector4d b_est(1, 0, 0, 0);
+  if (rot_distribution_ != nullptr)
+    b_est = rot_distribution_->getEstimate();
+  Eigen::Vector3d g_est(0, 0, 0);
+  if (trans_distribution_ != nullptr)
+    g_est = trans_distribution_->getEstimate().block(0, 0, 3, 1);
   Eigen::VectorXd dq(8);
-  dq << b_est, 0, g_est.block(0, 0, 3, 1);
+  dq << b_est, 0, g_est;
   return common::DualQuaternion(dq);
 }
 
