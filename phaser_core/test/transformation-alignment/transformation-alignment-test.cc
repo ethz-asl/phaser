@@ -47,7 +47,7 @@ TEST_F(TransformationAlignmentTest, TransformEasy) {
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             prev_cloud, result.getRegisteredCloud()),
-        40.0);
+        45.0);
   });
   ds_->startStreaming();
 }
