@@ -95,13 +95,13 @@ void PhaseAligner::alignRegistered(
 
   // Find the index that maximizes the correlation.
   const auto max_corr = std::max_element(c_, c_+n_voxels_);
-  const int max = std::distance(c_, max_corr);
-
-  std::array<uint16_t, 3> max_xyz =
+  const uint32_t max = std::distance(c_, max_corr);
+  std::array<uint32_t, 3> max_xyz =
       ind2sub(max, FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);
   VLOG(1) << "Found max correlation at " << max
-          << " with the value:" << *max_corr << " with index: " << max_xyz[0]
-          << " " << max_xyz[1] << " " << max_xyz[2];
+          << " with the value:" << *max_corr << " xyz: " << max_xyz[0] << " , "
+          << max_xyz[1] << " , " << max_xyz[2];
+
   (*xyz)(0) = computeTranslationFromIndex(static_cast<double>(max_xyz[0]));
   (*xyz)(1) = computeTranslationFromIndex(static_cast<double>(max_xyz[1]));
   (*xyz)(2) = computeTranslationFromIndex(static_cast<double>(max_xyz[2]));
@@ -146,23 +146,29 @@ void PhaseAligner::discretizePointcloud(
   VLOG(1) << "done";
 }
 
-std::size_t PhaseAligner::sub2ind(
-    const std::size_t i, const std::size_t j, const std::size_t k,
-    const uint32_t rows, const uint32_t cols) const {
+uint32_t PhaseAligner::sub2ind(
+    const uint32_t i, const uint32_t j, const uint32_t k, const uint32_t rows,
+    const uint32_t cols) const {
   return (i * cols + j) + (rows * cols * k);
 }
-
-std::array<uint16_t, 3> PhaseAligner::ind2sub(const int lin_index) const {
+std::array<uint32_t, 3> PhaseAligner::ind2sub(const uint32_t lin_index) const {
   return ind2sub(lin_index, FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);
 }
 
-std::array<uint16_t, 3> PhaseAligner::ind2sub(
-    const int lin_index, const uint32_t rows, const uint32_t cols) const {
-  std::array<uint16_t, 3> xyz;
+std::array<uint32_t, 3> PhaseAligner::ind2sub(
+    const uint32_t lin_index, const uint32_t rows, const uint32_t cols) const {
+  std::array<uint32_t, 3> xyz;
   xyz[1] = lin_index % cols;
   const int updated_index = lin_index / cols;
   xyz[0] = updated_index % rows;
   xyz[2] = updated_index / rows;
+  /*
+  xyz[1] = lin_index % rows;
+  const int updated_index = lin_index / rows;
+  xyz[0] = updated_index % cols;
+  xyz[2] = updated_index / cols;
+  */
+
   return xyz;
 }
 
@@ -171,9 +177,8 @@ double PhaseAligner::computeTranslationFromIndex(double index) const {
   static double width = std::abs(FLAGS_phase_discretize_lower) +
     std::abs(FLAGS_phase_discretize_upper);
   if (index <= n_voxels_half) {
-    return (index*width) / FLAGS_phase_n_voxels;
+    return ((index)*width) / FLAGS_phase_n_voxels;
   }
-
   return (index-FLAGS_phase_n_voxels) * width/ FLAGS_phase_n_voxels;
 }
 

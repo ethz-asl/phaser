@@ -75,7 +75,7 @@ void GaussianPeakBasedEval::retrievePeakNeighbors(
   // Extract translational estimates.
   uint32_t k = 0u;
   for (uint32_t i = start; i <= end; ++i) {
-    std::array<uint16_t, 3> xyz = phase.ind2sub(i);
+    std::array<uint32_t, 3> xyz = phase.ind2sub(i);
     (*samples)(0, k) =
         phase.computeTranslationFromIndex(static_cast<double>(xyz[0]));
     (*samples)(1, k) =

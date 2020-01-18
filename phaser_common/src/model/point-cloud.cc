@@ -94,7 +94,7 @@ void PointCloud::getNearestPoints(
       value.addPoint(point);
       value.addRange(dist);
       value.addIntensity(point.intensity);
-      value.addInterpolation(0.7f * point.intensity + 0.3f * dist);
+      value.addInterpolation(0.5f * point.intensity + 0.5f * dist);
       // value.addInterpolation(point.intensity);
     }
     function_values->emplace_back(std::move(value));

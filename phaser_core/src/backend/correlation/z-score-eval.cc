@@ -101,7 +101,7 @@ ZScoreEval::fitTranslationalNormalDist(
 
   // Extract translational estimates.
   for (uint32_t signal_idx : signals) {
-    std::array<uint16_t, 3> xyz = phase.ind2sub(signal_idx);
+    std::array<uint32_t, 3> xyz = phase.ind2sub(signal_idx);
     samples(0, i) =
         phase.computeTranslationFromIndex(static_cast<double>(xyz[0]));
     samples(1, i) =

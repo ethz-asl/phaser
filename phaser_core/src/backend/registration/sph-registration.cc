@@ -86,22 +86,19 @@ model::RegistrationResult SphRegistration::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
   CHECK(cloud_prev);
   CHECK(cloud_cur);
+  VLOG(1) << "=== Registering point cloud ====================================";
   cloud_prev->initialize_kd_tree();
 
   // Register the point cloud.
-  // visualization::DebugVisualizer::getInstance()
-  // .visualizePointCloudDiff(*cloud_prev, *cloud_cur);
+  visualization::DebugVisualizer::getInstance().visualizePointCloudDiff(
+      *cloud_prev, *cloud_cur);
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
-  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-    */
   estimateTranslation(cloud_prev, &result);
 
-  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-    */
   return result;
 }
 
@@ -120,6 +117,7 @@ model::RegistrationResult SphRegistration::estimateRotation(
   Eigen::VectorXd corr_est = common::RotationUtils::ConvertZYZtoXYZ(zyz);
 
   VLOG(1) << "Corr rotation: " << corr_est.transpose();
+  VLOG(1) << "Bingham q: " << rot->getEstimate().transpose();
   VLOG(1) << "Bingham rotation: " << b_est.transpose();
   common::RotationUtils::RotateAroundXYZ(
       cloud_cur, b_est(0), b_est(1), b_est(2));
@@ -159,8 +157,8 @@ void SphRegistration::estimateTranslation(
       rot_cloud, g_est(0), g_est(1), g_est(2));
   /*
 common::TranslationUtils::TranslateXYZ(
-  rot_cloud, xyz(0), xyz(1), xyz(2));
-    */
+rot_cloud, xyz(0), xyz(1), xyz(2));
+*/
   result->setPosUncertaintyEstimate(pos);
 }
 
