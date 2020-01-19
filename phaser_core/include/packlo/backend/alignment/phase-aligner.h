@@ -44,6 +44,7 @@ class PhaseAligner : public BaseAligner {
   Eigen::VectorXd g_;
   Eigen::VectorXd hist_;
   const uint32_t n_voxels_;
+  std::vector<double> durations_;
 };
 
 }  // namespace alignment

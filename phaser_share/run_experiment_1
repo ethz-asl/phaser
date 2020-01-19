@@ -9,10 +9,10 @@ rosrun phaser_ros phaser_ros \
 		--datasource="ply" \
 		--PlyReadDirectory="/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_experimental/phaser_prototype/ply/" \
     --app_mode="experiment1" \
-		--spherical_bandwith=91 \
-		--phase_n_voxels=241 \
-		--phase_discretize_lower=-120 \
-		--phase_discretize_upper=120 \
+		--spherical_bandwith=60 \
+		--phase_n_voxels=101 \
+		--phase_discretize_lower=-50 \
+		--phase_discretize_upper=50 \
     --gaussian_peak_neighbors=0 \
     --bingham_peak_neighbors=0 \
     --z_score_filter_threshold=0.01 \

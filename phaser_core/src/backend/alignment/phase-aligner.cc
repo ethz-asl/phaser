@@ -3,6 +3,8 @@
 
 #include <complex.h>  // needs to be included before fftw
 
+#include <algorithm>
+#include <chrono>
 #include <gflags/gflags.h>
 #include <glog/logging.h>
 #include "igl/histc.h"
@@ -76,6 +78,7 @@ void PhaseAligner::alignRegistered(
 
   discretizePointcloud(cloud_prev, &f_, &hist_);
   discretizePointcloud(cloud_reg, &g_, &hist_);
+  auto start = std::chrono::high_resolution_clock::now();
 
   // Perform the two FFTs on the discretized signals.
   VLOG(1) << "Performing FFT on the first point cloud.";
@@ -95,6 +98,16 @@ void PhaseAligner::alignRegistered(
 
   // Find the index that maximizes the correlation.
   const auto max_corr = std::max_element(c_, c_+n_voxels_);
+  auto end = std::chrono::high_resolution_clock::now();
+  double duration =
+      std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
+          .count();
+  durations_.emplace_back(duration);
+  std::cout << "Translation alignment times: \n";
+  std::copy(
+      durations_.begin(), durations_.end(),
+      std::ostream_iterator<double>(std::cout, " "));
+
   const uint32_t max = std::distance(c_, max_corr);
   std::array<uint32_t, 3> max_xyz =
       ind2sub(max, FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);

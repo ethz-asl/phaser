@@ -10,7 +10,9 @@
 #include "packlo/common/translation-utils.h"
 #include "packlo/visualization/debug-visualizer.h"
 
+#include <algorithm>
 #include <glog/logging.h>
+#include <iostream>
 
 DEFINE_int32(
     spherical_bandwith, 70,
@@ -198,7 +200,14 @@ void SphRegistration::correlatePointcloud(
   statistics_manager_.emplaceValue(kSampleDurationKey, duration_sample_f_ms);
   statistics_manager_.emplaceValue(kSampleDurationKey, duration_sample_h_ms);
   statistics_manager_.emplaceValue(
-      kCorrelationDurationKey, duration_correlation_ms);
+      kCorrelationDurationKey,
+      duration_correlation_ms + duration_sample_f_ms + duration_sample_h_ms);
+  std::vector<double> times =
+      statistics_manager_.getValuesForKey(kCorrelationDurationKey);
+  std::cout << " rotation timings: \n";
+  std::copy(
+      times.begin(), times.end(),
+      std::ostream_iterator<double>(std::cout, " "));
 }
 
 void SphRegistration::setBandwith(const int bandwith) {
