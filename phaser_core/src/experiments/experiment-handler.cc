@@ -59,11 +59,11 @@ void ExperimentHandler::runExperiment3(const model::PointCloudPtr& cloud) {
   }
   model::RegistrationResult result =
       registrator_->estimateRotation(prev_point_cloud_, cloud);
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*prev_point_cloud_, *result.getRegisteredCloud());
+  visualization::DebugVisualizer::getInstance().visualizePointCloudDiff(
+      *prev_point_cloud_, *result.getRegisteredCloud());
   visualization::PlottyVisualizer::getInstance()
-    .createPlotFor(result.getRotationCorrelation())
-    .storeToFile(result.getRotationCorrelation());
+      .createPlotFor(result.getRotationCorrelation())
+      .storeToFile(result.getRotationCorrelation());
 
   appendResult(result);
   prev_point_cloud_ = nullptr;

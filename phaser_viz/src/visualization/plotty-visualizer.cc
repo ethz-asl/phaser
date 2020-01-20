@@ -18,7 +18,8 @@ void PlottyVisualizer::createPlotFor(
   plotty::show();
 }
 
-PlottyVisualizer& PlottyVisualizer::createPlotFor(const std::vector<double>& data) {
+PlottyVisualizer& PlottyVisualizer::createPlotFor(
+    const std::vector<double>& data) {
   if (data.empty())
     return *this;
   plotty::plot(data);

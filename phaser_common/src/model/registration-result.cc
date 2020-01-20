@@ -101,8 +101,8 @@ void RegistrationResult::setRotationCorrelation(
   rotation_correlation_ = rot;
 }
 
-const std::vector<double>& RegistrationResult::getRotationCorrelation()
-    const noexcept {
+const std::vector<double>& RegistrationResult::getRotationCorrelation() const
+    noexcept {
   return rotation_correlation_;
 }
 
