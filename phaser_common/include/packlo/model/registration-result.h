@@ -7,6 +7,7 @@
 
 #include <array>
 #include <memory>
+#include <vector>
 
 namespace model {
 
@@ -40,6 +41,9 @@ class RegistrationResult {
   common::BaseDistributionPtr getRotUncertaintyEstimate() const noexcept;
   common::BaseDistributionPtr getPosUncertaintyEstimate() const noexcept;
 
+  void setRotationCorrelation(const std::vector<double>& rot);
+  const std::vector<double>& getRotationCorrelation() const noexcept;
+
  private:
   model::PointCloudPtr reg_cloud_;
   std::array<double, 3> rotation_;
@@ -48,6 +52,7 @@ class RegistrationResult {
   bool found_solution_for_translation_;
   common::BaseDistributionPtr uncertainty_;
   State current_state_;
+  std::vector<double> rotation_correlation_;
 };
 
 }  // namespace model

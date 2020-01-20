@@ -1,6 +1,7 @@
 #include "packlo/experiments/experiment-handler.h"
 #include "packlo/common/translation-utils.h"
 #include "packlo/visualization/debug-visualizer.h"
+#include "packlo/visualization/plotty-visualizer.h"
 
 #include <fstream>
 #include <glog/logging.h>
@@ -50,6 +51,25 @@ void ExperimentHandler::runExperiment1(const model::PointCloudPtr& cloud) {
   ++n_registered_;
 }
 
+void ExperimentHandler::runExperiment3(const model::PointCloudPtr& cloud) {
+  CHECK_NOTNULL(registrator_);
+  if (prev_point_cloud_ == nullptr) {
+    prev_point_cloud_ = cloud;
+    return;
+  }
+  model::RegistrationResult result =
+      registrator_->estimateRotation(prev_point_cloud_, cloud);
+  visualization::DebugVisualizer::getInstance()
+    .visualizePointCloudDiff(*prev_point_cloud_, *result.getRegisteredCloud());
+  visualization::PlottyVisualizer::getInstance()
+    .createPlotFor(result.getRotationCorrelation())
+    .storeToFile(result.getRotationCorrelation());
+
+  appendResult(result);
+  prev_point_cloud_ = nullptr;
+  ++n_registered_;
+}
+
 void ExperimentHandler::readTruth() {
   const std::string gt =
       "/home/berlukas/Documents/workspace/phaser_ws/src/packlo/"
@@ -75,7 +95,6 @@ void ExperimentHandler::readTruth() {
 
 void ExperimentHandler::appendResult(const model::RegistrationResult& result) {
   Eigen::VectorXd dq = result.getStateAsVec();
-  VLOG(1) << "dq: " << dq.transpose();
   states_.emplace_back(dq);
 }
 

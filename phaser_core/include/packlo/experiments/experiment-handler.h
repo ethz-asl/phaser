@@ -19,6 +19,7 @@ class ExperimentHandler {
   void shutdown();
 
   void runExperiment1(const model::PointCloudPtr& cloud);
+  void runExperiment3(const model::PointCloudPtr& cloud);
 
  private:
   void readTruth();

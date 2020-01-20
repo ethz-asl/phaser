@@ -136,6 +136,7 @@ model::RegistrationResult SphRegistration::estimateRotation(
 
   model::RegistrationResult result(std::move(*cloud_cur), std::move(zyz));
   result.setRotUncertaintyEstimate(rot);
+  result.setRotationCorrelation(sph_corr_.getCorrelation());
   return result;
 }
 

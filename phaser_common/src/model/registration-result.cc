@@ -96,4 +96,14 @@ common::BaseDistributionPtr RegistrationResult::getPosUncertaintyEstimate()
   return current_state_.getTranslationalDistribution();
 }
 
+void RegistrationResult::setRotationCorrelation(
+    const std::vector<double>& rot) {
+  rotation_correlation_ = rot;
+}
+
+const std::vector<double>& RegistrationResult::getRotationCorrelation()
+    const noexcept {
+  return rotation_correlation_;
+}
+
 }  // namespace model

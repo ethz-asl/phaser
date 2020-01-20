@@ -61,7 +61,9 @@ void Distributor::initializeRegistrationAlgorithm() {
   else
     LOG(FATAL) << "Unknown registration algorithm specified!";
 
-  if (FLAGS_app_mode == "experiment1") {
+  if (FLAGS_app_mode == "experiment1"
+      || FLAGS_app_mode == "experiment2"
+      || FLAGS_app_mode == "experiment3") {
     experiment_handler_ = std::make_unique<experiments::ExperimentHandler>();
   }
 }
@@ -84,6 +86,8 @@ void Distributor::pointCloudCallback(
     cloud->writeToFile();
   else if (FLAGS_app_mode == "experiment1")
     experiment_handler_->runExperiment1(cloud);
+  else if (FLAGS_app_mode == "experiment3")
+    experiment_handler_->runExperiment3(cloud);
   else
     LOG(FATAL) << "Unknown applicaiton mode. Aborting.";
 }

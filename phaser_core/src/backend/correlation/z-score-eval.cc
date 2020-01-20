@@ -60,6 +60,7 @@ void ZScoreEval::evaluateCorrelationVector(
   */
 
   // visualization::PlottyVisualizer::getInstance().createPlotFor(*n_corr_ds);
+
   peak_extraction_.extractPeaks(*n_corr_ds, signals);
 }
 
