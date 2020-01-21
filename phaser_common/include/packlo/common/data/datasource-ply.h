@@ -16,8 +16,9 @@ class DatasourcePly : public BaseDatasource {
 		virtual void startStreaming(const uint32_t number_of_clouds = 0) override;
     void setDatasetFolder(std::string&& datasource);
 	private:
-		std::vector<model::PointCloudPtr> readPly(const std::string& directory);
-    std::string datasource_folder_;
+         std::vector<model::PointCloudPtr> readPly(
+             const std::string& directory, const uint32_t max_n_clouds);
+         std::string datasource_folder_;
 
 };
 

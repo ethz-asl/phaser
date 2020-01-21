@@ -50,7 +50,7 @@ common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
   Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(4, num_elements);
   Eigen::RowVectorXd weights = Eigen::RowVectorXd::Zero(num_elements);
   retrievePeakNeighbors(start, end, norm_corr, sph, &samples, &weights);
-  // VLOG(1) << "bingham samples:\n" << samples << "\nweights:\n" << weights;
+  VLOG(1) << "bingham samples:\n" << samples << "\nweights:\n" << weights;
   return common::Bingham::fit(samples, weights);
 }
 

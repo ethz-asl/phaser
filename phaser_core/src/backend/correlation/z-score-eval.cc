@@ -45,10 +45,16 @@ void ZScoreEval::evaluateCorrelationVector(
   // std::vector<double> n_corr;
 
   // Normalize correlation.
-  double max = *std::max_element(corr.cbegin(), corr.cend());
+  auto max = std::max_element(corr.cbegin(), corr.cend());
+  CHECK(max != corr.cend());
+  /*
   std::transform(
       corr.begin(), corr.end(), std::back_inserter(*n_corr_ds),
-      [&](const double val) { return val / max; });
+      [&](const double val) { return val / *max; });
+      */
+  VLOG(1) << "max is at: " << *max;
+  signals->insert(std::distance(corr.begin(), max));
+  *n_corr_ds = corr;
 
   // Filter values close to zero for speedup.
   /*
@@ -61,7 +67,7 @@ void ZScoreEval::evaluateCorrelationVector(
 
   // visualization::PlottyVisualizer::getInstance().createPlotFor(*n_corr_ds);
 
-  peak_extraction_.extractPeaks(*n_corr_ds, signals);
+  // peak_extraction_.extractPeaks(*n_corr_ds, signals);
 }
 
 std::pair<double, double> ZScoreEval::fitSmoothedNormalDist(

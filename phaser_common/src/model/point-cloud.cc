@@ -89,14 +89,19 @@ void PointCloud::getNearestPoints(
       const int current_idx = pointIdxNKNSearch[i];
       const float current_dist = pointNKNSquaredDistance[i];
       const common::Point_t& point = cloud_->points[current_idx];
-
+      double penality = 1;
+      if (current_dist > 1)
+        penality = 0.5;
       const double dist = ranges_.at(current_idx);
       value.addPoint(point);
       value.addRange(dist);
       value.addIntensity(point.intensity);
-      value.addInterpolation(0.8f * point.intensity + 0.2f * dist);
+      value.addInterpolation(
+          (0.75f * point.intensity + 0.35f * dist) * penality);
       // value.addInterpolation(point.intensity);
     }
+    // if (value.getAveragedIntensity() > 1
+    //&& value.getAveragedIntensity() < 100)
     function_values->emplace_back(std::move(value));
   }
 }
@@ -157,11 +162,12 @@ void PointCloud::writeToFile(std::string&& directory) {
   pcl::PLYWriter writer;
   std::vector<std::string> files;
   data::FileSystemHelper::readDirectory(directory, &files);
-  std::string file_name =
-      directory + FLAGS_PlyPrefix + std::to_string(files.size() + 1) + ".ply";
+  char buffer[50];
+  sprintf(buffer, "%s%.3lu.ply", FLAGS_PlyPrefix.c_str(), files.size() + 1);
+  const std::string full_name = directory + std::string(buffer);
 
-  VLOG(2) << "Writing PLY file to: " << file_name;
-  writer.write(file_name, *cloud_);
+  VLOG(2) << "Writing PLY file to: " << full_name;
+  writer.write(full_name, *cloud_);
 }
 
 void PointCloud::readFromFile(const std::string& ply) {

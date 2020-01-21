@@ -7,14 +7,14 @@ rosrun phaser_ros phaser_ros \
 		--enable_debug=true \
 		--registration_algorithm="sph" \
 		--datasource="ply" \
-		--PlyReadDirectory="/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_test_data/test_clouds/gonzen/new/" \
-		--spherical_bandwith=101 \
-		--phase_n_voxels=241 \
-		--phase_discretize_lower=-120 \
-		--phase_discretize_upper=120 \
+		--PlyReadDirectory="/home/berlukas/Documents/ply_datasets/arche1/" \
+		--spherical_bandwith=211 \
+		--phase_n_voxels=282 \
+		--phase_discretize_lower=-70 \
+		--phase_discretize_upper=70 \
     --gaussian_peak_neighbors=0 \
     --bingham_peak_neighbors=0 \
-    --z_score_filter_threshold=0.4 \
-    --z_score_lag_max=15 \
+    --z_score_filter_threshold=0.01 \
+    --z_score_lag_max=5 \
     --z_score_threshold=3.0 \
     $REST

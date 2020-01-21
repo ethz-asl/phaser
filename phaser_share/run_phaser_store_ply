@@ -8,4 +8,5 @@ rosrun phaser_ros phaser_ros \
 		--app_mode="store_ply" \
 		--PlyWriteDirectory="/home/berlukas/Documents/ply/" \
 		--point_cloud_topic="/penguin/os1_cloud_node/points" \
+		--take_every_n_cloud=1 \
     $REST

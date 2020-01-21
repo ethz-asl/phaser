@@ -1,10 +1,9 @@
 #ifndef INCLUDE_PACKLO_COMMON_POINT_TYPES_H_
 #define INCLUDE_PACKLO_COMMON_POINT_TYPES_H_
 
-#include <pcl/point_types.h>
-#include <pcl/register_point_struct.h>
-#include <pcl/common/projection_matrix.h>
 #include <Eigen/Dense>
+#include <pcl/point_cloud.h>
+#include <pcl/point_representation.h>
 
 namespace common {
 

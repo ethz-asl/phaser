@@ -102,10 +102,8 @@ model::RegistrationResult SphRegistration::registerPointCloud(
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
     */
   estimateTranslation(cloud_prev, &result);
-  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-    */
   return result;
 }
 
@@ -187,7 +185,7 @@ void SphRegistration::correlatePointcloud(
   const double duration_sample_h_ms = common::executeTimedFunction(
       &common::SphericalSampler::sampleUniformly, &sampler_, target,
       &h_values_);
-  CHECK(f_values_.size() == h_values_.size());
+  // CHECK(f_values_.size() == h_values_.size());
 
   const double duration_correlation_ms = common::executeTimedFunction(
       &backend::SphericalCorrelation::correlateSignals, &sph_corr_, f_values_,
