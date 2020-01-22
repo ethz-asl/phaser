@@ -96,9 +96,9 @@ void PointCloud::getNearestPoints(
       value.addPoint(point);
       value.addRange(dist);
       value.addIntensity(point.intensity);
-      value.addInterpolation(
-          (0.75f * point.intensity + 0.35f * dist) * penality);
-      // value.addInterpolation(point.intensity);
+      //value.addInterpolation(
+          //(0.75f * point.intensity + 0.35f * dist) * penality);
+      value.addInterpolation(point.intensity);
     }
     // if (value.getAveragedIntensity() > 1
     //&& value.getAveragedIntensity() < 100)
@@ -174,10 +174,15 @@ void PointCloud::readFromFile(const std::string& ply) {
   CHECK(!ply.empty());
   CHECK_NOTNULL(cloud_);
   VLOG(2) << "Reading PLY file from: " << ply;
+  ply_read_directory_ = ply;
   pcl::PLYReader reader;
   reader.read(ply, *cloud_);
   VLOG(2) << "Cloud size: " << cloud_->size();
   // convertInputPointCloud(cloud);
+}
+
+std::string PointCloud::getPlyReadDirectory() const noexcept {
+  return ply_read_directory_;
 }
 
 }  // namespace model

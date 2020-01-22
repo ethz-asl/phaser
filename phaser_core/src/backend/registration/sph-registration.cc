@@ -89,6 +89,8 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   CHECK(cloud_prev);
   CHECK(cloud_cur);
   VLOG(1) << "=== Registering point cloud ====================================";
+  VLOG(1) << "Cloud1: " << cloud_prev->getPlyReadDirectory();
+  VLOG(1) << "Cloud2: " << cloud_cur->getPlyReadDirectory();
   cloud_prev->initialize_kd_tree();
 
   // Register the point cloud.

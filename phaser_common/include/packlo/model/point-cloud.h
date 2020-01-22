@@ -47,6 +47,8 @@ class PointCloud {
   void initialize_kd_tree();
   void writeToFile(std::string&& directory = "");
 
+  std::string getPlyReadDirectory() const noexcept;
+
  private:
   void readFromFile(const std::string& ply);
   common::PointCloud_tPtr cloud_;
@@ -55,6 +57,7 @@ class PointCloud {
   bool kd_tree_is_initialized_;
   std::string ply_directory_;
   std::vector<double> ranges_;
+  std::string ply_read_directory_;
 };
 
 using PointCloudPtr = std::shared_ptr<PointCloud>;

@@ -7,11 +7,11 @@ rosrun phaser_ros phaser_ros \
 		--enable_debug=true \
 		--registration_algorithm="sph" \
 		--datasource="ply" \
-		--PlyReadDirectory="/home/berlukas/Documents/ply_datasets/arche1/" \
-		--spherical_bandwith=211 \
-		--phase_n_voxels=282 \
-		--phase_discretize_lower=-70 \
-		--phase_discretize_upper=70 \
+		--PlyReadDirectory="/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_test_data/test_clouds/kitti/1/" \
+		--spherical_bandwith=71 \
+		--phase_n_voxels=201 \
+		--phase_discretize_lower=-100 \
+		--phase_discretize_upper=100 \
     --gaussian_peak_neighbors=0 \
     --bingham_peak_neighbors=0 \
     --z_score_filter_threshold=0.01 \

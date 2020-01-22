@@ -70,6 +70,12 @@ void ExperimentHandler::runExperiment3(const model::PointCloudPtr& cloud) {
   ++n_registered_;
 }
 
+void ExperimentHandler::runExperiment4(const model::PointCloudPtr& cloud) {
+  model::RegistrationResult result =
+      registrator_->estimateRotation(prev_point_cloud_, cloud);
+  registrator_->estimateTranslation(prev_point_cloud_, &result);
+}
+
 void ExperimentHandler::readTruth() {
   const std::string gt =
       "/home/berlukas/Documents/workspace/phaser_ws/src/packlo/"
