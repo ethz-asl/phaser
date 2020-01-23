@@ -89,7 +89,7 @@ ASSERT_LT(
     ASSERT_LT(
         common::MetricUtils::HausdorffDistance(
             prev_cloud, result.getRegisteredCloud()),
-        40.0);
+        50.0);
     prev_cloud = result.getRegisteredCloud();
   });
   ds_->startStreaming();

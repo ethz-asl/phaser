@@ -45,7 +45,7 @@ TEST_F(VoxgraphAlignmentTest, TransformVoxgraphEasy) {
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             prev_cloud, result.getRegisteredCloud()),
-        initHausdorff);
+        50);
   });
   ds_->startStreaming(1);
 }
