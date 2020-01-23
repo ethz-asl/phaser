@@ -4,6 +4,8 @@
 #include "packlo/backend/registration/base-registration.h"
 #include "packlo/backend/registration/sph-registration.h"
 #include "packlo/model/point-cloud.h"
+#include "packlo/backend/registration/g-icp-registration.h"
+
 
 #include <Eigen/Dense>
 #include <memory>
@@ -21,6 +23,7 @@ class ExperimentHandler {
   void runExperiment1(const model::PointCloudPtr& cloud);
   void runExperiment3(const model::PointCloudPtr& cloud);
   void runExperiment4(const model::PointCloudPtr& cloud);
+  void runExperimentGICP(const model::PointCloudPtr& cloud);
 
  private:
   void readTruth();
@@ -34,6 +37,8 @@ class ExperimentHandler {
   std::vector<Eigen::VectorXd> states_;
   Eigen::MatrixXd gt_;
   uint16_t n_registered_ = 0u;
+  registration::GIcpRegistration gicp_reg_;
+
 };
 
 using ExperimentHandlerPtr = std::unique_ptr<ExperimentHandler>;

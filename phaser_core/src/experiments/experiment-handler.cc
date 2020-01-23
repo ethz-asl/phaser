@@ -79,6 +79,19 @@ void ExperimentHandler::runExperiment4(const model::PointCloudPtr& cloud) {
   registrator_->estimateTranslation(prev_point_cloud_, &result);
 }
 
+void ExperimentHandler::runExperimentGICP(const model::PointCloudPtr& cloud) {
+  if (prev_point_cloud_ == nullptr) {
+    prev_point_cloud_ = cloud;
+    return;
+  }
+  model::RegistrationResult result = gicp_reg_.registerPointCloud(
+    prev_point_cloud_, cloud);
+
+  //appendResult(result);
+  prev_point_cloud_ = nullptr;
+  ++n_registered_;
+}
+
 void ExperimentHandler::readTruth() {
   const std::string gt =
       "/home/berlukas/Documents/workspace/phaser_ws/src/packlo/"
@@ -87,7 +100,7 @@ void ExperimentHandler::readTruth() {
   std::vector<double> result;
   std::string line;
 
-  uint16_t rows = 0;
+  uint16_t rows = 0u;
   while (std::getline(input_gt, line)) {
     std::stringstream lineStream(line);
     std::string cell;
@@ -139,5 +152,6 @@ void ExperimentHandler::translateToOdomFrame(
   VLOG(1) << "t_vec odom: " << t_vec;
   common::TranslationUtils::TranslateXYZ(cloud, t_vec(0), t_vec(1), t_vec(2));
 }
+
 
 }  // namespace experiments

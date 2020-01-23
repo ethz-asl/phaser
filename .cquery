@@ -12,6 +12,6 @@
 -I/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_viz/include
 -I/home/berlukas/Documents/workspace/phaser_ws/src/pcl_catkin/perception_pcl/pcl_conversions/include
 -I/home/berlukas/Documents/workspace/phaser_ws/devel/include
--I/home/berlukas/Documents/workspace/phaser_ws/devel/include/pcl-1.9
+-I/home/berlukas/Documents/workspace/phaser_ws/devel/include/pcl-1.10
 -I/usr/include/eigen3
 -I/opt/ros/melodic/include
