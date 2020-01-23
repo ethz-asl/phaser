@@ -89,14 +89,14 @@ void Distributor::pointCloudCallback(
   if (cloud_counter_ % FLAGS_take_every_n_cloud != 0) {
     return;
   }
-  preprocessPointCloud(cloud);
+  //preprocessPointCloud(cloud);
   if (FLAGS_app_mode == "registration") {
     if (prev_point_cloud_ == nullptr) {
       prev_point_cloud_ = cloud;
       return;
     }
     const model::RegistrationResult result = registerPointCloud(cloud);
-    //prev_point_cloud_ = result.getRegisteredCloud();
+    // prev_point_cloud_ = result.getRegisteredCloud();
     prev_point_cloud_ = cloud;
     appendResult(result);
     writeResultsToFile();

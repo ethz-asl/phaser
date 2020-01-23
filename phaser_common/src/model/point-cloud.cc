@@ -90,14 +90,14 @@ void PointCloud::getNearestPoints(
       const float current_dist = pointNKNSquaredDistance[i];
       const common::Point_t& point = cloud_->points[current_idx];
       double penality = 1;
-      if (current_dist > 1)
-        penality = 0.5;
+      //if (current_dist > 1)
+        //penality = 0.5;
       const double dist = ranges_.at(current_idx);
       value.addPoint(point);
       value.addRange(dist);
       value.addIntensity(point.intensity);
       //value.addInterpolation(
-          //(0.75f * point.intensity + 0.35f * dist) * penality);
+       // (0.65f * point.intensity + 0.35f * dist) * penality);
       value.addInterpolation(point.intensity);
     }
     // if (value.getAveragedIntensity() > 1

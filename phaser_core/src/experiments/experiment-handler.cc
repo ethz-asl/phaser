@@ -34,6 +34,9 @@ void ExperimentHandler::runExperiment1(const model::PointCloudPtr& cloud) {
   // Register the point clouds.
   VLOG(2) << " === Ground truth =============================";
   VLOG(2) << gt_.col(n_registered_).transpose();
+  VLOG(1) << "Cloud1: " << prev_point_cloud_->getPlyReadDirectory();
+  VLOG(1) << "Cloud2: " << cloud->getPlyReadDirectory();
+
   translateToSensorFrame(cloud);
   model::RegistrationResult result =
       registrator_->estimateRotation(prev_point_cloud_, cloud);

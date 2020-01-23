@@ -1,7 +1,7 @@
 #pragma once
 
-#include "packlo/backend/registration/sph-registration.h"
 #include <memory>
+#include "packlo/backend/registration/sph-registration.h"
 
 namespace registration {
 
@@ -12,9 +12,10 @@ class SphRegistrationMockCutted : public SphRegistration {
         model::PointCloudPtr cloud_prev,
         model::PointCloudPtr cloud_cur) override;
 
-  private:
-    model::PointCloudPtr cutPointCloud(common::PointCloud_tPtr& cloud,
-        double min, double max, std::string&& dim);
+   private:
+    model::PointCloudPtr cutPointCloud(
+        common::PointCloud_tPtr& cloud, double min, double max,
+        std::string&& dim);
 };
 
 } // namespace handler
