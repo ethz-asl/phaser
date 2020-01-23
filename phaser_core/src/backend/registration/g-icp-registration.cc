@@ -5,19 +5,20 @@ namespace registration {
 
 model::RegistrationResult GIcpRegistration::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
-
+  VLOG(1) << " === Starting GICP registration ================================";
   gicp_.setInputSource(cloud_cur->getRawCloud());
   gicp_.setInputTarget(cloud_prev->getRawCloud());
 
   common::PointCloud_tPtr transformed(new common::PointCloud_t);
   gicp_.align(*transformed);
-  model::PointCloudPtr registered 
+  model::PointCloudPtr registered
     = std::make_shared<model::PointCloud>(transformed);
 
+  Eigen::Matrix4f T = gicp_.getFinalTransformation();
   model::RegistrationResult result;
   result.setRegisteredCloud(registered);
-
-  VLOG(1) << "G-ICP: \n" << gicp_.getFinalTransformation();
+  result.setGICPResult(T);
+  VLOG(2) << "G-ICP: \n" << T;
 
   return result;
 }

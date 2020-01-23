@@ -44,6 +44,9 @@ class RegistrationResult {
   void setRotationCorrelation(const std::vector<double>& rot);
   const std::vector<double>& getRotationCorrelation() const noexcept;
 
+  void setGICPResult(const Eigen::Matrix4f& result);
+  Eigen::Matrix4f getGICPResult() const noexcept;
+
  private:
   model::PointCloudPtr reg_cloud_;
   std::array<double, 3> rotation_;
@@ -53,6 +56,7 @@ class RegistrationResult {
   common::BaseDistributionPtr uncertainty_;
   State current_state_;
   std::vector<double> rotation_correlation_;
+  Eigen::Matrix4f gicp_result_;
 };
 
 }  // namespace model

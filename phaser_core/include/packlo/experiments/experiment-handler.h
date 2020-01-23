@@ -38,7 +38,7 @@ class ExperimentHandler {
   Eigen::MatrixXd gt_;
   uint16_t n_registered_ = 0u;
   registration::GIcpRegistration gicp_reg_;
-
+  std::vector<Eigen::Matrix4f> gicp_states_;
 };
 
 using ExperimentHandlerPtr = std::unique_ptr<ExperimentHandler>;

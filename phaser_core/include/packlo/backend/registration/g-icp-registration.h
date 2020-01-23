@@ -8,6 +8,8 @@ namespace registration {
 
 class GIcpRegistration : public BaseRegistration {
  public:
+  GIcpRegistration() = default;
+  virtual ~GIcpRegistration() = default;
   model::RegistrationResult registerPointCloud(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) override;
  private:

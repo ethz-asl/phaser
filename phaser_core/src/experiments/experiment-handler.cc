@@ -20,8 +20,6 @@ ExperimentHandler::ExperimentHandler() : prev_point_cloud_(nullptr) {
 }
 
 void ExperimentHandler::shutdown() {
-  if (states_.empty())
-    return;
   writeResultsToFile();
 }
 
@@ -86,8 +84,9 @@ void ExperimentHandler::runExperimentGICP(const model::PointCloudPtr& cloud) {
   }
   model::RegistrationResult result = gicp_reg_.registerPointCloud(
     prev_point_cloud_, cloud);
+  gicp_states_.emplace_back(result.getGICPResult());
+  VLOG(1) << " gicp: " << result.getGICPResult();
 
-  //appendResult(result);
   prev_point_cloud_ = nullptr;
   ++n_registered_;
 }
@@ -121,19 +120,31 @@ void ExperimentHandler::appendResult(const model::RegistrationResult& result) {
 }
 
 void ExperimentHandler::writeResultsToFile() {
-  VLOG(1) << "Writing experiment results to " << FLAGS_output_file;
-  std::ofstream out_file(FLAGS_output_file);
-  for (const Eigen::VectorXd& vec : states_) {
-    /*
-    out_file << vec.transpose();
-    out_file << ";\n";
-    */
-    const uint8_t n_vec = 8;
-    for (uint8_t i = 0u; i < n_vec; ++i) {
-      if (i == n_vec - 1)
-        out_file << vec[i] << "\n";
-      else
-        out_file << vec[i] << ",";
+  if (!states_.empty()) {
+    VLOG(1) << "Writing experiment results to " << FLAGS_output_file;
+    std::ofstream out_file(FLAGS_output_file);
+    for (const Eigen::VectorXd& vec : states_) {
+      const uint8_t n_vec = 8;
+      for (uint8_t i = 0u; i < n_vec; ++i) {
+        if (i == n_vec - 1)
+          out_file << vec[i] << "\n";
+        else
+          out_file << vec[i] << ",";
+      }
+    }
+  }
+  VLOG(1) << "gicp size: " << gicp_states_.size();
+  if (!gicp_states_.empty()) {
+    VLOG(1) << "Writing gicp results to gicp_results.txt";
+    std::ofstream out_file("gicp_results.txt");
+    for (const Eigen::Matrix4f& mat : gicp_states_) {
+      const uint8_t n_vec = 16;
+      for (uint8_t i = 0u; i < n_vec; ++i) {
+        if (i == n_vec - 1)
+          out_file << mat(i) << "\n";
+        else
+          out_file << mat(i) << ",";
+      }
     }
   }
 }
