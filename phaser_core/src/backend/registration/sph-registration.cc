@@ -199,12 +199,14 @@ void SphRegistration::correlatePointcloud(
   statistics_manager_.emplaceValue(
       kCorrelationDurationKey,
       duration_correlation_ms + duration_sample_f_ms + duration_sample_h_ms);
+  /*
   std::vector<double> times =
       statistics_manager_.getValuesForKey(kCorrelationDurationKey);
   std::cout << " rotation timings: \n";
   std::copy(
       times.begin(), times.end(),
       std::ostream_iterator<double>(std::cout, " "));
+      */
 }
 
 void SphRegistration::setBandwith(const int bandwith) {

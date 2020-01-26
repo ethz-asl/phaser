@@ -43,19 +43,15 @@ void ExperimentHandler::runExperiment1(const model::PointCloudPtr& cloud) {
   /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*prev_point_cloud_, *cloud);
-    */
-  //translateToSensorFrame(cloud);
-  rotateToSensorFrame(cloud);
-  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*prev_point_cloud_, *cloud);
     */
-  model::RegistrationResult result;
-  result.setRegisteredCloud(cloud);
-      //registrator_->estimateRotation(prev_point_cloud_, cloud);
-  //translateToOdomFrame(cloud);
+  translateToSensorFrame(cloud);
+  //rotateToSensorFrame(cloud);
+  model::RegistrationResult result =
+      registrator_->estimateRotation(prev_point_cloud_, cloud);
+  translateToOdomFrame(result.getRegisteredCloud());
   registrator_->estimateTranslation(prev_point_cloud_, &result);
-
 
   /*
   visualization::DebugVisualizer::getInstance()

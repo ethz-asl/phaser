@@ -76,9 +76,9 @@ void PhaseAligner::alignRegistered(
     const std::vector<model::FunctionValue>&, common::Vector_t* xyz) {
   CHECK(xyz);
 
+  auto start = std::chrono::high_resolution_clock::now();
   discretizePointcloud(cloud_prev, &f_, &hist_);
   discretizePointcloud(cloud_reg, &g_, &hist_);
-  auto start = std::chrono::high_resolution_clock::now();
 
   // Perform the two FFTs on the discretized signals.
   VLOG(1) << "Performing FFT on the first point cloud.";
