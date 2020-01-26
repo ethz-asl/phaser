@@ -33,7 +33,7 @@
 - git:
     local-name: pcl_catkin
     uri: git@github.com:ethz-asl/pcl_catkin.git
-    version: master
+    version: fix/pcl-1.10
 - git:
     local-name: nlopt
     uri: git@github.com:ethz-asl/nlopt.git
