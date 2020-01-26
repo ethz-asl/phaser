@@ -25,6 +25,15 @@ void RotationUtils::RotateAroundXYZ(
 }
 
 void RotationUtils::RotateAroundZYX(
+    model::PointCloudPtr cloud, const float alpha_rad, 
+    const float beta_rad, const float gamma_rad) {
+  Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
+                      createTransformationAroundY(beta_rad) *
+                      createTransformationAroundX(alpha_rad);
+  cloud->transformPointCloud(T);
+}
+
+void RotationUtils::RotateAroundZYX(
     model::PointCloud* cloud, const float alpha_rad, const float beta_rad,
     const float gamma_rad) {
   Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *

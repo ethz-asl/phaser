@@ -32,6 +32,9 @@ class ExperimentHandler {
   void translateToSensorFrame(const model::PointCloudPtr& cloud);
   void translateToOdomFrame(const model::PointCloudPtr& cloud);
 
+  void rotateToSensorFrame(const model::PointCloudPtr& cloud);
+  void rotateToOdomFrame(const model::PointCloudPtr& cloud);
+
   registration::SphRegistrationPtr registrator_;
   model::PointCloudPtr prev_point_cloud_;
   std::vector<Eigen::VectorXd> states_;

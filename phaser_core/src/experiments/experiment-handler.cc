@@ -1,5 +1,6 @@
 #include "packlo/experiments/experiment-handler.h"
 #include "packlo/common/translation-utils.h"
+#include "packlo/common/rotation-utils.h"
 #include "packlo/visualization/debug-visualizer.h"
 #include "packlo/visualization/plotty-visualizer.h"
 
@@ -11,6 +12,10 @@
 DEFINE_string(
     output_file, "experiment_results.txt",
     "Declares the name of the ouput file.");
+
+DEFINE_string(
+    truth_file, "",
+    "Defines the path of the truth file.");
 
 namespace experiments {
 
@@ -35,11 +40,22 @@ void ExperimentHandler::runExperiment1(const model::PointCloudPtr& cloud) {
   VLOG(1) << "Cloud1: " << prev_point_cloud_->getPlyReadDirectory();
   VLOG(1) << "Cloud2: " << cloud->getPlyReadDirectory();
 
-  translateToSensorFrame(cloud);
-  model::RegistrationResult result =
-      registrator_->estimateRotation(prev_point_cloud_, cloud);
-  translateToOdomFrame(cloud);
+  /*
+  visualization::DebugVisualizer::getInstance()
+    .visualizePointCloudDiff(*prev_point_cloud_, *cloud);
+    */
+  //translateToSensorFrame(cloud);
+  rotateToSensorFrame(cloud);
+  /*
+  visualization::DebugVisualizer::getInstance()
+    .visualizePointCloudDiff(*prev_point_cloud_, *cloud);
+    */
+  model::RegistrationResult result;
+  result.setRegisteredCloud(cloud);
+      //registrator_->estimateRotation(prev_point_cloud_, cloud);
+  //translateToOdomFrame(cloud);
   registrator_->estimateTranslation(prev_point_cloud_, &result);
+
 
   /*
   visualization::DebugVisualizer::getInstance()
@@ -60,11 +76,13 @@ void ExperimentHandler::runExperiment3(const model::PointCloudPtr& cloud) {
   }
   model::RegistrationResult result =
       registrator_->estimateRotation(prev_point_cloud_, cloud);
+  /*
   visualization::DebugVisualizer::getInstance().visualizePointCloudDiff(
       *prev_point_cloud_, *result.getRegisteredCloud());
   visualization::PlottyVisualizer::getInstance()
       .createPlotFor(result.getRotationCorrelation())
       .storeToFile(result.getRotationCorrelation());
+    */
 
   appendResult(result);
   prev_point_cloud_ = nullptr;
@@ -87,15 +105,22 @@ void ExperimentHandler::runExperimentGICP(const model::PointCloudPtr& cloud) {
   gicp_states_.emplace_back(result.getGICPResult());
   VLOG(1) << " gicp: " << result.getGICPResult();
 
+  /*
+  visualization::DebugVisualizer::getInstance()
+    .visualizePointCloudDiff(*prev_point_cloud_, *result.getRegisteredCloud());
+    */
+
   prev_point_cloud_ = nullptr;
   ++n_registered_;
 }
 
 void ExperimentHandler::readTruth() {
-  const std::string gt =
-      "/home/berlukas/Documents/workspace/phaser_ws/src/packlo/"
-      "phaser_experimental/phaser_prototype/ply/ground_truth.txt";
-  std::ifstream input_gt(gt);
+  if (FLAGS_truth_file.empty()) {
+    LOG(WARNING) << "No truth file specified.";
+    return;
+  }
+
+  std::ifstream input_gt(FLAGS_truth_file);
   std::vector<double> result;
   std::string line;
 
@@ -152,7 +177,6 @@ void ExperimentHandler::writeResultsToFile() {
 void ExperimentHandler::translateToSensorFrame(
     const model::PointCloudPtr& cloud) {
   Eigen::Vector3d t_vec = gt_.block(3, n_registered_, 3, 1);
-  VLOG(1) << "t_vec: " << t_vec;
   common::TranslationUtils::TranslateXYZ(
       cloud, -t_vec(0), -t_vec(1), -t_vec(2));
 }
@@ -160,8 +184,19 @@ void ExperimentHandler::translateToSensorFrame(
 void ExperimentHandler::translateToOdomFrame(
     const model::PointCloudPtr& cloud) {
   Eigen::Vector3d t_vec = gt_.block(3, n_registered_, 3, 1);
-  VLOG(1) << "t_vec odom: " << t_vec;
   common::TranslationUtils::TranslateXYZ(cloud, t_vec(0), t_vec(1), t_vec(2));
+}
+
+void ExperimentHandler::rotateToSensorFrame(const model::PointCloudPtr& cloud) {
+  Eigen::Vector3d rpy = gt_.block(0, n_registered_, 3, 1);
+  VLOG(1) << "sampled rpy: " << rpy.transpose();
+  common::RotationUtils::RotateAroundZYX(cloud, -rpy(0), -rpy(1), -rpy(2));
+}
+
+void ExperimentHandler::rotateToOdomFrame(const model::PointCloudPtr& cloud) {
+  Eigen::Vector3d rpy = gt_.block(0, n_registered_, 3, 1);
+  common::RotationUtils::RotateAroundXYZ(cloud, rpy(0), rpy(1), rpy(2));
+
 }
 
 
