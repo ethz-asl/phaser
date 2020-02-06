@@ -36,6 +36,7 @@ class GaussianPeakBasedEval : public ZScoreEval {
       const uint32_t start, const uint32_t end,
       const std::vector<double>& norm_corr, const alignment::BaseAligner& sph,
       Eigen::ArrayXXd* samples, Eigen::VectorXd* weights) const;
+ private:
 };
 
 }  // namespace correlation

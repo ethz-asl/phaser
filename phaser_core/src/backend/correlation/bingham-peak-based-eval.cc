@@ -47,8 +47,8 @@ common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
   uint32_t start, end;
   calculateStartEndNeighbor(*max_signal, n_corr, &start, &end);
   const uint32_t num_elements = end - start + 1u;
-  Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(4, num_elements);
-  Eigen::RowVectorXd weights = Eigen::RowVectorXd::Zero(num_elements);
+  Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(4, 2*FLAGS_bingham_peak_neighbors+1);
+  Eigen::RowVectorXd weights = Eigen::RowVectorXd::Zero(2*FLAGS_bingham_peak_neighbors+1);
   retrievePeakNeighbors(start, end, norm_corr, sph, &samples, &weights);
   VLOG(1) << "bingham samples:\n" << samples << "\nweights:\n" << weights;
   return common::Bingham::fit(samples, weights);
@@ -96,7 +96,7 @@ void BinghamPeakBasedEval::retrievePeakNeighbors(
   const double weight_sum = weights->array().sum();
   CHECK_GT(weight_sum, 0);
   (*weights) = weights->array() / weight_sum;
-  VLOG(1) << "bingham weights: \n" << (*weights);
+  //VLOG(1) << "bingham weights: \n" << (*weights);
 }
 
 }  // namespace correlation

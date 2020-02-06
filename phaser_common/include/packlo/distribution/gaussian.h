@@ -25,6 +25,9 @@ class Gaussian : public BaseDistribution {
 
   std::pair<Eigen::VectorXd, Eigen::MatrixXd> getParameters() const;
 
+  Eigen::MatrixXd samples_;
+  Eigen::VectorXd weights_;
+
  private:
   void setMeanAndCov(const Eigen::MatrixXd& samples,
      const Eigen::VectorXd& weights);

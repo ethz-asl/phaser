@@ -41,6 +41,7 @@ class BinghamPeakBasedEval : public ZScoreEval {
       const std::vector<double>& norm_corr,
       const backend::SphericalCorrelation& sph, Eigen::MatrixXd* samples,
       Eigen::RowVectorXd* weights) const;
+ private:
 };
 
 }  // namespace correlation

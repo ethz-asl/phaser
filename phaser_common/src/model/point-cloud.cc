@@ -96,12 +96,12 @@ void PointCloud::getNearestPoints(
       value.addPoint(point);
       value.addRange(dist);
       value.addIntensity(point.intensity);
-      //value.addInterpolation(
-       // (0.65f * point.intensity + 0.35f * dist) * penality);
-      value.addInterpolation(point.intensity);
+      value.addInterpolation(
+        (0.55f * point.intensity + 0.45f * dist) * penality);
+      //value.addInterpolation(point.intensity);
     }
-    // if (value.getAveragedIntensity() > 1
-    //&& value.getAveragedIntensity() < 100)
+    //if (value.getAveragedIntensity() > 400)
+      //&& value.getAveragedIntensity() < 400)
     function_values->emplace_back(std::move(value));
   }
 }

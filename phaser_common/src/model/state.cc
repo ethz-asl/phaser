@@ -1,10 +1,23 @@
 #include "packlo/model/state.h"
+#include "packlo/distribution/bingham.h"
+#include "packlo/distribution/gaussian.h"
 
 #include <glog/logging.h>
 
 namespace model {
 
 common::DualQuaternion State::getCurrentState() const {
+  VLOG(1) << "---------------------------------------------------";
+  common::BinghamPtr rot_uncertainty 
+    = std::dynamic_pointer_cast<common::Bingham>(rot_distribution_);
+  VLOG(1) << rot_uncertainty->moment();
+  VLOG(1) << rot_uncertainty->moment().trace();
+  VLOG(1) << "---------------------------------------------------";
+  common::GaussianPtr pos_uncertainty 
+    = std::dynamic_pointer_cast<common::Gaussian>(trans_distribution_);
+  VLOG(1) << pos_uncertainty->getCov();
+  VLOG(1) << "---------------------------------------------------";
+
   Eigen::Vector4d b_est(1, 0, 0, 0);
   if (rot_distribution_ != nullptr)
     b_est = rot_distribution_->getEstimate();

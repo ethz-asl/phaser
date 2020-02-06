@@ -94,14 +94,21 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   cloud_prev->initialize_kd_tree();
 
   // Register the point cloud.
+  /*
   visualization::DebugVisualizer::getInstance().visualizePointCloudDiff(
       *cloud_prev, *cloud_cur);
+      */
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
+  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
+      */
   estimateTranslation(cloud_prev, &result);
+
+  /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
+      */
   return result;
 }
 
@@ -115,6 +122,8 @@ model::RegistrationResult SphRegistration::estimateRotation(
   correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
   common::BaseDistributionPtr rot =
       correlation_eval_->calcRotationUncertainty();
+  Eigen::Vector4d inv = rot->getEstimate();
+  inv.block(1,0,3,1) = -inv.block(1,0,3,1);
   Eigen::VectorXd b_est =
       common::RotationUtils::ConvertQuaternionToXYZ(rot->getEstimate());
   Eigen::VectorXd corr_est = common::RotationUtils::ConvertZYZtoXYZ(zyz);

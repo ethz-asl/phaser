@@ -7,13 +7,13 @@ rosrun phaser_ros phaser_ros \
 		--enable_debug=true \
 		--registration_algorithm="sph" \
 		--datasource="ply" \
-		--PlyReadDirectory="/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_experimental/phaser_prototype/ply/exp1_2/" \
-		--spherical_bandwith=70 \
+		--PlyReadDirectory="/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_experimental/phaser_prototype/ply/test-exp/" \
+		--spherical_bandwith=91 \
 		--phase_n_voxels=105 \
 		--phase_discretize_lower=-50 \
 		--phase_discretize_upper=50 \
-    --gaussian_peak_neighbors=10 \
-    --bingham_peak_neighbors=10 \
+    --gaussian_peak_neighbors=0 \
+    --bingham_peak_neighbors=0 \
     --z_score_filter_threshold=0.01 \
     --z_score_lag_max=5 \
     --z_score_threshold=3.0 \

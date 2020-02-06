@@ -97,7 +97,7 @@ void Distributor::pointCloudCallback(
     }
     const model::RegistrationResult result = registerPointCloud(cloud);
     // prev_point_cloud_ = result.getRegisteredCloud();
-    prev_point_cloud_ = cloud;
+    prev_point_cloud_ = nullptr;
     appendResult(result);
     writeResultsToFile();
     registrator_ = std::make_unique<registration::SphRegistration>();
@@ -136,7 +136,7 @@ void Distributor::preprocessPointCloud(
   pcl::PassThrough<common::Point_t> pass;
   pass.setInputCloud(input_cloud);
   pass.setFilterFieldName("z");
-  pass.setFilterLimits(-1.0, 1.0);
+  pass.setFilterLimits(-2.0, -0.4);
   pass.setFilterLimitsNegative(true);
   pass.filter(*input_cloud);
 

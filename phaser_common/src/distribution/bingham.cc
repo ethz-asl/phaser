@@ -43,7 +43,12 @@ Eigen::MatrixXd Bingham::gaussianCovariance(bool angle) {
     eRes << 2 * res;
     return eRes;
   } else {
-    throw std::runtime_error("not yet implemented");
+    const uint16_t sample_count = 1000u;
+    Eigen::MatrixXd samples; 
+    sample(&samples, sample_count);
+    Eigen::VectorXd m = mode();
+    Eigen::MatrixXd zero_samples = samples - m.replicate(samples.rows(), 1);
+    return zero_samples*zero_samples.transpose()/sample_count;
   }
 }
 
@@ -292,7 +297,10 @@ Bingham Bingham::fit(
 
   Eigen::MatrixXd C = samples * weights.asDiagonal() * samples.transpose();
   C = 0.5 * (C + C.transpose()).eval();
-  return fitToMoment(C);
+  Bingham b = fitToMoment(C);
+  b.samples_ = samples;
+  b.weights_ = weights;
+  return b;
 }
 
 Bingham Bingham::fit(const Eigen::MatrixXd& samples) {

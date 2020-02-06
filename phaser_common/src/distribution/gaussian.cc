@@ -17,6 +17,8 @@ Gaussian::Gaussian(const Eigen::MatrixXd& samples,
   CHECK_GT(samples.rows(), 0);
   CHECK_EQ(samples.cols(), weights.rows());
   setMeanAndCov(samples, weights);
+  samples_ = samples;
+  weights_ = weights;
 }
 
 Eigen::VectorXd Gaussian::getEstimate() const {
