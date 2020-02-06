@@ -1,6 +1,5 @@
 # Phase Correlation Based Point Cloud Registration
 
-
 ## Installation
 
 ### Prerequisites 
@@ -37,5 +36,5 @@ Building the project:
 Build and run tests: 
 
 ```
-  catkin run_tests phaser_core
+  ./phaser_share/run_build_tests
 ```
