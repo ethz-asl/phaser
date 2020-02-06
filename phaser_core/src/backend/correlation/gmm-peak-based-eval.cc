@@ -1,7 +1,7 @@
-#include "packlo/backend/correlation/gmm-peak-based-eval.h"
-#include "packlo/backend/alignment/phase-aligner.h"
-#include "packlo/backend/correlation/gaussian-peak-based-eval.h"
-#include "packlo/distribution/gaussian.h"
+#include "phaser/backend/correlation/gmm-peak-based-eval.h"
+#include "phaser/backend/alignment/phase-aligner.h"
+#include "phaser/backend/correlation/gaussian-peak-based-eval.h"
+#include "phaser/distribution/gaussian.h"
 
 #include <glog/logging.h>
 #include <vector>

@@ -1,7 +1,7 @@
-#include "packlo/backend/registration/mock/sph-registration-mock-translated.h"
-#include "packlo/common/translation-utils.h"
-#include "packlo/common/rotation-utils.h"
-#include "packlo/common/statistic-utils.h"
+#include "phaser/backend/registration/mock/sph-registration-mock-translated.h"
+#include "phaser/common/translation-utils.h"
+#include "phaser/common/rotation-utils.h"
+#include "phaser/common/statistic-utils.h"
 
 #include <glog/logging.h>
 

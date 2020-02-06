@@ -1,5 +1,5 @@
-#include "packlo/distribution/bingham-objective.h"
-#include "packlo/distribution/bingham.h"
+#include "phaser/distribution/bingham-objective.h"
+#include "phaser/distribution/bingham.h"
 
 #include <glog/logging.h>
 

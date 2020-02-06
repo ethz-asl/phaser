@@ -1,4 +1,4 @@
-#include "packlo/distribution/bingham-normalization-constant.h"
+#include "phaser/distribution/bingham-normalization-constant.h"
 
 #define _USE_MATH_DEFINES
 #include <cmath>

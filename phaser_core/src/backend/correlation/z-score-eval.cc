@@ -1,10 +1,10 @@
-#include "packlo/backend/correlation/z-score-eval.h"
-#include "packlo/backend/alignment/phase-aligner.h"
-#include "packlo/backend/correlation/signal-analysis.h"
- #include "packlo/distribution/bingham.h"
- #include "packlo/distribution/gaussian.h"
+#include "phaser/backend/correlation/z-score-eval.h"
+#include "phaser/backend/alignment/phase-aligner.h"
+#include "phaser/backend/correlation/signal-analysis.h"
+ #include "phaser/distribution/bingham.h"
+ #include "phaser/distribution/gaussian.h"
 
-#include "packlo/visualization/plotty-visualizer.h"
+#include "phaser/visualization/plotty-visualizer.h"
 
 #include <cmath>
 #include <numeric>

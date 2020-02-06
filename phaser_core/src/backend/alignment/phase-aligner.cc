@@ -1,5 +1,5 @@
-#include "packlo/backend/alignment/phase-aligner.h"
-#include "packlo/common/point-cloud-utils.h"
+#include "phaser/backend/alignment/phase-aligner.h"
+#include "phaser/common/point-cloud-utils.h"
 
 #include <complex.h>  // needs to be included before fftw
 

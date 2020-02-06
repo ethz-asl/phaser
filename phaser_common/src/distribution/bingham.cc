@@ -1,8 +1,8 @@
-#include "packlo/distribution/bingham.h"
-#include "packlo/common/math-utils.h"
-#include "packlo/distribution/bingham-mle.h"
-#include "packlo/distribution/bingham-normalization-constant.h"
-#include "packlo/distribution/bingham-opt-mle.h"
+#include "phaser/distribution/bingham.h"
+#include "phaser/common/math-utils.h"
+#include "phaser/distribution/bingham-mle.h"
+#include "phaser/distribution/bingham-normalization-constant.h"
+#include "phaser/distribution/bingham-opt-mle.h"
 
 #include <algorithm>
 #include <boost/math/special_functions/bessel.hpp>

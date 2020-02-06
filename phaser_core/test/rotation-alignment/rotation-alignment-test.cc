@@ -1,11 +1,11 @@
-#include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
-#include "packlo/backend/registration/sph-registration.h"
-#include "packlo/common/data/datasource-ply.h"
-#include "packlo/common/metric-utils.h"
-#include "packlo/common/rotation-utils.h"
-#include "packlo/common/test/testing-entrypoint.h"
-#include "packlo/common/test/testing-predicates.h"
-#include "packlo/visualization/debug-visualizer.h"
+#include "phaser/backend/registration/mock/sph-registration-mock-rotated.h"
+#include "phaser/backend/registration/sph-registration.h"
+#include "phaser/common/data/datasource-ply.h"
+#include "phaser/common/metric-utils.h"
+#include "phaser/common/rotation-utils.h"
+#include "phaser/common/test/testing-entrypoint.h"
+#include "phaser/common/test/testing-predicates.h"
+#include "phaser/visualization/debug-visualizer.h"
 
 #include <gtest/gtest.h>
 #include <cmath>
