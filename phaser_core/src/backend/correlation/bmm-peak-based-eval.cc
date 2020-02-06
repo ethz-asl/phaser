@@ -39,14 +39,11 @@ common::BinghamMixturePtr BmmPeakBasedEval::fitRotationalBinghamDistribution(
   uint32_t start, end, k = 0;
   // for (uint32_t i = 0u; i < n_signals; ++i) {
   for (uint32_t i : signals) {
-    VLOG(1) << "signal: " << i;
     calculateStartEndNeighbor(i, n_corr, &start, &end);
     const uint32_t num_elements = end - start + 1;
 
-    VLOG(1) << "num_elements: " << num_elements;
     Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(4, num_elements);
     Eigen::RowVectorXd weights = Eigen::RowVectorXd::Zero(num_elements);
-
     retrievePeakNeighbors(start, end, norm_corr, sph, &samples, &weights);
     peak_binghams.emplace_back(common::Bingham::fit(samples, weights));
 
