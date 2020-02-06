@@ -53,14 +53,8 @@ common::BinghamMixturePtr BmmPeakBasedEval::fitRotationalBinghamDistribution(
     bm_weights(k) = norm_corr.at(i);
     ++k;
   }
-  VLOG(1) << "bm weighted";
   bm_weights = bm_weights.array() / bm_weights.array().sum();
-  VLOG(1) << "bm weighted2";
-  auto test =
-      std::make_shared<common::BinghamMixture>(peak_binghams, bm_weights);
-  VLOG(1) << "bmm fitted";
-
-  return test;
+  return std::make_shared<common::BinghamMixture>(peak_binghams, bm_weights);
 }
 
 void BmmPeakBasedEval::calculateStartEndNeighbor(
@@ -104,7 +98,6 @@ void BmmPeakBasedEval::retrievePeakNeighbors(
   const double weight_sum = weights->array().sum();
   CHECK_GT(weight_sum, 0);
   (*weights) = weights->array() / weight_sum;
-  VLOG(1) << "bingham weights: \n" << (*weights);
 }
 
 }  // namespace correlation

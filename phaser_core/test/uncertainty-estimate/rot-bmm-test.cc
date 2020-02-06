@@ -53,7 +53,6 @@ TEST_F(RotBinghamMixtureTest, LowUncertainty) {
             result.getRotUncertaintyEstimate());
     CHECK_NOTNULL(uncertainty);
     const Eigen::MatrixXd& cov = uncertainty->getMixtureS2();
-    VLOG(1) << "------------------------- Uncertainty bingham:\n" << cov;
     EXPECT_LE(cov.trace(), 5);
   });
   ds_->startStreaming(0);

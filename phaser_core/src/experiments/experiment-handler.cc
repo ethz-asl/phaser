@@ -185,14 +185,12 @@ void ExperimentHandler::translateToOdomFrame(
 
 void ExperimentHandler::rotateToSensorFrame(const model::PointCloudPtr& cloud) {
   Eigen::Vector3d rpy = gt_.block(0, n_registered_, 3, 1);
-  VLOG(1) << "sampled rpy: " << rpy.transpose();
   common::RotationUtils::RotateAroundZYX(cloud, -rpy(0), -rpy(1), -rpy(2));
 }
 
 void ExperimentHandler::rotateToOdomFrame(const model::PointCloudPtr& cloud) {
   Eigen::Vector3d rpy = gt_.block(0, n_registered_, 3, 1);
   common::RotationUtils::RotateAroundXYZ(cloud, rpy(0), rpy(1), rpy(2));
-
 }
 
 

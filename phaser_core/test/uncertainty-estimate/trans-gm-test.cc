@@ -52,7 +52,6 @@ TEST_F(TransGMTest, LowUncertainty) {
         std::dynamic_pointer_cast<common::GaussianMixture>(
             result.getPosUncertaintyEstimate());
     const Eigen::MatrixXd& cov = uncertainty->getMixtureCov();
-    VLOG(1) << "------------------------- Uncertainty:\n" << cov;
     EXPECT_LT(cov.trace(), 10.0);
   });
   ds_->startStreaming(0);

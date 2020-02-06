@@ -57,9 +57,6 @@ const common::Vector_t& RegistrationResult::getTranslation() const {
 
 Eigen::VectorXd RegistrationResult::getStateAsVec() const {
   const common::DualQuaternion dq = current_state_.getCurrentState();
-  VLOG(1) << "q: " << dq.getRotation().vec().transpose();
-  VLOG(1) << "t: " << dq.getTranslation().transpose();
-  VLOG(1) << "dq: " << dq.asVec().transpose();
   return dq.asVec();
 }
 

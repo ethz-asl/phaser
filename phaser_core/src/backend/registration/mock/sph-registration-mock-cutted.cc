@@ -21,7 +21,7 @@ model::RegistrationResult SphRegistrationMockCutted::registerPointCloud(
 
   pcl::getMinMax3D(*raw_cloud, min_pt, max_pt);
   float dist = std::sqrt((min_pt.y - max_pt.y) * (min_pt.y - max_pt.y));
-  VLOG(1) << "min pt dist: " << dist;
+  VLOG(3) << "min pt dist: " << dist;
   model::PointCloudPtr point_cloud =
       cutPointCloud(raw_cloud, min_pt.y + 1, min_pt.y + 0.7 * dist, "y");
   model::PointCloudPtr syn_cloud =
@@ -49,7 +49,7 @@ model::RegistrationResult SphRegistrationMockCutted::registerPointCloud(
 
 model::PointCloudPtr SphRegistrationMockCutted::cutPointCloud(
     common::PointCloud_tPtr& cloud, double min, double max, std::string&& dim) {
-  VLOG(1) << "pass using " << min << " and " << max;
+  VLOG(3) << "pass using " << min << " and " << max;
   common::PointCloud_tPtr mod_cloud (new common::PointCloud_t);
   pcl::PassThrough<common::Point_t> pass;
   pass.setInputCloud (cloud);
