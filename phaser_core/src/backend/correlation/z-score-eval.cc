@@ -2,7 +2,7 @@
 #include "packlo/backend/alignment/phase-aligner.h"
 #include "packlo/backend/correlation/signal-analysis.h"
  #include "packlo/distribution/bingham.h"
- #include "packlo/distribution/gaussian.h" 
+ #include "packlo/distribution/gaussian.h"
 
 #include "packlo/visualization/plotty-visualizer.h"
 
@@ -34,14 +34,14 @@ common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromTranslation() {
   std::set<uint32_t> signals;
   std::vector<double> n_corr_ds;
   evaluateCorrelationVector(aligner_.getCorrelation(), &signals, &n_corr_ds);
-  common::BaseDistributionPtr dist 
+  common::BaseDistributionPtr dist
     = evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
 
   common::GaussianPtr g = std::dynamic_pointer_cast<common::Gaussian>(dist);
   trans_samples_.emplace_back(g->samples_);
   trans_weights_.emplace_back(g->weights_);
 
-  std::fstream fs; 
+  std::fstream fs;
   fs.open("trans_samples.txt", std::fstream::out);
   for (auto& sample : trans_samples_) {
     fs << sample << "\n";
@@ -62,31 +62,8 @@ common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromRotation() {
   std::set<uint32_t> signals;
   std::vector<double> n_corr_ds;
   evaluateCorrelationVector(sph_.getCorrelation(), &signals, &n_corr_ds);
-  common::BaseDistributionPtr dist 
+  common::BaseDistributionPtr dist
     = evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
-
-  // =============================== DEBUG 
-  ++counter;
-  common::BinghamPtr b = std::dynamic_pointer_cast<common::Bingham>(dist);
-  VLOG(1) << "======== TRACES: ";                                               
-  rot_samples_.emplace_back(b->samples_);
-  rot_weights_.emplace_back(b->weights_);
-  //if (counter > 115 != 0u) return dist; 
-
-  std::fstream fs; 
-  fs.open("rot_samples.txt", std::fstream::out);
-  for (auto& sample : rot_samples_) {
-    fs << sample << "\n";
-  }
-  fs.close();
-  fs.open("rot_weights.txt", std::fstream::out);
-  for (auto& weights : rot_weights_) {
-    fs << weights << "\n";
-  }
-  VLOG(1) << "====================================================";
-  // =====================================
-  
-
   return dist;
 }
 

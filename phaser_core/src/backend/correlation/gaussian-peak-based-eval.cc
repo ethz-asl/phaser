@@ -5,7 +5,7 @@
 #include <glog/logging.h>
 
 DEFINE_int32(
-    gaussian_peak_neighbors, 5,
+    gaussian_peak_neighbors, 0,
     "Determines the number of neighbors used for the Bingham calculation.");
 
 namespace correlation {

@@ -15,7 +15,7 @@ class RotBinghamTest : public ::testing::Test {
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
-    ds_->setDatasetFolder("./test_clouds/arche/");
+    ds_->setDatasetFolder("./test_clouds/arche/sigma-level-1/");
     registrator_ = std::make_unique<registration::SphRegistration>(
         "phase", "bingham", "gaussian");
     z_score_eval_ = dynamic_cast<correlation::ZScoreEval*>(

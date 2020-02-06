@@ -15,7 +15,7 @@ class TransformationAlignmentTest : public ::testing::Test {
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
-    ds_->setDatasetFolder("./test_clouds/kitti/1/");
+    ds_->setDatasetFolder("./test_clouds/kitti/sigma-level-1/");
   }
 
   data::DatasourcePlyPtr ds_;
@@ -81,6 +81,9 @@ ASSERT_LT(
         prev_cloud, result.getRegisteredCloud()),
     init_hausdorff);
     */
+
+  //visualization::DebugVisualizer::getInstance()
+    //.visualizePointCloudDiff(*prev_cloud, *result.getRegisteredCloud());
 
     // Check that the Hausdorff distance decreased
     // after the translation estimation.
