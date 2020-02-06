@@ -1,3 +1,0 @@
-[submodule "phaser_experimental/phaser_prototype"]
-	path = phaser_experimental/phaser_prototype
-	url = git@github.com:ethz-asl/spherical_lidar_registration.git
