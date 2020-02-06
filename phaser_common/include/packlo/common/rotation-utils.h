@@ -15,6 +15,9 @@ class RotationUtils {
   static void RotateAroundZYX(
       model::PointCloud* cloud, const float alpha_rad, const float beta_rad,
       const float gamma_rad);
+  static void RotateAroundZYX(
+      model::PointCloudPtr cloud, const float alpha_rad, const float beta_rad,
+      const float gamma_rad);
   static model::PointCloud RotateAroundZYXCopy(
       const model::PointCloud& cloud, const float alpha_rad,
       const float beta_rad, const float gamma_rad);
@@ -22,6 +25,9 @@ class RotationUtils {
       model::PointCloud* cloud, const float alpha_rad, const float beta_rad,
       const float gamma_rad);
   static void RotateAroundXYZ(
+      model::PointCloudPtr cloud, const float alpha_rad, const float beta_rad,
+      const float gamma_rad);
+  static void RotateAroundXYZInv(
       model::PointCloudPtr cloud, const float alpha_rad, const float beta_rad,
       const float gamma_rad);
   static model::PointCloud RotateAroundXYZCopy(

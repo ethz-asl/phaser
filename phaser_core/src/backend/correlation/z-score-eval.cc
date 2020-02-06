@@ -1,7 +1,8 @@
 #include "packlo/backend/correlation/z-score-eval.h"
 #include "packlo/backend/alignment/phase-aligner.h"
 #include "packlo/backend/correlation/signal-analysis.h"
-#include "packlo/distribution/gaussian.h"
+ #include "packlo/distribution/bingham.h"
+ #include "packlo/distribution/gaussian.h"
 
 #include "packlo/visualization/plotty-visualizer.h"
 
@@ -9,6 +10,8 @@
 #include <numeric>
 #include <algorithm>
 #include <functional>
+#include <sstream>
+#include <fstream>
 
 #include <glog/logging.h>
 
@@ -25,18 +28,43 @@ common::BaseDistributionPtr ZScoreEval::evaluateCorrelation(
   return evaluateCorrelationFromTranslation();
 }
 
+static std::vector<Eigen::MatrixXd> trans_samples_;
+static std::vector<Eigen::MatrixXd> trans_weights_;
 common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromTranslation() {
   std::set<uint32_t> signals;
   std::vector<double> n_corr_ds;
   evaluateCorrelationVector(aligner_.getCorrelation(), &signals, &n_corr_ds);
-  return evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
+  common::BaseDistributionPtr dist
+    = evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
+
+  common::GaussianPtr g = std::dynamic_pointer_cast<common::Gaussian>(dist);
+  trans_samples_.emplace_back(g->samples_);
+  trans_weights_.emplace_back(g->weights_);
+
+  std::fstream fs;
+  fs.open("trans_samples.txt", std::fstream::out);
+  for (auto& sample : trans_samples_) {
+    fs << sample << "\n";
+  }
+  fs.close();
+  fs.open("trans_weights.txt", std::fstream::out);
+  for (auto& weights : trans_weights_) {
+    fs << weights << "\n";
+  }
+
+  return dist;
 }
 
+static std::vector<Eigen::MatrixXd> rot_samples_;
+static std::vector<Eigen::MatrixXd> rot_weights_;
+static uint32_t counter = 0u;
 common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromRotation() {
   std::set<uint32_t> signals;
   std::vector<double> n_corr_ds;
   evaluateCorrelationVector(sph_.getCorrelation(), &signals, &n_corr_ds);
-  return evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
+  common::BaseDistributionPtr dist
+    = evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
+  return dist;
 }
 
 void ZScoreEval::evaluateCorrelationVector(
@@ -45,10 +73,16 @@ void ZScoreEval::evaluateCorrelationVector(
   // std::vector<double> n_corr;
 
   // Normalize correlation.
-  double max = *std::max_element(corr.cbegin(), corr.cend());
+  auto max = std::max_element(corr.cbegin(), corr.cend());
+  CHECK(max != corr.cend());
+  /*
   std::transform(
       corr.begin(), corr.end(), std::back_inserter(*n_corr_ds),
-      [&](const double val) { return val / max; });
+      [&](const double val) { return val / *max; });
+      */
+  VLOG(1) << "max is at: " << *max;
+  signals->insert(std::distance(corr.begin(), max));
+  *n_corr_ds = corr;
 
   // Filter values close to zero for speedup.
   /*
@@ -60,7 +94,8 @@ void ZScoreEval::evaluateCorrelationVector(
   */
 
   // visualization::PlottyVisualizer::getInstance().createPlotFor(*n_corr_ds);
-  peak_extraction_.extractPeaks(*n_corr_ds, signals);
+
+  // peak_extraction_.extractPeaks(*n_corr_ds, signals);
 }
 
 std::pair<double, double> ZScoreEval::fitSmoothedNormalDist(
@@ -101,7 +136,7 @@ ZScoreEval::fitTranslationalNormalDist(
 
   // Extract translational estimates.
   for (uint32_t signal_idx : signals) {
-    std::array<uint16_t, 3> xyz = phase.ind2sub(signal_idx);
+    std::array<uint32_t, 3> xyz = phase.ind2sub(signal_idx);
     samples(0, i) =
         phase.computeTranslationFromIndex(static_cast<double>(xyz[0]));
     samples(1, i) =

@@ -15,7 +15,7 @@ class TransformationAlignmentTest : public ::testing::Test {
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
-    ds_->setDatasetFolder("./test_clouds/kitti/1/");
+    ds_->setDatasetFolder("./test_clouds/kitti/sigma-level-1/");
   }
 
   data::DatasourcePlyPtr ds_;
@@ -47,7 +47,7 @@ TEST_F(TransformationAlignmentTest, TransformEasy) {
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             prev_cloud, result.getRegisteredCloud()),
-        40.0);
+        45.0);
   });
   ds_->startStreaming();
 }
@@ -82,6 +82,9 @@ ASSERT_LT(
     init_hausdorff);
     */
 
+  //visualization::DebugVisualizer::getInstance()
+    //.visualizePointCloudDiff(*prev_cloud, *result.getRegisteredCloud());
+
     // Check that the Hausdorff distance decreased
     // after the translation estimation.
     reg.estimateTranslation(prev_cloud, &result);
@@ -89,7 +92,7 @@ ASSERT_LT(
     ASSERT_LT(
         common::MetricUtils::HausdorffDistance(
             prev_cloud, result.getRegisteredCloud()),
-        40.0);
+        50.0);
     prev_cloud = result.getRegisteredCloud();
   });
   ds_->startStreaming();

@@ -34,6 +34,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/controller/distributor.cc
    src/backend/registration/base-registration.cc
    src/backend/registration/sph-registration.cc
+   src/backend/registration/g-icp-registration.cc
    src/backend/registration/mock/sph-registration-mock-rotated.cc
    src/backend/registration/mock/sph-registration-mock-cutted.cc
    src/backend/registration/mock/sph-registration-mock-translated.cc
@@ -54,6 +55,8 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/alignment/range-based-aligner.cc
    src/backend/alignment/phase-aligner.cc
    src/backend/alignment/feature-aligner.cc
+
+   src/experiments/experiment-handler.cc
 )
 
 #############

@@ -111,6 +111,22 @@ TEST_F(BinghamTest, sampleDeterministicTest) {
   EXPECT_NEAR_EIGEN(deterministic_samples, true_samples, 1e-4);
 }
 
+TEST_F(BinghamTest, fitSingleTest) {
+  Eigen::Quaterniond q1(
+      0.956937406927354, 0.058856783978165, 0.168490940966118,
+      0.228948642746032);
+  Eigen::MatrixXd samples =
+      common::RotationUtils::ConvertQuaternionsToMatrix({q1});
+  Eigen::RowVectorXd weights(1);
+  weights << 1;
+
+  common::Bingham bingham = common::Bingham::fit(samples, weights);
+  Eigen::VectorXd true_mode(4);
+  true_mode << 0.956937406927354, 0.058856783978165, 0.168490940966118,
+      0.228948642746032;
+  EXPECT_NEAR_EIGEN(bingham.mode(), true_mode, 1e-4);
+}
+
 }  // namespace common
 
 MAPLAB_UNITTEST_ENTRYPOINT

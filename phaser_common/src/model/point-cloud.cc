@@ -3,6 +3,7 @@
 
 #include <pcl/common/io.h>
 #include <pcl/common/transforms.h>
+#include <pcl/features/normal_3d.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/kdtree/impl/kdtree_flann.hpp>
 
@@ -88,14 +89,19 @@ void PointCloud::getNearestPoints(
       const int current_idx = pointIdxNKNSearch[i];
       const float current_dist = pointNKNSquaredDistance[i];
       const common::Point_t& point = cloud_->points[current_idx];
-
+      double penality = 1;
+      //if (current_dist > 1)
+        //penality = 0.5;
       const double dist = ranges_.at(current_idx);
       value.addPoint(point);
       value.addRange(dist);
       value.addIntensity(point.intensity);
-      value.addInterpolation(0.50f * point.intensity + 0.50f * dist);
-      // value.addInterpolation(point.intensity);
+      value.addInterpolation(
+        (0.55f * point.intensity + 0.45f * dist) * penality);
+      //value.addInterpolation(point.intensity);
     }
+    //if (value.getAveragedIntensity() > 400)
+      //&& value.getAveragedIntensity() < 400)
     function_values->emplace_back(std::move(value));
   }
 }
@@ -156,21 +162,27 @@ void PointCloud::writeToFile(std::string&& directory) {
   pcl::PLYWriter writer;
   std::vector<std::string> files;
   data::FileSystemHelper::readDirectory(directory, &files);
-  std::string file_name =
-      directory + FLAGS_PlyPrefix + std::to_string(files.size() + 1) + ".ply";
+  char buffer[50];
+  sprintf(buffer, "%s%.3lu.ply", FLAGS_PlyPrefix.c_str(), files.size() + 1);
+  const std::string full_name = directory + std::string(buffer);
 
-  VLOG(2) << "Writing PLY file to: " << file_name;
-  writer.write(file_name, *cloud_);
+  VLOG(2) << "Writing PLY file to: " << full_name;
+  writer.write(full_name, *cloud_);
 }
 
 void PointCloud::readFromFile(const std::string& ply) {
   CHECK(!ply.empty());
   CHECK_NOTNULL(cloud_);
   VLOG(2) << "Reading PLY file from: " << ply;
+  ply_read_directory_ = ply;
   pcl::PLYReader reader;
   reader.read(ply, *cloud_);
   VLOG(2) << "Cloud size: " << cloud_->size();
   // convertInputPointCloud(cloud);
+}
+
+std::string PointCloud::getPlyReadDirectory() const noexcept {
+  return ply_read_directory_;
 }
 
 }  // namespace model

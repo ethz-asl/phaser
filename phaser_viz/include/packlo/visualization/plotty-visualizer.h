@@ -13,7 +13,7 @@ class PlottyVisualizer {
 
   void createPlotFor(
       const common::StatisticsManager& manager, std::string&& key);
-  void createPlotFor(const std::vector<double>& data);
+  PlottyVisualizer& createPlotFor(const std::vector<double>& data);
 
   void storeToFile(const std::vector<double>& data);
   // Singleton instance

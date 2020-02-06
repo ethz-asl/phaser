@@ -23,22 +23,15 @@ SphRegistrationMockRotated::SphRegistrationMockRotated()
 
 model::RegistrationResult SphRegistrationMockRotated::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr) {
+  CHECK_NOTNULL(cloud_prev);
   cloud_prev->initialize_kd_tree();
 
-  model::PointCloud syn_cloud = pertubPointCloud(
-      *cloud_prev, mock_alpha_rad_, mock_beta_rad_, mock_gamma_rad_);
-  syn_cloud.initialize_kd_tree();
+  model::PointCloudPtr syn_cloud =
+      std::make_shared<model::PointCloud>(pertubPointCloud(
+          *cloud_prev, mock_alpha_rad_, mock_beta_rad_, mock_gamma_rad_));
+  syn_cloud->initialize_kd_tree();
 
-  std::array<double, 3> zyz;
-  correlatePointcloud(*cloud_prev, syn_cloud, &zyz);
-  Eigen::VectorXd xyz = common::RotationUtils::ConvertZYZtoXYZ(zyz);
-  VLOG(1) << "estimated xyz: " << xyz.transpose();
-
-  common::RotationUtils::RotateAroundXYZ(&syn_cloud, xyz(0), xyz(1), xyz(2));
-
-  // visualization::DebugVisualizer::getInstance()
-  // .visualizePointCloudDiff(*cloud_prev, syn_cloud);
-  return model::RegistrationResult(std::move(syn_cloud), std::move(zyz));
+  return estimateRotation(cloud_prev, syn_cloud);
 }
 
 void SphRegistrationMockRotated::setRandomRotation(

@@ -200,6 +200,8 @@ class Bingham : public BaseDistribution {
   static double computeF(const Eigen::VectorXd& Z);
 
   static Eigen::VectorXd computeDF(const Eigen::VectorXd& Z);
+  Eigen::MatrixXd samples_;
+  Eigen::VectorXd weights_;
 
  private:
   /**

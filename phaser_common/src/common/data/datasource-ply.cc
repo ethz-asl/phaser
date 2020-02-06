@@ -19,14 +19,11 @@ void DatasourcePly::subscribeToPointClouds(
 void DatasourcePly::startStreaming(const uint32_t number_of_clouds) {
   VLOG(1) << "path: " << boost::filesystem::current_path();
   VLOG(1) << "reading ply from: " << datasource_folder_;
-  std::vector<model::PointCloudPtr> clouds = readPly(datasource_folder_);
+  std::vector<model::PointCloudPtr> clouds =
+      readPly(datasource_folder_, number_of_clouds);
   VLOG(1) << "reading ply done. size: " << clouds.size();
   CHECK(!clouds.empty());
-  uint32_t n_clouds = 0;
-  if (number_of_clouds == 0)
-    n_clouds = clouds.size();
-  else
-    n_clouds = number_of_clouds;
+  const uint32_t n_clouds = clouds.size();
   for (uint32_t i = 0u; i < n_clouds; ++i) {
     model::PointCloudPtr& cloud = clouds.at(i);
     for (auto& callback : callbacks_) {
@@ -40,17 +37,25 @@ void DatasourcePly::setDatasetFolder(std::string&& datasource) {
 }
 
 std::vector<model::PointCloudPtr> DatasourcePly::readPly(
-    const std::string& directory) {
+    const std::string& directory, const uint32_t max_n_clouds) {
   std::vector<model::PointCloudPtr> clouds;
   if (directory.empty()) return clouds;
   std::vector<std::string> files;
   FileSystemHelper::readDirectory(directory, &files);
   if (files.empty()) return clouds;
 
+  uint32_t file_counter = 0u;
   for (const std::string& ply : files) {
+    if (max_n_clouds > 0 && file_counter > max_n_clouds)
+      break;
+    const std::string& path_to_ply = directory + ply;
+    boost::filesystem::path p(path_to_ply);
+    if (p.extension() != ".ply")
+      continue;
     model::PointCloudPtr cur_cloud =
-        std::make_shared<model::PointCloud>(directory + ply);
+        std::make_shared<model::PointCloud>(path_to_ply);
     clouds.emplace_back(std::move(cur_cloud));
+    ++file_counter;
   }
 
   return clouds;

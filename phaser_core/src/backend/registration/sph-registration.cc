@@ -10,7 +10,9 @@
 #include "packlo/common/translation-utils.h"
 #include "packlo/visualization/debug-visualizer.h"
 
+#include <algorithm>
 #include <glog/logging.h>
+#include <iostream>
 
 DEFINE_int32(
     spherical_bandwith, 70,
@@ -86,22 +88,27 @@ model::RegistrationResult SphRegistration::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
   CHECK(cloud_prev);
   CHECK(cloud_cur);
+  VLOG(1) << "=== Registering point cloud ====================================";
+  VLOG(1) << "Cloud1: " << cloud_prev->getPlyReadDirectory();
+  VLOG(1) << "Cloud2: " << cloud_cur->getPlyReadDirectory();
   cloud_prev->initialize_kd_tree();
 
   // Register the point cloud.
-  // visualization::DebugVisualizer::getInstance()
-  // .visualizePointCloudDiff(*cloud_prev, *cloud_cur);
+  /*
+  visualization::DebugVisualizer::getInstance().visualizePointCloudDiff(
+      *cloud_prev, *cloud_cur);
+      */
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-    */
+      */
   estimateTranslation(cloud_prev, &result);
 
   /*
   visualization::DebugVisualizer::getInstance()
     .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-    */
+      */
   return result;
 }
 
@@ -115,14 +122,26 @@ model::RegistrationResult SphRegistration::estimateRotation(
   correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
   common::BaseDistributionPtr rot =
       correlation_eval_->calcRotationUncertainty();
+  Eigen::Vector4d inv = rot->getEstimate();
+  inv.block(1,0,3,1) = -inv.block(1,0,3,1);
   Eigen::VectorXd b_est =
       common::RotationUtils::ConvertQuaternionToXYZ(rot->getEstimate());
+  Eigen::VectorXd corr_est = common::RotationUtils::ConvertZYZtoXYZ(zyz);
 
+  VLOG(1) << "Corr rotation: " << corr_est.transpose();
+  VLOG(1) << "Bingham q: " << rot->getEstimate().transpose();
+  VLOG(1) << "Bingham rotation: " << b_est.transpose();
   common::RotationUtils::RotateAroundXYZ(
       cloud_cur, b_est(0), b_est(1), b_est(2));
 
+  /*
+  common::RotationUtils::RotateAroundXYZ(
+      cloud_cur, corr_est(0), corr_est(1), corr_est(2));
+      */
+
   model::RegistrationResult result(std::move(*cloud_cur), std::move(zyz));
   result.setRotUncertaintyEstimate(rot);
+  result.setRotationCorrelation(sph_corr_.getCorrelation());
   return result;
 }
 
@@ -142,12 +161,17 @@ void SphRegistration::estimateTranslation(
       correlation_eval_->calcTranslationUncertainty();
   Eigen::VectorXd g_est = pos->getEstimate();
 
+  VLOG(1) << "Corr translation: " << xyz.transpose();
   VLOG(1) << "Gaussian translation: " << g_est.transpose();
   VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
     << "ms.";
 
   common::TranslationUtils::TranslateXYZ(
       rot_cloud, g_est(0), g_est(1), g_est(2));
+  /*
+common::TranslationUtils::TranslateXYZ(
+rot_cloud, xyz(0), xyz(1), xyz(2));
+*/
   result->setPosUncertaintyEstimate(pos);
 }
 
@@ -168,7 +192,7 @@ void SphRegistration::correlatePointcloud(
   const double duration_sample_h_ms = common::executeTimedFunction(
       &common::SphericalSampler::sampleUniformly, &sampler_, target,
       &h_values_);
-  CHECK(f_values_.size() == h_values_.size());
+  // CHECK(f_values_.size() == h_values_.size());
 
   const double duration_correlation_ms = common::executeTimedFunction(
       &backend::SphericalCorrelation::correlateSignals, &sph_corr_, f_values_,
@@ -182,7 +206,16 @@ void SphRegistration::correlatePointcloud(
   statistics_manager_.emplaceValue(kSampleDurationKey, duration_sample_f_ms);
   statistics_manager_.emplaceValue(kSampleDurationKey, duration_sample_h_ms);
   statistics_manager_.emplaceValue(
-      kCorrelationDurationKey, duration_correlation_ms);
+      kCorrelationDurationKey,
+      duration_correlation_ms + duration_sample_f_ms + duration_sample_h_ms);
+  /*
+  std::vector<double> times =
+      statistics_manager_.getValuesForKey(kCorrelationDurationKey);
+  std::cout << " rotation timings: \n";
+  std::copy(
+      times.begin(), times.end(),
+      std::ostream_iterator<double>(std::cout, " "));
+      */
 }
 
 void SphRegistration::setBandwith(const int bandwith) {

@@ -1,11 +1,21 @@
 #include "packlo/model/state.h"
+#include "packlo/distribution/bingham.h"
+#include "packlo/distribution/gaussian.h"
 
 #include <glog/logging.h>
 
 namespace model {
 
 common::DualQuaternion State::getCurrentState() const {
-  return common::DualQuaternion();
+  Eigen::Vector4d b_est(1, 0, 0, 0);
+  if (rot_distribution_ != nullptr)
+    b_est = rot_distribution_->getEstimate();
+  Eigen::Vector3d g_est(0, 0, 0);
+  if (trans_distribution_ != nullptr)
+    g_est = trans_distribution_->getEstimate().block(0, 0, 3, 1);
+  Eigen::VectorXd dq(8);
+  dq << b_est, 0, g_est;
+  return common::DualQuaternion(dq);
 }
 
 void State::setRotationalDistribution(common::BaseDistributionPtr rot_dist) {
@@ -13,10 +23,6 @@ void State::setRotationalDistribution(common::BaseDistributionPtr rot_dist) {
 }
 
 void State::setTranslationalDistribution(common::BaseDistributionPtr pos_dist) {
-  if (pos_dist != nullptr)
-    VLOG(1) << "setting pos dist";
-  else
-    VLOG(1) << "setting null pos dist";
   trans_distribution_ = pos_dist;
 }
 
@@ -25,10 +31,6 @@ common::BaseDistributionPtr State::getRotationalDistribution() const {
 }
 
 common::BaseDistributionPtr State::getTranslationalDistribution() const {
-  if (trans_distribution_ != nullptr)
-    VLOG(1) << "NOT NULL";
-  else
-    VLOG(1) << " NULL";
   return trans_distribution_;
 }
 

@@ -20,8 +20,8 @@ class State {
   common::BaseDistributionPtr getTranslationalDistribution() const;
 
  private:
-  common::BaseDistributionPtr rot_distribution_;
-  common::BaseDistributionPtr trans_distribution_;
+  common::BaseDistributionPtr rot_distribution_ = nullptr;
+  common::BaseDistributionPtr trans_distribution_ = nullptr;
 };
 
 }  // namespace model

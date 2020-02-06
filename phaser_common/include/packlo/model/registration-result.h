@@ -7,6 +7,7 @@
 
 #include <array>
 #include <memory>
+#include <vector>
 
 namespace model {
 
@@ -18,14 +19,16 @@ class RegistrationResult {
   explicit RegistrationResult(
       model::PointCloud&& reg_cloud, common::Vector_t&& rotation);
   explicit RegistrationResult(model::PointCloudPtr reg_cloud);
+  explicit RegistrationResult(model::PointCloud&& reg_cloud);
 
   RegistrationResult combine(RegistrationResult&& other);
 
   model::PointCloudPtr getRegisteredCloud() const;
   void setRegisteredCloud(model::PointCloudPtr reg_cloud);
 
-  std::array<double, 3> getRotation() const;
+  Eigen::Vector3d getRotation() const;
   const common::Vector_t& getTranslation() const;
+  Eigen::VectorXd getStateAsVec() const;
 
   bool foundSolution() const;
   bool foundSolutionForRotation() const;
@@ -38,6 +41,12 @@ class RegistrationResult {
   common::BaseDistributionPtr getRotUncertaintyEstimate() const noexcept;
   common::BaseDistributionPtr getPosUncertaintyEstimate() const noexcept;
 
+  void setRotationCorrelation(const std::vector<double>& rot);
+  const std::vector<double>& getRotationCorrelation() const noexcept;
+
+  void setGICPResult(const Eigen::Matrix4f& result);
+  Eigen::Matrix4f getGICPResult() const noexcept;
+
  private:
   model::PointCloudPtr reg_cloud_;
   std::array<double, 3> rotation_;
@@ -46,6 +55,8 @@ class RegistrationResult {
   bool found_solution_for_translation_;
   common::BaseDistributionPtr uncertainty_;
   State current_state_;
+  std::vector<double> rotation_correlation_;
+  Eigen::Matrix4f gicp_result_;
 };
 
 }  // namespace model

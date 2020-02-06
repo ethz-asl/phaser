@@ -24,6 +24,10 @@ RegistrationResult::RegistrationResult(
 RegistrationResult::RegistrationResult(model::PointCloudPtr reg_cloud)
     : reg_cloud_(reg_cloud) {}
 
+RegistrationResult::RegistrationResult(model::PointCloud&& reg_cloud) {
+  reg_cloud_ = std::make_shared<model::PointCloud>(reg_cloud);
+}
+
 RegistrationResult RegistrationResult::combine(RegistrationResult&& other) {
   reg_cloud_ = other.reg_cloud_;
   found_solution_for_rotation_ |= other.found_solution_for_rotation_;
@@ -40,16 +44,23 @@ model::PointCloudPtr RegistrationResult::getRegisteredCloud() const {
   return reg_cloud_;
 }
 
-std::array<double, 3> RegistrationResult::getRotation() const {
-  return rotation_;
-  common::DualQuaternion dq = current_state_.getCurrentState();
-  Eigen::Quaterniond q = dq.getRotation();
-  Eigen::Vector3d res = common::RotationUtils::ConvertQuaternionToXYZ(q);
-  return {res(0), res(1), res(2)};
+Eigen::Vector3d RegistrationResult::getRotation() const {
+  const common::DualQuaternion dq = current_state_.getCurrentState();
+  const Eigen::Quaterniond q = dq.getRotation();
+  return common::RotationUtils::ConvertQuaternionToXYZ(q);
 }
 
 const common::Vector_t& RegistrationResult::getTranslation() const {
-  return translation_;
+  const common::DualQuaternion dq = current_state_.getCurrentState();
+  return dq.getTranslation();
+}
+
+Eigen::VectorXd RegistrationResult::getStateAsVec() const {
+  const common::DualQuaternion dq = current_state_.getCurrentState();
+  VLOG(1) << "q: " << dq.getRotation().vec().transpose();
+  VLOG(1) << "t: " << dq.getTranslation().transpose();
+  VLOG(1) << "dq: " << dq.asVec().transpose();
+  return dq.asVec();
 }
 
 bool RegistrationResult::foundSolution() const {
@@ -82,11 +93,25 @@ common::BaseDistributionPtr RegistrationResult::getRotUncertaintyEstimate()
 
 common::BaseDistributionPtr RegistrationResult::getPosUncertaintyEstimate()
     const noexcept {
-  if (uncertainty_ != nullptr)
-    VLOG(1) << "u not null";
-  else
-    VLOG(1) << "u  null";
   return current_state_.getTranslationalDistribution();
+}
+
+void RegistrationResult::setRotationCorrelation(
+    const std::vector<double>& rot) {
+  rotation_correlation_ = rot;
+}
+
+const std::vector<double>& RegistrationResult::getRotationCorrelation() const
+    noexcept {
+  return rotation_correlation_;
+}
+
+void RegistrationResult::setGICPResult(const Eigen::Matrix4f& result) {
+  gicp_result_ = result;
+}
+
+Eigen::Matrix4f RegistrationResult::getGICPResult() const noexcept {
+  return gicp_result_;
 }
 
 }  // namespace model

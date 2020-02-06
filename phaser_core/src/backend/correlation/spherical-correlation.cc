@@ -36,6 +36,7 @@ void SphericalCorrelation::correlateSignals(
       bw, averaged_signal.data(), averaged_pattern.data(), &alpha, &beta,
       &gamma, &maxcoeff, &signal_values, &signal_coeff, is_real);
   VLOG(2) << "done, result: " << alpha << ", " << beta << ", " << gamma;
+  VLOG(2) << "max at: " << maxcoeff;
   const uint32_t len_corr = 8 * bw * bw * bw;
   corr_.assign(signal_values, signal_values + len_corr);
 

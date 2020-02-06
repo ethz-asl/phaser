@@ -23,17 +23,17 @@ class PhaseAligner : public BaseAligner {
 
   std::vector<double> getCorrelation() const override;
   double computeTranslationFromIndex(double index) const;
-  std::array<uint16_t, 3> ind2sub(const int lin_index) const;
+  std::array<uint32_t, 3> ind2sub(const uint32_t lin_index) const;
 
  private:
   void discretizePointcloud(
       const model::PointCloud& cloud, Eigen::VectorXd* f,
       Eigen::VectorXd* hist) const;
-  std::size_t sub2ind(
-      const std::size_t i, const std::size_t j, const std::size_t k,
-      const uint32_t rows, const uint32_t cols) const;
-  std::array<uint16_t, 3> ind2sub(
-      const int lin_index, const uint32_t rows, const uint32_t cols) const;
+  uint32_t sub2ind(
+      const uint32_t i, const uint32_t j, const uint32_t k, const uint32_t rows,
+      const uint32_t cols) const;
+  std::array<uint32_t, 3> ind2sub(
+      const uint32_t lin_index, const uint32_t rows, const uint32_t cols) const;
 
   fftw_plan f_plan_;
   fftw_plan g_plan_;
@@ -44,6 +44,7 @@ class PhaseAligner : public BaseAligner {
   Eigen::VectorXd g_;
   Eigen::VectorXd hist_;
   const uint32_t n_voxels_;
+  std::vector<double> durations_;
 };
 
 }  // namespace alignment
