@@ -71,6 +71,14 @@ PhaseAligner::~PhaseAligner() {
   delete [] c_;
 }
 
+__global__ void correlation(cufftComplex* F, cufftComplex* G, uint32_t size) {
+  const int idx = blockIdx.x*blockDim.x + threadIdx.x;
+  if (idx >= size) return;
+
+  F[idx].x = F[idx].x * G[idx].x - F[idx].y * (-G[idx].y);
+  F[idx].x = F[idx].x * (-G[idx].y) + F[idx].y * G[idx].x;
+}
+
 void PhaseAligner::alignRegistered(
     const model::PointCloud& cloud_prev,
     const std::vector<model::FunctionValue>&,
@@ -93,14 +101,16 @@ void PhaseAligner::alignRegistered(
   cufftExecR2C(f_plan_, d_input, G_);
 
   // Correlate the signals in the frequency domain.
-  for (uint32_t i = 0u; i < n_voxels_; ++i) {
-    C_[i][0] = F_[i][0] * G_[i][0] - F_[i][1] * (-G_[i][1]);
-    C_[i][1] = F_[i][0] * (-G_[i][1]) + F_[i][1] * G_[i][0];
-  }
+  const uint32_t dim = FLAGS_phase_gpu_n_voxels;
+  dim3 dimBlock(dim, dim, dim);
+  dim3 dimGrid(1,1,1);
+  correlation<<<dimGrid, dimBlock>>>(F_, G_, n_voxels_);
 
   // Perform the IFFT on the correlation tensor.
   VLOG(1) << "Performing IFFT on correlation.";
-  fftw_execute(c_plan_);
+  double* d_input;
+  cufftExecR2C(c_plan_, F_, d_input);
+  cudaMemcpy(c_, d_input, sizeof(double)*n_voxels_, cudaMemcpyDeviceToHost);
 
   // Find the index that maximizes the correlation.
   const auto max_corr = std::max_element(c_, c_+n_voxels_);
