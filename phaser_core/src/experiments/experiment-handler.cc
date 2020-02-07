@@ -1,8 +1,8 @@
-#include "packlo/experiments/experiment-handler.h"
-#include "packlo/common/translation-utils.h"
-#include "packlo/common/rotation-utils.h"
-#include "packlo/visualization/debug-visualizer.h"
-#include "packlo/visualization/plotty-visualizer.h"
+#include "phaser/experiments/experiment-handler.h"
+#include "phaser/common/translation-utils.h"
+#include "phaser/common/rotation-utils.h"
+#include "phaser/visualization/debug-visualizer.h"
+#include "phaser/visualization/plotty-visualizer.h"
 
 #include <fstream>
 #include <glog/logging.h>
@@ -185,14 +185,12 @@ void ExperimentHandler::translateToOdomFrame(
 
 void ExperimentHandler::rotateToSensorFrame(const model::PointCloudPtr& cloud) {
   Eigen::Vector3d rpy = gt_.block(0, n_registered_, 3, 1);
-  VLOG(1) << "sampled rpy: " << rpy.transpose();
   common::RotationUtils::RotateAroundZYX(cloud, -rpy(0), -rpy(1), -rpy(2));
 }
 
 void ExperimentHandler::rotateToOdomFrame(const model::PointCloudPtr& cloud) {
   Eigen::Vector3d rpy = gt_.block(0, n_registered_, 3, 1);
   common::RotationUtils::RotateAroundXYZ(cloud, rpy(0), rpy(1), rpy(2));
-
 }
 
 

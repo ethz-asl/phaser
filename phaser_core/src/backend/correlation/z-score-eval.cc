@@ -1,10 +1,10 @@
-#include "packlo/backend/correlation/z-score-eval.h"
-#include "packlo/backend/alignment/phase-aligner.h"
-#include "packlo/backend/correlation/signal-analysis.h"
- #include "packlo/distribution/bingham.h"
- #include "packlo/distribution/gaussian.h"
+#include "phaser/backend/correlation/z-score-eval.h"
+#include "phaser/backend/alignment/phase-aligner.h"
+#include "phaser/backend/correlation/signal-analysis.h"
+ #include "phaser/distribution/bingham.h"
+ #include "phaser/distribution/gaussian.h"
 
-#include "packlo/visualization/plotty-visualizer.h"
+#include "phaser/visualization/plotty-visualizer.h"
 
 #include <cmath>
 #include <numeric>
@@ -28,43 +28,18 @@ common::BaseDistributionPtr ZScoreEval::evaluateCorrelation(
   return evaluateCorrelationFromTranslation();
 }
 
-static std::vector<Eigen::MatrixXd> trans_samples_;
-static std::vector<Eigen::MatrixXd> trans_weights_;
 common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromTranslation() {
   std::set<uint32_t> signals;
   std::vector<double> n_corr_ds;
   evaluateCorrelationVector(aligner_.getCorrelation(), &signals, &n_corr_ds);
-  common::BaseDistributionPtr dist
-    = evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
-
-  common::GaussianPtr g = std::dynamic_pointer_cast<common::Gaussian>(dist);
-  trans_samples_.emplace_back(g->samples_);
-  trans_weights_.emplace_back(g->weights_);
-
-  std::fstream fs;
-  fs.open("trans_samples.txt", std::fstream::out);
-  for (auto& sample : trans_samples_) {
-    fs << sample << "\n";
-  }
-  fs.close();
-  fs.open("trans_weights.txt", std::fstream::out);
-  for (auto& weights : trans_weights_) {
-    fs << weights << "\n";
-  }
-
-  return dist;
+  return evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
 }
 
-static std::vector<Eigen::MatrixXd> rot_samples_;
-static std::vector<Eigen::MatrixXd> rot_weights_;
-static uint32_t counter = 0u;
 common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromRotation() {
   std::set<uint32_t> signals;
   std::vector<double> n_corr_ds;
   evaluateCorrelationVector(sph_.getCorrelation(), &signals, &n_corr_ds);
-  common::BaseDistributionPtr dist
-    = evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
-  return dist;
+  return evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
 }
 
 void ZScoreEval::evaluateCorrelationVector(

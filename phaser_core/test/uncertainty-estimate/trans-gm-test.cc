@@ -1,10 +1,10 @@
-#include "packlo/backend/correlation/z-score-eval.h"
-#include "packlo/backend/registration/sph-registration.h"
-#include "packlo/common/data/datasource-ply.h"
-#include "packlo/common/metric-utils.h"
-#include "packlo/common/test/testing-entrypoint.h"
-#include "packlo/common/test/testing-predicates.h"
-#include "packlo/distribution/gaussian-mixture.h"
+#include "phaser/backend/correlation/z-score-eval.h"
+#include "phaser/backend/registration/sph-registration.h"
+#include "phaser/common/data/datasource-ply.h"
+#include "phaser/common/metric-utils.h"
+#include "phaser/common/test/testing-entrypoint.h"
+#include "phaser/common/test/testing-predicates.h"
+#include "phaser/distribution/gaussian-mixture.h"
 
 #include <gtest/gtest.h>
 
@@ -52,7 +52,6 @@ TEST_F(TransGMTest, LowUncertainty) {
         std::dynamic_pointer_cast<common::GaussianMixture>(
             result.getPosUncertaintyEstimate());
     const Eigen::MatrixXd& cov = uncertainty->getMixtureCov();
-    VLOG(1) << "------------------------- Uncertainty:\n" << cov;
     EXPECT_LT(cov.trace(), 10.0);
   });
   ds_->startStreaming(0);

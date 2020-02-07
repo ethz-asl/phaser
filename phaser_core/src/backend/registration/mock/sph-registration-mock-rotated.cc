@@ -1,6 +1,6 @@
-#include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
-#include "packlo/common/rotation-utils.h"
-#include "packlo/visualization/debug-visualizer.h"
+#include "phaser/backend/registration/mock/sph-registration-mock-rotated.h"
+#include "phaser/common/rotation-utils.h"
+#include "phaser/visualization/debug-visualizer.h"
 
 #include <glog/logging.h>
 

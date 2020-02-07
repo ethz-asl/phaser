@@ -1,10 +1,10 @@
-#include "packlo/backend/correlation/z-score-eval.h"
-#include "packlo/backend/registration/sph-registration.h"
-#include "packlo/common/data/datasource-ply.h"
-#include "packlo/common/metric-utils.h"
-#include "packlo/common/test/testing-entrypoint.h"
-#include "packlo/common/test/testing-predicates.h"
-#include "packlo/distribution/bingham.h"
+#include "phaser/backend/correlation/z-score-eval.h"
+#include "phaser/backend/registration/sph-registration.h"
+#include "phaser/common/data/datasource-ply.h"
+#include "phaser/common/metric-utils.h"
+#include "phaser/common/test/testing-entrypoint.h"
+#include "phaser/common/test/testing-predicates.h"
+#include "phaser/distribution/bingham.h"
 
 #include <gtest/gtest.h>
 
@@ -53,7 +53,6 @@ TEST_F(RotBinghamTest, LowUncertainty) {
         result.getRotUncertaintyEstimate());
     CHECK_NOTNULL(uncertainty);
     const Eigen::MatrixXd& cov = uncertainty->moment();
-    VLOG(1) << "------------------------- Uncertainty bingham:\n" << cov;
     EXPECT_LE(cov.trace(), 1.2);
   });
   ds_->startStreaming(0);

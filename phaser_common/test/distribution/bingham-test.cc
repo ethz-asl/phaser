@@ -1,7 +1,7 @@
-#include "packlo/distribution/bingham.h"
-#include "packlo/common/rotation-utils.h"
-#include "packlo/common/test/testing-entrypoint.h"
-#include "packlo/common/test/testing-predicates.h"
+#include "phaser/distribution/bingham.h"
+#include "phaser/common/rotation-utils.h"
+#include "phaser/common/test/testing-entrypoint.h"
+#include "phaser/common/test/testing-predicates.h"
 
 #include <Eigen/Dense>
 #include <chrono>

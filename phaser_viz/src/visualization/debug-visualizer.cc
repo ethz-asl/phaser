@@ -1,5 +1,5 @@
-#include "packlo/visualization/debug-visualizer.h"
-#include "packlo/model/point-cloud.h"
+#include "phaser/visualization/debug-visualizer.h"
+#include "phaser/model/point-cloud.h"
 
 #include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/visualization/impl/pcl_visualizer.hpp>

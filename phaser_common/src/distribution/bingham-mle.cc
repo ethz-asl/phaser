@@ -1,8 +1,8 @@
-#include "packlo/distribution/bingham-mle.h"
+#include "phaser/distribution/bingham-mle.h"
 #include <Eigen/Dense>
 #include <glog/logging.h>
 #include <iostream>
-#include "packlo/distribution/bingham-normalization-constant.h"
+#include "phaser/distribution/bingham-normalization-constant.h"
 
 Eigen::VectorXd BinghamMLE::compute(Eigen::VectorXd* omega) {
   auto m = omega->rows();

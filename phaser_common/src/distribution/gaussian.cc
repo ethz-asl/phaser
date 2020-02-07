@@ -1,4 +1,4 @@
-#include "packlo/distribution/gaussian.h"
+#include "phaser/distribution/gaussian.h"
 
 #include <glog/logging.h>
 

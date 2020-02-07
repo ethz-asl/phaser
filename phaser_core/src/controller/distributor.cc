@@ -1,12 +1,12 @@
-#include "packlo/controller/distributor.h"
-#include "packlo/backend/registration/mock/sph-registration-mock-cutted.h"
-#include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
-#include "packlo/backend/registration/mock/sph-registration-mock-transformed.h"
-#include "packlo/backend/registration/mock/sph-registration-mock-translated.h"
-#include "packlo/backend/registration/sph-registration.h"
-#include "packlo/common/rotation-utils.h"
-#include "packlo/common/spherical-projection.h"
-#include "packlo/common/statistic-utils.h"
+#include "phaser/controller/distributor.h"
+#include "phaser/backend/registration/mock/sph-registration-mock-cutted.h"
+#include "phaser/backend/registration/mock/sph-registration-mock-rotated.h"
+#include "phaser/backend/registration/mock/sph-registration-mock-transformed.h"
+#include "phaser/backend/registration/mock/sph-registration-mock-translated.h"
+#include "phaser/backend/registration/sph-registration.h"
+#include "phaser/common/rotation-utils.h"
+#include "phaser/common/spherical-projection.h"
+#include "phaser/common/statistic-utils.h"
 
 #include <glog/logging.h>
 #include <pcl/filters/passthrough.h>

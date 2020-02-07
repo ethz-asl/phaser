@@ -1,5 +1,5 @@
-#include "packlo/backend/correlation/bmm-peak-based-eval.h"
-#include "packlo/common/rotation-utils.h"
+#include "phaser/backend/correlation/bmm-peak-based-eval.h"
+#include "phaser/common/rotation-utils.h"
 
 #include <glog/logging.h>
 
@@ -39,28 +39,19 @@ common::BinghamMixturePtr BmmPeakBasedEval::fitRotationalBinghamDistribution(
   uint32_t start, end, k = 0;
   // for (uint32_t i = 0u; i < n_signals; ++i) {
   for (uint32_t i : signals) {
-    VLOG(1) << "signal: " << i;
     calculateStartEndNeighbor(i, n_corr, &start, &end);
     const uint32_t num_elements = end - start + 1;
 
-    VLOG(1) << "num_elements: " << num_elements;
     Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(4, num_elements);
     Eigen::RowVectorXd weights = Eigen::RowVectorXd::Zero(num_elements);
-
     retrievePeakNeighbors(start, end, norm_corr, sph, &samples, &weights);
     peak_binghams.emplace_back(common::Bingham::fit(samples, weights));
 
     bm_weights(k) = norm_corr.at(i);
     ++k;
   }
-  VLOG(1) << "bm weighted";
   bm_weights = bm_weights.array() / bm_weights.array().sum();
-  VLOG(1) << "bm weighted2";
-  auto test =
-      std::make_shared<common::BinghamMixture>(peak_binghams, bm_weights);
-  VLOG(1) << "bmm fitted";
-
-  return test;
+  return std::make_shared<common::BinghamMixture>(peak_binghams, bm_weights);
 }
 
 void BmmPeakBasedEval::calculateStartEndNeighbor(
@@ -104,7 +95,6 @@ void BmmPeakBasedEval::retrievePeakNeighbors(
   const double weight_sum = weights->array().sum();
   CHECK_GT(weight_sum, 0);
   (*weights) = weights->array() / weight_sum;
-  VLOG(1) << "bingham weights: \n" << (*weights);
 }
 
 }  // namespace correlation

@@ -1,5 +1,5 @@
-#include "packlo/backend/correlation/spherical-correlation.h"
-#include "packlo/model/function-value.h"
+#include "phaser/backend/correlation/spherical-correlation.h"
+#include "phaser/model/function-value.h"
 
 extern "C" {
 #include <soft/wrap_fftw.h>

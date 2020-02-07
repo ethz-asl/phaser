@@ -1,6 +1,6 @@
-#include "packlo/distribution/gaussian-mixture.h"
-#include "packlo/common/test/testing-entrypoint.h"
-#include "packlo/common/test/testing-predicates.h"
+#include "phaser/distribution/gaussian-mixture.h"
+#include "phaser/common/test/testing-entrypoint.h"
+#include "phaser/common/test/testing-predicates.h"
 
 #include <Eigen/Dense>
 #include <chrono>

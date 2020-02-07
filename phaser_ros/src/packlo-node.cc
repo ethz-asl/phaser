@@ -1,8 +1,8 @@
-#include "packlo/packlo-node.h"
-#include "packlo/common/data/datasource-ros.h"
-#include "packlo/common/data/datasource-ply.h"
-#include "packlo/controller/distributor.h"
-#include "packlo/visualization/plotty-visualizer.h"
+#include "phaser/packlo-node.h"
+#include "phaser/common/data/datasource-ros.h"
+#include "phaser/common/data/datasource-ply.h"
+#include "phaser/controller/distributor.h"
+#include "phaser/visualization/plotty-visualizer.h"
 
 #include <glog/logging.h>
 #include <ros/ros.h>

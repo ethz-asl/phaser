@@ -1,5 +1,5 @@
-#include "packlo/backend/correlation/bingham-peak-based-eval.h"
-#include "packlo/common/rotation-utils.h"
+#include "phaser/backend/correlation/bingham-peak-based-eval.h"
+#include "phaser/common/rotation-utils.h"
 
 #include <algorithm>
 #include <glog/logging.h>
@@ -50,7 +50,6 @@ common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
   Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(4, 2*FLAGS_bingham_peak_neighbors+1);
   Eigen::RowVectorXd weights = Eigen::RowVectorXd::Zero(2*FLAGS_bingham_peak_neighbors+1);
   retrievePeakNeighbors(start, end, norm_corr, sph, &samples, &weights);
-  VLOG(1) << "bingham samples:\n" << samples << "\nweights:\n" << weights;
   return common::Bingham::fit(samples, weights);
 }
 
@@ -81,7 +80,7 @@ void BinghamPeakBasedEval::retrievePeakNeighbors(
   CHECK_LT(end, n_signals);
   CHECK_LE(start, end);
 
-  VLOG(1) << "Checking neighbors from " << start << " to " << end;
+  VLOG(1) << "Checking bingham neighbors from " << start << " to " << end;
   std::size_t k = 0u;
   for (uint32_t i = start; i <= end; ++i) {
     std::array<double, 3> zyz = sph.getZYZFromIndex(i);
@@ -96,7 +95,6 @@ void BinghamPeakBasedEval::retrievePeakNeighbors(
   const double weight_sum = weights->array().sum();
   CHECK_GT(weight_sum, 0);
   (*weights) = weights->array() / weight_sum;
-  //VLOG(1) << "bingham weights: \n" << (*weights);
 }
 
 }  // namespace correlation

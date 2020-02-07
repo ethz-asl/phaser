@@ -1,6 +1,6 @@
-#include "packlo/model/state.h"
-#include "packlo/distribution/bingham.h"
-#include "packlo/distribution/gaussian.h"
+#include "phaser/model/state.h"
+#include "phaser/distribution/bingham.h"
+#include "phaser/distribution/gaussian.h"
 
 #include <glog/logging.h>
 

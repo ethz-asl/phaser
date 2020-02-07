@@ -1,5 +1,5 @@
-#include "packlo/model/registration-result.h"
-#include "packlo/common/rotation-utils.h"
+#include "phaser/model/registration-result.h"
+#include "phaser/common/rotation-utils.h"
 
 #include <glog/logging.h>
 
@@ -57,9 +57,6 @@ const common::Vector_t& RegistrationResult::getTranslation() const {
 
 Eigen::VectorXd RegistrationResult::getStateAsVec() const {
   const common::DualQuaternion dq = current_state_.getCurrentState();
-  VLOG(1) << "q: " << dq.getRotation().vec().transpose();
-  VLOG(1) << "t: " << dq.getTranslation().transpose();
-  VLOG(1) << "dq: " << dq.asVec().transpose();
   return dq.asVec();
 }
 
