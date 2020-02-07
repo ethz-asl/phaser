@@ -38,3 +38,5 @@ Build and run tests:
 ```
   ./phaser_share/run_build_tests
 ```
+
+test
