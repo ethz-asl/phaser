@@ -15,3 +15,4 @@
 -I/home/berlukas/Documents/workspace/phaser_ws/devel/include/pcl-1.10
 -I/usr/include/eigen3
 -I/opt/ros/melodic/include
+-I/usr/local/cuda/include

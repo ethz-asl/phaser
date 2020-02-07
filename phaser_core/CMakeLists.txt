@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(phaser_core)
 
+set(CMAKE_CUDA_COMPILER  /usr/local/cuda/bin/nvcc)
+find_package(CUDA REQUIRED)
+
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
 if(COMPILER_SUPPORTS_CXX14)
