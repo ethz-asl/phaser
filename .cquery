@@ -6,12 +6,12 @@
 -std=c++14
 
 # Includes
--I/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_common/include
--I/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_core/include
--I/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_ros/include
--I/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_viz/include
--I/home/berlukas/Documents/workspace/phaser_ws/src/pcl_catkin/perception_pcl/pcl_conversions/include
+-I./phaser_common/include
+-I./phaser_common/include
+-I./phaser_core/include
+-I./phaser_ros/include
+-I./phaser_viz/include
 -I/home/berlukas/Documents/workspace/phaser_ws/devel/include
--I/home/berlukas/Documents/workspace/phaser_ws/devel/include/pcl-1.10
 -I/usr/include/eigen3
 -I/opt/ros/melodic/include
+-I/usr/include/pcl-1.8/
