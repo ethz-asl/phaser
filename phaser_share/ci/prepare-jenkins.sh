@@ -2,7 +2,6 @@
 echo "Running the prepare script for maplab.";
 
 if [[ $(uname) == "Linux" ]]; then
-  sudo apt-get update -qq
   sudo apt-get install -y doxygen liblapack-dev libblas-dev autotools-dev \
     dh-autoreconf libboost-all-dev python-setuptools git g++ cppcheck \
     default-jre libreadline-dev libgtest-dev libglew-dev python-git pylint \
