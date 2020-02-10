@@ -2,12 +2,13 @@
 echo "Running the prepare script for maplab.";
 
 if [[ $(uname) == "Linux" ]]; then
+  sudo apt-get update -qq
   sudo apt-get install -y doxygen liblapack-dev libblas-dev autotools-dev \
     dh-autoreconf libboost-all-dev python-setuptools git g++ cppcheck \
     default-jre libreadline-dev libgtest-dev libglew-dev python-git pylint \
     checkstyle python-termcolor liblog4cplus-dev cimg-dev python-wstool \
     python-catkin-tools libssh2-1-dev libatlas3-base libv4l-dev python-scipy \
-    libnlopt-dev 
+    libnlopt-dev
 
   if lsb_release -c 2> /dev/null | grep trusty > /dev/null ; then
     # Ubuntu 14.04 / ROS Indigo.
