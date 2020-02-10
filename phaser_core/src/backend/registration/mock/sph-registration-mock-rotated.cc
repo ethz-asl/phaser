@@ -1,6 +1,5 @@
 #include "phaser/backend/registration/mock/sph-registration-mock-rotated.h"
 #include "phaser/common/rotation-utils.h"
-#include "phaser/visualization/debug-visualizer.h"
 
 #include <glog/logging.h>
 

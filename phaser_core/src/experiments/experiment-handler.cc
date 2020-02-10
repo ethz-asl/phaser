@@ -1,7 +1,6 @@
 #include "phaser/experiments/experiment-handler.h"
 #include "phaser/common/translation-utils.h"
 #include "phaser/common/rotation-utils.h"
-#include "phaser/visualization/debug-visualizer.h"
 #include "phaser/visualization/plotty-visualizer.h"
 
 #include <fstream>
@@ -40,23 +39,12 @@ void ExperimentHandler::runExperiment1(const model::PointCloudPtr& cloud) {
   VLOG(1) << "Cloud1: " << prev_point_cloud_->getPlyReadDirectory();
   VLOG(1) << "Cloud2: " << cloud->getPlyReadDirectory();
 
-  /*
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*prev_point_cloud_, *cloud);
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*prev_point_cloud_, *cloud);
-    */
   translateToSensorFrame(cloud);
   //rotateToSensorFrame(cloud);
   model::RegistrationResult result =
       registrator_->estimateRotation(prev_point_cloud_, cloud);
   translateToOdomFrame(result.getRegisteredCloud());
   registrator_->estimateTranslation(prev_point_cloud_, &result);
-
-  /*
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*prev_point_cloud_, *result.getRegisteredCloud());
-    */
   appendResult(result);
 
   // Wait for the next pair.
@@ -72,14 +60,6 @@ void ExperimentHandler::runExperiment3(const model::PointCloudPtr& cloud) {
   }
   model::RegistrationResult result =
       registrator_->estimateRotation(prev_point_cloud_, cloud);
-  /*
-  visualization::DebugVisualizer::getInstance().visualizePointCloudDiff(
-      *prev_point_cloud_, *result.getRegisteredCloud());
-  visualization::PlottyVisualizer::getInstance()
-      .createPlotFor(result.getRotationCorrelation())
-      .storeToFile(result.getRotationCorrelation());
-    */
-
   appendResult(result);
   prev_point_cloud_ = nullptr;
   ++n_registered_;
@@ -99,13 +79,6 @@ void ExperimentHandler::runExperimentGICP(const model::PointCloudPtr& cloud) {
   model::RegistrationResult result = gicp_reg_.registerPointCloud(
     prev_point_cloud_, cloud);
   gicp_states_.emplace_back(result.getGICPResult());
-  VLOG(1) << " gicp: " << result.getGICPResult();
-
-  /*
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*prev_point_cloud_, *result.getRegisteredCloud());
-    */
-
   prev_point_cloud_ = nullptr;
   ++n_registered_;
 }

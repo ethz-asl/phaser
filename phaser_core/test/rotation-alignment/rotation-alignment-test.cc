@@ -5,7 +5,6 @@
 #include "phaser/common/rotation-utils.h"
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
-#include "phaser/visualization/debug-visualizer.h"
 
 #include <gtest/gtest.h>
 #include <cmath>
