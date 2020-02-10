@@ -8,7 +8,6 @@
 #include "phaser/common/rotation-utils.h"
 #include "phaser/common/statistic-utils.h"
 #include "phaser/common/translation-utils.h"
-#include "phaser/visualization/debug-visualizer.h"
 
 #include <algorithm>
 #include <glog/logging.h>
@@ -94,21 +93,8 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   cloud_prev->initialize_kd_tree();
 
   // Register the point cloud.
-  /*
-  visualization::DebugVisualizer::getInstance().visualizePointCloudDiff(
-      *cloud_prev, *cloud_cur);
-      */
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
-  /*
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-      */
   estimateTranslation(cloud_prev, &result);
-
-  /*
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-      */
   return result;
 }
 

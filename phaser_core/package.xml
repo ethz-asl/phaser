@@ -13,7 +13,7 @@
   <depend>glog_catkin</depend>
   <depend>eigen_catkin</depend>
   <depend>eigen_checks</depend>
-  <depend>pcl_catkin</depend>
+  <depend>pcl_ros</depend>
   <depend>opencv3_catkin</depend>
   <depend>fftw3_catkin</depend>
 

@@ -3,7 +3,6 @@
 #include "phaser/common/metric-utils.h"
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
-#include "phaser/visualization/debug-visualizer.h"
 
 #include <gtest/gtest.h>
 #include <memory>
@@ -81,9 +80,6 @@ ASSERT_LT(
         prev_cloud, result.getRegisteredCloud()),
     init_hausdorff);
     */
-
-  //visualization::DebugVisualizer::getInstance()
-    //.visualizePointCloudDiff(*prev_cloud, *result.getRegisteredCloud());
 
     // Check that the Hausdorff distance decreased
     // after the translation estimation.
