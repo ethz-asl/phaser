@@ -16,14 +16,13 @@ void CloudController::initializeRegistrationAlgorithm(
   }
 }
 
-void CloudController::registerPointCloud(const model::PointCloudPtr& target,
+model::RegistrationResult CloudController::registerPointCloud(const model::PointCloudPtr& target,
     const model::PointCloudPtr& source) {
   CHECK_NOTNULL(target);
   CHECK_NOTNULL(source);
   CHECK_NOTNULL(registrator_);
 
-  model::RegistrationResult result =
-    registrator_->registerPointCloud(target, source);
+  return registrator_->registerPointCloud(target, source);
 }
 
 }  // namespace controller

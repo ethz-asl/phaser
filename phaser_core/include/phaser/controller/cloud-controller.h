@@ -11,7 +11,8 @@ class CloudController {
 public:
   CloudController();
   void initializeRegistrationAlgorithm(const std::string& method);
-  void registerPointCloud(const model::PointCloudPtr& target,
+  model::RegistrationResult registerPointCloud(
+    const model::PointCloudPtr& target,
     const model::PointCloudPtr& source);
 private:
   registration::BaseRegistrationPtr registrator_;
