@@ -14,7 +14,7 @@
 #include <iostream>
 
 DEFINE_int32(
-    spherical_bandwith, 70,
+    spherical_bandwith, 130,
     "Defines the bandwith used for the spherical registration.");
 DEFINE_string(alignment_algorithm, "phase",
     "Sets the algorithm used for the translational alignment.");
@@ -24,6 +24,11 @@ DEFINE_string(
 DEFINE_string(
     pos_evaluation_algorithm, "gaussian",
     "Defines the algorithm used for the evaluation of the pos correlations.");
+DEFINE_bool(refine_rot_x, true, "Perform a rotation over x.");
+DEFINE_bool(refine_rot_y, true, "Perform a rotation over y.");
+DEFINE_bool(refine_rot_z, true, "Perform a rotation over z.");
+DEFINE_bool(estimate_rotation, true, "Esttimates the rotation if true.");
+DEFINE_bool(estimate_translation, true, "Esttimates the translation if true.");
 
 namespace registration {
 
@@ -93,8 +98,11 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   cloud_prev->initialize_kd_tree();
 
   // Register the point cloud.
+  if (!FLAGS_estimate_rotation) LOG(FATAL) << "not yet implemented.";
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
-  estimateTranslation(cloud_prev, &result);
+  if (FLAGS_estimate_translation)
+    estimateTranslation(cloud_prev, &result);
+
   return result;
 }
 
@@ -113,6 +121,10 @@ model::RegistrationResult SphRegistration::estimateRotation(
   Eigen::VectorXd b_est =
       common::RotationUtils::ConvertQuaternionToXYZ(rot->getEstimate());
   Eigen::VectorXd corr_est = common::RotationUtils::ConvertZYZtoXYZ(zyz);
+  if (!FLAGS_refine_rot_x) b_est(0) = 0;
+  if (!FLAGS_refine_rot_y) b_est(1) = 0;
+  if (!FLAGS_refine_rot_z) b_est(2) = 0;
+
 
   VLOG(1) << "Corr rotation: " << corr_est.transpose();
   VLOG(1) << "Bingham q: " << rot->getEstimate().transpose();

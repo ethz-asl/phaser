@@ -16,7 +16,8 @@ void CloudController::initializeRegistrationAlgorithm(
   }
 }
 
-model::RegistrationResult CloudController::registerPointCloud(const model::PointCloudPtr& target,
+model::RegistrationResult CloudController::registerPointCloud(
+    const model::PointCloudPtr& target,
     const model::PointCloudPtr& source) {
   CHECK_NOTNULL(target);
   CHECK_NOTNULL(source);
