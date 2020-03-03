@@ -35,6 +35,7 @@ cs_add_library(${PROJECT_NAME}_lib
    lib/SOFT/wignerTransforms_fftw.c
 
    src/controller/distributor.cc
+   src/controller/cloud-controller.cc
    src/backend/registration/base-registration.cc
    src/backend/registration/sph-registration.cc
    src/backend/registration/g-icp-registration.cc

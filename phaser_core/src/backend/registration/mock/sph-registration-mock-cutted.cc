@@ -1,6 +1,5 @@
 #include "phaser/backend/registration/mock/sph-registration-mock-cutted.h"
 #include "phaser/common/rotation-utils.h"
-#include "phaser/visualization/debug-visualizer.h"
 
 #include <pcl/filters/passthrough.h>
 #include <pcl/common/common.h>
@@ -31,16 +30,12 @@ model::RegistrationResult SphRegistrationMockCutted::registerPointCloud(
   common::RotationUtils::RotateAroundXYZ(syn_cloud, 0.2, 0.55, 1.23);
   syn_cloud->writeToFile("./");
 
-  visualization::DebugVisualizer::getInstance().visualizePointCloudDiff(
-      *point_cloud, *syn_cloud);
 
   point_cloud->initialize_kd_tree();
   syn_cloud->initialize_kd_tree();
   model::RegistrationResult result = estimateRotation(point_cloud, syn_cloud);
 
   model::PointCloudPtr reg_cloud = result.getRegisteredCloud();
-  visualization::DebugVisualizer::getInstance().visualizePointCloudDiff(
-      *point_cloud, *reg_cloud);
 
   reg_cloud->writeToFile("./");
 
