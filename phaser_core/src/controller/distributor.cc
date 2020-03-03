@@ -25,8 +25,6 @@ DEFINE_string(app_mode, "registration", "Defines the operating mode.");
 
 DEFINE_int32(take_every_n_cloud, 1, "As the name suggests.");
 
-DEFINE_int32(n_clouds_to_process, 0, "As the name suggests.");
-
 namespace controller {
 
 Distributor::Distributor(const data::DatasourcePtr& ds)
@@ -35,8 +33,6 @@ Distributor::Distributor(const data::DatasourcePtr& ds)
       registration_algorithm_(FLAGS_registration_algorithm) {
   subscribeToTopics();
   initializeRegistrationAlgorithm();
-  VLOG(1) << "Loading " << FLAGS_n_clouds_to_process << " clouds.";
-  ds_->startStreaming(FLAGS_n_clouds_to_process);
 }
 
 void Distributor::shutdown() {
