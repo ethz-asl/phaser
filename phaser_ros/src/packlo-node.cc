@@ -12,6 +12,8 @@ namespace packlo {
 DEFINE_string(datasource, "bag",
   "Defines the datasource to use for packlo.");
 
+DEFINE_int32(n_clouds_to_process, 0, "As the name suggests.");
+
 PackloNode::PackloNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private)
     : spinner_(1), node_handle_(nh), node_handle_private_(nh_private) {
   should_exit_.store(false);
@@ -24,7 +26,12 @@ PackloNode::PackloNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private)
 bool PackloNode::run() {
   LOG(INFO) << "Running PackLO";
   spinner_.start();
-  return dist_.get() != nullptr;
+  if (ds_ == nullptr || dist_ == nullptr) {
+    return false;
+  }
+  VLOG(1) << "Loading " << FLAGS_n_clouds_to_process << " clouds.";
+  ds_->startStreaming(FLAGS_n_clouds_to_process);
+  return true;
 }
 
 const std::atomic<bool>& PackloNode::shouldExit() const noexcept {
