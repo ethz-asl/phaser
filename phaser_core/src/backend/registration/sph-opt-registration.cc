@@ -1,5 +1,5 @@
-#include "phaser/backend/registration/sph-registration.h"
-#include "phaser/backend/alignment/phase-aligner.h"
+#include "phaser/backend/registration/sph-opt-registration.h"
+#include "phaser/backend/alignment/phase-aligner-gpu.h"
 #include "phaser/backend/alignment/range-based-aligner.h"
 #include "phaser/backend/correlation/bingham-peak-based-eval.h"
 #include "phaser/backend/correlation/bmm-peak-based-eval.h"
@@ -40,6 +40,7 @@ SphRegistration::SphRegistration()
       pos_evaluation_algorithm_(FLAGS_pos_evaluation_algorithm) {
   initializeAlgorithms();
 }
+
 SphRegistration::SphRegistration(
     std::string&& alignment_algorithm, std::string&& rot_evaluation_algorithm,
     std::string&& pos_evaluation_algorithm)

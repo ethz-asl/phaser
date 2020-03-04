@@ -63,6 +63,10 @@ cs_add_library(${PROJECT_NAME}_lib
    src/experiments/experiment-handler.cc
 )
 
+ cuda_add_library(${PROJECT_NAME}_cuda_lib
+   src/backend/alignment/phase-aligner-opt.cu
+ )
+
 #############
 ## TESTING ##
 #############

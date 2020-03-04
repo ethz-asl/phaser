@@ -14,14 +14,14 @@ namespace controller {
 
 class Distributor {
  public:
-  explicit Distributor(const data::DatasourcePtr& ds);
+  explicit Distributor(const data::DatasourcePtr& ds,
+    registration::BaseRegistrationPtr&& registration);
 
   void updateStatistics();
   void getStatistics(common::StatisticsManager*) const noexcept;
 
   void setRegistrationAlgorithm(std::string&& algorithm);
   void setRegistrationAlgorithm(const std::string& algorithm);
-  void initializeRegistrationAlgorithm();
   void shutdown();
 
  private:
