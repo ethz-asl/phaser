@@ -10,10 +10,10 @@
 
 namespace alignment {
 
-class PhaseAlignerGpu {
+class SpatialCorrelationCuda {
  public:
-  PhaseAlignerGpu();
-  ~PhaseAlignerGpu();
+  SpatialCorrelationCuda(const uint32_t voxels_per_dim);
+  ~SpatialCorrelationCuda();
 
   /*
   void alignRegistered(
@@ -23,18 +23,17 @@ class PhaseAlignerGpu {
       const std::vector<model::FunctionValue>& f_reg,
       common::Vector_t* xyz) override;
       */
-
-  std::vector<double> getCorrelation() const;
+  void correlateSignals(double* const f, double* const g);
 
  private:
   cufftHandle f_plan_;
-  //cufftHandle g_plan_;
   cufftHandle c_plan_;
   cufftDoubleComplex *F_, *G_, *C_;
   double* c_;
   //Eigen::VectorXd f_;
   //Eigen::VectorXd g_;
-  const uint32_t n_voxels_;
+  const uint32_t n_voxels_total_;
+  const uint32_t n_voxels_per_dim_;
 };
 
 }  // namespace alignment

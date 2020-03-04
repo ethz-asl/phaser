@@ -64,7 +64,7 @@ cs_add_library(${PROJECT_NAME}_lib
 )
 
  cuda_add_library(${PROJECT_NAME}_cuda_lib
-   src/backend/alignment/phase-aligner-opt.cu
+   src/backend/alignment/spatial-correlation-cuda.cu
  )
 
 #############
