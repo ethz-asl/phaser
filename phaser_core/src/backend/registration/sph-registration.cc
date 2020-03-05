@@ -1,10 +1,10 @@
 #include "phaser/backend/registration/sph-registration.h"
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/alignment/range-based-aligner.h"
-#include "phaser/backend/correlation/bingham-peak-based-eval.h"
-#include "phaser/backend/correlation/bmm-peak-based-eval.h"
-#include "phaser/backend/correlation/gaussian-peak-based-eval.h"
-#include "phaser/backend/correlation/gmm-peak-based-eval.h"
+#include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
+#include "phaser/backend/uncertainty/bmm-peak-based-eval.h"
+#include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
+#include "phaser/backend/uncertainty/gmm-peak-based-eval.h"
 #include "phaser/common/rotation-utils.h"
 #include "phaser/common/statistic-utils.h"
 #include "phaser/common/translation-utils.h"
@@ -64,29 +64,29 @@ void SphRegistration::initializeAlgorithms() {
   CHECK_NOTNULL(aligner_);
 
   // Rotational evaluation
-  correlation::BaseEvalPtr rot_eval;
+  uncertainty::BaseEvalPtr rot_eval;
   if (rot_evaluation_algorithm_ == "bingham")
-    rot_eval = std::make_unique<correlation::BinghamPeakBasedEval>(
+    rot_eval = std::make_unique<uncertainty::BinghamPeakBasedEval>(
         *aligner_, sph_corr_);
   else if (rot_evaluation_algorithm_ == "bmm")
     rot_eval =
-        std::make_unique<correlation::BmmPeakBasedEval>(*aligner_, sph_corr_);
+        std::make_unique<uncertainty::BmmPeakBasedEval>(*aligner_, sph_corr_);
   else
     LOG(FATAL) << "Unknown rot evaluation algorithm specificed: "
                << rot_evaluation_algorithm_;
 
   // Positional evaluation
-  correlation::BaseEvalPtr pos_eval;
+  uncertainty::BaseEvalPtr pos_eval;
   if (pos_evaluation_algorithm_ == "gaussian")
-    pos_eval = std::make_unique<correlation::GaussianPeakBasedEval>(
+    pos_eval = std::make_unique<uncertainty::GaussianPeakBasedEval>(
         *aligner_, sph_corr_);
   else if (pos_evaluation_algorithm_ == "gmm")
     pos_eval =
-        std::make_unique<correlation::GmmPeakBasedEval>(*aligner_, sph_corr_);
+        std::make_unique<uncertainty::GmmPeakBasedEval>(*aligner_, sph_corr_);
   else
     LOG(FATAL) << "Unknown pos evaluation algorithm specificed: "
                << pos_evaluation_algorithm_;
-  correlation_eval_ = std::make_unique<correlation::PhaseCorrelationEval>(
+  correlation_eval_ = std::make_unique<uncertainty::PhaseCorrelationEval>(
       std::move(rot_eval), std::move(pos_eval));
 }
 
@@ -222,11 +222,11 @@ void SphRegistration::setBandwith(const int bandwith) {
   sampler_.initialize(bandwith);
 }
 
-correlation::BaseEval& SphRegistration::getRotEvaluation() {
+uncertainty::BaseEval& SphRegistration::getRotEvaluation() {
   return correlation_eval_->getRotationEval();
 }
 
-correlation::BaseEval& SphRegistration::getPosEvaluation() {
+uncertainty::BaseEval& SphRegistration::getPosEvaluation() {
   return correlation_eval_->getPositionEval();
 }
 

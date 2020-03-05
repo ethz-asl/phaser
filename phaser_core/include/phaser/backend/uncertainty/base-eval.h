@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_CORRELATION_BASE_EVAL_H_
-#define PACKLO_BACKEND_CORRELATION_BASE_EVAL_H_
+#ifndef PACKLO_BACKEND_UNCERTAINTY_BASE_EVAL_H_
+#define PACKLO_BACKEND_UNCERTAINTY_BASE_EVAL_H_
 
 #include "phaser/backend/alignment/base-aligner.h"
 #include "phaser/backend/correlation/spherical-correlation.h"
@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 
-namespace correlation {
+namespace uncertainty {
 
 class BaseEval {
  public:
@@ -32,6 +32,6 @@ class BaseEval {
 
 using BaseEvalPtr = std::unique_ptr<BaseEval>;
 
-}  // namespace correlation
+}  // namespace uncertainty
 
-#endif  // PACKLO_BACKEND_CORRELATION_BASE_EVAL_H_
+#endif  // PACKLO_BACKEND_UNCERTAINTY_BASE_EVAL_H_

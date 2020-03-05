@@ -1,15 +1,15 @@
-#ifndef PACKLO_BACKEND_CORRELATION_GAUSSIAN_PEAK_BASED_EVAL_H_
-#define PACKLO_BACKEND_CORRELATION_GAUSSIAN_PEAK_BASED_EVAL_H_
+#ifndef PACKLO_BACKEND_UNCERTAINTY_GAUSSIAN_PEAK_BASED_EVAL_H_
+#define PACKLO_BACKEND_UNCERTAINTY_GAUSSIAN_PEAK_BASED_EVAL_H_
 
 #include "phaser/backend/alignment/base-aligner.h"
-#include "phaser/backend/correlation/z-score-eval.h"
+#include "phaser/backend/uncertainty/z-score-eval.h"
 #include "phaser/distribution/gaussian.h"
 
 #include <set>
 #include <utility>
 #include <vector>
 
-namespace correlation {
+namespace uncertainty {
 
 class GaussianPeakBasedEval : public ZScoreEval {
  public:
@@ -39,6 +39,6 @@ class GaussianPeakBasedEval : public ZScoreEval {
  private:
 };
 
-}  // namespace correlation
+}  // namespace uncertainty
 
-#endif  // PACKLO_BACKEND_CORRELATION_GAUSSIAN_PEAK_BASED_EVAL_H_
+#endif  // PACKLO_BACKEND_UNCERTAINTY_GAUSSIAN_PEAK_BASED_EVAL_H_

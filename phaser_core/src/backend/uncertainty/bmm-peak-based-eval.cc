@@ -1,4 +1,4 @@
-#include "phaser/backend/correlation/bmm-peak-based-eval.h"
+#include "phaser/backend/uncertainty/bmm-peak-based-eval.h"
 #include "phaser/common/rotation-utils.h"
 
 #include <glog/logging.h>
@@ -7,7 +7,7 @@ DEFINE_int32(
     bmm_peak_neighbors, 2,
     "Determines the number of neighbors used for the GMM calculation.");
 
-namespace correlation {
+namespace uncertainty {
 
 BmmPeakBasedEval::BmmPeakBasedEval(
     const alignment::BaseAligner& aligner,
@@ -97,4 +97,4 @@ void BmmPeakBasedEval::retrievePeakNeighbors(
   (*weights) = weights->array() / weight_sum;
 }
 
-}  // namespace correlation
+}  // namespace uncertainty

@@ -1,14 +1,14 @@
-#ifndef PACKLO_BACKEND_CORRELATION_BINGHAM_PEAK_BASED_EVAL_H_
-#define PACKLO_BACKEND_CORRELATION_BINGHAM_PEAK_BASED_EVAL_H_
+#ifndef PACKLO_BACKEND_UNCERTAINTY_BINGHAM_PEAK_BASED_EVAL_H_
+#define PACKLO_BACKEND_UNCERTAINTY_BINGHAM_PEAK_BASED_EVAL_H_
 
 #include "phaser/backend/alignment/base-aligner.h"
-#include "phaser/backend/correlation/z-score-eval.h"
+#include "phaser/backend/uncertainty/z-score-eval.h"
 #include "phaser/distribution/bingham.h"
 
 #include <set>
 #include <vector>
 
-namespace correlation {
+namespace uncertainty {
 
 class BinghamPeakBasedEval : public ZScoreEval {
  public:
@@ -44,6 +44,6 @@ class BinghamPeakBasedEval : public ZScoreEval {
  private:
 };
 
-}  // namespace correlation
+}  // namespace uncertainty
 
-#endif  // PACKLO_BACKEND_CORRELATION_BINGHAM_PEAK_BASED_EVAL_H_
+#endif  // PACKLO_BACKEND_UNCERTAINTY_BINGHAM_PEAK_BASED_EVAL_H_

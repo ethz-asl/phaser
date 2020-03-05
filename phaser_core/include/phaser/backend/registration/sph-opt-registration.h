@@ -2,8 +2,8 @@
 #define PACKLO_BACKEND_REGISTRATION_SPH_CUDA_REGISTRATION_H_
 
 #include "phaser/backend/alignment/base-aligner.h"
-#include "phaser/backend/correlation/base-eval.h"
-#include "phaser/backend/correlation/phase-correlation-eval.h"
+#include "phaser/backend/uncertainty/base-eval.h"
+#include "phaser/backend/uncertainty/phase-correlation-eval.h"
 #include "phaser/backend/correlation/spherical-correlation.h"
 #include "phaser/backend/registration/base-registration.h"
 #include "phaser/common/spherical-sampler.h"

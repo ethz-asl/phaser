@@ -20,7 +20,6 @@ SpatialCorrelationCuda::SpatialCorrelationCuda(const uint32_t voxels_per_dim)
     * FLAGS_phase_gpu_batch;
   cudaMalloc((void**)&F_, data_size);
   cudaMalloc((void**)&G_, data_size);
-  cudaMalloc((void**)&C_, data_size);
   c_ = new double[n_voxels_total_];
 
   // Create the cuda plans for two FFTs and one IFFT.
@@ -33,7 +32,6 @@ SpatialCorrelationCuda::SpatialCorrelationCuda(const uint32_t voxels_per_dim)
 SpatialCorrelationCuda::~SpatialCorrelationCuda() {
   cudaFree(F_);
   cudaFree(G_);
-  cudaFree(C_);
 
   cufftDestroy(f_plan_);
   cufftDestroy(c_plan_);
@@ -42,6 +40,7 @@ SpatialCorrelationCuda::~SpatialCorrelationCuda() {
 }
 
 // CUDA kernel for the spatial phase correlation.
+// Simple complex multiplication version.
 __global__ void correlation(cufftDoubleComplex* F, cufftDoubleComplex* G,
     uint32_t size) {
   const int idx = blockIdx.x*blockDim.x + threadIdx.x;

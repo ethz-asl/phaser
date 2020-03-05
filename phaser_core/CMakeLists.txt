@@ -44,17 +44,18 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/registration/mock/sph-registration-mock-translated.cc
    src/backend/registration/mock/sph-registration-mock-transformed.cc
 
-   src/backend/correlation/base-eval.cc
    src/backend/correlation/spherical-correlation.cc
-   src/backend/correlation/z-score-eval.cc
-   src/backend/correlation/z-score-peak-extraction.cc
-   src/backend/correlation/gaussian-peak-based-eval.cc
-   src/backend/correlation/gmm-peak-based-eval.cc
-   src/backend/correlation/bingham-peak-based-eval.cc
-   src/backend/correlation/bmm-peak-based-eval.cc
-   src/backend/correlation/peak-based-eval.cc
-   src/backend/correlation/phase-correlation-eval.cc
-   src/backend/correlation/signal-analysis.cc
+
+   src/backend/uncertainty/base-eval.cc
+   src/backend/uncertainty/z-score-eval.cc
+   src/backend/uncertainty/z-score-peak-extraction.cc
+   src/backend/uncertainty/gaussian-peak-based-eval.cc
+   src/backend/uncertainty/gmm-peak-based-eval.cc
+   src/backend/uncertainty/bingham-peak-based-eval.cc
+   src/backend/uncertainty/bmm-peak-based-eval.cc
+   src/backend/uncertainty/peak-based-eval.cc
+   src/backend/uncertainty/phase-correlation-eval.cc
+   src/backend/uncertainty/signal-analysis.cc
 
    src/backend/alignment/range-based-aligner.cc
    src/backend/alignment/phase-aligner.cc

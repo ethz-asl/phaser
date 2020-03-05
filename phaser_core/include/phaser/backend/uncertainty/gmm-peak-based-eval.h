@@ -1,8 +1,8 @@
-#ifndef PACKLO_BACKEND_CORRELATION_GMM_PEAK_BASED_EVAL_H_
-#define PACKLO_BACKEND_CORRELATION_GMM_PEAK_BASED_EVAL_H_
+#ifndef PACKLO_BACKEND_UNCERTAINTY_GMM_PEAK_BASED_EVAL_H_
+#define PACKLO_BACKEND_UNCERTAINTY_GMM_PEAK_BASED_EVAL_H_
 
 #include "phaser/backend/alignment/base-aligner.h"
-#include "phaser/backend/correlation/z-score-eval.h"
+#include "phaser/backend/uncertainty/z-score-eval.h"
 #include "phaser/distribution/gaussian-mixture.h"
 #include "phaser/model/gmm-parameters.h"
 
@@ -11,7 +11,7 @@
 #include <utility>
 #include <vector>
 
-namespace correlation {
+namespace uncertainty {
 
 class GmmPeakBasedEval : public ZScoreEval {
  public:
@@ -37,6 +37,6 @@ class GmmPeakBasedEval : public ZScoreEval {
       Eigen::MatrixXd* samples, Eigen::VectorXd* gaussian_weights) const;
 };
 
-}  // namespace correlation
+}  // namespace uncertainty
 
-#endif  // PACKLO_BACKEND_CORRELATION_GMM_PEAK_BASED_EVAL_H_
+#endif  // PACKLO_BACKEND_UNCERTAINTY_GMM_PEAK_BASED_EVAL_H_

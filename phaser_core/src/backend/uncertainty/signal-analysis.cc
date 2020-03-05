@@ -1,8 +1,8 @@
-#include "phaser/backend/correlation/signal-analysis.h"
+#include "phaser/backend/uncertainty/signal-analysis.h"
 
 #include <cmath>
 
-namespace correlation {
+namespace uncertainty {
 
 double SignalAnalysis::stdDev(
     const std::vector<double>& vec, const double mean, const uint32_t from,
@@ -18,4 +18,4 @@ double SignalAnalysis::stdDev(
   return std::sqrt(accum / (to - from - 1u));
 }
 
-}  // namespace correlation
+}  // namespace uncertainty

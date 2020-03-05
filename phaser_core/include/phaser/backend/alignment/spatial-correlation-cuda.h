@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_ALIGNMENT_PHASE_ALIGNER_GPU_H_
-#define PACKLO_BACKEND_ALIGNMENT_PHASE_ALIGNER_GPU_H_
+#ifndef PACKLO_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_CUDA_H_
+#define PACKLO_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_CUDA_H_
 
 #include <cufft.h>
 #include <cuda.h>
@@ -15,27 +15,18 @@ class SpatialCorrelationCuda {
   SpatialCorrelationCuda(const uint32_t voxels_per_dim);
   ~SpatialCorrelationCuda();
 
-  /*
-  void alignRegistered(
-      const model::PointCloud& cloud_prev,
-      const std::vector<model::FunctionValue>& f_prev,
-      const model::PointCloud& cloud_reg,
-      const std::vector<model::FunctionValue>& f_reg,
-      common::Vector_t* xyz) override;
-      */
   void correlateSignals(double* const f, double* const g);
 
  private:
   cufftHandle f_plan_;
   cufftHandle c_plan_;
-  cufftDoubleComplex *F_, *G_, *C_;
+  cufftDoubleComplex* F_;
+  cufftDoubleComplex* G_;
   double* c_;
-  //Eigen::VectorXd f_;
-  //Eigen::VectorXd g_;
   const uint32_t n_voxels_total_;
   const uint32_t n_voxels_per_dim_;
 };
 
 }  // namespace alignment
 
-#endif  // PACKLO_BACKEND_ALIGNMENT_PHASE_ALIGNER_GPU_H_
+#endif  // PACKLO_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_CUDA_H_

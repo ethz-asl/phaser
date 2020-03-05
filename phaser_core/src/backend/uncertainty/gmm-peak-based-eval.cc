@@ -1,12 +1,12 @@
-#include "phaser/backend/correlation/gmm-peak-based-eval.h"
+#include "phaser/backend/uncertainty/gmm-peak-based-eval.h"
+#include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
 #include "phaser/backend/alignment/phase-aligner.h"
-#include "phaser/backend/correlation/gaussian-peak-based-eval.h"
 #include "phaser/distribution/gaussian.h"
 
 #include <glog/logging.h>
 #include <vector>
 
-namespace correlation {
+namespace uncertainty {
 
 DEFINE_int32(
     gmm_peak_neighbors, 2,
@@ -100,4 +100,4 @@ void GmmPeakBasedEval::retrievePeakNeighbors(
   VLOG(1) << "gaussian weights: \n" << (*gaussian_weights);
 }
 
-}  // namespace correlation
+}  // namespace uncertainty

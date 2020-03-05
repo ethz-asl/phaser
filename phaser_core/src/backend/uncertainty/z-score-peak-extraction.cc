@@ -1,5 +1,5 @@
-#include "phaser/backend/correlation/z-score-peak-extraction.h"
-#include "phaser/backend/correlation/signal-analysis.h"
+#include "phaser/backend/uncertainty/z-score-peak-extraction.h"
+#include "phaser/backend/uncertainty/signal-analysis.h"
 
 #include <algorithm>
 #include <cmath>
@@ -24,7 +24,7 @@ DEFINE_double(
     z_score_filter_threshold, 0.405,
     "Removes all correlation input below this value.");
 
-namespace correlation {
+namespace uncertainty {
 
 ZScorePeakExtraction::ZScorePeakExtraction()
     : manager_("z-score"),
@@ -143,4 +143,4 @@ uint32_t& ZScorePeakExtraction::getMaxLag() {
   return lag_max_;
 }
 
-}  // namespace correlation
+}  // namespace uncertainty
