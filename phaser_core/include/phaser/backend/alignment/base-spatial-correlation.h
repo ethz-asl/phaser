@@ -7,8 +7,7 @@ namespace alignment {
 
 class BaseSpatialCorrelation {
 public:
-  void correlateSignals(Eigen::VectorXd* f, Eigen::VectorXd* g);
-  virtual void correlateSignals(double* const f, double* const g) = 0;
+  virtual double* correlateSignals(double* f, double* g) = 0;
 };
 
 } // namespace alignment

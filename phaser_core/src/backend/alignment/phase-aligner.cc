@@ -1,5 +1,6 @@
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/common/point-cloud-utils.h"
+#include "phaser/backend/alignment/spatial-correlation.h"
 
 #include <complex.h>  // needs to be included before fftw
 
@@ -80,6 +81,13 @@ void PhaseAligner::alignRegistered(
   discretizePointcloud(cloud_prev, &f_, &hist_);
   discretizePointcloud(cloud_reg, &g_, &hist_);
 
+  const auto max_f = std::max_element(f_.data(), f_.data()+n_voxels_);
+  VLOG(1) << "max f: " << *max_f << " dist: " << std::distance(f_.data(), max_f);
+  SpatialCorrelation corr(FLAGS_phase_n_voxels);
+  memcpy(c_, corr.correlateSignals(f_.data(), g_.data()),
+    n_voxels_ * sizeof(double));
+
+    /*
   // Perform the two FFTs on the discretized signals.
   VLOG(1) << "Performing FFT on the first point cloud.";
   fftw_execute(f_plan_);
@@ -95,6 +103,7 @@ void PhaseAligner::alignRegistered(
   // Perform the IFFT on the correlation tensor.
   VLOG(1) << "Performing IFFT on correlation.";
   fftw_execute(c_plan_);
+  */
 
   // Find the index that maximizes the correlation.
   const auto max_corr = std::max_element(c_, c_+n_voxels_);

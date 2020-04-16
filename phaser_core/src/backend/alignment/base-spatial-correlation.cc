@@ -2,7 +2,7 @@
 
 namespace alignment {
 
-void BaseSpatialCorrelation::correlateSignals(
+double* BaseSpatialCorrelation::correlateSignals(
     Eigen::VectorXd* f, Eigen::VectorXd* g) {
   correlateSignals(f->data(), g->data());
 }
