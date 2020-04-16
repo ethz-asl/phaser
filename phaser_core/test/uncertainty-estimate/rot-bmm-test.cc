@@ -1,4 +1,4 @@
-#include "phaser/backend/correlation/z-score-eval.h"
+#include "phaser/backend/uncertainty/z-score-eval.h"
 #include "phaser/backend/registration/sph-registration.h"
 #include "phaser/common/data/datasource-ply.h"
 #include "phaser/common/metric-utils.h"
@@ -18,13 +18,13 @@ class RotBinghamMixtureTest : public ::testing::Test {
     ds_->setDatasetFolder("./test_clouds/arche/sigma-level-1/");
     registrator_ = std::make_unique<registration::SphRegistration>(
         "phase", "bmm", "gaussian");
-    z_score_eval_ = dynamic_cast<correlation::ZScoreEval*>(
+    z_score_eval_ = dynamic_cast<uncertainty::ZScoreEval*>(
         &registrator_->getRotEvaluation());
   }
 
   data::DatasourcePlyPtr ds_;
   registration::SphRegistrationPtr registrator_;
-  correlation::ZScoreEval* z_score_eval_;
+  uncertainty::ZScoreEval* z_score_eval_;
 };
 
 TEST_F(RotBinghamMixtureTest, LowUncertainty) {
