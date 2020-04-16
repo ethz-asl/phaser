@@ -18,11 +18,8 @@ namespace registration {
 class SphOptRegistration : public BaseRegistration {
  public:
   SphOptRegistration();
-  explicit SphOptRegistration(
-      std::string&& alignment_algorithm, std::string&& evaluation_algorithm,
-      std::string&& pos_evaluation_algorithm);
-
   virtual ~SphOptRegistration() = default;
+
   model::RegistrationResult registerPointCloud(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) override;
 
@@ -37,8 +34,8 @@ class SphOptRegistration : public BaseRegistration {
 
   void setBandwith(const int bandwith);
 
-  correlation::BaseEval& getRotEvaluation();
-  correlation::BaseEval& getPosEvaluation();
+  uncertainty::BaseEval& getRotEvaluation();
+  uncertainty::BaseEval& getPosEvaluation();
 
  protected:
   void correlatePointcloud(
@@ -50,21 +47,10 @@ class SphOptRegistration : public BaseRegistration {
   std::vector<model::FunctionValue> f_values_;
   std::vector<model::FunctionValue> h_values_;
   alignment::BaseAlignerPtr aligner_;
-  correlation::PhaseCorrelationEvalPtr correlation_eval_;
-
-  // Statistics
-  const std::string kSampleDurationKey = "Sampling";
-  const std::string kCorrelationDurationKey = "Correlation";
-  const std::string kTranslationDurationKey = "Translation";
-
- private:
-  void initializeAlgorithms();
-  std::string alignment_algorithm_;
-  std::string rot_evaluation_algorithm_;
-  std::string pos_evaluation_algorithm_;
+  uncertainty::PhaseCorrelationEvalPtr correlation_eval_;
 };
 
-using SphCudaRegistrationPtr = std::unique_ptr<SphRegistration>;
+using SphCudaRegistrationPtr = std::unique_ptr<SphOptRegistration>;
 
 }  // namespace registration
 
