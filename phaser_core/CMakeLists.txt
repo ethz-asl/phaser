@@ -61,6 +61,8 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/alignment/range-based-aligner.cc
    src/backend/alignment/phase-aligner.cc
    src/backend/alignment/feature-aligner.cc
+   src/backend/alignment/base-spatial-correlation.cc
+   src/backend/alignment/spatial-correlation.cc
 
    src/experiments/experiment-handler.cc
 )

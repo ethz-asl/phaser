@@ -5,7 +5,7 @@ rosrun phaser_ros phaser_ros \
     --alsologtostderr=1 \
     --v=3 \
 		--enable_debug=true \
-		--registration_algorithm="sph" \
+		--registration_algorithm="sph-opt" \
 		--datasource="ply" \
 		--PlyReadDirectory="/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_test_data/test_clouds/arche/sigma-level-1/" \
 		--spherical_bandwith=70 \

@@ -8,6 +8,7 @@
 #include "phaser/backend/registration/mock/sph-registration-mock-transformed.h"
 #include "phaser/backend/registration/mock/sph-registration-mock-translated.h"
 #include "phaser/backend/registration/sph-registration.h"
+#include "phaser/backend/registration/sph-opt-registration.h"
 
 #include <glog/logging.h>
 #include <ros/ros.h>
@@ -92,6 +93,8 @@ registration::BaseRegistrationPtr PackloNode::initializeRegistrationAlgorithm(
     const std::string& algo) {
   if (algo == "sph")
     return std::make_unique<registration::SphRegistration>();
+  else if (algo == "sph-opt")
+    return std::make_unique<registration::SphOptRegistration>();
   else if (algo == "sph-mock-rotated")
     return std::make_unique<registration::SphRegistrationMockRotated>();
   else if (algo == "sph-mock-cutted")

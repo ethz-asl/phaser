@@ -65,7 +65,6 @@ void Distributor::pointCloudCallback(
     prev_point_cloud_ = nullptr;
     appendResult(result);
     //writeResultsToFile();
-    registrator_ = std::make_unique<registration::SphRegistration>();
   } else if (FLAGS_app_mode == "store_ply")
     cloud->writeToFile();
   else if (FLAGS_app_mode == "experiment1")

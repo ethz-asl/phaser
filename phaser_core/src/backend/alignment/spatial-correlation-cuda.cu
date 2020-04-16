@@ -32,10 +32,8 @@ SpatialCorrelationCuda::SpatialCorrelationCuda(const uint32_t voxels_per_dim)
 SpatialCorrelationCuda::~SpatialCorrelationCuda() {
   cudaFree(F_);
   cudaFree(G_);
-
   cufftDestroy(f_plan_);
   cufftDestroy(c_plan_);
-
   delete [] c_;
 }
 
