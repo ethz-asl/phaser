@@ -18,7 +18,7 @@ namespace registration {
 
 SphOptRegistration::SphOptRegistration()
     : BaseRegistration("SphOptRegistration"),
-      sampler_(100) {
+      sampler_(150) {
   aligner_ = std::make_unique<alignment::PhaseAligner>();
 
   uncertainty::BaseEvalPtr rot_eval
