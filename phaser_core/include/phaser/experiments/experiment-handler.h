@@ -4,7 +4,6 @@
 #include "phaser/backend/registration/base-registration.h"
 #include "phaser/backend/registration/sph-registration.h"
 #include "phaser/model/point-cloud.h"
-#include "phaser/backend/registration/g-icp-registration.h"
 
 
 #include <Eigen/Dense>
@@ -23,7 +22,6 @@ class ExperimentHandler {
   void runExperiment1(const model::PointCloudPtr& cloud);
   void runExperiment3(const model::PointCloudPtr& cloud);
   void runExperiment4(const model::PointCloudPtr& cloud);
-  void runExperimentGICP(const model::PointCloudPtr& cloud);
 
  private:
   void readTruth();
@@ -40,8 +38,6 @@ class ExperimentHandler {
   std::vector<Eigen::VectorXd> states_;
   Eigen::MatrixXd gt_;
   uint16_t n_registered_ = 0u;
-  registration::GIcpRegistration gicp_reg_;
-  std::vector<Eigen::Matrix4f> gicp_states_;
 };
 
 using ExperimentHandlerPtr = std::unique_ptr<ExperimentHandler>;

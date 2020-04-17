@@ -103,12 +103,4 @@ const std::vector<double>& RegistrationResult::getRotationCorrelation() const
   return rotation_correlation_;
 }
 
-void RegistrationResult::setGICPResult(const Eigen::Matrix4f& result) {
-  gicp_result_ = result;
-}
-
-Eigen::Matrix4f RegistrationResult::getGICPResult() const noexcept {
-  return gicp_result_;
-}
-
 }  // namespace model

@@ -39,7 +39,6 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/registration/base-registration.cc
    src/backend/registration/sph-registration.cc
    src/backend/registration/sph-opt-registration.cc
-   src/backend/registration/g-icp-registration.cc
    src/backend/registration/mock/sph-registration-mock-rotated.cc
    src/backend/registration/mock/sph-registration-mock-cutted.cc
    src/backend/registration/mock/sph-registration-mock-translated.cc
