@@ -43,7 +43,7 @@ SpatialCorrelation::~SpatialCorrelation() {
   delete [] g_;
 }
 
-double* SpatialCorrelation::correlateSignals(double* f, double* g) {
+double* SpatialCorrelation::correlateSignals(double* const f, double* const g) {
   const uint32_t function_size = total_n_voxels_ * sizeof(double);
   memcpy(f_, f, function_size);
   memcpy(g_, g, function_size);

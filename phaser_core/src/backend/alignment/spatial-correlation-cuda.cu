@@ -48,7 +48,7 @@ __global__ void correlation(cufftDoubleComplex* F, cufftDoubleComplex* G,
   F[idx].y = F[idx].x * (-G[idx].y) + F[idx].y * G[idx].x;
 }
 
-void SpatialCorrelationCuda::correlateSignals(double* const f,
+double* SpatialCorrelationCuda::correlateSignals(double* const f,
     double* const g) {
   // Perform the two FFTs on the discretized signals.
   VLOG(1) << "Performing FFT on the first point cloud.";
@@ -73,6 +73,7 @@ void SpatialCorrelationCuda::correlateSignals(double* const f,
   VLOG(1) << "Performing IFFT on correlation.";
   cufftExecZ2D(c_plan_, F_, d_input);
   cudaMemcpy(c_, d_input, sizeof(double)*n_voxels_total_, cudaMemcpyDeviceToHost);
+  return c_;
 }
 
 }  // namespace alignment

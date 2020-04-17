@@ -9,7 +9,9 @@ namespace alignment {
 
 class BaseSpatialCorrelation {
 public:
-  virtual double* correlateSignals(double* f, double* g) = 0;
+  double* correlateSignals(
+      Eigen::VectorXd* const f, Eigen::VectorXd* const g);
+  virtual double* correlateSignals(double* const f, double* const g) = 0;
 };
 
 using BaseSpatialCorrelationPtr = std::unique_ptr<BaseSpatialCorrelation>;
