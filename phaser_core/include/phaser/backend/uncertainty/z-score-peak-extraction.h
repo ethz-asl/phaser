@@ -1,7 +1,7 @@
-#ifndef PACKLO_BACKEND_CORRELATION_Z_SCORE_PEAK_EXTRACTION_H_
-#define PACKLO_BACKEND_CORRELATION_Z_SCORE_PEAK_EXTRACTION_H_
+#ifndef PACKLO_BACKEND_UNCERTAINTY_Z_SCORE_PEAK_EXTRACTION_H_
+#define PACKLO_BACKEND_UNCERTAINTY_Z_SCORE_PEAK_EXTRACTION_H_
 
-#include "phaser/backend/correlation/base-peak-extraction.h"
+#include "phaser/backend/uncertainty/base-peak-extraction.h"
 #include "phaser/common/statistics-manager.h"
 
 #include <cstdint>
@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 
-namespace correlation {
+namespace uncertainty {
 
 class ZScorePeakExtraction : public BasePeakExtraction {
  public:
@@ -42,6 +42,6 @@ class ZScorePeakExtraction : public BasePeakExtraction {
   uint32_t lag_max_;
 };
 
-}  // namespace correlation
+}  // namespace uncertainty
 
-#endif  // PACKLO_BACKEND_CORRELATION_Z_SCORE_PEAK_EXTRACTION_H_
+#endif  // PACKLO_BACKEND_UNCERTAINTY_Z_SCORE_PEAK_EXTRACTION_H_

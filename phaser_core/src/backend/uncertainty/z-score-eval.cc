@@ -1,6 +1,6 @@
-#include "phaser/backend/correlation/z-score-eval.h"
+#include "phaser/backend/uncertainty/z-score-eval.h"
+#include "phaser/backend/uncertainty/signal-analysis.h"
 #include "phaser/backend/alignment/phase-aligner.h"
-#include "phaser/backend/correlation/signal-analysis.h"
  #include "phaser/distribution/bingham.h"
  #include "phaser/distribution/gaussian.h"
 
@@ -15,7 +15,7 @@
 
 #include <glog/logging.h>
 
-namespace correlation {
+namespace uncertainty {
 
 ZScoreEval::ZScoreEval(
     const alignment::BaseAligner& aligner,
@@ -136,4 +136,4 @@ ZScorePeakExtraction& ZScoreEval::getPeakExtraction() {
 void ZScoreEval::evaluateCorrelationFromRotation(
     const std::vector<double>& corr) {}
 
-}  // namespace correlation
+}  // namespace uncertainty

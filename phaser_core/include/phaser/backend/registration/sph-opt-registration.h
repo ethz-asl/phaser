@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_REGISTRATION_SPH_REGISTRATION_H_
-#define PACKLO_BACKEND_REGISTRATION_SPH_REGISTRATION_H_
+#ifndef PACKLO_BACKEND_REGISTRATION_SPH_CUDA_REGISTRATION_H_
+#define PACKLO_BACKEND_REGISTRATION_SPH_CUDA_REGISTRATION_H_
 
 #include "phaser/backend/alignment/base-aligner.h"
 #include "phaser/backend/uncertainty/base-eval.h"
@@ -15,14 +15,11 @@
 
 namespace registration {
 
-class SphRegistration : public BaseRegistration {
+class SphOptRegistration : public BaseRegistration {
  public:
-  SphRegistration();
-  explicit SphRegistration(
-      std::string&& alignment_algorithm, std::string&& evaluation_algorithm,
-      std::string&& pos_evaluation_algorithm);
+  SphOptRegistration();
+  virtual ~SphOptRegistration() = default;
 
-  virtual ~SphRegistration() = default;
   model::RegistrationResult registerPointCloud(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) override;
 
@@ -51,21 +48,10 @@ class SphRegistration : public BaseRegistration {
   std::vector<model::FunctionValue> h_values_;
   alignment::BaseAlignerPtr aligner_;
   uncertainty::PhaseCorrelationEvalPtr correlation_eval_;
-
-  // Statistics
-  const std::string kSampleDurationKey = "Sampling";
-  const std::string kCorrelationDurationKey = "Correlation";
-  const std::string kTranslationDurationKey = "Translation";
-
- private:
-  void initializeAlgorithms();
-  std::string alignment_algorithm_;
-  std::string rot_evaluation_algorithm_;
-  std::string pos_evaluation_algorithm_;
 };
 
-using SphRegistrationPtr = std::unique_ptr<SphRegistration>;
+using SphCudaRegistrationPtr = std::unique_ptr<SphOptRegistration>;
 
 }  // namespace registration
 
-#endif  // PACKLO_BACKEND_REGISTRATION_SPH_REGISTRATION_H_
+#endif  // PACKLO_BACKEND_REGISTRATION_SPH_CUDA_REGISTRATION_H_

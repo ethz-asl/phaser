@@ -1,11 +1,11 @@
-#ifndef PACKLO_BACKEND_CORRELATION_PHASE_CORRELATION_EVAL_H_
-#define PACKLO_BACKEND_CORRELATION_PHASE_CORRELATION_EVAL_H_
+#ifndef PACKLO_BACKEND_UNCERTAINTY_PHASE_CORRELATION_EVAL_H_
+#define PACKLO_BACKEND_UNCERTAINTY_PHASE_CORRELATION_EVAL_H_
 
-#include "phaser/backend/correlation/base-eval.h"
+#include "phaser/backend/uncertainty/base-eval.h"
 
 #include <memory>
 
-namespace correlation {
+namespace uncertainty {
 
 class PhaseCorrelationEval {
  public:
@@ -25,6 +25,6 @@ class PhaseCorrelationEval {
 
 using PhaseCorrelationEvalPtr = std::unique_ptr<PhaseCorrelationEval>;
 
-}  // namespace correlation
+}  // namespace uncertainty
 
-#endif  // PACKLO_BACKEND_CORRELATION_PHASE_CORRELATION_EVAL_H_
+#endif  // PACKLO_BACKEND_UNCERTAINTY_PHASE_CORRELATION_EVAL_H_

@@ -1,18 +1,19 @@
 #ifndef PACKLO_BACKEND_ALIGNMENT_PHASE_ALIGNER_H_
 #define PACKLO_BACKEND_ALIGNMENT_PHASE_ALIGNER_H_
 
-#include "phaser/backend/alignment/base-aligner.h"
-#include <fftw3/fftw3.h>
-
 #include <array>
 #include <vector>
+
+#include <fftw3/fftw3.h>
+
+#include "phaser/backend/alignment/base-aligner.h"
+#include "phaser/backend/alignment/base-spatial-correlation.h"
 
 namespace alignment {
 
 class PhaseAligner : public BaseAligner {
  public:
   PhaseAligner();
-  ~PhaseAligner();
 
   void alignRegistered(
       const model::PointCloud& cloud_prev,
@@ -35,16 +36,12 @@ class PhaseAligner : public BaseAligner {
   std::array<uint32_t, 3> ind2sub(
       const uint32_t lin_index, const uint32_t rows, const uint32_t cols) const;
 
-  fftw_plan f_plan_;
-  fftw_plan g_plan_;
-  fftw_plan c_plan_;
-  fftw_complex *F_, *G_, *C_;
-  double* c_;
   Eigen::VectorXd f_;
   Eigen::VectorXd g_;
   Eigen::VectorXd hist_;
-  const uint32_t n_voxels_;
-  std::vector<double> durations_;
+  const uint32_t total_n_voxels_;
+  BaseSpatialCorrelationPtr spatial_correlation_;
+  std::vector<double> previous_correlation_;
 };
 
 }  // namespace alignment

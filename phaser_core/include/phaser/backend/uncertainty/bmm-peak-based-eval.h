@@ -1,13 +1,13 @@
-#ifndef PACKLO_BACKEND_CORRELATION_BMM_PEAK_BASED_EVAL_H_
-#define PACKLO_BACKEND_CORRELATION_BMM_PEAK_BASED_EVAL_H_
+#ifndef PACKLO_BACKEND_UNCERTAINTY_BMM_PEAK_BASED_EVAL_H_
+#define PACKLO_BACKEND_UNCERTAINTY_BMM_PEAK_BASED_EVAL_H_
 
-#include "phaser/backend/correlation/z-score-eval.h"
+#include "phaser/backend/uncertainty/z-score-eval.h"
 #include "phaser/distribution/bingham-mixture.h"
 
 #include <set>
 #include <vector>
 
-namespace correlation {
+namespace uncertainty {
 
 class BmmPeakBasedEval : public ZScoreEval {
  public:
@@ -40,6 +40,6 @@ class BmmPeakBasedEval : public ZScoreEval {
       Eigen::RowVectorXd* weights) const;
 };
 
-}  // namespace correlation
+}  // namespace uncertainty
 
 #endif  // PACKLO_BACKEND_CORRELATION_BMM_PEAK_BASED_EVAL_H_

@@ -1,9 +1,4 @@
 #include "phaser/controller/distributor.h"
-#include "phaser/backend/registration/mock/sph-registration-mock-cutted.h"
-#include "phaser/backend/registration/mock/sph-registration-mock-rotated.h"
-#include "phaser/backend/registration/mock/sph-registration-mock-transformed.h"
-#include "phaser/backend/registration/mock/sph-registration-mock-translated.h"
-#include "phaser/backend/registration/sph-registration.h"
 #include "phaser/common/rotation-utils.h"
 #include "phaser/common/spherical-projection.h"
 #include "phaser/common/statistic-utils.h"
@@ -17,30 +12,22 @@
 DEFINE_bool(
     enable_debug, false, "Enables the debug mode for the registration.");
 
-DEFINE_string(
-    registration_algorithm, "sph",
-    "Defines the used algorithm for the point cloud registration.");
-
 DEFINE_string(app_mode, "registration", "Defines the operating mode.");
 
 DEFINE_int32(take_every_n_cloud, 1, "As the name suggests.");
 
-DEFINE_int32(n_clouds_to_process, 0, "As the name suggests.");
-
 namespace controller {
 
-Distributor::Distributor(const data::DatasourcePtr& ds)
+Distributor::Distributor(const data::DatasourcePtr& ds,
+    registration::BaseRegistrationPtr&& registration)
     : ds_(ds),
       statistics_manager_(kManagerReferenceName),
-      registration_algorithm_(FLAGS_registration_algorithm) {
+      registrator_(std::move(registration)) {
   subscribeToTopics();
-  initializeRegistrationAlgorithm();
-  VLOG(1) << "Loading " << FLAGS_n_clouds_to_process << " clouds.";
-  ds_->startStreaming(FLAGS_n_clouds_to_process);
 }
 
 void Distributor::shutdown() {
-  writeResultsToFile();
+  //writeResultsToFile();
   if (experiment_handler_ != nullptr)
     experiment_handler_->shutdown();
 }
@@ -50,28 +37,6 @@ void Distributor::subscribeToTopics() {
     CHECK(cloud);
     pointCloudCallback(cloud);
   });
-}
-
-void Distributor::initializeRegistrationAlgorithm() {
-  if (registration_algorithm_ == "sph")
-    registrator_ = std::make_unique<registration::SphRegistration>();
-  else if (registration_algorithm_ == "sph-mock-rotated")
-    registrator_ = std::make_unique<registration::SphRegistrationMockRotated>();
-  else if (registration_algorithm_ == "sph-mock-cutted")
-    registrator_ = std::make_unique<registration::SphRegistrationMockCutted>();
-  else if (registration_algorithm_ == "sph-mock-translated")
-    registrator_ = std::make_unique<
-      registration::SphRegistrationMockTranslated>();
-  else if (registration_algorithm_ == "sph-mock-transformed")
-    registrator_ = std::make_unique<
-      registration::SphRegistrationMockTransformed>();
-  else
-    LOG(FATAL) << "Unknown registration algorithm specified!";
-
-  if (FLAGS_app_mode == "experiment1" || FLAGS_app_mode == "experiment2" ||
-      FLAGS_app_mode == "experiment3" || FLAGS_app_mode == "gicp") {
-    experiment_handler_ = std::make_unique<experiments::ExperimentHandler>();
-  }
 }
 
 void Distributor::setRegistrationAlgorithm(std::string&& algorithm) {
@@ -99,8 +64,7 @@ void Distributor::pointCloudCallback(
     // prev_point_cloud_ = result.getRegisteredCloud();
     prev_point_cloud_ = nullptr;
     appendResult(result);
-    writeResultsToFile();
-    registrator_ = std::make_unique<registration::SphRegistration>();
+    //writeResultsToFile();
   } else if (FLAGS_app_mode == "store_ply")
     cloud->writeToFile();
   else if (FLAGS_app_mode == "experiment1")

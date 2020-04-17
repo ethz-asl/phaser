@@ -1,11 +1,11 @@
-#ifndef PACKLO_BACKEND_CORRELATION_BASE_PEAK_EXTRACTION_H_
-#define PACKLO_BACKEND_CORRELATION_BASE_PEAK_EXTRACTION_H_
+#ifndef PACKLO_BACKEND_UNCERTAINTY_BASE_PEAK_EXTRACTION_H_
+#define PACKLO_BACKEND_UNCERTAINTY_BASE_PEAK_EXTRACTION_H_
 
 #include <memory>
 #include <set>
 #include <vector>
 
-namespace correlation {
+namespace uncertainty {
 
 class BasePeakExtraction {
   virtual void extractPeaks(
@@ -14,6 +14,6 @@ class BasePeakExtraction {
 
 using BasePeakExtractionPtr = std::unique_ptr<BasePeakExtraction>;
 
-}  // namespace correlation
+}  // namespace uncertainty
 
-#endif  // PACKLO_BACKEND_CORRELATION_BASE_PEAK_EXTRACTION_H_
+#endif  // PACKLO_BACKEND_UNCERTAINTY_BASE_PEAK_EXTRACTION_H_

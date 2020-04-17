@@ -1,8 +1,8 @@
-#include "phaser/backend/correlation/phase-correlation-eval.h"
+#include "phaser/backend/uncertainty/phase-correlation-eval.h"
 
 #include <glog/logging.h>
 
-namespace correlation {
+namespace uncertainty {
 
 PhaseCorrelationEval::PhaseCorrelationEval(
     BaseEvalPtr&& rotation, BaseEvalPtr&& positional)
@@ -27,4 +27,4 @@ BaseEval& PhaseCorrelationEval::getPositionEval() {
   return *positional_eval_;
 }
 
-}  // namespace correlation
+}  // namespace uncertainty

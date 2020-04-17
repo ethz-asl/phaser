@@ -1,4 +1,4 @@
-#include "phaser/backend/correlation/gaussian-peak-based-eval.h"
+#include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/distribution/gaussian.h"
 
@@ -8,7 +8,7 @@ DEFINE_int32(
     gaussian_peak_neighbors, 0,
     "Determines the number of neighbors used for the Bingham calculation.");
 
-namespace correlation {
+namespace uncertainty {
 
 GaussianPeakBasedEval::GaussianPeakBasedEval(
     const alignment::BaseAligner& aligner,
@@ -94,4 +94,4 @@ void GaussianPeakBasedEval::retrievePeakNeighbors(
   (*weights) = weights->array() / weight_sum;
 }
 
-}  // namespace correlation
+}  // namespace uncertainty

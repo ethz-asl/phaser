@@ -9,7 +9,7 @@ namespace controller {
 
 class CloudController {
 public:
-  CloudController();
+  CloudController(std::string&& method = "sph");
   void initializeRegistrationAlgorithm(const std::string& method);
   model::RegistrationResult registerPointCloud(
     const model::PointCloudPtr& target,

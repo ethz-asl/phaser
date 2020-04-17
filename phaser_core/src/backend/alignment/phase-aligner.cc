@@ -1,5 +1,7 @@
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/common/point-cloud-utils.h"
+#include "phaser/backend/alignment/spatial-correlation.h"
+#include "phaser/backend/alignment/spatial-correlation-cuda.h"
 
 #include <complex.h>  // needs to be included before fftw
 
@@ -22,51 +24,16 @@ DEFINE_double(
 namespace alignment {
 
 PhaseAligner::PhaseAligner()
-    : n_voxels_(
+    : total_n_voxels_(
           FLAGS_phase_n_voxels * FLAGS_phase_n_voxels * FLAGS_phase_n_voxels) {
   VLOG(1) << "Initializing phase alignment with " << FLAGS_phase_n_voxels
           << " voxels in [" << FLAGS_phase_discretize_lower << ", "
           << FLAGS_phase_discretize_upper << "].";
-
-  // Allocate memory for the FFT and IFFT.
-  F_ =
-      static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * n_voxels_));
-  G_ =
-      static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * n_voxels_));
-  C_ =
-      static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * n_voxels_));
-  c_ = new double[n_voxels_];
-
   // Allocate memory for the function signals in the time domain.
-  f_ = Eigen::VectorXd::Zero(n_voxels_);
-  g_ = Eigen::VectorXd::Zero(n_voxels_);
-  hist_ = Eigen::VectorXd::Zero(n_voxels_);
-
-  // Create the FFTW plans for two FFTs and one IFFT.
-  f_plan_ = fftw_plan_dft_r2c_3d(FLAGS_phase_n_voxels,
-      FLAGS_phase_n_voxels, FLAGS_phase_n_voxels,
-      f_.data(), F_, FFTW_ESTIMATE);
-
-  g_plan_ = fftw_plan_dft_r2c_3d(
-      FLAGS_phase_n_voxels, FLAGS_phase_n_voxels, FLAGS_phase_n_voxels,
-      g_.data(), G_, FFTW_ESTIMATE);
-
-  c_plan_ = fftw_plan_dft_c2r_3d(FLAGS_phase_n_voxels,
-      FLAGS_phase_n_voxels, FLAGS_phase_n_voxels,
-      C_, c_, FFTW_ESTIMATE);
-}
-
-PhaseAligner::~PhaseAligner() {
-  fftw_free(F_);
-  fftw_free(G_);
-  fftw_free(C_);
-
-  fftw_destroy_plan(f_plan_);
-  fftw_destroy_plan(g_plan_);
-  fftw_destroy_plan(c_plan_);
-
-  fftw_cleanup();
-  delete [] c_;
+  f_ = Eigen::VectorXd::Zero(total_n_voxels_);
+  g_ = Eigen::VectorXd::Zero(total_n_voxels_);
+  hist_ = Eigen::VectorXd::Zero(total_n_voxels_);
+  spatial_correlation_.reset(new SpatialCorrelation(FLAGS_phase_n_voxels));
 }
 
 void PhaseAligner::alignRegistered(
@@ -76,39 +43,15 @@ void PhaseAligner::alignRegistered(
     const std::vector<model::FunctionValue>&, common::Vector_t* xyz) {
   CHECK(xyz);
 
-  auto start = std::chrono::high_resolution_clock::now();
   discretizePointcloud(cloud_prev, &f_, &hist_);
   discretizePointcloud(cloud_reg, &g_, &hist_);
 
-  // Perform the two FFTs on the discretized signals.
-  VLOG(1) << "Performing FFT on the first point cloud.";
-  fftw_execute(f_plan_);
-  VLOG(1) << "Performing FFT on the second point cloud.";
-  fftw_execute(g_plan_);
-
-  // Correlate the signals in the frequency domain.
-  for (uint32_t i = 0u; i < n_voxels_; ++i) {
-    C_[i][0] = F_[i][0] * G_[i][0] - F_[i][1] * (-G_[i][1]);
-    C_[i][1] = F_[i][0] * (-G_[i][1]) + F_[i][1] * G_[i][0];
-  }
-
-  // Perform the IFFT on the correlation tensor.
-  VLOG(1) << "Performing IFFT on correlation.";
-  fftw_execute(c_plan_);
+  double* c = spatial_correlation_->correlateSignals(f_.data(), g_.data());
+  previous_correlation_ = std::vector<double>(c, c + total_n_voxels_);
 
   // Find the index that maximizes the correlation.
-  const auto max_corr = std::max_element(c_, c_+n_voxels_);
-  auto end = std::chrono::high_resolution_clock::now();
-  double duration =
-      std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
-          .count();
-  durations_.emplace_back(duration);
-  std::cout << "Translation alignment times: \n";
-  std::copy(
-      durations_.begin(), durations_.end(),
-      std::ostream_iterator<double>(std::cout, " "));
-
-  const uint32_t max = std::distance(c_, max_corr);
+  const auto max_corr = std::max_element(c, c + total_n_voxels_);
+  const uint32_t max = std::distance(c, max_corr);
   std::array<uint32_t, 3> max_xyz =
       ind2sub(max, FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);
   VLOG(1) << "Found max correlation at " << max
@@ -175,13 +118,6 @@ std::array<uint32_t, 3> PhaseAligner::ind2sub(
   const int updated_index = lin_index / cols;
   xyz[0] = updated_index % rows;
   xyz[2] = updated_index / rows;
-  /*
-  xyz[1] = lin_index % rows;
-  const int updated_index = lin_index / rows;
-  xyz[0] = updated_index % cols;
-  xyz[2] = updated_index / cols;
-  */
-
   return xyz;
 }
 
@@ -196,7 +132,7 @@ double PhaseAligner::computeTranslationFromIndex(double index) const {
 }
 
 std::vector<double> PhaseAligner::getCorrelation() const {
-  return std::vector<double>(c_, c_+n_voxels_);
+  return previous_correlation_;
 }
 
 }  // namespace alignment

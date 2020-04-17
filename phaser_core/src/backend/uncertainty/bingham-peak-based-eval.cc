@@ -1,4 +1,4 @@
-#include "phaser/backend/correlation/bingham-peak-based-eval.h"
+#include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
 #include "phaser/common/rotation-utils.h"
 
 #include <algorithm>
@@ -8,7 +8,7 @@ DEFINE_int32(
     bingham_peak_neighbors, 0,
     "Determines the number of neighbors used for the Bingham calculation.");
 
-namespace correlation {
+namespace uncertainty {
 
 BinghamPeakBasedEval::BinghamPeakBasedEval(
     const alignment::BaseAligner& aligner,
@@ -97,4 +97,4 @@ void BinghamPeakBasedEval::retrievePeakNeighbors(
   (*weights) = weights->array() / weight_sum;
 }
 
-}  // namespace correlation
+}  // namespace uncertainty
