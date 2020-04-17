@@ -75,6 +75,12 @@ cs_add_library(${PROJECT_NAME}_lib
 ## TESTING ##
 #############
 
+cuda_add_executable(${PROJECT_NAME}_driver test/driver.cc)
+cuda_add_cufft_to_target(${PROJECT_NAME}_driver)
+target_link_libraries(${PROJECT_NAME}_driver
+  ${PROJECT_NAME}_lib ${PROJECT_NAME}_cuda_lib
+  ${CUDA_LIBRARIES} ${CUDA_CUFFT_LIBRARIES})
+
 # Sanity check.
 catkin_add_gtest(test_sanity_check test/sanity-check/sanity-check-test.cc)
 target_link_libraries(test_sanity_check
@@ -115,23 +121,11 @@ target_link_libraries(test_translation_gaussian
   ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_translation_gaussian)
 
-#catkin_add_gtest(test_translation_gm
-  #test/uncertainty-estimate/trans-gm-test.cc)
-#target_link_libraries(test_translation_gm
-  #${PROJECT_NAME}_lib)
-#phaser_import_test_maps(test_translation_gm)
-
 catkin_add_gtest(test_rotation_bingham
   test/uncertainty-estimate/rot-bingham-test.cc)
 target_link_libraries(test_rotation_bingham
   ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_rotation_bingham)
-
-#catkin_add_gtest(test_rotation_bmm
-#test/uncertainty-estimate/rot-bmm-test.cc)
-#target_link_libraries(test_rotation_bmm
-#${PROJECT_NAME}_lib)
-#phaser_import_test_maps(test_rotation_bmm)
 
 cs_install()
 cs_export()

@@ -4,6 +4,9 @@ project(phaser_ros)
 find_package(catkin_simple REQUIRED)
 catkin_simple(ALL_DEPS_REQUIRED)
 
+set(CMAKE_CUDA_COMPILER  /usr/local/cuda/bin/nvcc)
+find_package(CUDA REQUIRED)
+
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
 if(COMPILER_SUPPORTS_CXX14)
@@ -20,8 +23,11 @@ cs_add_library(${PROJECT_NAME}_lib
    src/packlo-node.cc
 )
 
-cs_add_executable(${PROJECT_NAME} app/packlo-app.cc)
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
+#cs_add_executable(${PROJECT_NAME} app/packlo-app.cc)
+#target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
+
+cuda_add_executable(${PROJECT_NAME}_cuda app/packlo-app.cc)
+target_link_libraries(${PROJECT_NAME}_cuda ${PROJECT_NAME}_lib)
 
 cs_install()
 cs_export()

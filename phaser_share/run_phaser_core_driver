@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+REST=$@
+
+rosrun phaser_core phaser_core_driver \
+  --v=3 \
+  --alsologtostderr=1 \
+  --target_cloud=/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_test_data/test_clouds/arche/sigma-level-1/cloud001.ply \
+  --source_cloud=/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_test_data/test_clouds/arche/sigma-level-1/cloud002.ply \
+  --reg_cloud=./cloud01.ply \
+  $REST

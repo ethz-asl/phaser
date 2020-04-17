@@ -24,6 +24,7 @@ class SpatialCorrelationCuda : public BaseSpatialCorrelation {
   cufftHandle c_plan_;
   cufftDoubleComplex* F_;
   cufftDoubleComplex* G_;
+  cufftDoubleComplex* C_;
   double* c_;
   const uint32_t n_voxels_total_;
   const uint32_t n_voxels_per_dim_;

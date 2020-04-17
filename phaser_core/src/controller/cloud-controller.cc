@@ -5,8 +5,7 @@
 
 namespace controller {
 
-CloudController::CloudController() {
-  std::string method = "sph";
+CloudController::CloudController(std::string&& method) {
   initializeRegistrationAlgorithm(method);
 }
 
