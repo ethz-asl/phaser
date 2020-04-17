@@ -12,15 +12,15 @@ if [[ $(uname) == "Linux" ]]; then
   if lsb_release -c 2> /dev/null | grep trusty > /dev/null ; then
     # Ubuntu 14.04 / ROS Indigo.
     sudo apt-get install -y clang-format-3.4 ros-indigo-camera-info-manager* \
-      ros-indigo-rviz-animated-view-controller ros-indigo-octomap-ros
+      ros-indigo-rviz-animated-view-controller
   elif lsb_release -c 2> /dev/null | grep xenial > /dev/null ; then
     # Ubuntu 16.04 / ROS Kinetic.
     sudo apt-get install -y clang-format-3.8 ros-kinetic-camera-info-manager* \
-      ros-kinetic-octomap-ros
+
   elif lsb_release -c 2> /dev/null | grep bionic > /dev/null ; then
     # Ubuntu 18.04 / ROS Melodic.
     sudo apt-get install -y clang-format-6.0 ros-melodic-pcl-conversions \
-      libpcl-dev ros-melodic-octomap libvtk6-dev libvtk6-qt-dev libvtk6-java \
+      libpcl-dev libvtk6-dev libvtk6-qt-dev libvtk6-java \
       libvtk6-jni
   else
     echo "Unknown Ubuntu version. Couldn't install all necessary dependencies."
