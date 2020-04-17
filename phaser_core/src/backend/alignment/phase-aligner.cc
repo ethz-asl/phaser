@@ -34,9 +34,6 @@ PhaseAligner::PhaseAligner()
       static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * n_voxels_));
   G_ =
       static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * n_voxels_));
-  C_ =
-      static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * n_voxels_));
-  c_ = new double[n_voxels_];
 
   // Allocate memory for the function signals in the time domain.
   f_ = Eigen::VectorXd::Zero(n_voxels_);
@@ -46,15 +43,11 @@ PhaseAligner::PhaseAligner()
   // Create the FFTW plans for two FFTs and one IFFT.
   f_plan_ = fftw_plan_dft_r2c_3d(FLAGS_phase_n_voxels,
       FLAGS_phase_n_voxels, FLAGS_phase_n_voxels,
-      f_.data(), F_, FFTW_ESTIMATE);
+      ff_, F_, FFTW_ESTIMATE);
 
   g_plan_ = fftw_plan_dft_r2c_3d(
       FLAGS_phase_n_voxels, FLAGS_phase_n_voxels, FLAGS_phase_n_voxels,
-      g_.data(), G_, FFTW_ESTIMATE);
-
-  c_plan_ = fftw_plan_dft_c2r_3d(FLAGS_phase_n_voxels,
-      FLAGS_phase_n_voxels, FLAGS_phase_n_voxels,
-      C_, c_, FFTW_ESTIMATE);
+      hh_, G_, FFTW_ESTIMATE);
 }
 
 PhaseAligner::~PhaseAligner() {
@@ -67,7 +60,6 @@ PhaseAligner::~PhaseAligner() {
   fftw_destroy_plan(c_plan_);
 
   fftw_cleanup();
-  delete [] c_;
 }
 
 void PhaseAligner::alignRegistered(
@@ -77,17 +69,14 @@ void PhaseAligner::alignRegistered(
     const std::vector<model::FunctionValue>&, common::Vector_t* xyz) {
   CHECK(xyz);
 
-  auto start = std::chrono::high_resolution_clock::now();
   discretizePointcloud(cloud_prev, &f_, &hist_);
   discretizePointcloud(cloud_reg, &g_, &hist_);
 
-  const auto max_f = std::max_element(f_.data(), f_.data()+n_voxels_);
-  VLOG(1) << "max f: " << *max_f << " dist: " << std::distance(f_.data(), max_f);
   SpatialCorrelation corr(FLAGS_phase_n_voxels);
-  memcpy(c_, corr.correlateSignals(f_.data(), g_.data()),
-    n_voxels_ * sizeof(double));
+  double* c = corr.correlateSignals(f_.data(), g_.data());
+  previous_correlation_ = std::vector<double>(c, c + n_voxels_);
 
-    /*
+  /*
   // Perform the two FFTs on the discretized signals.
   VLOG(1) << "Performing FFT on the first point cloud.";
   fftw_execute(f_plan_);
@@ -106,18 +95,8 @@ void PhaseAligner::alignRegistered(
   */
 
   // Find the index that maximizes the correlation.
-  const auto max_corr = std::max_element(c_, c_+n_voxels_);
-  auto end = std::chrono::high_resolution_clock::now();
-  double duration =
-      std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
-          .count();
-  durations_.emplace_back(duration);
-  std::cout << "Translation alignment times: \n";
-  std::copy(
-      durations_.begin(), durations_.end(),
-      std::ostream_iterator<double>(std::cout, " "));
-
-  const uint32_t max = std::distance(c_, max_corr);
+  const auto max_corr = std::max_element(c, c + n_voxels_);
+  const uint32_t max = std::distance(c, max_corr);
   std::array<uint32_t, 3> max_xyz =
       ind2sub(max, FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);
   VLOG(1) << "Found max correlation at " << max
@@ -205,7 +184,7 @@ double PhaseAligner::computeTranslationFromIndex(double index) const {
 }
 
 std::vector<double> PhaseAligner::getCorrelation() const {
-  return std::vector<double>(c_, c_+n_voxels_);
+  return previous_correlation_;
 }
 
 }  // namespace alignment

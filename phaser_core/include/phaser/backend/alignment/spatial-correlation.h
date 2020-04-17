@@ -25,7 +25,7 @@ private:
   double* g_;
   Eigen::VectorXd hist_;
   const uint32_t total_n_voxels_;
-  const uint32_t n_voxels_;
+  const uint32_t n_voxels_per_dim_;
 };
 
 }  // namespace alignment

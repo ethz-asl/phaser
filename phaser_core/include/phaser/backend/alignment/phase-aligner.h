@@ -39,12 +39,14 @@ class PhaseAligner : public BaseAligner {
   fftw_plan g_plan_;
   fftw_plan c_plan_;
   fftw_complex *F_, *G_, *C_;
-  double* c_;
+  double* ff_;
+  double* hh_;
   Eigen::VectorXd f_;
   Eigen::VectorXd g_;
   Eigen::VectorXd hist_;
   const uint32_t n_voxels_;
   std::vector<double> durations_;
+  std::vector<double> previous_correlation_;
 };
 
 }  // namespace alignment
