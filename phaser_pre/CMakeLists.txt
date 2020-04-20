@@ -17,6 +17,10 @@ catkin_simple(ALL_DEPS_REQUIRED)
 
 cs_add_library(${PROJECT_NAME}_lib
   src/cloud-pre-processor.cc
+
+  src/common/pre-processor-gflags.cc
+  
+  src/command/voxel-grid-cmd.cc
 )
 
 #############

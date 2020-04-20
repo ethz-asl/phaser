@@ -7,11 +7,17 @@
 
 namespace preproc {
 
+struct CloudPreProcessorSettings {
+  static CloudPreProcessorSettings fromGflags();
+  bool enable_voxel_grid_downsampling;
+};
+
 class CloudPreProcessor {
  public:
-  CloudPreProcessor();
+  explicit CloudPreProcessor(const CloudPreProcessorSettings& settings);
 
  private:
+  void initializeCommandFromSettings(const CloudPreProcessorSettings& settings);
   std::vector<BaseCommandPtr> processors_;
 };
 
