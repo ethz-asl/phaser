@@ -1,6 +1,6 @@
-#include "packlo/common/gflags-interface.h"
-#include "packlo/controller/distributor.h"
-#include "packlo/packlo-node.h"
+#include "phaser/common/gflags-interface.h"
+#include "phaser/controller/distributor.h"
+#include "phaser/packlo-node.h"
 
 #include <ros/ros.h>
 #include <glog/logging.h>

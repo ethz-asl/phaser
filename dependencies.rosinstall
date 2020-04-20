@@ -31,10 +31,6 @@
     uri: git@github.com:ethz-asl/fftw3_catkin.git
     version: master
 - git:
-    local-name: pcl_catkin
-    uri: git@github.com:ethz-asl/pcl_catkin.git
-    version: master
-- git:
     local-name: nlopt
     uri: git@github.com:ethz-asl/nlopt.git
     version: master

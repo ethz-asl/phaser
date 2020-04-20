@@ -1,5 +1,5 @@
-#include "packlo/distribution/bingham-opt-mle.h"
-#include "packlo/distribution/bingham-objective.h"
+#include "phaser/distribution/bingham-opt-mle.h"
+#include "phaser/distribution/bingham-objective.h"
 
 #include <glog/logging.h>
 #include <nlopt.hpp>

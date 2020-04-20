@@ -1,6 +1,5 @@
 # Phase Correlation Based Point Cloud Registration
 
-
 ## Installation
 
 ### Prerequisites 
@@ -31,7 +30,12 @@ Within the caktin workspace
 Building the project:
 
 ```
-  catkin build
+  catkin build phaser_ros
 ```
 
+Build and run tests: 
 
+```
+  ./phaser_share/run_build_tests
+```
+test

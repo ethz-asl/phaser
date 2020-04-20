@@ -1,10 +1,10 @@
-#include "packlo/backend/correlation/z-score-eval.h"
-#include "packlo/backend/registration/sph-registration.h"
-#include "packlo/common/data/datasource-ply.h"
-#include "packlo/common/metric-utils.h"
-#include "packlo/common/test/testing-entrypoint.h"
-#include "packlo/common/test/testing-predicates.h"
-#include "packlo/distribution/gaussian-mixture.h"
+#include "phaser/backend/uncertainty/z-score-eval.h"
+#include "phaser/backend/registration/sph-registration.h"
+#include "phaser/common/data/datasource-ply.h"
+#include "phaser/common/metric-utils.h"
+#include "phaser/common/test/testing-entrypoint.h"
+#include "phaser/common/test/testing-predicates.h"
+#include "phaser/distribution/gaussian-mixture.h"
 
 #include <gtest/gtest.h>
 
@@ -15,16 +15,16 @@ class TransGMTest : public ::testing::Test {
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
-    ds_->setDatasetFolder("./test_clouds/arche/");
+    ds_->setDatasetFolder("./test_clouds/arche/sigma-level-1/");
     registrator_ = std::make_unique<registration::SphRegistration>(
         "phase", "bingham", "gmm");
-    z_score_eval_ = dynamic_cast<correlation::ZScoreEval*>(
+    z_score_eval_ = dynamic_cast<uncertainty::ZScoreEval*>(
         &registrator_->getPosEvaluation());
   }
 
   data::DatasourcePlyPtr ds_;
   registration::SphRegistrationPtr registrator_;
-  correlation::ZScoreEval* z_score_eval_;
+  uncertainty::ZScoreEval* z_score_eval_;
 };
 
 TEST_F(TransGMTest, LowUncertainty) {
@@ -52,7 +52,6 @@ TEST_F(TransGMTest, LowUncertainty) {
         std::dynamic_pointer_cast<common::GaussianMixture>(
             result.getPosUncertaintyEstimate());
     const Eigen::MatrixXd& cov = uncertainty->getMixtureCov();
-    VLOG(1) << "------------------------- Uncertainty:\n" << cov;
     EXPECT_LT(cov.trace(), 10.0);
   });
   ds_->startStreaming(0);

@@ -1,8 +1,8 @@
-#include "packlo/distribution/bingham.h"
-#include "packlo/common/math-utils.h"
-#include "packlo/distribution/bingham-mle.h"
-#include "packlo/distribution/bingham-normalization-constant.h"
-#include "packlo/distribution/bingham-opt-mle.h"
+#include "phaser/distribution/bingham.h"
+#include "phaser/common/math-utils.h"
+#include "phaser/distribution/bingham-mle.h"
+#include "phaser/distribution/bingham-normalization-constant.h"
+#include "phaser/distribution/bingham-opt-mle.h"
 
 #include <algorithm>
 #include <boost/math/special_functions/bessel.hpp>
@@ -43,7 +43,12 @@ Eigen::MatrixXd Bingham::gaussianCovariance(bool angle) {
     eRes << 2 * res;
     return eRes;
   } else {
-    throw std::runtime_error("not yet implemented");
+    const uint16_t sample_count = 1000u;
+    Eigen::MatrixXd samples;
+    sample(&samples, sample_count);
+    Eigen::VectorXd m = mode();
+    Eigen::MatrixXd zero_samples = samples - m.replicate(samples.rows(), 1);
+    return zero_samples*zero_samples.transpose()/sample_count;
   }
 }
 
@@ -210,19 +215,11 @@ void Bingham::sampleDeterministic(
 
     auto end = dim - 1;
     (*samples)(0, end) = 1;  // sample at mode
-    VLOG(1) << "samples: " << *samples;
-    VLOG(1) << "end: " << end;
-    VLOG(1) << "S: " << S;
-    VLOG(1) << "Z: " << Z;
 
     auto offset = (1 - lambda) * (S(S.rows() - 1, S.cols() - 1) / end);
-    VLOG(1) << "offset: " << offset;
     for (std::size_t i = 0u; i < end; ++i) {
       p(i) = S(i, i) + offset;
       alpha(i) = std::asin(std::sqrt(S(i, i) / p(i)));
-      VLOG(1) << "p: " << p(i);
-      VLOG(1) << "alpha: " << alpha(i);
-      VLOG(1) << "S: " << S(i, i);
       (*samples)(2 * i + 1, end) = std::cos(alpha(i));
       (*samples)(2 * i + 2, end) = std::cos(alpha(i));
       (*samples)(2 * i + 1, i) = std::sin(alpha(i));
@@ -230,7 +227,6 @@ void Bingham::sampleDeterministic(
       (*weights)(2 * i + 1) = p(i) / 2.0;
       (*weights)(2 * i + 2) = p(i) / 2.0;
     }
-    VLOG(1) << "samples: " << *samples;
     (*weights)(0) = 1.0 - weights->segment(1, 2 * dim - 2).sum();
     *weights = *weights / weights->norm();
     *samples = (M * samples->transpose()).eval();
@@ -292,7 +288,10 @@ Bingham Bingham::fit(
 
   Eigen::MatrixXd C = samples * weights.asDiagonal() * samples.transpose();
   C = 0.5 * (C + C.transpose()).eval();
-  return fitToMoment(C);
+  Bingham b = fitToMoment(C);
+  b.samples_ = samples;
+  b.weights_ = weights;
+  return b;
 }
 
 Bingham Bingham::fit(const Eigen::MatrixXd& samples) {

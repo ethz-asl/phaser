@@ -1,9 +1,8 @@
-#include "packlo/backend/registration/sph-registration.h"
-#include "packlo/common/data/datasource-ply.h"
-#include "packlo/common/metric-utils.h"
-#include "packlo/common/test/testing-entrypoint.h"
-#include "packlo/common/test/testing-predicates.h"
-#include "packlo/visualization/debug-visualizer.h"
+#include "phaser/backend/registration/sph-registration.h"
+#include "phaser/common/data/datasource-ply.h"
+#include "phaser/common/metric-utils.h"
+#include "phaser/common/test/testing-entrypoint.h"
+#include "phaser/common/test/testing-predicates.h"
 
 #include <gtest/gtest.h>
 #include <memory>
@@ -15,7 +14,7 @@ class TransformationAlignmentTest : public ::testing::Test {
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
-    ds_->setDatasetFolder("./test_clouds/kitti/1/");
+    ds_->setDatasetFolder("./test_clouds/kitti/sigma-level-1/");
   }
 
   data::DatasourcePlyPtr ds_;
@@ -47,7 +46,7 @@ TEST_F(TransformationAlignmentTest, TransformEasy) {
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             prev_cloud, result.getRegisteredCloud()),
-        40.0);
+        45.0);
   });
   ds_->startStreaming();
 }
@@ -89,7 +88,7 @@ ASSERT_LT(
     ASSERT_LT(
         common::MetricUtils::HausdorffDistance(
             prev_cloud, result.getRegisteredCloud()),
-        40.0);
+        50.0);
     prev_cloud = result.getRegisteredCloud();
   });
   ds_->startStreaming();

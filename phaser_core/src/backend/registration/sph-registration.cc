@@ -1,19 +1,20 @@
-#include "packlo/backend/registration/sph-registration.h"
-#include "packlo/backend/alignment/phase-aligner.h"
-#include "packlo/backend/alignment/range-based-aligner.h"
-#include "packlo/backend/correlation/bingham-peak-based-eval.h"
-#include "packlo/backend/correlation/bmm-peak-based-eval.h"
-#include "packlo/backend/correlation/gaussian-peak-based-eval.h"
-#include "packlo/backend/correlation/gmm-peak-based-eval.h"
-#include "packlo/common/rotation-utils.h"
-#include "packlo/common/statistic-utils.h"
-#include "packlo/common/translation-utils.h"
-#include "packlo/visualization/debug-visualizer.h"
+#include "phaser/backend/registration/sph-registration.h"
+#include "phaser/backend/alignment/phase-aligner.h"
+#include "phaser/backend/alignment/range-based-aligner.h"
+#include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
+#include "phaser/backend/uncertainty/bmm-peak-based-eval.h"
+#include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
+#include "phaser/backend/uncertainty/gmm-peak-based-eval.h"
+#include "phaser/common/rotation-utils.h"
+#include "phaser/common/statistic-utils.h"
+#include "phaser/common/translation-utils.h"
 
+#include <algorithm>
 #include <glog/logging.h>
+#include <iostream>
 
 DEFINE_int32(
-    spherical_bandwith, 70,
+    spherical_bandwith, 130,
     "Defines the bandwith used for the spherical registration.");
 DEFINE_string(alignment_algorithm, "phase",
     "Sets the algorithm used for the translational alignment.");
@@ -23,6 +24,11 @@ DEFINE_string(
 DEFINE_string(
     pos_evaluation_algorithm, "gaussian",
     "Defines the algorithm used for the evaluation of the pos correlations.");
+DEFINE_bool(refine_rot_x, true, "Perform a rotation over x.");
+DEFINE_bool(refine_rot_y, true, "Perform a rotation over y.");
+DEFINE_bool(refine_rot_z, true, "Perform a rotation over z.");
+DEFINE_bool(estimate_rotation, true, "Esttimates the rotation if true.");
+DEFINE_bool(estimate_translation, true, "Esttimates the translation if true.");
 
 namespace registration {
 
@@ -51,34 +57,36 @@ void SphRegistration::initializeAlgorithms() {
     aligner_ = std::make_unique<alignment::PhaseAligner>();
   else if (alignment_algorithm_ == "averaging")
     aligner_ = std::make_unique<alignment::RangeBasedAligner>();
+  else if (alignment_algorithm_ == "phase-gpu")
+    aligner_ = std::make_unique<alignment::PhaseAligner>();
   else
     LOG(FATAL) << "Unknown alignment algorithm specificed.";
   CHECK_NOTNULL(aligner_);
 
   // Rotational evaluation
-  correlation::BaseEvalPtr rot_eval;
+  uncertainty::BaseEvalPtr rot_eval;
   if (rot_evaluation_algorithm_ == "bingham")
-    rot_eval = std::make_unique<correlation::BinghamPeakBasedEval>(
+    rot_eval = std::make_unique<uncertainty::BinghamPeakBasedEval>(
         *aligner_, sph_corr_);
   else if (rot_evaluation_algorithm_ == "bmm")
     rot_eval =
-        std::make_unique<correlation::BmmPeakBasedEval>(*aligner_, sph_corr_);
+        std::make_unique<uncertainty::BmmPeakBasedEval>(*aligner_, sph_corr_);
   else
     LOG(FATAL) << "Unknown rot evaluation algorithm specificed: "
                << rot_evaluation_algorithm_;
 
   // Positional evaluation
-  correlation::BaseEvalPtr pos_eval;
+  uncertainty::BaseEvalPtr pos_eval;
   if (pos_evaluation_algorithm_ == "gaussian")
-    pos_eval = std::make_unique<correlation::GaussianPeakBasedEval>(
+    pos_eval = std::make_unique<uncertainty::GaussianPeakBasedEval>(
         *aligner_, sph_corr_);
   else if (pos_evaluation_algorithm_ == "gmm")
     pos_eval =
-        std::make_unique<correlation::GmmPeakBasedEval>(*aligner_, sph_corr_);
+        std::make_unique<uncertainty::GmmPeakBasedEval>(*aligner_, sph_corr_);
   else
     LOG(FATAL) << "Unknown pos evaluation algorithm specificed: "
                << pos_evaluation_algorithm_;
-  correlation_eval_ = std::make_unique<correlation::PhaseCorrelationEval>(
+  correlation_eval_ = std::make_unique<uncertainty::PhaseCorrelationEval>(
       std::move(rot_eval), std::move(pos_eval));
 }
 
@@ -86,22 +94,17 @@ model::RegistrationResult SphRegistration::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
   CHECK(cloud_prev);
   CHECK(cloud_cur);
+  VLOG(1) << "=== Registering point cloud ====================================";
+  VLOG(1) << "Cloud1: " << cloud_prev->getPlyReadDirectory();
+  VLOG(1) << "Cloud2: " << cloud_cur->getPlyReadDirectory();
   cloud_prev->initialize_kd_tree();
 
   // Register the point cloud.
-  // visualization::DebugVisualizer::getInstance()
-  // .visualizePointCloudDiff(*cloud_prev, *cloud_cur);
+  if (!FLAGS_estimate_rotation) LOG(FATAL) << "not yet implemented.";
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
-  /*
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-    */
-  estimateTranslation(cloud_prev, &result);
+  if (FLAGS_estimate_translation)
+    estimateTranslation(cloud_prev, &result);
 
-  /*
-  visualization::DebugVisualizer::getInstance()
-    .visualizePointCloudDiff(*cloud_prev, *result.getRegisteredCloud());
-    */
   return result;
 }
 
@@ -115,14 +118,30 @@ model::RegistrationResult SphRegistration::estimateRotation(
   correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
   common::BaseDistributionPtr rot =
       correlation_eval_->calcRotationUncertainty();
+  Eigen::Vector4d inv = rot->getEstimate();
+  inv.block(1,0,3,1) = -inv.block(1,0,3,1);
   Eigen::VectorXd b_est =
       common::RotationUtils::ConvertQuaternionToXYZ(rot->getEstimate());
+  Eigen::VectorXd corr_est = common::RotationUtils::ConvertZYZtoXYZ(zyz);
+  if (!FLAGS_refine_rot_x) b_est(0) = 0;
+  if (!FLAGS_refine_rot_y) b_est(1) = 0;
+  if (!FLAGS_refine_rot_z) b_est(2) = 0;
 
+
+  VLOG(1) << "Corr rotation: " << corr_est.transpose();
+  VLOG(1) << "Bingham q: " << rot->getEstimate().transpose();
+  VLOG(1) << "Bingham rotation: " << b_est.transpose();
   common::RotationUtils::RotateAroundXYZ(
       cloud_cur, b_est(0), b_est(1), b_est(2));
 
+  /*
+  common::RotationUtils::RotateAroundXYZ(
+      cloud_cur, corr_est(0), corr_est(1), corr_est(2));
+      */
+
   model::RegistrationResult result(std::move(*cloud_cur), std::move(zyz));
   result.setRotUncertaintyEstimate(rot);
+  result.setRotationCorrelation(sph_corr_.getCorrelation());
   return result;
 }
 
@@ -142,12 +161,17 @@ void SphRegistration::estimateTranslation(
       correlation_eval_->calcTranslationUncertainty();
   Eigen::VectorXd g_est = pos->getEstimate();
 
+  VLOG(1) << "Corr translation: " << xyz.transpose();
   VLOG(1) << "Gaussian translation: " << g_est.transpose();
   VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
     << "ms.";
 
   common::TranslationUtils::TranslateXYZ(
       rot_cloud, g_est(0), g_est(1), g_est(2));
+  /*
+common::TranslationUtils::TranslateXYZ(
+rot_cloud, xyz(0), xyz(1), xyz(2));
+*/
   result->setPosUncertaintyEstimate(pos);
 }
 
@@ -168,7 +192,7 @@ void SphRegistration::correlatePointcloud(
   const double duration_sample_h_ms = common::executeTimedFunction(
       &common::SphericalSampler::sampleUniformly, &sampler_, target,
       &h_values_);
-  CHECK(f_values_.size() == h_values_.size());
+  // CHECK(f_values_.size() == h_values_.size());
 
   const double duration_correlation_ms = common::executeTimedFunction(
       &backend::SphericalCorrelation::correlateSignals, &sph_corr_, f_values_,
@@ -182,18 +206,27 @@ void SphRegistration::correlatePointcloud(
   statistics_manager_.emplaceValue(kSampleDurationKey, duration_sample_f_ms);
   statistics_manager_.emplaceValue(kSampleDurationKey, duration_sample_h_ms);
   statistics_manager_.emplaceValue(
-      kCorrelationDurationKey, duration_correlation_ms);
+      kCorrelationDurationKey,
+      duration_correlation_ms + duration_sample_f_ms + duration_sample_h_ms);
+  /*
+  std::vector<double> times =
+      statistics_manager_.getValuesForKey(kCorrelationDurationKey);
+  std::cout << " rotation timings: \n";
+  std::copy(
+      times.begin(), times.end(),
+      std::ostream_iterator<double>(std::cout, " "));
+      */
 }
 
 void SphRegistration::setBandwith(const int bandwith) {
   sampler_.initialize(bandwith);
 }
 
-correlation::BaseEval& SphRegistration::getRotEvaluation() {
+uncertainty::BaseEval& SphRegistration::getRotEvaluation() {
   return correlation_eval_->getRotationEval();
 }
 
-correlation::BaseEval& SphRegistration::getPosEvaluation() {
+uncertainty::BaseEval& SphRegistration::getPosEvaluation() {
   return correlation_eval_->getPositionEval();
 }
 

@@ -1,0 +1,12 @@
+#!/usr/bin/env zsh
+REST=$@
+
+rosrun phaser_ros phaser_ros \
+    --alsologtostderr=1 \
+    --v=3 \
+		--enable_debug=true \
+		--app_mode="store_ply" \
+		--PlyWriteDirectory="/home/berlukas/Documents/ply/" \
+		--point_cloud_topic="/rslidar_points" \
+		--take_every_n_cloud=1 \
+    $REST

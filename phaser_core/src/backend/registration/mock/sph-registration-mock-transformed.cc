@@ -1,5 +1,5 @@
-#include "packlo/backend/registration/mock/sph-registration-mock-transformed.h"
-#include "packlo/common/rotation-utils.h"
+#include "phaser/backend/registration/mock/sph-registration-mock-transformed.h"
+#include "phaser/common/rotation-utils.h"
 
 #include <glog/logging.h>
 

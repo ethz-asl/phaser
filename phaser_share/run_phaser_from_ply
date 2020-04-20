@@ -5,14 +5,16 @@ rosrun phaser_ros phaser_ros \
     --alsologtostderr=1 \
     --v=3 \
 		--enable_debug=true \
-		--registration_algorithm="sph" \
+		--registration_algorithm="sph-opt" \
 		--datasource="ply" \
-		--PlyReadDirectory="/home/berlukas/Documents/workspace/phaser_ws/src/packlo/phaser_test_data/test_clouds/kitti/1/" \
-		--spherical_bandwith=71 \
-		--phase_n_voxels=51 \
-		--phase_discretize_lower=-30 \
-		--phase_discretize_upper=30 \
-    --z_score_filter_threshold=0.4 \
-    --z_score_lag_max=15 \
+		--PlyReadDirectory="/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_test_data/test_clouds/arche/sigma-level-1/" \
+		--spherical_bandwith=70 \
+		--phase_n_voxels=105 \
+		--phase_discretize_lower=-50 \
+		--phase_discretize_upper=50 \
+    --gaussian_peak_neighbors=10 \
+    --bingham_peak_neighbors=10 \
+    --z_score_filter_threshold=0.01 \
+    --z_score_lag_max=5 \
     --z_score_threshold=3.0 \
     $REST

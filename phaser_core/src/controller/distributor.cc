@@ -1,12 +1,7 @@
-#include "packlo/controller/distributor.h"
-#include "packlo/backend/registration/mock/sph-registration-mock-cutted.h"
-#include "packlo/backend/registration/mock/sph-registration-mock-rotated.h"
-#include "packlo/backend/registration/mock/sph-registration-mock-transformed.h"
-#include "packlo/backend/registration/mock/sph-registration-mock-translated.h"
-#include "packlo/backend/registration/sph-registration.h"
-#include "packlo/common/rotation-utils.h"
-#include "packlo/common/spherical-projection.h"
-#include "packlo/common/statistic-utils.h"
+#include "phaser/controller/distributor.h"
+#include "phaser/common/rotation-utils.h"
+#include "phaser/common/spherical-projection.h"
+#include "phaser/common/statistic-utils.h"
 
 #include <glog/logging.h>
 #include <pcl/filters/passthrough.h>
@@ -17,21 +12,24 @@
 DEFINE_bool(
     enable_debug, false, "Enables the debug mode for the registration.");
 
-DEFINE_string(
-    registration_algorithm, "sph",
-    "Defines the used algorithm for the point cloud registration.");
-
 DEFINE_string(app_mode, "registration", "Defines the operating mode.");
+
+DEFINE_int32(take_every_n_cloud, 1, "As the name suggests.");
 
 namespace controller {
 
-Distributor::Distributor(data::DatasourcePtr& ds)
+Distributor::Distributor(const data::DatasourcePtr& ds,
+    registration::BaseRegistrationPtr&& registration)
     : ds_(ds),
       statistics_manager_(kManagerReferenceName),
-      registration_algorithm_(FLAGS_registration_algorithm) {
+      registrator_(std::move(registration)) {
   subscribeToTopics();
-  initializeRegistrationAlgorithm();
-  ds_->startStreaming(0);
+}
+
+void Distributor::shutdown() {
+  //writeResultsToFile();
+  if (experiment_handler_ != nullptr)
+    experiment_handler_->shutdown();
 }
 
 void Distributor::subscribeToTopics() {
@@ -39,23 +37,6 @@ void Distributor::subscribeToTopics() {
     CHECK(cloud);
     pointCloudCallback(cloud);
   });
-}
-
-void Distributor::initializeRegistrationAlgorithm() {
-  if (registration_algorithm_ == "sph")
-    registrator_ = std::make_unique<registration::SphRegistration>();
-  else if (registration_algorithm_ == "sph-mock-rotated")
-    registrator_ = std::make_unique<registration::SphRegistrationMockRotated>();
-  else if (registration_algorithm_ == "sph-mock-cutted")
-    registrator_ = std::make_unique<registration::SphRegistrationMockCutted>();
-  else if (registration_algorithm_ == "sph-mock-translated")
-    registrator_ = std::make_unique<
-      registration::SphRegistrationMockTranslated>();
-  else if (registration_algorithm_ == "sph-mock-transformed")
-    registrator_ = std::make_unique<
-      registration::SphRegistrationMockTransformed>();
-  else
-    LOG(FATAL) << "Unknown registration algorithm specified!";
 }
 
 void Distributor::setRegistrationAlgorithm(std::string&& algorithm) {
@@ -69,29 +50,45 @@ void Distributor::setRegistrationAlgorithm(const std::string& algorithm) {
 // TODO(lbern): should i just pass a different callback
 void Distributor::pointCloudCallback(
     const model::PointCloudPtr& cloud) {
-  VLOG(1) << "received cloud in callback";
-  // preprocessPointCloud(cloud);
-  if (FLAGS_app_mode == "registration")
-    registerPointCloud(cloud);
-  else if (FLAGS_app_mode == "store_ply")
+  ++cloud_counter_;
+  if (cloud_counter_ % FLAGS_take_every_n_cloud != 0) {
+    return;
+  }
+  //preprocessPointCloud(cloud);
+  if (FLAGS_app_mode == "registration") {
+    if (prev_point_cloud_ == nullptr) {
+      prev_point_cloud_ = cloud;
+      return;
+    }
+    const model::RegistrationResult result = registerPointCloud(cloud);
+    // prev_point_cloud_ = result.getRegisteredCloud();
+    prev_point_cloud_ = nullptr;
+    appendResult(result);
+    //writeResultsToFile();
+  } else if (FLAGS_app_mode == "store_ply")
     cloud->writeToFile();
+  else if (FLAGS_app_mode == "experiment1")
+    experiment_handler_->runExperiment1(cloud);
+  else if (FLAGS_app_mode == "experiment3")
+    experiment_handler_->runExperiment3(cloud);
   else
     LOG(FATAL) << "Unknown applicaiton mode. Aborting.";
 }
 
-void Distributor::registerPointCloud(const model::PointCloudPtr& cloud) {
-  if (prev_point_cloud_ == nullptr) {
-    prev_point_cloud_ = cloud;
-    return;
-  }
-
+model::RegistrationResult Distributor::registerPointCloud(
+    const model::PointCloudPtr& cloud) {
   CHECK_NOTNULL(registrator_);
+  CHECK_NOTNULL(prev_point_cloud_);
+  /*
   const double duration_sample_f_ms = common::executeTimedFunction(
       &registration::BaseRegistration::registerPointCloud, &(*registrator_),
       prev_point_cloud_, cloud);
-  // registrator_->registerPointCloud(prev_point_cloud_, cloud);
   VLOG(1) << "Full registration took: " << duration_sample_f_ms << "ms.";
-  prev_point_cloud_ = cloud;
+      */
+  model::RegistrationResult result =
+      registrator_->registerPointCloud(prev_point_cloud_, cloud);
+  // registrator_->registerPointCloud(prev_point_cloud_, cloud);
+  return result;
 }
 
 void Distributor::preprocessPointCloud(
@@ -101,7 +98,7 @@ void Distributor::preprocessPointCloud(
   pcl::PassThrough<common::Point_t> pass;
   pass.setInputCloud(input_cloud);
   pass.setFilterFieldName("z");
-  pass.setFilterLimits(0.0, 0.0);
+  pass.setFilterLimits(-2.0, -0.4);
   pass.setFilterLimitsNegative(true);
   pass.filter(*input_cloud);
 
@@ -120,6 +117,26 @@ void Distributor::getStatistics(common::StatisticsManager* manager) const
     noexcept {
   registrator_->getStatistics(manager);
   manager->mergeManager(statistics_manager_);
+}
+
+void Distributor::appendResult(const model::RegistrationResult& result) {
+  const Eigen::VectorXd dq = result.getStateAsVec();
+  states_.emplace_back(dq);
+}
+
+void Distributor::writeResultsToFile() {
+  static std::string filename = "sph-results.txt";
+  VLOG(1) << "Writing experiment results to " << filename;
+  std::ofstream out_file(filename);
+  for (const Eigen::VectorXd& vec : states_) {
+    const uint8_t n_vec = 8;
+    for (uint8_t i = 0u; i < n_vec; ++i) {
+      if (i == n_vec - 1)
+        out_file << vec[i] << "\n";
+      else
+        out_file << vec[i] << ",";
+    }
+  }
 }
 
 }  // namespace controller

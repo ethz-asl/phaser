@@ -1,4 +1,4 @@
-#include "packlo/common/dual-quaternion.h"
+#include "phaser/common/dual-quaternion.h"
 
 #include <glog/logging.h>
 
@@ -18,6 +18,7 @@ Eigen::VectorXd DualQuaternion::asVec() const {
   Eigen::VectorXd vec(8);
   vec << rotation_.w(), rotation_.x(), rotation_.y(), rotation_.z(), 0,
       translation_(0), translation_(1), translation_(2);
+  return vec;
 }
 
 Eigen::Quaterniond& DualQuaternion::getRotation() {

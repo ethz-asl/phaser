@@ -1,9 +1,9 @@
-#include "packlo/backend/registration/mock/sph-registration-mock-translated.h"
-#include "packlo/backend/registration/sph-registration.h"
-#include "packlo/common/data/datasource-ply.h"
-#include "packlo/common/metric-utils.h"
-#include "packlo/common/test/testing-entrypoint.h"
-#include "packlo/common/test/testing-predicates.h"
+#include "phaser/backend/registration/mock/sph-registration-mock-translated.h"
+#include "phaser/backend/registration/sph-registration.h"
+#include "phaser/common/data/datasource-ply.h"
+#include "phaser/common/metric-utils.h"
+#include "phaser/common/test/testing-entrypoint.h"
+#include "phaser/common/test/testing-predicates.h"
 
 #include <gtest/gtest.h>
 #include <cmath>
@@ -22,7 +22,7 @@ class TranslationAlignmentTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
-    ds_->setDatasetFolder("./test_clouds/arche/");
+    ds_->setDatasetFolder("./test_clouds/arche/sigma-level-1/");
   }
 
   registration::BaseRegistration* initializeRegistration(bool mocked) {

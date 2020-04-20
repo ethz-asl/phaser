@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(phaser_core)
 
+set(CMAKE_CUDA_COMPILER  /usr/local/cuda/bin/nvcc)
+find_package(CUDA REQUIRED)
+
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
 if(COMPILER_SUPPORTS_CXX14)
@@ -32,33 +35,50 @@ cs_add_library(${PROJECT_NAME}_lib
    lib/SOFT/wignerTransforms_fftw.c
 
    src/controller/distributor.cc
+   src/controller/cloud-controller.cc
    src/backend/registration/base-registration.cc
    src/backend/registration/sph-registration.cc
+   src/backend/registration/sph-opt-registration.cc
    src/backend/registration/mock/sph-registration-mock-rotated.cc
    src/backend/registration/mock/sph-registration-mock-cutted.cc
    src/backend/registration/mock/sph-registration-mock-translated.cc
    src/backend/registration/mock/sph-registration-mock-transformed.cc
 
-   src/backend/correlation/base-eval.cc
    src/backend/correlation/spherical-correlation.cc
-   src/backend/correlation/z-score-eval.cc
-   src/backend/correlation/z-score-peak-extraction.cc
-   src/backend/correlation/gaussian-peak-based-eval.cc
-   src/backend/correlation/gmm-peak-based-eval.cc
-   src/backend/correlation/bingham-peak-based-eval.cc
-   src/backend/correlation/bmm-peak-based-eval.cc
-   src/backend/correlation/peak-based-eval.cc
-   src/backend/correlation/phase-correlation-eval.cc
-   src/backend/correlation/signal-analysis.cc
+
+   src/backend/uncertainty/base-eval.cc
+   src/backend/uncertainty/z-score-eval.cc
+   src/backend/uncertainty/z-score-peak-extraction.cc
+   src/backend/uncertainty/gaussian-peak-based-eval.cc
+   src/backend/uncertainty/gmm-peak-based-eval.cc
+   src/backend/uncertainty/bingham-peak-based-eval.cc
+   src/backend/uncertainty/bmm-peak-based-eval.cc
+   src/backend/uncertainty/peak-based-eval.cc
+   src/backend/uncertainty/phase-correlation-eval.cc
+   src/backend/uncertainty/signal-analysis.cc
 
    src/backend/alignment/range-based-aligner.cc
    src/backend/alignment/phase-aligner.cc
    src/backend/alignment/feature-aligner.cc
+   src/backend/alignment/base-spatial-correlation.cc
+   src/backend/alignment/spatial-correlation.cc
+
+   src/experiments/experiment-handler.cc
 )
+
+ cuda_add_library(${PROJECT_NAME}_cuda_lib
+   src/backend/alignment/spatial-correlation-cuda.cu
+ )
 
 #############
 ## TESTING ##
 #############
+
+cuda_add_executable(${PROJECT_NAME}_driver test/driver.cc)
+cuda_add_cufft_to_target(${PROJECT_NAME}_driver)
+target_link_libraries(${PROJECT_NAME}_driver
+  ${PROJECT_NAME}_lib ${PROJECT_NAME}_cuda_lib
+  ${CUDA_LIBRARIES} ${CUDA_CUFFT_LIBRARIES})
 
 # Sanity check.
 catkin_add_gtest(test_sanity_check test/sanity-check/sanity-check-test.cc)
@@ -100,23 +120,11 @@ target_link_libraries(test_translation_gaussian
   ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_translation_gaussian)
 
-#catkin_add_gtest(test_translation_gm
-  #test/uncertainty-estimate/trans-gm-test.cc)
-#target_link_libraries(test_translation_gm
-  #${PROJECT_NAME}_lib)
-#phaser_import_test_maps(test_translation_gm)
-
 catkin_add_gtest(test_rotation_bingham
   test/uncertainty-estimate/rot-bingham-test.cc)
 target_link_libraries(test_rotation_bingham
   ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_rotation_bingham)
-
-#catkin_add_gtest(test_rotation_bmm
-#test/uncertainty-estimate/rot-bmm-test.cc)
-#target_link_libraries(test_rotation_bmm
-#${PROJECT_NAME}_lib)
-#phaser_import_test_maps(test_rotation_bmm)
 
 cs_install()
 cs_export()

@@ -1,10 +1,10 @@
-#include "packlo/backend/correlation/z-score-eval.h"
-#include "packlo/backend/registration/sph-registration.h"
-#include "packlo/common/data/datasource-ply.h"
-#include "packlo/common/metric-utils.h"
-#include "packlo/common/test/testing-entrypoint.h"
-#include "packlo/common/test/testing-predicates.h"
-#include "packlo/distribution/gaussian.h"
+#include "phaser/backend/uncertainty/z-score-eval.h"
+#include "phaser/backend/registration/sph-registration.h"
+#include "phaser/common/data/datasource-ply.h"
+#include "phaser/common/metric-utils.h"
+#include "phaser/common/test/testing-entrypoint.h"
+#include "phaser/common/test/testing-predicates.h"
+#include "phaser/distribution/gaussian.h"
 
 #include <gtest/gtest.h>
 
@@ -15,16 +15,16 @@ class TransGaussTest : public ::testing::Test {
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
-    ds_->setDatasetFolder("./test_clouds/arche/");
+    ds_->setDatasetFolder("./test_clouds/arche/sigma-level-1/");
     registrator_ = std::make_unique<registration::SphRegistration>(
         "phase", "bingham", "gaussian");
-    z_score_eval_ = dynamic_cast<correlation::ZScoreEval*>(
+    z_score_eval_ = dynamic_cast<uncertainty::ZScoreEval*>(
         &registrator_->getPosEvaluation());
   }
 
   data::DatasourcePlyPtr ds_;
   registration::SphRegistrationPtr registrator_;
-  correlation::ZScoreEval* z_score_eval_;
+  uncertainty::ZScoreEval* z_score_eval_;
 };
 
 TEST_F(TransGaussTest, LowUncertainty) {
@@ -34,7 +34,6 @@ TEST_F(TransGaussTest, LowUncertainty) {
   model::RegistrationResult result;
   model::PointCloudPtr prev_cloud = nullptr;
   ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
-    VLOG(1) << "------------------------";
     CHECK(cloud);
     if (prev_cloud == nullptr) {
       prev_cloud = cloud;
@@ -45,11 +44,9 @@ TEST_F(TransGaussTest, LowUncertainty) {
     // Register the point clouds.
     cloud->initialize_kd_tree();
     result = registrator_->registerPointCloud(prev_cloud, cloud);
-    VLOG(1) << "------------------------";
     prev_cloud = cloud;
     EXPECT_TRUE(result.foundSolutionForRotation());
     EXPECT_TRUE(result.foundSolutionForTranslation());
-    VLOG(1) << "------------------------";
 
     auto rot = result.getRotUncertaintyEstimate();
     CHECK_NOTNULL(rot);
@@ -58,11 +55,9 @@ TEST_F(TransGaussTest, LowUncertainty) {
     common::GaussianPtr uncertainty =
         std::dynamic_pointer_cast<common::Gaussian>(
             result.getPosUncertaintyEstimate());
-    VLOG(1) << "cov------------------------";
     CHECK_NOTNULL(uncertainty);
     const Eigen::MatrixXd& cov = uncertainty->getCov();
     EXPECT_LT(cov.trace(), 15);
-    VLOG(1) << "cov2------------------------";
   });
   ds_->startStreaming(0);
 }

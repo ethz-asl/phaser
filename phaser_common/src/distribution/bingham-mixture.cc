@@ -1,4 +1,4 @@
-#include "packlo/distribution/bingham-mixture.h"
+#include "phaser/distribution/bingham-mixture.h"
 
 #include <glog/logging.h>
 

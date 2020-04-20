@@ -1,4 +1,4 @@
-#include "packlo/common/rotation-utils.h"
+#include "phaser/common/rotation-utils.h"
 
 #include <glog/logging.h>
 
@@ -21,6 +21,24 @@ void RotationUtils::RotateAroundXYZ(
   Eigen::Matrix4f T = createTransformationAroundX(alpha_rad) *
                       createTransformationAroundY(beta_rad) *
                       createTransformationAroundZ(gamma_rad);
+  cloud->transformPointCloud(T);
+}
+
+void RotationUtils::RotateAroundXYZInv(
+    model::PointCloudPtr cloud, const float alpha_rad, const float beta_rad,
+    const float gamma_rad) {
+  Eigen::Matrix4f T = createTransformationAroundX(alpha_rad) *
+                      createTransformationAroundY(beta_rad) *
+                      createTransformationAroundZ(gamma_rad);
+  cloud->transformPointCloud(T.inverse());
+}
+
+void RotationUtils::RotateAroundZYX(
+    model::PointCloudPtr cloud, const float alpha_rad, 
+    const float beta_rad, const float gamma_rad) {
+  Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
+                      createTransformationAroundY(beta_rad) *
+                      createTransformationAroundX(alpha_rad);
   cloud->transformPointCloud(T);
 }
 
