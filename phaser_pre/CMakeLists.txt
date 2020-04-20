@@ -21,6 +21,7 @@ cs_add_library(${PROJECT_NAME}_lib
   src/common/pre-processor-gflags.cc
 
   src/command/voxel-grid-cmd.cc
+  src/command/pass-through-gnd-filter-cmd.cc
 )
 
 #############

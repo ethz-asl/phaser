@@ -52,6 +52,20 @@ TEST_F(CloudPreProcessorTest, CreationSanityCheck) {
 TEST_F(CloudPreProcessorTest, VoxelGridCmdTest) {
   CloudPreProcessorSettings settings;
   settings.enable_voxel_grid_downsampling = true;
+  settings.enable_pass_through_gnd_filtering = true;
+
+  CloudPreProcessor pre_processor(settings);
+
+  const uint32_t n_points = 500;
+  model::PointCloudPtr cloud = getRandomCloud(n_points);
+  pre_processor.process(cloud);
+
+  EXPECT_LT(n_points, cloud->size());
+}
+
+TEST_F(CloudPreProcessorTest, PassThroughGndFilterTest) {
+  CloudPreProcessorSettings settings;
+  settings.enable_pass_through_gnd_filtering = true;
 
   CloudPreProcessor pre_processor(settings);
 

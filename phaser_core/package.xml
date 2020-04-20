@@ -20,4 +20,5 @@
   <depend>phaser_test_data</depend>
   <depend>phaser_common</depend>
   <depend>phaser_viz</depend>
+  <depend>phaser_pre</depend>
 </package>
