@@ -71,18 +71,6 @@ void ExperimentHandler::runExperiment4(const model::PointCloudPtr& cloud) {
   registrator_->estimateTranslation(prev_point_cloud_, &result);
 }
 
-void ExperimentHandler::runExperimentGICP(const model::PointCloudPtr& cloud) {
-  if (prev_point_cloud_ == nullptr) {
-    prev_point_cloud_ = cloud;
-    return;
-  }
-  model::RegistrationResult result = gicp_reg_.registerPointCloud(
-    prev_point_cloud_, cloud);
-  gicp_states_.emplace_back(result.getGICPResult());
-  prev_point_cloud_ = nullptr;
-  ++n_registered_;
-}
-
 void ExperimentHandler::readTruth() {
   if (FLAGS_truth_file.empty()) {
     LOG(WARNING) << "No truth file specified.";
@@ -124,20 +112,6 @@ void ExperimentHandler::writeResultsToFile() {
           out_file << vec[i] << "\n";
         else
           out_file << vec[i] << ",";
-      }
-    }
-  }
-  VLOG(1) << "gicp size: " << gicp_states_.size();
-  if (!gicp_states_.empty()) {
-    VLOG(1) << "Writing gicp results to gicp_results.txt";
-    std::ofstream out_file("gicp_results.txt");
-    for (const Eigen::Matrix4f& mat : gicp_states_) {
-      const uint8_t n_vec = 16;
-      for (uint8_t i = 0u; i < n_vec; ++i) {
-        if (i == n_vec - 1)
-          out_file << mat(i) << "\n";
-        else
-          out_file << mat(i) << ",";
       }
     }
   }

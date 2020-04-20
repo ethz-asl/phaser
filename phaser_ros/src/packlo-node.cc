@@ -109,7 +109,7 @@ registration::BaseRegistrationPtr PackloNode::initializeRegistrationAlgorithm(
     LOG(FATAL) << "Unknown registration algorithm specified!";
   /*
   if (FLAGS_app_mode == "experiment1" || FLAGS_app_mode == "experiment2" ||
-      FLAGS_app_mode == "experiment3" || FLAGS_app_mode == "gicp") {
+      FLAGS_app_mode == "experiment3") {
     experiment_handler_ = std::make_unique<experiments::ExperimentHandler>();
   }
   */
