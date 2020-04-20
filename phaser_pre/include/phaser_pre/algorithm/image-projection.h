@@ -15,8 +15,9 @@ class ImageProjection {
 
  private:
   common::PointCloud_tPtr full_cloud_;
-  cv::Mat rangeMat_;
-  cv::Mat signalMat_;
+  common::PointCloud_tPtr full_info_cloud_;
+  cv::Mat range_mat_;
+  cv::Mat signal_mat_;
 };
 
 }  // namespace preproc

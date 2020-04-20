@@ -9,10 +9,149 @@
 namespace preproc {
 
 ImageProjection::ImageProjection() {
-  rangeMat_ = cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(FLT_MAX));
-  signalMat_ = cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(0));
+  full_cloud_.reset(new common::PointCloud_t);
+  full_info_cloud_.reset(new common::PointCloud_t);
+  range_mat_ = cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(FLT_MAX));
+  signal_mat_ = cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(0));
 }
 
-void ImageProjection::projectPointCloud(model::PointCloudPtr cloud) {}
+void ImageProjection::projectPointCloud(model::PointCloudPtr cloud) {
+  std::size_t cloudSize = cloud->size();
+  __m128 lowerVecXY = _mm_setzero_ps();
+  __m128 upperVecXY = _mm_setzero_ps();
+  __m128 vecX = _mm_setzero_ps();
+  __m128 vecY = _mm_setzero_ps();
+  __m128 vecZ = _mm_setzero_ps();
+  __m128 verticalAngle = _mm_setzero_ps();
+  __m128 horizonAngle = _mm_setzero_ps();
+  __m128 sumSquaredXY = _mm_setzero_ps();
+  __m128 rowIdn = _mm_setzero_ps();
+  __m128 columnIdn = _mm_setzero_ps();
+  __m128 range = _mm_setzero_ps();
+  __m128 largerThanHorizon = _mm_setzero_ps();
+  __m128 validRow = _mm_setzero_ps();
+  __m128 intensity = _mm_setzero_ps();
+  __m128 index = _mm_setzero_ps();
+  uint32_t cond = 0;
+  std::size_t i = 0;
+  common::PointCloud_tPtr input_cloud = cloud->getRawCloud();
+
+  for (; i < cloudSize; i += 4) {
+    const auto& point1 = input_cloud->points[i];
+    const auto& point2 = input_cloud->points[i + 1];
+    const auto& point3 = input_cloud->points[i + 2];
+    const auto& point4 = input_cloud->points[i + 3];
+    lowerVecXY[0] = point1.x;
+    lowerVecXY[1] = point1.y;
+    lowerVecXY[2] = point2.x;
+    lowerVecXY[3] = point2.y;
+    upperVecXY[0] = point3.x;
+    upperVecXY[1] = point3.y;
+    upperVecXY[2] = point4.x;
+    upperVecXY[3] = point4.y;
+    vecX[0] = point1.x;
+    vecX[1] = point2.x;
+    vecX[2] = point3.x;
+    vecX[3] = point4.x;
+    vecY[0] = point1.y;
+    vecY[1] = point2.y;
+    vecY[2] = point3.y;
+    vecY[3] = point4.y;
+    vecZ[0] = point1.z;
+    vecZ[1] = point2.z;
+    vecZ[2] = point3.z;
+    vecZ[3] = point4.z;
+
+    // Compute the vertical angle alpha, i.e.
+    // alpha = atan2(z, sqrt(x^2 + y^2)).
+    sumSquaredXY = _mm_hadd_ps(
+        _mm_mul_ps(lowerVecXY, lowerVecXY), _mm_mul_ps(upperVecXY, upperVecXY));
+    verticalAngle = rad2deg_ps(atan2_ps(vecZ, _mm_sqrt_ps(sumSquaredXY)));
+
+    rowIdn = _mm_round_ps(
+        _mm_div_ps(_mm_add_ps(verticalAngle, ang_bottom_ps), ang_res_y_ps),
+        _MM_FROUND_TO_ZERO);
+
+    horizonAngle = rad2deg_ps(atan2_ps(vecX, vecY));
+    columnIdn = _mm_sub_ps(
+        horizon_scan_half_ps,
+        _mm_round_ps(
+            _mm_div_ps(_mm_sub_ps(horizonAngle, degree90_ps), ang_res_x_ps),
+            _MM_FROUND_TO_ZERO));
+
+    // columnIdn = columnIdn >= Horizon_SCAN ?
+    //   columnIdn - Horizon_SCAN : columnIdn
+    largerThanHorizon = _mm_cmpge_ps(columnIdn, horizon_scan_ps);
+    columnIdn = _mm_blendv_ps(
+        columnIdn, _mm_sub_ps(columnIdn, horizon_scan_ps), largerThanHorizon);
+
+    range = _mm_sqrt_ps(_mm_add_ps(sumSquaredXY, _mm_mul_ps(vecZ, vecZ)));
+    intensity = _mm_add_ps(rowIdn, _mm_div_ps(columnIdn, tenThousand_ps));
+
+    validRow = _mm_and_ps(
+        _mm_cmpge_ps(rowIdn, zero_ps), _mm_cmplt_ps(rowIdn, n_scan_ps));
+    cond = _mm_movemask_epi8(_mm_castps_si128(validRow));
+    index = _mm_add_ps(columnIdn, _mm_mul_ps(rowIdn, horizon_scan_ps));
+
+    if (cond & 0x000F) {
+      range_mat_.at<float>(rowIdn[0], columnIdn[0]) = range[0];
+      signal_mat_.at<float>(rowIdn[0], columnIdn[0]) = point1.intensity;
+      full_cloud_->points[index[0]] = point1;
+      full_cloud_->points[index[0]].intensity = intensity[0];
+      full_info_cloud_->points[index[0]].intensity = range[0];
+    }
+    if (cond & 0x00F0) {
+      range_mat_.at<float>(rowIdn[1], columnIdn[1]) = range[1];
+      signal_mat_.at<float>(rowIdn[1], columnIdn[1]) = point2.intensity;
+      full_cloud_->points[index[1]] = point2;
+      full_cloud_->points[index[1]].intensity = intensity[1];
+      full_info_cloud_->points[index[1]].intensity = range[1];
+    }
+    if (cond & 0x0F00) {
+      range_mat_.at<float>(rowIdn[2], columnIdn[2]) = range[2];
+      signal_mat_.at<float>(rowIdn[2], columnIdn[2]) = point3.intensity;
+      full_cloud_->points[index[2]] = point3;
+      full_cloud_->points[index[2]].intensity = intensity[2];
+      full_info_cloud_->points[index[2]].intensity = range[2];
+    }
+    if (cond & 0xF000) {
+      range_mat_.at<float>(rowIdn[3], columnIdn[3]) = range[3];
+      signal_mat_.at<float>(rowIdn[3], columnIdn[3]) = point4.intensity;
+      full_cloud_->points[index[3]] = point4;
+      full_cloud_->points[index[3]].intensity = intensity[3];
+      full_info_cloud_->points[index[3]].intensity = range[3];
+    }
+  }
+
+  // Process the remaining points in the cloud sequentially.
+  float verticalAngleSeq, horizonAngleSeq, rangeSeq;
+  std::size_t rowIdnSeq, columnIdnSeq, indexSeq;
+  for (; i < cloudSize; ++i) {
+    auto& curPoint = input_cloud->points[i];
+    const auto squaredXY = curPoint.x * curPoint.x + curPoint.y * curPoint.y;
+
+    verticalAngleSeq = atan2(curPoint.z, sqrt(squaredXY)) * 180 / M_PI;
+    rowIdnSeq = (verticalAngleSeq + ang_bottom) / ang_res_y;
+    if (rowIdnSeq < 0 || rowIdnSeq >= N_SCAN)
+      continue;
+
+    horizonAngleSeq = atan2(curPoint.x, curPoint.y) * 180 / M_PI;
+
+    columnIdnSeq =
+        Horizon_SCAN / 2 - round((horizonAngleSeq - 90.0) / ang_res_x);
+    if (columnIdnSeq >= Horizon_SCAN)
+      columnIdnSeq -= Horizon_SCAN;
+
+    rangeSeq = sqrt(squaredXY + curPoint.z * curPoint.z);
+    range_mat_.at<float>(rowIdnSeq, columnIdnSeq) = rangeSeq;
+    signal_mat_.at<float>(rowIdnSeq, columnIdnSeq) = curPoint.intensity;
+
+    curPoint.intensity = static_cast<float>(rowIdnSeq) +
+                         static_cast<float>(columnIdnSeq) / 10000.0;
+    indexSeq = columnIdnSeq + rowIdnSeq * Horizon_SCAN;
+    full_cloud_->points[indexSeq] = curPoint;
+    full_info_cloud_->points[indexSeq].intensity = rangeSeq;
+  }
+}
 
 }  // namespace preproc
