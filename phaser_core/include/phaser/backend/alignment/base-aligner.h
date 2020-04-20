@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_ALIGNMENT_BASE_ALIGNER_H_
-#define PACKLO_BACKEND_ALIGNMENT_BASE_ALIGNER_H_
+#ifndef PHASER_BACKEND_ALIGNMENT_BASE_ALIGNER_H_
+#define PHASER_BACKEND_ALIGNMENT_BASE_ALIGNER_H_
 
 #include "phaser/model/point-cloud.h"
 #include "phaser/common/statistics-manager.h"
@@ -25,4 +25,4 @@ using BaseAlignerPtr = std::unique_ptr<BaseAligner>;
 
 }  // namespace alignment
 
-#endif  // PACKLO_BACKEND_ALIGNMENT_BASE_ALIGNER_H_
+#endif  // PHASER_BACKEND_ALIGNMENT_BASE_ALIGNER_H_
