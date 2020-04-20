@@ -12,9 +12,10 @@ struct CloudPreProcessorSettings {
   bool enable_voxel_grid_downsampling;
 };
 
-class CloudPreProcessor {
+class CloudPreProcessor : public BasePreProcessor {
  public:
   explicit CloudPreProcessor(const CloudPreProcessorSettings& settings);
+  void process(model::PointCloudPtr cloud) override;
 
  private:
   void initializeCommandFromSettings(const CloudPreProcessorSettings& settings);

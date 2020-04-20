@@ -3,11 +3,13 @@
 
 #include <memory>
 
+#include "phaser/model/point-cloud.h"
+
 namespace preproc {
 
 class BaseCommand {
  public:
-  virtual void execute() = 0;
+  virtual void execute(model::PointCloudPtr cloud) = 0;
 };
 
 using BaseCommandPtr = std::unique_ptr<BaseCommand>;

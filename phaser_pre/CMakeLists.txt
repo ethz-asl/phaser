@@ -19,13 +19,18 @@ cs_add_library(${PROJECT_NAME}_lib
   src/cloud-pre-processor.cc
 
   src/common/pre-processor-gflags.cc
-  
+
   src/command/voxel-grid-cmd.cc
 )
 
 #############
 ## TESTING ##
 #############
+
+catkin_add_gtest(test_cloud_pre_processor
+  test/cloud-pre-processor-test.cc)
+target_link_libraries(test_cloud_pre_processor
+  ${PROJECT_NAME}_lib)
 
 cs_install()
 cs_export()
