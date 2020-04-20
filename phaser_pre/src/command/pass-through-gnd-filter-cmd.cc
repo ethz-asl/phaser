@@ -3,10 +3,10 @@
 #include <glog/logging.h>
 
 DEFINE_double(
-    phaser_pass_through_gnd_filter_limit_min, -2.0,
+    phaser_pass_through_gnd_filter_limit_min, -5.0,
     "Defines the lower bound of the pass through GND filter.");
 DEFINE_double(
-    phaser_pass_through_gnd_filter_limit_max, -0.4,
+    phaser_pass_through_gnd_filter_limit_max, 3.0,
     "Defines the upper bound of the pass through GND filter.");
 
 namespace preproc {

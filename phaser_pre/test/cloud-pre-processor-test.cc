@@ -60,7 +60,7 @@ TEST_F(CloudPreProcessorTest, VoxelGridCmdTest) {
   model::PointCloudPtr cloud = getRandomCloud(n_points);
   pre_processor.process(cloud);
 
-  EXPECT_LT(n_points, cloud->size());
+  EXPECT_LT(cloud->size(), n_points);
 }
 
 TEST_F(CloudPreProcessorTest, PassThroughGndFilterTest) {
@@ -73,7 +73,7 @@ TEST_F(CloudPreProcessorTest, PassThroughGndFilterTest) {
   model::PointCloudPtr cloud = getRandomCloud(n_points);
   pre_processor.process(cloud);
 
-  EXPECT_LT(n_points, cloud->size());
+  EXPECT_LT(cloud->size(), n_points);
 }
 
 }  // namespace preproc
