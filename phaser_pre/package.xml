@@ -18,4 +18,5 @@
   <depend>opencv3_catkin</depend>
   <depend>fftw3_catkin</depend>
   <depend>phaser_common</depend>
+  <depend>phaser_test_data</depend>
 </package>

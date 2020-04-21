@@ -2,21 +2,45 @@
 
 #include <chrono>
 
+#include <glog/logging.h>
+
 #define USE_SSE2
 #include "phaser_pre/common/sse-mathfun-extension.h"
 #include "phaser_pre/common/vec-helper.h"
 
 namespace preproc {
 
-ImageProjection::ImageProjection() {
-  full_cloud_.reset(new common::PointCloud_t);
-  full_info_cloud_.reset(new common::PointCloud_t);
-  range_mat_ = cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(FLT_MAX));
-  signal_mat_ = cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(0));
+ImageProjection::ImageProjection() {}
+
+ProjectionResult ImageProjection::projectPointCloudSequential(
+    model::PointCloudPtr cloud) {
+  const std::size_t n_points = cloud->size();
+  common::PointCloud_tPtr input_cloud = cloud->getRawCloud();
+  common::PointCloud_tPtr full_cloud(new common::PointCloud_t);
+  common::PointCloud_tPtr full_info_cloud(new common::PointCloud_t);
+  cv::Mat range_mat =
+      cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(FLT_MAX));
+  cv::Mat signal_mat =
+      cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(0));
+  full_cloud->points.resize(N_SCAN * Horizon_SCAN);
+  full_info_cloud->points.resize(N_SCAN * Horizon_SCAN);
+
+  projectPointCloudSequentialImpl(
+      input_cloud, 0, n_points, full_cloud, full_info_cloud, &range_mat,
+      &signal_mat);
+  return ProjectionResult(full_cloud, full_info_cloud, range_mat, signal_mat);
 }
 
-void ImageProjection::projectPointCloud(model::PointCloudPtr cloud) {
-  std::size_t cloudSize = cloud->size();
+ProjectionResult ImageProjection::projectPointCloud(
+    model::PointCloudPtr cloud) {
+  common::PointCloud_tPtr full_cloud(new common::PointCloud_t);
+  common::PointCloud_tPtr full_info_cloud(new common::PointCloud_t);
+  cv::Mat range_mat =
+      cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(FLT_MAX));
+  cv::Mat signal_mat =
+      cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(0));
+
+  const std::size_t n_points = cloud->size();
   __m128 lowerVecXY = _mm_setzero_ps();
   __m128 upperVecXY = _mm_setzero_ps();
   __m128 vecX = _mm_setzero_ps();
@@ -36,7 +60,7 @@ void ImageProjection::projectPointCloud(model::PointCloudPtr cloud) {
   std::size_t i = 0;
   common::PointCloud_tPtr input_cloud = cloud->getRawCloud();
 
-  for (; i < cloudSize; i += 4) {
+  for (; i < n_points; i += 4) {
     const auto& point1 = input_cloud->points[i];
     const auto& point2 = input_cloud->points[i + 1];
     const auto& point3 = input_cloud->points[i + 2];
@@ -94,41 +118,58 @@ void ImageProjection::projectPointCloud(model::PointCloudPtr cloud) {
     index = _mm_add_ps(columnIdn, _mm_mul_ps(rowIdn, horizon_scan_ps));
 
     if (cond & 0x000F) {
-      range_mat_.at<float>(rowIdn[0], columnIdn[0]) = range[0];
-      signal_mat_.at<float>(rowIdn[0], columnIdn[0]) = point1.intensity;
-      full_cloud_->points[index[0]] = point1;
-      full_cloud_->points[index[0]].intensity = intensity[0];
-      full_info_cloud_->points[index[0]].intensity = range[0];
+      range_mat.at<float>(rowIdn[0], columnIdn[0]) = range[0];
+      signal_mat.at<float>(rowIdn[0], columnIdn[0]) = point1.intensity;
+      full_cloud->points[index[0]] = point1;
+      full_cloud->points[index[0]].intensity = intensity[0];
+      full_info_cloud->points[index[0]].intensity = range[0];
     }
     if (cond & 0x00F0) {
-      range_mat_.at<float>(rowIdn[1], columnIdn[1]) = range[1];
-      signal_mat_.at<float>(rowIdn[1], columnIdn[1]) = point2.intensity;
-      full_cloud_->points[index[1]] = point2;
-      full_cloud_->points[index[1]].intensity = intensity[1];
-      full_info_cloud_->points[index[1]].intensity = range[1];
+      range_mat.at<float>(rowIdn[1], columnIdn[1]) = range[1];
+      signal_mat.at<float>(rowIdn[1], columnIdn[1]) = point2.intensity;
+      full_cloud->points[index[1]] = point2;
+      full_cloud->points[index[1]].intensity = intensity[1];
+      full_info_cloud->points[index[1]].intensity = range[1];
     }
     if (cond & 0x0F00) {
-      range_mat_.at<float>(rowIdn[2], columnIdn[2]) = range[2];
-      signal_mat_.at<float>(rowIdn[2], columnIdn[2]) = point3.intensity;
-      full_cloud_->points[index[2]] = point3;
-      full_cloud_->points[index[2]].intensity = intensity[2];
-      full_info_cloud_->points[index[2]].intensity = range[2];
+      range_mat.at<float>(rowIdn[2], columnIdn[2]) = range[2];
+      signal_mat.at<float>(rowIdn[2], columnIdn[2]) = point3.intensity;
+      full_cloud->points[index[2]] = point3;
+      full_cloud->points[index[2]].intensity = intensity[2];
+      full_info_cloud->points[index[2]].intensity = range[2];
     }
     if (cond & 0xF000) {
-      range_mat_.at<float>(rowIdn[3], columnIdn[3]) = range[3];
-      signal_mat_.at<float>(rowIdn[3], columnIdn[3]) = point4.intensity;
-      full_cloud_->points[index[3]] = point4;
-      full_cloud_->points[index[3]].intensity = intensity[3];
-      full_info_cloud_->points[index[3]].intensity = range[3];
+      range_mat.at<float>(rowIdn[3], columnIdn[3]) = range[3];
+      signal_mat.at<float>(rowIdn[3], columnIdn[3]) = point4.intensity;
+      full_cloud->points[index[3]] = point4;
+      full_cloud->points[index[3]].intensity = intensity[3];
+      full_info_cloud->points[index[3]].intensity = range[3];
     }
   }
 
   // Process the remaining points in the cloud sequentially.
+  projectPointCloudSequentialImpl(
+      input_cloud, i, n_points, full_cloud, full_info_cloud, &range_mat,
+      &signal_mat);
+  return ProjectionResult(full_cloud, full_info_cloud, range_mat, signal_mat);
+}
+
+void ImageProjection::projectPointCloudSequentialImpl(
+    common::PointCloud_tPtr cloud, const std::size_t start,
+    const std::size_t end, common::PointCloud_tPtr full_cloud,
+    common::PointCloud_tPtr full_info_cloud, cv::Mat* range_mat,
+    cv::Mat* signal_mat) {
+  CHECK_NOTNULL(cloud);
+  CHECK_NOTNULL(full_cloud);
+  CHECK_NOTNULL(full_info_cloud);
+  CHECK_NOTNULL(range_mat);
+  CHECK_NOTNULL(signal_mat);
+
   float verticalAngleSeq, horizonAngleSeq, rangeSeq;
   std::size_t rowIdnSeq, columnIdnSeq, indexSeq;
-  for (; i < cloudSize; ++i) {
-    auto& curPoint = input_cloud->points[i];
-    const auto squaredXY = curPoint.x * curPoint.x + curPoint.y * curPoint.y;
+  for (std::size_t i = start; i < end; ++i) {
+    common::Point_t& curPoint = cloud->points[i];
+    const float squaredXY = curPoint.x * curPoint.x + curPoint.y * curPoint.y;
 
     verticalAngleSeq = atan2(curPoint.z, sqrt(squaredXY)) * 180 / M_PI;
     rowIdnSeq = (verticalAngleSeq + ang_bottom) / ang_res_y;
@@ -143,14 +184,14 @@ void ImageProjection::projectPointCloud(model::PointCloudPtr cloud) {
       columnIdnSeq -= Horizon_SCAN;
 
     rangeSeq = sqrt(squaredXY + curPoint.z * curPoint.z);
-    range_mat_.at<float>(rowIdnSeq, columnIdnSeq) = rangeSeq;
-    signal_mat_.at<float>(rowIdnSeq, columnIdnSeq) = curPoint.intensity;
+    range_mat->at<float>(rowIdnSeq, columnIdnSeq) = rangeSeq;
+    signal_mat->at<float>(rowIdnSeq, columnIdnSeq) = curPoint.intensity;
 
     curPoint.intensity = static_cast<float>(rowIdnSeq) +
                          static_cast<float>(columnIdnSeq) / 10000.0;
     indexSeq = columnIdnSeq + rowIdnSeq * Horizon_SCAN;
-    full_cloud_->points[indexSeq] = curPoint;
-    full_info_cloud_->points[indexSeq].intensity = rangeSeq;
+    full_cloud->points[indexSeq] = curPoint;
+    full_info_cloud->points[indexSeq].intensity = rangeSeq;
   }
 }
 

@@ -1,9 +1,7 @@
 #ifndef PHASER_PRE_ALGORITHM_IMAGE_PROJECTION_H_
 #define PHASER_PRE_ALGORITHM_IMAGE_PROJECTION_H_
 
-#include <opencv2/core/mat.hpp>
-
-#include "phaser/model/point-cloud.h"
+#include "phaser_pre/model/projection-result.h"
 
 namespace preproc {
 
@@ -11,13 +9,15 @@ class ImageProjection {
  public:
   ImageProjection();
 
-  void projectPointCloud(model::PointCloudPtr cloud);
+  ProjectionResult projectPointCloudSequential(model::PointCloudPtr cloud);
+  ProjectionResult projectPointCloud(model::PointCloudPtr cloud);
 
  private:
-  common::PointCloud_tPtr full_cloud_;
-  common::PointCloud_tPtr full_info_cloud_;
-  cv::Mat range_mat_;
-  cv::Mat signal_mat_;
+  void projectPointCloudSequentialImpl(
+      common::PointCloud_tPtr cloud, const std::size_t start,
+      const std::size_t end, common::PointCloud_tPtr full_cloud,
+      common::PointCloud_tPtr full_info_cloud, cv::Mat* range_mat,
+      cv::Mat* signal_mat);
 };
 
 }  // namespace preproc

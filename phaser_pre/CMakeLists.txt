@@ -20,6 +20,8 @@ cs_add_library(${PROJECT_NAME}_lib
 
   src/common/pre-processor-gflags.cc
 
+  src/model/projection-result.cc
+
   src/command/voxel-grid-cmd.cc
   src/command/pass-through-gnd-filter-cmd.cc
 
@@ -34,6 +36,12 @@ catkin_add_gtest(test_cloud_pre_processor
   test/cloud-pre-processor-test.cc)
 target_link_libraries(test_cloud_pre_processor
   ${PROJECT_NAME}_lib)
+
+catkin_add_gtest(test_image_projection
+  test/image-projection-test.cc)
+target_link_libraries(test_image_projection
+  ${PROJECT_NAME}_lib)
+#phaser_import_test_maps(test_image_projection)
 
 cs_install()
 cs_export()

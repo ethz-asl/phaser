@@ -4,16 +4,19 @@
 #include <memory>
 #include <random>
 
+#include <opencv2/highgui/highgui.hpp>
+
+#include "phaser/common/data/datasource-ply.h"
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
 #include "phaser/model/point-cloud.h"
-#include "phaser_pre/cloud-pre-processor.h"
+#include "phaser_pre/algorithm/image-projection.h"
 
 namespace preproc {
 
-class CloudPreProcessorTest : public ::testing::Test {
+class ImageProjectionTest : public ::testing::Test {
  public:
-  CloudPreProcessorTest()
+  ImageProjectionTest()
       : generator_(std::chrono::system_clock::now().time_since_epoch().count()),
         distribution_(0, M_PI) {}
 
@@ -35,45 +38,29 @@ class CloudPreProcessorTest : public ::testing::Test {
     return std::make_shared<model::PointCloud>(cloud);
   }
 
- private:
+ protected:
+  virtual void SetUp() {
+    ds_ = std::make_unique<data::DatasourcePly>();
+    CHECK_NOTNULL(ds_);
+    ds_->setDatasetFolder("./test_clouds/arche/sigma-level-1/");
+  }
+
+  data::DatasourcePlyPtr ds_;
   std::default_random_engine generator_;
   std::uniform_real_distribution<float> distribution_;
   pcl::PointCloud<pcl::PointXYZI>::Ptr target_;
 };
 
-TEST_F(CloudPreProcessorTest, CreationSanityCheck) {
-  CloudPreProcessorSettings settings;
-  settings.enable_voxel_grid_downsampling = true;
-  settings.enable_pass_through_gnd_filtering = true;
-
-  auto pre_processor = std::make_unique<CloudPreProcessor>(settings);
-  EXPECT_NE(nullptr, pre_processor);
-}
-
-TEST_F(CloudPreProcessorTest, VoxelGridCmdTest) {
-  CloudPreProcessorSettings settings;
-  settings.enable_voxel_grid_downsampling = true;
-
-  CloudPreProcessor pre_processor(settings);
-
-  const uint32_t n_points = 500;
-  model::PointCloudPtr cloud = getRandomCloud(n_points);
-  pre_processor.process(cloud);
-
-  EXPECT_LT(cloud->size(), n_points);
-}
-
-TEST_F(CloudPreProcessorTest, PassThroughGndFilterTest) {
-  CloudPreProcessorSettings settings;
-  settings.enable_pass_through_gnd_filtering = true;
-
-  CloudPreProcessor pre_processor(settings);
-
-  const uint32_t n_points = 500;
-  model::PointCloudPtr cloud = getRandomCloud(n_points);
-  pre_processor.process(cloud);
-
-  EXPECT_LT(cloud->size(), n_points);
+TEST_F(ImageProjectionTest, ProjectionSeqTest) {
+  CHECK(ds_);
+  ImageProjection proj;
+  ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
+    CHECK(cloud);
+    ProjectionResult result = proj.projectPointCloudSequential(cloud);
+    cv::imshow("range wnd", result.getSignalMat());
+    cvWaitKey(0);
+  });
+  ds_->startStreaming(1);
 }
 
 }  // namespace preproc
