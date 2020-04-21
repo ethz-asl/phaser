@@ -47,6 +47,7 @@ ProjectionResult ImageProjection::projectPointCloud(
       settings.N_SCAN, settings.Horizon_SCAN, CV_32F, cv::Scalar::all(0));
 
   const std::size_t n_points = cloud->size();
+  const std::size_t n_points_vec = n_points - 3;
   __m128 lowerVecXY = _mm_setzero_ps();
   __m128 upperVecXY = _mm_setzero_ps();
   __m128 vecX = _mm_setzero_ps();
@@ -66,7 +67,7 @@ ProjectionResult ImageProjection::projectPointCloud(
   std::size_t i = 0;
   common::PointCloud_tPtr input_cloud = cloud->getRawCloud();
 
-  for (; i < n_points; i += 4) {
+  for (; i < n_points_vec; i += 4) {
     const auto& point1 = input_cloud->points[i];
     const auto& point2 = input_cloud->points[i + 1];
     const auto& point3 = input_cloud->points[i + 2];
