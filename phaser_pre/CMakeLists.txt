@@ -41,7 +41,7 @@ catkin_add_gtest(test_image_projection
   test/image-projection-test.cc)
 target_link_libraries(test_image_projection
   ${PROJECT_NAME}_lib)
-#phaser_import_test_maps(test_image_projection)
+phaser_import_test_maps(test_image_projection)
 
 cs_install()
 cs_export()
