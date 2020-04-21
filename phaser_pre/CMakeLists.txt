@@ -48,5 +48,9 @@ catkin_add_gtest(test_angle_based_ground_removal test/angle-based-ground-removal
 target_link_libraries(test_angle_based_ground_removal ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_angle_based_ground_removal)
 
+catkin_add_gtest(test_cluster_points test/cluster-points-test.cc)
+target_link_libraries(test_cluster_points ${PROJECT_NAME}_lib)
+phaser_import_test_maps(test_cluster_points)
+
 cs_install()
 cs_export()
