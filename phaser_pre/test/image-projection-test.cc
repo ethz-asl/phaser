@@ -5,6 +5,7 @@
 #include <random>
 
 #include <Eigen/Dense>
+#include <eigen-checks/gtest.h>
 #include <opencv2/core/eigen.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
@@ -81,6 +82,34 @@ TEST_F(ImageProjectionTest, ProjectionVecTest) {
     cv::cv2eigen(result.getSignalMat(), signals);
     EXPECT_TRUE((range.array() > 0).any());
     EXPECT_TRUE((signals.array() > 0).any());
+  });
+  ds_->startStreaming(1);
+}
+
+TEST_F(ImageProjectionTest, ProjectionSeqVecEqualResultTest) {
+  CHECK(ds_);
+  ImageProjection proj;
+  const float precision = 0.1f;
+  ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
+    CHECK(cloud);
+    const ProjectionResult resultVec = proj.projectPointCloud(cloud);
+    const ProjectionResult resultSeq = proj.projectPointCloudSequential(cloud);
+
+    Eigen::MatrixXf rangeVec, signalsVec, rangeSeq, signalsSeq;
+    cv::cv2eigen(resultVec.getRangeMat(), rangeVec);
+    cv::cv2eigen(resultVec.getSignalMat(), signalsVec);
+    cv::cv2eigen(resultSeq.getRangeMat(), rangeSeq);
+    cv::cv2eigen(resultSeq.getSignalMat(), signalsSeq);
+
+    // cv::imshow("signal wnd seq", resultSeq.getSignalMat());
+    // cv::imshow("signal wnd vec", resultVec.getSignalMat());
+    // cv::waitKey(0);
+    EXPECT_TRUE((rangeVec.array() > 0).any());
+    EXPECT_TRUE((signalsVec.array() > 0).any());
+    EXPECT_TRUE((rangeSeq.array() > 0).any());
+    EXPECT_TRUE((signalsSeq.array() > 0).any());
+    EXPECT_NEAR(rangeVec.nonZeros(), rangeSeq.nonZeros(), 5);
+    EXPECT_NEAR(signalsVec.nonZeros(), signalsSeq.nonZeros(), 5);
   });
   ds_->startStreaming(1);
 }

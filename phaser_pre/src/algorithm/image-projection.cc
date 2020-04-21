@@ -174,14 +174,14 @@ void ImageProjection::projectPointCloudSequentialImpl(
     const float squaredXY = curPoint.x * curPoint.x + curPoint.y * curPoint.y;
 
     verticalAngleSeq = atan2(curPoint.z, sqrt(squaredXY)) * 180 / M_PI;
-    rowIdnSeq = (verticalAngleSeq + ang_bottom) / ang_res_y;
+    rowIdnSeq = std::trunc((verticalAngleSeq + ang_bottom) / ang_res_y);
     if (rowIdnSeq < 0 || rowIdnSeq >= N_SCAN)
       continue;
 
     horizonAngleSeq = atan2(curPoint.x, curPoint.y) * 180 / M_PI;
 
     columnIdnSeq =
-        Horizon_SCAN / 2 - round((horizonAngleSeq - 90.0) / ang_res_x);
+        std::trunc(Horizon_SCAN / 2 - (horizonAngleSeq - 90.0) / ang_res_x);
     if (columnIdnSeq >= Horizon_SCAN)
       columnIdnSeq -= Horizon_SCAN;
 
