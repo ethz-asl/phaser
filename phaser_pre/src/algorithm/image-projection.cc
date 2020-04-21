@@ -18,12 +18,12 @@ ProjectionResult ImageProjection::projectPointCloudSequential(
   common::PointCloud_tPtr input_cloud = cloud->getRawCloud();
   common::PointCloud_tPtr full_cloud(new common::PointCloud_t);
   common::PointCloud_tPtr full_info_cloud(new common::PointCloud_t);
+  full_cloud->points.resize(N_SCAN * Horizon_SCAN);
+  full_info_cloud->points.resize(N_SCAN * Horizon_SCAN);
   cv::Mat range_mat =
       cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(FLT_MAX));
   cv::Mat signal_mat =
       cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(0));
-  full_cloud->points.resize(N_SCAN * Horizon_SCAN);
-  full_info_cloud->points.resize(N_SCAN * Horizon_SCAN);
 
   projectPointCloudSequentialImpl(
       input_cloud, 0, n_points, full_cloud, full_info_cloud, &range_mat,
@@ -35,6 +35,8 @@ ProjectionResult ImageProjection::projectPointCloud(
     model::PointCloudPtr cloud) {
   common::PointCloud_tPtr full_cloud(new common::PointCloud_t);
   common::PointCloud_tPtr full_info_cloud(new common::PointCloud_t);
+  full_cloud->points.resize(N_SCAN * Horizon_SCAN);
+  full_info_cloud->points.resize(N_SCAN * Horizon_SCAN);
   cv::Mat range_mat =
       cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(FLT_MAX));
   cv::Mat signal_mat =

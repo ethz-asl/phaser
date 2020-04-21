@@ -59,9 +59,28 @@ TEST_F(ImageProjectionTest, ProjectionSeqTest) {
   ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
     CHECK(cloud);
     const ProjectionResult result = proj.projectPointCloudSequential(cloud);
-    Eigen::MatrixXf range;
-    cv::cv2eigen(result.getSignalMat(), range);
+
+    Eigen::MatrixXf range, signals;
+    cv::cv2eigen(result.getRangeMat(), range);
+    cv::cv2eigen(result.getSignalMat(), signals);
     EXPECT_TRUE((range.array() > 0).any());
+    EXPECT_TRUE((signals.array() > 0).any());
+  });
+  ds_->startStreaming(1);
+}
+
+TEST_F(ImageProjectionTest, ProjectionVecTest) {
+  CHECK(ds_);
+  ImageProjection proj;
+  ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
+    CHECK(cloud);
+    const ProjectionResult result = proj.projectPointCloud(cloud);
+
+    Eigen::MatrixXf range, signals;
+    cv::cv2eigen(result.getRangeMat(), range);
+    cv::cv2eigen(result.getSignalMat(), signals);
+    EXPECT_TRUE((range.array() > 0).any());
+    EXPECT_TRUE((signals.array() > 0).any());
   });
   ds_->startStreaming(1);
 }
