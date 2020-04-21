@@ -19,6 +19,8 @@ cs_add_library(${PROJECT_NAME}_lib
   src/cloud-pre-processor.cc
 
   src/common/pre-processor-gflags.cc
+  src/common/sse-mathfun.cc
+  src/common/sse-mathfun-extension.cc
 
   src/model/projection-result.cc
 
@@ -26,6 +28,7 @@ cs_add_library(${PROJECT_NAME}_lib
   src/command/pass-through-gnd-filter-cmd.cc
 
   src/algorithm/image-projection.cc
+  src/algorithm/angle-based-ground-removal.cc
 )
 
 #############

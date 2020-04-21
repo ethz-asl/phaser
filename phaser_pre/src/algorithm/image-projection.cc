@@ -18,12 +18,15 @@ ProjectionResult ImageProjection::projectPointCloudSequential(
   common::PointCloud_tPtr input_cloud = cloud->getRawCloud();
   common::PointCloud_tPtr full_cloud(new common::PointCloud_t);
   common::PointCloud_tPtr full_info_cloud(new common::PointCloud_t);
-  full_cloud->points.resize(N_SCAN * Horizon_SCAN);
-  full_info_cloud->points.resize(N_SCAN * Horizon_SCAN);
-  cv::Mat range_mat =
-      cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(FLT_MAX));
-  cv::Mat signal_mat =
-      cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(0));
+
+  AlgorithmSettings settings;
+  const auto full_cloud_size = settings.N_SCAN * settings.Horizon_SCAN;
+  full_cloud->points.resize(full_cloud_size);
+  full_info_cloud->points.resize(full_cloud_size);
+  cv::Mat range_mat = cv::Mat(
+      settings.N_SCAN, settings.Horizon_SCAN, CV_32F, cv::Scalar::all(FLT_MAX));
+  cv::Mat signal_mat = cv::Mat(
+      settings.N_SCAN, settings.Horizon_SCAN, CV_32F, cv::Scalar::all(0));
 
   projectPointCloudSequentialImpl(
       input_cloud, 0, n_points, full_cloud, full_info_cloud, &range_mat,
@@ -35,12 +38,13 @@ ProjectionResult ImageProjection::projectPointCloud(
     model::PointCloudPtr cloud) {
   common::PointCloud_tPtr full_cloud(new common::PointCloud_t);
   common::PointCloud_tPtr full_info_cloud(new common::PointCloud_t);
-  full_cloud->points.resize(N_SCAN * Horizon_SCAN);
-  full_info_cloud->points.resize(N_SCAN * Horizon_SCAN);
-  cv::Mat range_mat =
-      cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(FLT_MAX));
-  cv::Mat signal_mat =
-      cv::Mat(N_SCAN, Horizon_SCAN, CV_32F, cv::Scalar::all(0));
+  AlgorithmSettings settings;
+  full_cloud->points.resize(settings.N_SCAN * settings.Horizon_SCAN);
+  full_info_cloud->points.resize(settings.N_SCAN * settings.Horizon_SCAN);
+  cv::Mat range_mat = cv::Mat(
+      settings.N_SCAN, settings.Horizon_SCAN, CV_32F, cv::Scalar::all(FLT_MAX));
+  cv::Mat signal_mat = cv::Mat(
+      settings.N_SCAN, settings.Horizon_SCAN, CV_32F, cv::Scalar::all(0));
 
   const std::size_t n_points = cloud->size();
   __m128 lowerVecXY = _mm_setzero_ps();
@@ -92,53 +96,64 @@ ProjectionResult ImageProjection::projectPointCloud(
     // alpha = atan2(z, sqrt(x^2 + y^2)).
     sumSquaredXY = _mm_hadd_ps(
         _mm_mul_ps(lowerVecXY, lowerVecXY), _mm_mul_ps(upperVecXY, upperVecXY));
-    verticalAngle = rad2deg_ps(atan2_ps(vecZ, _mm_sqrt_ps(sumSquaredXY)));
+    verticalAngle =
+        settings.rad2deg_ps(atan2_ps(vecZ, _mm_sqrt_ps(sumSquaredXY)));
 
     rowIdn = _mm_round_ps(
-        _mm_div_ps(_mm_add_ps(verticalAngle, ang_bottom_ps), ang_res_y_ps),
+        _mm_div_ps(
+            _mm_add_ps(verticalAngle, settings.ang_bottom_ps),
+            settings.ang_res_y_ps),
         _MM_FROUND_TO_ZERO);
 
-    horizonAngle = rad2deg_ps(atan2_ps(vecX, vecY));
+    horizonAngle = settings.rad2deg_ps(atan2_ps(vecX, vecY));
     columnIdn = _mm_sub_ps(
-        horizon_scan_half_ps,
+        settings.horizon_scan_half_ps,
         _mm_round_ps(
-            _mm_div_ps(_mm_sub_ps(horizonAngle, degree90_ps), ang_res_x_ps),
+            _mm_div_ps(
+                _mm_sub_ps(horizonAngle, settings.degree90_ps),
+                settings.ang_res_x_ps),
             _MM_FROUND_TO_ZERO));
 
     // columnIdn = columnIdn >= Horizon_SCAN ?
     //   columnIdn - Horizon_SCAN : columnIdn
-    largerThanHorizon = _mm_cmpge_ps(columnIdn, horizon_scan_ps);
+    largerThanHorizon = _mm_cmpge_ps(columnIdn, settings.horizon_scan_ps);
     columnIdn = _mm_blendv_ps(
-        columnIdn, _mm_sub_ps(columnIdn, horizon_scan_ps), largerThanHorizon);
+        columnIdn, _mm_sub_ps(columnIdn, settings.horizon_scan_ps),
+        largerThanHorizon);
 
     range = _mm_sqrt_ps(_mm_add_ps(sumSquaredXY, _mm_mul_ps(vecZ, vecZ)));
-    intensity = _mm_add_ps(rowIdn, _mm_div_ps(columnIdn, tenThousand_ps));
+    intensity =
+        _mm_add_ps(rowIdn, _mm_div_ps(columnIdn, settings.tenThousand_ps));
 
     validRow = _mm_and_ps(
-        _mm_cmpge_ps(rowIdn, zero_ps), _mm_cmplt_ps(rowIdn, n_scan_ps));
+        _mm_cmpge_ps(rowIdn, settings.zero_ps),
+        _mm_cmplt_ps(rowIdn, settings.n_scan_ps));
     cond = _mm_movemask_epi8(_mm_castps_si128(validRow));
-    index = _mm_add_ps(columnIdn, _mm_mul_ps(rowIdn, horizon_scan_ps));
+    index = _mm_add_ps(columnIdn, _mm_mul_ps(rowIdn, settings.horizon_scan_ps));
 
     if (cond & 0x000F) {
       range_mat.at<float>(rowIdn[0], columnIdn[0]) = range[0];
       signal_mat.at<float>(rowIdn[0], columnIdn[0]) = point1.intensity;
       full_cloud->points[index[0]] = point1;
       full_cloud->points[index[0]].intensity = intensity[0];
-      full_info_cloud->points[index[0]].intensity = range[0];
+      full_info_cloud->points[index[0]].x = range[0];
+      full_info_cloud->points[index[0]].y = point1.intensity;
     }
     if (cond & 0x00F0) {
       range_mat.at<float>(rowIdn[1], columnIdn[1]) = range[1];
       signal_mat.at<float>(rowIdn[1], columnIdn[1]) = point2.intensity;
       full_cloud->points[index[1]] = point2;
       full_cloud->points[index[1]].intensity = intensity[1];
-      full_info_cloud->points[index[1]].intensity = range[1];
+      full_info_cloud->points[index[1]].x = range[1];
+      full_info_cloud->points[index[1]].y = point2.intensity;
     }
     if (cond & 0x0F00) {
       range_mat.at<float>(rowIdn[2], columnIdn[2]) = range[2];
       signal_mat.at<float>(rowIdn[2], columnIdn[2]) = point3.intensity;
       full_cloud->points[index[2]] = point3;
       full_cloud->points[index[2]].intensity = intensity[2];
-      full_info_cloud->points[index[2]].intensity = range[2];
+      full_info_cloud->points[index[2]].x = range[2];
+      full_info_cloud->points[index[2]].y = point3.intensity;
     }
     if (cond & 0xF000) {
       range_mat.at<float>(rowIdn[3], columnIdn[3]) = range[3];
@@ -146,6 +161,7 @@ ProjectionResult ImageProjection::projectPointCloud(
       full_cloud->points[index[3]] = point4;
       full_cloud->points[index[3]].intensity = intensity[3];
       full_info_cloud->points[index[3]].intensity = range[3];
+      full_info_cloud->points[index[3]].y = point4.intensity;
     }
   }
 
@@ -167,6 +183,7 @@ void ImageProjection::projectPointCloudSequentialImpl(
   CHECK_NOTNULL(range_mat);
   CHECK_NOTNULL(signal_mat);
 
+  AlgorithmSettings settings;
   float verticalAngleSeq, horizonAngleSeq, rangeSeq;
   std::size_t rowIdnSeq, columnIdnSeq, indexSeq;
   for (std::size_t i = start; i < end; ++i) {
@@ -174,26 +191,30 @@ void ImageProjection::projectPointCloudSequentialImpl(
     const float squaredXY = curPoint.x * curPoint.x + curPoint.y * curPoint.y;
 
     verticalAngleSeq = atan2(curPoint.z, sqrt(squaredXY)) * 180 / M_PI;
-    rowIdnSeq = std::trunc((verticalAngleSeq + ang_bottom) / ang_res_y);
-    if (rowIdnSeq < 0 || rowIdnSeq >= N_SCAN)
+    rowIdnSeq = std::trunc(
+        (verticalAngleSeq + settings.ang_bottom) / settings.ang_res_y);
+    if (rowIdnSeq < 0 || rowIdnSeq >= settings.N_SCAN)
       continue;
 
     horizonAngleSeq = atan2(curPoint.x, curPoint.y) * 180 / M_PI;
 
-    columnIdnSeq =
-        std::trunc(Horizon_SCAN / 2 - (horizonAngleSeq - 90.0) / ang_res_x);
-    if (columnIdnSeq >= Horizon_SCAN)
-      columnIdnSeq -= Horizon_SCAN;
+    columnIdnSeq = std::trunc(
+        settings.Horizon_SCAN / 2 -
+        (horizonAngleSeq - 90.0) / settings.ang_res_x);
+    if (columnIdnSeq >= settings.Horizon_SCAN)
+      columnIdnSeq -= settings.Horizon_SCAN;
 
     rangeSeq = sqrt(squaredXY + curPoint.z * curPoint.z);
     range_mat->at<float>(rowIdnSeq, columnIdnSeq) = rangeSeq;
     signal_mat->at<float>(rowIdnSeq, columnIdnSeq) = curPoint.intensity;
 
+    indexSeq = columnIdnSeq + rowIdnSeq * settings.Horizon_SCAN;
+    full_info_cloud->points[indexSeq].x = rangeSeq;
+    full_info_cloud->points[indexSeq].y = curPoint.intensity;
+
     curPoint.intensity = static_cast<float>(rowIdnSeq) +
                          static_cast<float>(columnIdnSeq) / 10000.0;
-    indexSeq = columnIdnSeq + rowIdnSeq * Horizon_SCAN;
     full_cloud->points[indexSeq] = curPoint;
-    full_info_cloud->points[indexSeq].intensity = rangeSeq;
   }
 }
 
