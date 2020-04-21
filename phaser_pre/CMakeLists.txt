@@ -23,12 +23,14 @@ cs_add_library(${PROJECT_NAME}_lib
   src/common/sse-mathfun-extension.cc
 
   src/model/projection-result.cc
+  src/model/cluster-result.cc
 
   src/command/voxel-grid-cmd.cc
   src/command/pass-through-gnd-filter-cmd.cc
 
   src/algorithm/image-projection.cc
   src/algorithm/angle-based-ground-removal.cc
+  src/algorithm/cluster-points.cc
 )
 
 #############
