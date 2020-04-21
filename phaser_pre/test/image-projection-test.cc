@@ -4,6 +4,8 @@
 #include <memory>
 #include <random>
 
+#include <Eigen/Dense>
+#include <opencv2/core/eigen.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
 #include "phaser/common/data/datasource-ply.h"
@@ -56,9 +58,10 @@ TEST_F(ImageProjectionTest, ProjectionSeqTest) {
   ImageProjection proj;
   ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
     CHECK(cloud);
-    ProjectionResult result = proj.projectPointCloudSequential(cloud);
-    cv::imshow("range wnd", result.getSignalMat());
-    cvWaitKey(0);
+    const ProjectionResult result = proj.projectPointCloudSequential(cloud);
+    Eigen::MatrixXf range;
+    cv::cv2eigen(result.getSignalMat(), range);
+    EXPECT_TRUE((range.array() > 0).any());
   });
   ds_->startStreaming(1);
 }
