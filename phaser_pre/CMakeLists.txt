@@ -24,6 +24,7 @@ cs_add_library(${PROJECT_NAME}_lib
 
   src/model/projection-result.cc
   src/model/cluster-result.cc
+  src/model/cloud-segmentation.cc
 
   src/command/voxel-grid-cmd.cc
   src/command/pass-through-gnd-filter-cmd.cc
