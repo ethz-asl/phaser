@@ -4,13 +4,14 @@
 #include <opencv2/core/mat.hpp>
 #include "phaser/model/point-cloud.h"
 #include "phaser_pre/common/vec-helper.h"
+#include "phaser_pre/model/ground-removal-result.h"
 
 namespace preproc {
 
 class AngleBasedGroundRemoval {
  public:
-  cv::Mat removeGroundSeq(common::PointCloud_tPtr cloud);
-  cv::Mat removeGround(common::PointCloud_tPtr cloud);
+  GroundRemovalResult removeGroundSeq(common::PointCloud_tPtr cloud);
+  GroundRemovalResult removeGround(common::PointCloud_tPtr cloud);
 
  private:
   void removeGroundForIndex(

@@ -35,11 +35,11 @@ TEST_F(AngleBasedGroundRemovalTest, GroundRemovalSeqTest) {
   ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
     CHECK(cloud);
     const ProjectionResult result = proj.projectPointCloudSequential(cloud);
-    const cv::Mat ground_mat =
+    const GroundRemovalResult ground_result =
         gnd_removal.removeGroundSeq(result.getFullCloud());
 
     Eigen::MatrixXf ground;
-    cv::cv2eigen(ground_mat, ground);
+    cv::cv2eigen(ground_result.getGroundMat(), ground);
     EXPECT_TRUE((ground.array() > 0).any());
   });
   ds_->startStreaming(1);
@@ -52,10 +52,11 @@ TEST_F(AngleBasedGroundRemovalTest, GroundRemovalVecTest) {
   ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
     CHECK(cloud);
     const ProjectionResult result = proj.projectPointCloud(cloud);
-    const cv::Mat ground_mat = gnd_removal.removeGround(result.getFullCloud());
+    const GroundRemovalResult ground_result =
+        gnd_removal.removeGround(result.getFullCloud());
 
     Eigen::MatrixXf ground;
-    cv::cv2eigen(ground_mat, ground);
+    cv::cv2eigen(ground_result.getGroundMat(), ground);
     EXPECT_TRUE((ground.array() > 0).any());
   });
   ds_->startStreaming(1);
@@ -68,14 +69,14 @@ TEST_F(AngleBasedGroundRemovalTest, GroundRemovalVecSeqComparisonTest) {
   ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
     CHECK(cloud);
     const ProjectionResult result = proj.projectPointCloud(cloud);
-    const cv::Mat ground_mat_vec =
+    const GroundRemovalResult ground_result_vec =
         gnd_removal.removeGround(result.getFullCloud());
-    const cv::Mat ground_mat_seq =
+    const GroundRemovalResult ground_result_seq =
         gnd_removal.removeGroundSeq(result.getFullCloud());
 
     Eigen::MatrixXf ground_vec, ground_seq;
-    cv::cv2eigen(ground_mat_vec, ground_vec);
-    cv::cv2eigen(ground_mat_seq, ground_seq);
+    cv::cv2eigen(ground_result_vec.getGroundMat(), ground_vec);
+    cv::cv2eigen(ground_result_seq.getGroundMat(), ground_seq);
     EXPECT_TRUE((ground_vec.array() > 0).any());
     EXPECT_TRUE((ground_seq.array() > 0).any());
     EXPECT_NEAR(ground_vec.nonZeros(), ground_seq.nonZeros(), 5);

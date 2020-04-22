@@ -1,5 +1,5 @@
-#ifndef PHASER_PRE_MODEL_CLOUD_SEGMENTATION_H_
-#define PHASER_PRE_MODEL_CLOUD_SEGMENTATION_H_
+#ifndef PHASER_PRE_MODEL_SEGMENTATION_RESULT_H_
+#define PHASER_PRE_MODEL_SEGMENTATION_RESULT_H_
 
 #include <cstdint>
 #include <vector>
@@ -45,4 +45,4 @@ class CloudSegmentation {
 
 }  // namespace preproc
 
-#endif  // PHASER_PRE_MODEL_CLOUD_SEGMENTATION_H_
+#endif  // PHASER_PRE_MODEL_SEGMENTATION_RESULT_H_

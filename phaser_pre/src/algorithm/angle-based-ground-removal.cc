@@ -6,17 +6,18 @@
 
 namespace preproc {
 
-cv::Mat AngleBasedGroundRemoval::removeGroundSeq(
+GroundRemovalResult AngleBasedGroundRemoval::removeGroundSeq(
     common::PointCloud_tPtr cloud) {
   cv::Mat ground_mat = cv::Mat(
       settings_.N_SCAN, settings_.Horizon_SCAN, CV_8S, cv::Scalar::all(0));
   for (std::size_t j = 0u; j < settings_.Horizon_SCAN; ++j) {
     removeGroundForIndex(cloud, 0, j, &ground_mat);
   }
-  return ground_mat;
+  return GroundRemovalResult(std::move(ground_mat));
 }
 
-cv::Mat AngleBasedGroundRemoval::removeGround(common::PointCloud_tPtr cloud) {
+GroundRemovalResult AngleBasedGroundRemoval::removeGround(
+    common::PointCloud_tPtr cloud) {
   cv::Mat ground_mat = cv::Mat(
       settings_.N_SCAN, settings_.Horizon_SCAN, CV_8S, cv::Scalar::all(0));
   std::size_t idx;
@@ -107,7 +108,7 @@ cv::Mat AngleBasedGroundRemoval::removeGround(common::PointCloud_tPtr cloud) {
     // Process the remaining points in the cloud sequentially.
     removeGroundForIndex(cloud, i, j, &ground_mat);
   }
-  return ground_mat;
+  return GroundRemovalResult(std::move(ground_mat));
 }
 
 void AngleBasedGroundRemoval::removeGroundForIndex(

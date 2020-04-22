@@ -1,4 +1,4 @@
-#include "phaser_pre/model/cloud-segmentation.h"
+#include "phaser_pre/model/segmentation-result.h"
 
 namespace preproc {
 
