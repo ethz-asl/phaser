@@ -3,10 +3,12 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <random>
+#include <sstream>
 
 #include <Eigen/Dense>
 #include <eigen-checks/gtest.h>
 #include <opencv2/core/eigen.hpp>
+#include <pcl/io/ply_io.h>
 
 #include "phaser/common/data/datasource-ply.h"
 #include "phaser/common/test/testing-entrypoint.h"
@@ -24,7 +26,7 @@ class CloudSegmentationTest : public ::testing::Test {
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
-    ds_->setDatasetFolder("./test_clouds/arche/sigma-level-1/");
+    ds_->setDatasetFolder("./test_clouds/arche/penguin/");
   }
 
   data::DatasourcePlyPtr ds_;
@@ -36,6 +38,7 @@ TEST_F(CloudSegmentationTest, SegmentCloudTest) {
   ClusterPoints cluster;
   AngleBasedGroundRemoval gnd_removal;
   CloudSegmentation seg;
+  uint32_t ply_counter = 0u;
   ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
     CHECK(cloud);
     const ProjectionResult proj_result = proj.projectPointCloud(cloud);
@@ -47,7 +50,11 @@ TEST_F(CloudSegmentationTest, SegmentCloudTest) {
         seg.segment(proj_result, cluster_result, ground_result);
 
     const common::PointCloud_tPtr& seg_cloud = seg_result.getSegmentedCloud();
+    CHECK_NOTNULL(seg_cloud);
     EXPECT_GT(seg_cloud->size(), 0);
+    std::stringstream ss;
+    ss << "/home/berlukas/Documents/ply/reg" << ++ply_counter << ".ply";
+    pcl::io::savePLYFileASCII(ss.str(), *seg_cloud);
   });
   ds_->startStreaming(1);
 }
