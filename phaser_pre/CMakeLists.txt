@@ -28,6 +28,7 @@ cs_add_library(${PROJECT_NAME}_lib
   src/model/ground-removal-result.cc
   src/model/feature-extraction-result.cc
   src/model/smoothness-result.cc
+  src/model/occlusion-result.cc
 
   src/command/voxel-grid-cmd.cc
   src/command/pass-through-gnd-filter-cmd.cc
@@ -38,6 +39,7 @@ cs_add_library(${PROJECT_NAME}_lib
   src/algorithm/cloud-segmentation.cc
   src/algorithm/extract-loam-features.cc
   src/algorithm/calc-smoothness.cc
+  src/algorithm/mark-occluded.cc
 )
 
 #############
