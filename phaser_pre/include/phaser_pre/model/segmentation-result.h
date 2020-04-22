@@ -4,10 +4,15 @@
 #include <cstdint>
 #include <vector>
 
+#include "phaser/model/point-cloud.h"
+#include "phaser_pre/common/vec-helper.h"
+
 namespace preproc {
 
-class CloudSegmentation {
+class SegmentationResult {
  public:
+  explicit SegmentationResult(const AlgorithmSettings& settings);
+
   const std::vector<int>& getStartRingIndex() const;
   std::vector<int>& getStartRingIndex();
 
@@ -32,6 +37,8 @@ class CloudSegmentation {
   const std::vector<float>& getRange() const;
   std::vector<float>& getRange();
 
+  common::PointCloud_tPtr& getSegmentedCloud();
+
  private:
   std::vector<int> start_ring_index_;
   std::vector<int> end_ring_index_;
@@ -41,6 +48,7 @@ class CloudSegmentation {
   std::vector<bool> ground_flag_;
   std::vector<uint32_t> col_ind_;
   std::vector<float> range_;
+  common::PointCloud_tPtr segmented_cloud_;
 };
 
 }  // namespace preproc

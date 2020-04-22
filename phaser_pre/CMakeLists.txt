@@ -33,6 +33,7 @@ cs_add_library(${PROJECT_NAME}_lib
   src/algorithm/image-projection.cc
   src/algorithm/angle-based-ground-removal.cc
   src/algorithm/cluster-points.cc
+  src/algorithm/cloud-segmentation.cc
 )
 
 #############

@@ -1,6 +1,7 @@
 #ifndef PHASER_PRE_COMMON_VEC_HELPER_H_
 #define PHASER_PRE_COMMON_VEC_HELPER_H_
 
+#include <cmath>
 #include <emmintrin.h>
 #include <pmmintrin.h>
 #include <smmintrin.h>
