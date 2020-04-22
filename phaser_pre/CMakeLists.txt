@@ -55,5 +55,9 @@ catkin_add_gtest(test_cluster_points test/cluster-points-test.cc)
 target_link_libraries(test_cluster_points ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_cluster_points)
 
+catkin_add_gtest(test_cloud_segmentation test/cloud-segmentation-test.cc)
+target_link_libraries(test_cloud_segmentation ${PROJECT_NAME}_lib)
+phaser_import_test_maps(test_cloud_segmentation)
+
 cs_install()
 cs_export()

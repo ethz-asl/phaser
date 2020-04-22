@@ -38,6 +38,7 @@ class SegmentationResult {
   std::vector<float>& getRange();
 
   common::PointCloud_tPtr& getSegmentedCloud();
+  const common::PointCloud_tPtr& getSegmentedCloud() const;
 
  private:
   std::vector<int> start_ring_index_;

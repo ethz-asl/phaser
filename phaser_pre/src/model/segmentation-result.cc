@@ -81,4 +81,8 @@ common::PointCloud_tPtr& SegmentationResult::getSegmentedCloud() {
   return segmented_cloud_;
 }
 
+const common::PointCloud_tPtr& SegmentationResult::getSegmentedCloud() const {
+  return segmented_cloud_;
+}
+
 }  // namespace preproc
