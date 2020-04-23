@@ -1,23 +1,26 @@
-#ifndef PACKLO_CONTROLLER_CLOUD_CONTROLLER_H_
-#define PACKLO_CONTROLLER_CLOUD_CONTROLLER_H_
+#ifndef PHASER_CONTROLLER_CLOUD_CONTROLLER_H_
+#define PHASER_CONTROLLER_CLOUD_CONTROLLER_H_
+
+#include <string>
 
 #include "phaser/backend/registration/base-registration.h"
 #include "phaser/model/point-cloud.h"
-#include <string>
+#include "phaser_pre/cloud-pre-processor.h"
 
 namespace controller {
 
 class CloudController {
-public:
-  CloudController(std::string&& method = "sph");
+ public:
+  explicit CloudController(std::string&& method = "sph");
   void initializeRegistrationAlgorithm(const std::string& method);
   model::RegistrationResult registerPointCloud(
-    const model::PointCloudPtr& target,
-    const model::PointCloudPtr& source);
-private:
+      model::PointCloudPtr target, model::PointCloudPtr source);
+
+ private:
   registration::BaseRegistrationPtr registrator_;
+  preproc::CloudPreProcessor preprocessor_;
 };
 
 }  // namespace controller
 
-#endif  // PACKLO_CONTROLLER_CLOUD_CONTROLLER_H_
+#endif  // PHASER_CONTROLLER_CLOUD_CONTROLLER_H_

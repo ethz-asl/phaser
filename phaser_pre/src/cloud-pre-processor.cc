@@ -17,6 +17,11 @@ CloudPreProcessorSettings CloudPreProcessorSettings::fromGflags() {
   return settings;
 }
 
+CloudPreProcessor::CloudPreProcessor() {
+  CloudPreProcessorSettings settings = CloudPreProcessorSettings::fromGflags();
+  initializeCommandFromSettings(settings);
+}
+
 CloudPreProcessor::CloudPreProcessor(
     const CloudPreProcessorSettings& settings) {
   initializeCommandFromSettings(settings);

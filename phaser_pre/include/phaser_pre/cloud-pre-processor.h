@@ -16,6 +16,7 @@ struct CloudPreProcessorSettings {
 
 class CloudPreProcessor : public BasePreProcessor {
  public:
+  CloudPreProcessor();
   explicit CloudPreProcessor(const CloudPreProcessorSettings& settings);
   void process(model::PointCloudPtr cloud) override;
 
