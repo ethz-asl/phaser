@@ -7,8 +7,8 @@
 #include <pcl/io/ply_io.h>
 #include <pcl/kdtree/impl/kdtree_flann.hpp>
 
-#include <glog/logging.h>
 #include <chrono>
+#include <glog/logging.h>
 
 DEFINE_string(
     PlyWriteDirectory, "", "Defines the directory to store the point clouds.");
@@ -52,7 +52,8 @@ PointCloud::PointCloud(const std::vector<common::Point_t>& points)
 }
 
 void PointCloud::initialize_kd_tree() {
-  if (kd_tree_is_initialized_) return;
+  if (kd_tree_is_initialized_)
+    return;
   kd_tree_.setInputCloud(cloud_);
   kd_tree_is_initialized_ = true;
 }
@@ -90,23 +91,23 @@ void PointCloud::getNearestPoints(
       const float current_dist = pointNKNSquaredDistance[i];
       const common::Point_t& point = cloud_->points[current_idx];
       double penality = 1;
-      //if (current_dist > 1)
-        //penality = 0.5;
+      // if (current_dist > 1)
+      // penality = 0.5;
       const double dist = ranges_.at(current_idx);
       value.addPoint(point);
       value.addRange(dist);
       value.addIntensity(point.intensity);
       value.addInterpolation(
-        (0.55f * point.intensity + 0.45f * dist) * penality);
-      //value.addInterpolation(point.intensity);
+          (0.55f * point.intensity + 0.45f * dist) * penality);
+      // value.addInterpolation(point.intensity);
     }
-    //if (value.getAveragedIntensity() > 400)
-      //&& value.getAveragedIntensity() < 400)
+    // if (value.getAveragedIntensity() > 400)
+    //&& value.getAveragedIntensity() < 400)
     function_values->emplace_back(std::move(value));
   }
 }
 
-void PointCloud::transformPointCloud(const Eigen::Matrix4f &T) {
+void PointCloud::transformPointCloud(const Eigen::Matrix4f& T) {
   pcl::transformPointCloud(*cloud_, *cloud_, T);
 }
 
@@ -120,6 +121,10 @@ void PointCloud::transformPointCloudCopy(
 }
 
 common::PointCloud_tPtr PointCloud::getRawCloud() const {
+  return cloud_;
+}
+
+common::PointCloud_tPtr& PointCloud::getRawCloud() {
   return cloud_;
 }
 
@@ -137,7 +142,6 @@ std::size_t PointCloud::size() const {
   CHECK_NOTNULL(cloud_);
   return cloud_->points.size();
 }
-
 
 PointCloud PointCloud::clone() const {
   PointCloud cloned_cloud;
@@ -157,13 +161,15 @@ double PointCloud::getRange(const uint32_t i) const {
 }
 
 void PointCloud::writeToFile(std::string&& directory) {
-  if (directory.empty()) directory = ply_directory_;
+  if (directory.empty())
+    directory = ply_directory_;
   CHECK(!directory.empty());
   pcl::PLYWriter writer;
   std::vector<std::string> files;
   data::FileSystemHelper::readDirectory(directory, &files);
   char buffer[50];
-  sprintf(buffer, "%s%.3lu.ply", FLAGS_PlyPrefix.c_str(), files.size() + 1);
+  snprintf(
+      buffer, 50, "%s%.3lu.ply", FLAGS_PlyPrefix.c_str(), files.size() + 1);
   const std::string full_name = directory + std::string(buffer);
 
   VLOG(2) << "Writing PLY file to: " << full_name;

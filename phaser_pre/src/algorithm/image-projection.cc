@@ -136,7 +136,7 @@ ProjectionResult ImageProjection::projectPointCloud(
       range_mat.at<float>(rowIdn[0], columnIdn[0]) = range[0];
       signal_mat.at<float>(rowIdn[0], columnIdn[0]) = point1.intensity;
       full_cloud->points[index[0]] = point1;
-      full_cloud->points[index[0]].intensity = intensity[0];
+      // full_cloud->points[index[0]].intensity = intensity[0];
       full_info_cloud->points[index[0]].x = range[0];
       full_info_cloud->points[index[0]].y = point1.intensity;
     }
@@ -144,7 +144,7 @@ ProjectionResult ImageProjection::projectPointCloud(
       range_mat.at<float>(rowIdn[1], columnIdn[1]) = range[1];
       signal_mat.at<float>(rowIdn[1], columnIdn[1]) = point2.intensity;
       full_cloud->points[index[1]] = point2;
-      full_cloud->points[index[1]].intensity = intensity[1];
+      // full_cloud->points[index[1]].intensity = intensity[1];
       full_info_cloud->points[index[1]].x = range[1];
       full_info_cloud->points[index[1]].y = point2.intensity;
     }
@@ -152,7 +152,7 @@ ProjectionResult ImageProjection::projectPointCloud(
       range_mat.at<float>(rowIdn[2], columnIdn[2]) = range[2];
       signal_mat.at<float>(rowIdn[2], columnIdn[2]) = point3.intensity;
       full_cloud->points[index[2]] = point3;
-      full_cloud->points[index[2]].intensity = intensity[2];
+      // full_cloud->points[index[2]].intensity = intensity[2];
       full_info_cloud->points[index[2]].x = range[2];
       full_info_cloud->points[index[2]].y = point3.intensity;
     }
@@ -160,7 +160,7 @@ ProjectionResult ImageProjection::projectPointCloud(
       range_mat.at<float>(rowIdn[3], columnIdn[3]) = range[3];
       signal_mat.at<float>(rowIdn[3], columnIdn[3]) = point4.intensity;
       full_cloud->points[index[3]] = point4;
-      full_cloud->points[index[3]].intensity = intensity[3];
+      // full_cloud->points[index[3]].intensity = intensity[3];
       full_info_cloud->points[index[3]].intensity = range[3];
       full_info_cloud->points[index[3]].y = point4.intensity;
     }
@@ -213,8 +213,8 @@ void ImageProjection::projectPointCloudSequentialImpl(
     full_info_cloud->points[indexSeq].x = rangeSeq;
     full_info_cloud->points[indexSeq].y = curPoint.intensity;
 
-    curPoint.intensity = static_cast<float>(rowIdnSeq) +
-                         static_cast<float>(columnIdnSeq) / 10000.0;
+    // curPoint.intensity = static_cast<float>(rowIdnSeq) +
+    // static_cast<float>(columnIdnSeq) / 10000.0;
     full_cloud->points[indexSeq] = curPoint;
   }
 }

@@ -30,8 +30,9 @@ cs_add_library(${PROJECT_NAME}_lib
   src/model/smoothness-result.cc
   src/model/occlusion-result.cc
 
-  src/command/voxel-grid-cmd.cc
-  src/command/pass-through-gnd-filter-cmd.cc
+  src/commands/voxel-grid-cmd.cc
+  src/commands/pass-through-gnd-filter-cmd.cc
+  src/commands/segment-cloud-cmd.cc
 
   src/algorithm/image-projection.cc
   src/algorithm/angle-based-ground-removal.cc
