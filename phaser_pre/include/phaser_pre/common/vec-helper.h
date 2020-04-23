@@ -20,9 +20,12 @@ struct AlgorithmSettings {
   const int Horizon_SCAN = 2000;
   const float ang_res_x = 0.18;
   const float ang_res_y = 0.52;
-  const float ang_bottom = 16.6 + 0.1;
-  const int groundScanInd = 20;
+  const float ang_bottom = 16.7;
+  const int groundScanInd = 18;
   const float sensorMountAngle = 0.0 * 180 / M_PI;
+  const float segmentAlphaX = ang_res_x / 180.0 * M_PI;
+  const float segmentAlphaY = ang_res_y / 180.0 * M_PI;
+  const float segmentTheta = 20.0 / 180.0 * M_PI;
 
   __m128 rad2degConv = _mm_div_ps(_mm_set_ps1(180.0f), _mm_set_ps1(M_PI));
 

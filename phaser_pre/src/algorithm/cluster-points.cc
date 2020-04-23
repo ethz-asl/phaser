@@ -58,18 +58,38 @@ uint32_t ClusterPoints::findAndLabelSimilarPoints(
       if (label_mat->at<int>(curP) >= 0)
         continue;
 
-      const float range2 = range_mat.at<float>(curP);
-      const float signal2 = signal_mat.at<float>(curP);
-      if (range2 < 0.1 || signal2 < 1)
-        continue;
+      const float d1 =
+          std::max(range_mat.at<float>(queuePoint), range_mat.at<float>(curP));
+      const float d2 =
+          std::min(range_mat.at<float>(queuePoint), range_mat.at<float>(curP));
 
-      const float diff =
-          std::fabs(range1 - range2) + std::fabs(signal1 - signal2);
+      float alpha;
+      if (n.x == 0)
+        alpha = settings_.segmentAlphaX;
+      else
+        alpha = settings_.segmentAlphaY;
 
-      if (diff >= threshold)
-        continue;
-      queue.emplace_back(curP);
-      ++labelCounter;
+      const float angle =
+          std::atan2(d2 * std::sin(alpha), (d1 - d2 * std::cos(alpha)));
+
+      if (angle > settings_.segmentTheta) {
+        queue.emplace_back(curP);
+        ++labelCounter;
+      }
+      /*
+        const float range2 = range_mat.at<float>(curP);
+        const float signal2 = signal_mat.at<float>(curP);
+        if (range2 < 0.1 || signal2 < 0.5)
+          continue;
+
+        const float diff =
+            std::fabs(range1 - range2) + std::fabs(signal1 - signal2);
+
+        if (diff >= threshold)
+          continue;
+        queue.emplace_back(curP);
+        ++labelCounter;
+        */
     }
   }
   return labelCounter;
