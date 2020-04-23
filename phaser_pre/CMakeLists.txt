@@ -69,5 +69,9 @@ catkin_add_gtest(test_mark_occluded test/mark-occluded-test.cc)
 target_link_libraries(test_mark_occluded ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_mark_occluded)
 
+catkin_add_gtest(test_loam_features test/loam-feature-extraction-test.cc)
+target_link_libraries(test_loam_features ${PROJECT_NAME}_lib)
+phaser_import_test_maps(test_loam_features)
+
 cs_install()
 cs_export()

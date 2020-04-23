@@ -90,7 +90,7 @@ FeatureExtractionResult ExtractLoamFeatures::extractFeatures(
         int ind = smoothness[k].second;
         if (picked_neighbors[ind] == 0 &&
             smoothness[ind].first < surf_threshold &&
-            ground_flag[ind] == true) {
+            ground_flag[ind] == false) {
           surf_points_flat->push_back(seg_cloud->points[ind]);
           unlabeled[ind] = 3;
 
