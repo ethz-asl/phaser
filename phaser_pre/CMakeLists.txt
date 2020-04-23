@@ -65,5 +65,9 @@ catkin_add_gtest(test_cloud_segmentation test/cloud-segmentation-test.cc)
 target_link_libraries(test_cloud_segmentation ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_cloud_segmentation)
 
+catkin_add_gtest(test_mark_occluded test/mark-occluded-test.cc)
+target_link_libraries(test_mark_occluded ${PROJECT_NAME}_lib)
+phaser_import_test_maps(test_mark_occluded)
+
 cs_install()
 cs_export()
