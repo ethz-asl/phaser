@@ -11,6 +11,7 @@ struct CloudPreProcessorSettings {
   static CloudPreProcessorSettings fromGflags();
   bool enable_voxel_grid_downsampling = false;
   bool enable_pass_through_gnd_filtering = false;
+  bool enable_geometric_cloud_segmentation = false;
 };
 
 class CloudPreProcessor : public BasePreProcessor {

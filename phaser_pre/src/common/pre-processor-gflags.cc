@@ -10,4 +10,8 @@ DEFINE_bool(
     phaser_pre_enable_pass_through_gnd_filtering, false,
     "Enable GND removal using pass-through filtering.");
 
+DEFINE_bool(
+    phaser_pre_enable_geometric_cloud_segmentation, false,
+    "Enable geometric segmentation of the cloud.");
+
 }  // namespace preproc
