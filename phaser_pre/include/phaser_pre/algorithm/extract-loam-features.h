@@ -3,6 +3,7 @@
 
 #include "phaser_pre/common/vec-helper.h"
 #include "phaser_pre/model/feature-extraction-result.h"
+#include "phaser_pre/model/occlusion-result.h"
 #include "phaser_pre/model/segmentation-result.h"
 #include "phaser_pre/model/smoothness-result.h"
 
@@ -12,7 +13,7 @@ class ExtractLoamFeatures {
  public:
   FeatureExtractionResult extractFeatures(
       const SegmentationResult& seg_result,
-      const SmoothnessResult& smooth_result);
+      const SmoothnessResult& smooth_result, const OcclusionResult& occ_result);
 
  private:
   AlgorithmSettings settings_;
