@@ -53,6 +53,7 @@ void SpatialCorrelation::complexMulSeq(
 
 void SpatialCorrelation::complexMulVec(
     fftw_complex* F, fftw_complex* G, fftw_complex* C) {
+  VLOG(1) << "Performing vectorized complex multiplication.";
   __m128d vec_F_real = _mm_setzero_pd();
   __m128d vec_F_img = _mm_setzero_pd();
   __m128d vec_G_real = _mm_setzero_pd();
@@ -101,7 +102,7 @@ double* SpatialCorrelation::correlateSignals(double* const f, double* const g) {
   fftw_execute(g_plan_);
 
   // Correlate the signals in the frequency domain.
-  complexMulSeq(F_, G_, C_);
+  complexMulVec(F_, G_, C_);
 
   // Perform the IFFT on the correlation tensor.
   VLOG(1) << "Performing IFFT on correlation.";
