@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_H_
-#define PACKLO_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_H_
+#ifndef PHASER_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_H_
+#define PHASER_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_H_
 
 #include <fftw3/fftw3.h>
 
@@ -8,12 +8,15 @@
 namespace alignment {
 
 class SpatialCorrelation : public BaseSpatialCorrelation {
-public:
-  SpatialCorrelation(const uint32_t n_voxels);
+ public:
+  explicit SpatialCorrelation(const uint32_t n_voxels);
   ~SpatialCorrelation();
   double* correlateSignals(double* const f, double* const g) override;
 
-private:
+ private:
+  void complexMulSeq(fftw_complex* F, fftw_complex* G, fftw_complex* C);
+  void complexMulVec(fftw_complex* F, fftw_complex* G, fftw_complex* C);
+
   fftw_plan f_plan_;
   fftw_plan g_plan_;
   fftw_plan c_plan_;
@@ -28,4 +31,4 @@ private:
 
 }  // namespace alignment
 
-#endif  // PACKLO_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_H_
+#endif  // PHASER_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_H_
