@@ -1,5 +1,6 @@
 #include "phaser/backend/alignment/spatial-correlation.h"
 
+#include <emmintrin.h>
 #include <glog/logging.h>
 
 namespace alignment {
@@ -47,6 +48,44 @@ void SpatialCorrelation::complexMulSeq(
   for (uint32_t i = 0u; i < total_n_voxels_; ++i) {
     C[i][0] = F[i][0] * G[i][0] - F[i][1] * (-G[i][1]);
     C[i][1] = F[i][0] * (-G[i][1]) + F[i][1] * G[i][0];
+  }
+}
+
+void SpatialCorrelation::complexMulVec(
+    fftw_complex* F, fftw_complex* G, fftw_complex* C) {
+  __m128d vec_F_real = _mm_setzero_pd();
+  __m128d vec_F_img = _mm_setzero_pd();
+  __m128d vec_G_real = _mm_setzero_pd();
+  __m128d neg_vec_G_img = _mm_setzero_pd();
+  __m128d vec_C_real = _mm_setzero_pd();
+  __m128d vec_C_img = _mm_setzero_pd();
+  for (uint32_t i = 0u; i < total_n_voxels_; i += 2) {
+    vec_F_real[0] = F[i][0];
+    vec_F_real[1] = F[i + 1][0];
+    vec_F_img[0] = F[i][1];
+    vec_F_img[1] = F[i + 1][1];
+    vec_G_real[0] = G[i][0];
+    vec_G_real[1] = G[i + 1][0];
+    neg_vec_G_img[0] = -G[i][1];
+    neg_vec_G_img[1] = -G[i + 1][1];
+    vec_C_real[0] = C[i][0];
+    vec_C_real[1] = C[i + 1][0];
+    vec_C_img[0] = C[i][1];
+    vec_C_img[1] = C[i + 1][1];
+
+    // Perform complex multiplication.
+    vec_C_real = _mm_sub_pd(
+        _mm_mul_pd(vec_F_real, vec_G_real),
+        _mm_mul_pd(vec_F_img, neg_vec_G_img));
+    vec_C_img = _mm_add_pd(
+        _mm_mul_pd(vec_F_real, neg_vec_G_img),
+        _mm_mul_pd(vec_F_img, vec_G_real));
+
+    // Write the memory back to C.
+    C[i][0] = vec_C_real[0];
+    C[i][1] = vec_C_img[0];
+    C[i + 1][0] = vec_C_real[1];
+    C[i + 1][1] = vec_C_img[1];
   }
 }
 

@@ -15,6 +15,7 @@ class SpatialCorrelation : public BaseSpatialCorrelation {
 
  private:
   void complexMulSeq(fftw_complex* F, fftw_complex* G, fftw_complex* C);
+  void complexMulVec(fftw_complex* F, fftw_complex* G, fftw_complex* C);
 
   fftw_plan f_plan_;
   fftw_plan g_plan_;
