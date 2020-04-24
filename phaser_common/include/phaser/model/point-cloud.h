@@ -1,13 +1,13 @@
-#ifndef INCLUDE_PACKLO_MODEL_POINT_CLOUD_H_
-#define INCLUDE_PACKLO_MODEL_POINT_CLOUD_H_
+#ifndef PHASER_MODEL_POINT_CLOUD_H_
+#define PHASER_MODEL_POINT_CLOUD_H_
 
 #include "phaser/common/point-types.h"
 #include "phaser/model/function-value.h"
 #include "phaser/model/point.h"
 
-#include <pcl/point_types.h>
 #include <pcl/common/projection_matrix.h>
 #include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/point_types.h>
 
 #include <memory>
 #include <string>
@@ -29,11 +29,12 @@ class PointCloud {
       const std::vector<common::Point_t>& query_points,
       std::vector<FunctionValue>* function_values) const;
 
-  void transformPointCloud(const Eigen::Matrix4f &T);
+  void transformPointCloud(const Eigen::Matrix4f& T);
   void transformPointCloudCopy(
       const Eigen::Matrix4f& T, PointCloud* copy) const;
 
   common::PointCloud_tPtr getRawCloud() const;
+  common::PointCloud_tPtr& getRawCloud();
 
   common::Point_t& pointAt(const std::size_t idx);
   const common::Point_t& pointAt(const std::size_t idx) const;
@@ -64,4 +65,4 @@ using PointCloudPtr = std::shared_ptr<PointCloud>;
 
 }  // namespace model
 
-#endif  // INCLUDE_PACKLO_MODEL_POINT_CLOUD_H_
+#endif  // PHASER_MODEL_POINT_CLOUD_H_
