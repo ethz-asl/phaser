@@ -117,8 +117,8 @@ void SphOptRegistration::correlatePointcloud(
       &h_values_);
 
   const double duration_correlation_ms = common::executeTimedFunction(
-      &backend::SphericalCorrelation::correlateSignals, &sph_corr_, f_values_,
-      h_values_, sampler_.getInitializedBandwith(), zyz);
+      &correlation::SphericalCorrelation::correlateSignals, &sph_corr_,
+      f_values_, h_values_, sampler_.getInitializedBandwith(), zyz);
 
   VLOG(1) << "Registered point cloud.\n"
           << "Sampling took for f and h: [" << duration_sample_f_ms << "ms,"

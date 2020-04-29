@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_UNCERTAINTY_Z_SCORE_EVAL_H_
-#define PACKLO_BACKEND_UNCERTAINTY_Z_SCORE_EVAL_H_
+#ifndef PHASER_BACKEND_UNCERTAINTY_Z_SCORE_EVAL_H_
+#define PHASER_BACKEND_UNCERTAINTY_Z_SCORE_EVAL_H_
 
 #include "phaser/backend/uncertainty/base-eval.h"
 #include "phaser/backend/uncertainty/z-score-peak-extraction.h"
@@ -16,11 +16,11 @@ class ZScoreEval : public BaseEval {
  public:
   ZScoreEval(
       const alignment::BaseAligner& aligner,
-      const backend::SphericalCorrelation& sph);
+      const correlation::SphericalCorrelation& sph);
 
   common::BaseDistributionPtr evaluateCorrelation(
       const alignment::BaseAligner& aligner,
-      const backend::SphericalCorrelation& sph) override;
+      const correlation::SphericalCorrelation& sph) override;
 
   common::BaseDistributionPtr evaluateCorrelationFromTranslation() override;
   common::BaseDistributionPtr evaluateCorrelationFromRotation() override;
@@ -32,7 +32,7 @@ class ZScoreEval : public BaseEval {
 
   virtual common::BaseDistributionPtr evaluatePeakBasedCorrelation(
       const alignment::BaseAligner& aligner,
-      const backend::SphericalCorrelation& sph,
+      const correlation::SphericalCorrelation& sph,
       const std::set<uint32_t>& signals,
       const std::vector<double>& normalized_corr) const = 0;
 
@@ -53,4 +53,4 @@ class ZScoreEval : public BaseEval {
 
 }  // namespace uncertainty
 
-#endif  // PACKLO_BACKEND_UNCERTAINTY_Z_SCORE_EVAL_H_
+#endif  // PHASER_BACKEND_UNCERTAINTY_Z_SCORE_EVAL_H_

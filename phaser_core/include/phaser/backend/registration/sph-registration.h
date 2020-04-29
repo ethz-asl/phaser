@@ -1,11 +1,11 @@
-#ifndef PACKLO_BACKEND_REGISTRATION_SPH_REGISTRATION_H_
-#define PACKLO_BACKEND_REGISTRATION_SPH_REGISTRATION_H_
+#ifndef PHASER_BACKEND_REGISTRATION_SPH_REGISTRATION_H_
+#define PHASER_BACKEND_REGISTRATION_SPH_REGISTRATION_H_
 
 #include "phaser/backend/alignment/base-aligner.h"
-#include "phaser/backend/uncertainty/base-eval.h"
-#include "phaser/backend/uncertainty/phase-correlation-eval.h"
 #include "phaser/backend/correlation/spherical-correlation.h"
 #include "phaser/backend/registration/base-registration.h"
+#include "phaser/backend/uncertainty/base-eval.h"
+#include "phaser/backend/uncertainty/phase-correlation-eval.h"
 #include "phaser/common/spherical-sampler.h"
 
 #include <array>
@@ -45,7 +45,7 @@ class SphRegistration : public BaseRegistration {
       const model::PointCloud& source, const model::PointCloud& target,
       std::array<double, 3>* const zyz);
 
-  backend::SphericalCorrelation sph_corr_;
+  correlation::SphericalCorrelation sph_corr_;
   common::SphericalSampler sampler_;
   std::vector<model::FunctionValue> f_values_;
   std::vector<model::FunctionValue> h_values_;
@@ -68,4 +68,4 @@ using SphRegistrationPtr = std::unique_ptr<SphRegistration>;
 
 }  // namespace registration
 
-#endif  // PACKLO_BACKEND_REGISTRATION_SPH_REGISTRATION_H_
+#endif  // PHASER_BACKEND_REGISTRATION_SPH_REGISTRATION_H_

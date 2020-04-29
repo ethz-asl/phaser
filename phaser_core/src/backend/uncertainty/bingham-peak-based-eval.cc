@@ -12,18 +12,19 @@ namespace uncertainty {
 
 BinghamPeakBasedEval::BinghamPeakBasedEval(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation& sph)
+    const correlation::SphericalCorrelation& sph)
     : ZScoreEval(aligner, sph) {}
 
 common::BaseDistributionPtr BinghamPeakBasedEval::evaluateCorrelation(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation&) {
+    const correlation::SphericalCorrelation&) {
   return evaluateCorrelationFromTranslation();
 }
 
 common::BaseDistributionPtr BinghamPeakBasedEval::evaluatePeakBasedCorrelation(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation& sph, const std::set<uint32_t>& signals,
+    const correlation::SphericalCorrelation& sph,
+    const std::set<uint32_t>& signals,
     const std::vector<double>& normalized_corr) const {
   common::BinghamPtr bingham = std::make_shared<common::Bingham>(
       fitRotationalBinghamDistribution(sph, signals, normalized_corr));
@@ -31,7 +32,8 @@ common::BaseDistributionPtr BinghamPeakBasedEval::evaluatePeakBasedCorrelation(
 }
 
 common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
-    const backend::SphericalCorrelation& sph, const std::set<uint32_t>& signals,
+    const correlation::SphericalCorrelation& sph,
+    const std::set<uint32_t>& signals,
     const std::vector<double>& norm_corr) const {
   const uint32_t n_signals = signals.size();
   const uint32_t n_corr = norm_corr.size();
@@ -47,8 +49,10 @@ common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
   uint32_t start, end;
   calculateStartEndNeighbor(*max_signal, n_corr, &start, &end);
   const uint32_t num_elements = end - start + 1u;
-  Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(4, 2*FLAGS_bingham_peak_neighbors+1);
-  Eigen::RowVectorXd weights = Eigen::RowVectorXd::Zero(2*FLAGS_bingham_peak_neighbors+1);
+  Eigen::MatrixXd samples =
+      Eigen::MatrixXd::Zero(4, 2 * FLAGS_bingham_peak_neighbors + 1);
+  Eigen::RowVectorXd weights =
+      Eigen::RowVectorXd::Zero(2 * FLAGS_bingham_peak_neighbors + 1);
   retrievePeakNeighbors(start, end, norm_corr, sph, &samples, &weights);
   return common::Bingham::fit(samples, weights);
 }
@@ -69,7 +73,7 @@ void BinghamPeakBasedEval::calculateStartEndNeighbor(
 void BinghamPeakBasedEval::retrievePeakNeighbors(
     const uint32_t start, const uint32_t end,
     const std::vector<double>& norm_corr,
-    const backend::SphericalCorrelation& sph, Eigen::MatrixXd* samples,
+    const correlation::SphericalCorrelation& sph, Eigen::MatrixXd* samples,
     Eigen::RowVectorXd* weights) const {
   CHECK_NOTNULL(samples);
   CHECK_NOTNULL(weights);

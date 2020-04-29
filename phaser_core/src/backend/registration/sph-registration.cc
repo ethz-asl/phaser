@@ -16,7 +16,8 @@
 DEFINE_int32(
     spherical_bandwith, 130,
     "Defines the bandwith used for the spherical registration.");
-DEFINE_string(alignment_algorithm, "phase",
+DEFINE_string(
+    alignment_algorithm, "phase",
     "Sets the algorithm used for the translational alignment.");
 DEFINE_string(
     rot_evaluation_algorithm, "bingham",
@@ -100,7 +101,8 @@ model::RegistrationResult SphRegistration::registerPointCloud(
   cloud_prev->initialize_kd_tree();
 
   // Register the point cloud.
-  if (!FLAGS_estimate_rotation) LOG(FATAL) << "not yet implemented.";
+  if (!FLAGS_estimate_rotation)
+    LOG(FATAL) << "not yet implemented.";
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   if (FLAGS_estimate_translation)
     estimateTranslation(cloud_prev, &result);
@@ -119,14 +121,16 @@ model::RegistrationResult SphRegistration::estimateRotation(
   common::BaseDistributionPtr rot =
       correlation_eval_->calcRotationUncertainty();
   Eigen::Vector4d inv = rot->getEstimate();
-  inv.block(1,0,3,1) = -inv.block(1,0,3,1);
+  inv.block(1, 0, 3, 1) = -inv.block(1, 0, 3, 1);
   Eigen::VectorXd b_est =
       common::RotationUtils::ConvertQuaternionToXYZ(rot->getEstimate());
   Eigen::VectorXd corr_est = common::RotationUtils::ConvertZYZtoXYZ(zyz);
-  if (!FLAGS_refine_rot_x) b_est(0) = 0;
-  if (!FLAGS_refine_rot_y) b_est(1) = 0;
-  if (!FLAGS_refine_rot_z) b_est(2) = 0;
-
+  if (!FLAGS_refine_rot_x)
+    b_est(0) = 0;
+  if (!FLAGS_refine_rot_y)
+    b_est(1) = 0;
+  if (!FLAGS_refine_rot_z)
+    b_est(2) = 0;
 
   VLOG(1) << "Corr rotation: " << corr_est.transpose();
   VLOG(1) << "Bingham q: " << rot->getEstimate().transpose();
@@ -164,7 +168,7 @@ void SphRegistration::estimateTranslation(
   VLOG(1) << "Corr translation: " << xyz.transpose();
   VLOG(1) << "Gaussian translation: " << g_est.transpose();
   VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
-    << "ms.";
+          << "ms.";
 
   common::TranslationUtils::TranslateXYZ(
       rot_cloud, g_est(0), g_est(1), g_est(2));
@@ -175,8 +179,8 @@ rot_cloud, xyz(0), xyz(1), xyz(2));
   result->setPosUncertaintyEstimate(pos);
 }
 
-void SphRegistration::getStatistics(
-    common::StatisticsManager* manager) const noexcept {
+void SphRegistration::getStatistics(common::StatisticsManager* manager) const
+    noexcept {
   BaseRegistration::getStatistics(manager);
   sph_corr_.getStatistics(manager);
 }
@@ -195,8 +199,8 @@ void SphRegistration::correlatePointcloud(
   // CHECK(f_values_.size() == h_values_.size());
 
   const double duration_correlation_ms = common::executeTimedFunction(
-      &backend::SphericalCorrelation::correlateSignals, &sph_corr_, f_values_,
-      h_values_, sampler_.getInitializedBandwith(), zyz);
+      &correlation::SphericalCorrelation::correlateSignals, &sph_corr_,
+      f_values_, h_values_, sampler_.getInitializedBandwith(), zyz);
 
   VLOG(1) << "Registered point cloud.\n"
           << "Sampling took for f and h: [" << duration_sample_f_ms << "ms,"

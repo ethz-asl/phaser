@@ -11,24 +11,26 @@ namespace uncertainty {
 
 BmmPeakBasedEval::BmmPeakBasedEval(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation& sph)
+    const correlation::SphericalCorrelation& sph)
     : ZScoreEval(aligner, sph) {}
 
 common::BaseDistributionPtr BmmPeakBasedEval::evaluateCorrelation(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation&) {
+    const correlation::SphericalCorrelation&) {
   return evaluateCorrelationFromTranslation();
 }
 
 common::BaseDistributionPtr BmmPeakBasedEval::evaluatePeakBasedCorrelation(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation& sph, const std::set<uint32_t>& signals,
+    const correlation::SphericalCorrelation& sph,
+    const std::set<uint32_t>& signals,
     const std::vector<double>& n_corr) const {
   return fitRotationalBinghamDistribution(sph, signals, n_corr);
 }
 
 common::BinghamMixturePtr BmmPeakBasedEval::fitRotationalBinghamDistribution(
-    const backend::SphericalCorrelation& sph, const std::set<uint32_t>& signals,
+    const correlation::SphericalCorrelation& sph,
+    const std::set<uint32_t>& signals,
     const std::vector<double>& norm_corr) const {
   const uint32_t n_signals = signals.size();
   const uint32_t n_corr = norm_corr.size();
@@ -69,7 +71,7 @@ void BmmPeakBasedEval::calculateStartEndNeighbor(
 void BmmPeakBasedEval::retrievePeakNeighbors(
     const uint32_t start, const uint32_t end,
     const std::vector<double>& norm_corr,
-    const backend::SphericalCorrelation& sph, Eigen::MatrixXd* samples,
+    const correlation::SphericalCorrelation& sph, Eigen::MatrixXd* samples,
     Eigen::RowVectorXd* weights) const {
   CHECK_NOTNULL(samples);
   CHECK_NOTNULL(weights);

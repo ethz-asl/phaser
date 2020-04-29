@@ -40,7 +40,7 @@ class PhaseAligner : public BaseAligner {
   Eigen::VectorXd g_;
   Eigen::VectorXd hist_;
   const uint32_t total_n_voxels_;
-  BaseSpatialCorrelationPtr spatial_correlation_;
+  correlation::BaseSpatialCorrelationPtr spatial_correlation_;
   std::vector<double> previous_correlation_;
 };
 

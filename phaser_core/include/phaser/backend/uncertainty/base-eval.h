@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_UNCERTAINTY_BASE_EVAL_H_
-#define PACKLO_BACKEND_UNCERTAINTY_BASE_EVAL_H_
+#ifndef PHASER_BACKEND_UNCERTAINTY_BASE_EVAL_H_
+#define PHASER_BACKEND_UNCERTAINTY_BASE_EVAL_H_
 
 #include "phaser/backend/alignment/base-aligner.h"
 #include "phaser/backend/correlation/spherical-correlation.h"
@@ -14,10 +14,10 @@ class BaseEval {
  public:
   BaseEval(
       const alignment::BaseAligner& aligner,
-      const backend::SphericalCorrelation& sph);
+      const correlation::SphericalCorrelation& sph);
   virtual common::BaseDistributionPtr evaluateCorrelation(
       const alignment::BaseAligner& aligner,
-      const backend::SphericalCorrelation& sph) = 0;
+      const correlation::SphericalCorrelation& sph) = 0;
 
   virtual common::BaseDistributionPtr evaluateCorrelationFromTranslation() = 0;
   virtual common::BaseDistributionPtr evaluateCorrelationFromRotation() = 0;
@@ -27,11 +27,11 @@ class BaseEval {
 
  protected:
   const alignment::BaseAligner& aligner_;
-  const backend::SphericalCorrelation& sph_;
+  const correlation::SphericalCorrelation& sph_;
 };
 
 using BaseEvalPtr = std::unique_ptr<BaseEval>;
 
 }  // namespace uncertainty
 
-#endif  // PACKLO_BACKEND_UNCERTAINTY_BASE_EVAL_H_
+#endif  // PHASER_BACKEND_UNCERTAINTY_BASE_EVAL_H_

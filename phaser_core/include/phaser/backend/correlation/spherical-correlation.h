@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_
-#define PACKLO_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_
+#ifndef PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_
+#define PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_
 
 #include "phaser/common/statistics-manager.h"
 #include "phaser/model/function-value.h"
@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-namespace backend {
+namespace correlation {
 
 class SphericalCorrelation {
  public:
@@ -41,6 +41,6 @@ class SphericalCorrelation {
   common::StatisticsManager statistics_manager_;
 };
 
-}  // namespace backend
+}  // namespace correlation
 
-#endif  // PACKLO_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_
+#endif  // PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_

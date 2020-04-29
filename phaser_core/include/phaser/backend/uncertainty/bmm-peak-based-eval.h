@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_UNCERTAINTY_BMM_PEAK_BASED_EVAL_H_
-#define PACKLO_BACKEND_UNCERTAINTY_BMM_PEAK_BASED_EVAL_H_
+#ifndef PHASER_BACKEND_UNCERTAINTY_BMM_PEAK_BASED_EVAL_H_
+#define PHASER_BACKEND_UNCERTAINTY_BMM_PEAK_BASED_EVAL_H_
 
 #include "phaser/backend/uncertainty/z-score-eval.h"
 #include "phaser/distribution/bingham-mixture.h"
@@ -13,21 +13,21 @@ class BmmPeakBasedEval : public ZScoreEval {
  public:
   BmmPeakBasedEval(
       const alignment::BaseAligner& aligner,
-      const backend::SphericalCorrelation& sph);
+      const correlation::SphericalCorrelation& sph);
 
   common::BaseDistributionPtr evaluateCorrelation(
       const alignment::BaseAligner& aligner,
-      const backend::SphericalCorrelation& sph) override;
+      const correlation::SphericalCorrelation& sph) override;
 
   common::BaseDistributionPtr evaluatePeakBasedCorrelation(
       const alignment::BaseAligner& aligner,
-      const backend::SphericalCorrelation& sph,
+      const correlation::SphericalCorrelation& sph,
       const std::set<uint32_t>& signals,
       const std::vector<double>& normalized_corr) const override;
 
  private:
   common::BinghamMixturePtr fitRotationalBinghamDistribution(
-      const backend::SphericalCorrelation& sph,
+      const correlation::SphericalCorrelation& sph,
       const std::set<uint32_t>& signals,
       const std::vector<double>& norm_corr) const;
   void calculateStartEndNeighbor(
@@ -36,10 +36,10 @@ class BmmPeakBasedEval : public ZScoreEval {
   void retrievePeakNeighbors(
       const uint32_t start, const uint32_t end,
       const std::vector<double>& norm_corr,
-      const backend::SphericalCorrelation& sph, Eigen::MatrixXd* samples,
+      const correlation::SphericalCorrelation& sph, Eigen::MatrixXd* samples,
       Eigen::RowVectorXd* weights) const;
 };
 
 }  // namespace uncertainty
 
-#endif  // PACKLO_BACKEND_CORRELATION_BMM_PEAK_BASED_EVAL_H_
+#endif  // PHASER_BACKEND_UNCERTAINTY_BMM_PEAK_BASED_EVAL_H_

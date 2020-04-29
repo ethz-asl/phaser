@@ -42,7 +42,7 @@ class SphOptRegistration : public BaseRegistration {
       const model::PointCloud& source, const model::PointCloud& target,
       std::array<double, 3>* const zyz);
 
-  backend::SphericalCorrelation sph_corr_;
+  correlation::SphericalCorrelation sph_corr_;
   common::SphericalSampler sampler_;
   std::vector<model::FunctionValue> f_values_;
   std::vector<model::FunctionValue> h_values_;

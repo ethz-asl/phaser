@@ -5,7 +5,7 @@
 
 #include <Eigen/Dense>
 
-namespace alignment {
+namespace correlation {
 
 class BaseSpatialCorrelation {
  public:
@@ -15,6 +15,6 @@ class BaseSpatialCorrelation {
 
 using BaseSpatialCorrelationPtr = std::unique_ptr<BaseSpatialCorrelation>;
 
-}  // namespace alignment
+}  // namespace correlation
 
 #endif  // PHASER_BACKEND_CORRELATION_BASE_SPATIAL_CORRELATION_H_
