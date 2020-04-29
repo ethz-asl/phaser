@@ -1,14 +1,14 @@
 #include "phaser/backend/registration/sph-opt-registration.h"
-#include "phaser/backend/alignment/spatial-correlation-cuda.h"
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/alignment/range-based-aligner.h"
+#include "phaser/backend/correlation/spatial-correlation-cuda.h"
 #include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
 #include "phaser/backend/uncertainty/bmm-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gmm-peak-based-eval.h"
 #include "phaser/common/rotation-utils.h"
-#include "phaser/common/translation-utils.h"
 #include "phaser/common/statistic-utils.h"
+#include "phaser/common/translation-utils.h"
 
 #include <algorithm>
 #include <glog/logging.h>
@@ -17,16 +17,14 @@
 namespace registration {
 
 SphOptRegistration::SphOptRegistration()
-    : BaseRegistration("SphOptRegistration"),
-      sampler_(150) {
+    : BaseRegistration("SphOptRegistration"), sampler_(150) {
   aligner_ = std::make_unique<alignment::PhaseAligner>();
 
-  uncertainty::BaseEvalPtr rot_eval
-    = std::make_unique<uncertainty::BinghamPeakBasedEval>(
-      *aligner_, sph_corr_);
-  uncertainty::BaseEvalPtr pos_eval
-    = std::make_unique<uncertainty::GaussianPeakBasedEval>(
-      *aligner_, sph_corr_);
+  uncertainty::BaseEvalPtr rot_eval =
+      std::make_unique<uncertainty::BinghamPeakBasedEval>(*aligner_, sph_corr_);
+  uncertainty::BaseEvalPtr pos_eval =
+      std::make_unique<uncertainty::GaussianPeakBasedEval>(
+          *aligner_, sph_corr_);
   correlation_eval_ = std::make_unique<uncertainty::PhaseCorrelationEval>(
       std::move(rot_eval), std::move(pos_eval));
 }
@@ -59,7 +57,7 @@ model::RegistrationResult SphOptRegistration::estimateRotation(
   common::BaseDistributionPtr rot =
       correlation_eval_->calcRotationUncertainty();
   Eigen::Vector4d inv = rot->getEstimate();
-  inv.block(1,0,3,1) = -inv.block(1,0,3,1);
+  inv.block(1, 0, 3, 1) = -inv.block(1, 0, 3, 1);
   Eigen::VectorXd b_est =
       common::RotationUtils::ConvertQuaternionToXYZ(rot->getEstimate());
   Eigen::VectorXd corr_est = common::RotationUtils::ConvertZYZtoXYZ(zyz);
@@ -93,15 +91,15 @@ void SphOptRegistration::estimateTranslation(
   VLOG(1) << "Corr translation: " << xyz.transpose();
   VLOG(1) << "Gaussian translation: " << g_est.transpose();
   VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
-    << "ms.";
+          << "ms.";
 
   common::TranslationUtils::TranslateXYZ(
       rot_cloud, g_est(0), g_est(1), g_est(2));
   result->setPosUncertaintyEstimate(pos);
 }
 
-void SphOptRegistration::getStatistics(
-    common::StatisticsManager* manager) const noexcept {
+void SphOptRegistration::getStatistics(common::StatisticsManager* manager) const
+    noexcept {
   BaseRegistration::getStatistics(manager);
   sph_corr_.getStatistics(manager);
 }

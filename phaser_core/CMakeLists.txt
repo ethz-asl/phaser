@@ -45,6 +45,8 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/registration/mock/sph-registration-mock-transformed.cc
 
    src/backend/correlation/spherical-correlation.cc
+   src/backend/correlation/base-spatial-correlation.cc
+   src/backend/correlation/spatial-correlation.cc
 
    src/backend/uncertainty/base-eval.cc
    src/backend/uncertainty/z-score-eval.cc
@@ -60,14 +62,12 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/alignment/range-based-aligner.cc
    src/backend/alignment/phase-aligner.cc
    src/backend/alignment/feature-aligner.cc
-   src/backend/alignment/base-spatial-correlation.cc
-   src/backend/alignment/spatial-correlation.cc
 
    src/experiments/experiment-handler.cc
 )
 
  cuda_add_library(${PROJECT_NAME}_cuda_lib
-   src/backend/alignment/spatial-correlation-cuda.cu
+   src/backend/correlation/spatial-correlation-cuda.cu
  )
 
 #############

@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_ALIGNMENT_PHASE_ALIGNER_H_
-#define PACKLO_BACKEND_ALIGNMENT_PHASE_ALIGNER_H_
+#ifndef PHASER_BACKEND_ALIGNMENT_PHASE_ALIGNER_H_
+#define PHASER_BACKEND_ALIGNMENT_PHASE_ALIGNER_H_
 
 #include <array>
 #include <vector>
@@ -7,7 +7,7 @@
 #include <fftw3/fftw3.h>
 
 #include "phaser/backend/alignment/base-aligner.h"
-#include "phaser/backend/alignment/base-spatial-correlation.h"
+#include "phaser/backend/correlation/base-spatial-correlation.h"
 
 namespace alignment {
 
@@ -46,4 +46,4 @@ class PhaseAligner : public BaseAligner {
 
 }  // namespace alignment
 
-#endif  // PACKLO_BACKEND_ALIGNMENT_PHASE_ALIGNER_H_
+#endif  // PHASER_BACKEND_ALIGNMENT_PHASE_ALIGNER_H_

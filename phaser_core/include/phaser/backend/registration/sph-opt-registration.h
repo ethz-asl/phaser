@@ -1,11 +1,11 @@
-#ifndef PACKLO_BACKEND_REGISTRATION_SPH_CUDA_REGISTRATION_H_
-#define PACKLO_BACKEND_REGISTRATION_SPH_CUDA_REGISTRATION_H_
+#ifndef PHASER_BACKEND_REGISTRATION_SPH_OPT_REGISTRATION_H_
+#define PHASER_BACKEND_REGISTRATION_SPH_OPT_REGISTRATION_H_
 
 #include "phaser/backend/alignment/base-aligner.h"
-#include "phaser/backend/uncertainty/base-eval.h"
-#include "phaser/backend/uncertainty/phase-correlation-eval.h"
 #include "phaser/backend/correlation/spherical-correlation.h"
 #include "phaser/backend/registration/base-registration.h"
+#include "phaser/backend/uncertainty/base-eval.h"
+#include "phaser/backend/uncertainty/phase-correlation-eval.h"
 #include "phaser/common/spherical-sampler.h"
 
 #include <array>
@@ -54,4 +54,4 @@ using SphCudaRegistrationPtr = std::unique_ptr<SphOptRegistration>;
 
 }  // namespace registration
 
-#endif  // PACKLO_BACKEND_REGISTRATION_SPH_CUDA_REGISTRATION_H_
+#endif  // PHASER_BACKEND_REGISTRATION_SPH_OPT_REGISTRATION_H_

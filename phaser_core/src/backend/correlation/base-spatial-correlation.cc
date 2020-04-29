@@ -1,4 +1,4 @@
-#include "phaser/backend/alignment/base-spatial-correlation.h"
+#include "phaser/backend/correlation/base-spatial-correlation.h"
 
 namespace alignment {
 
