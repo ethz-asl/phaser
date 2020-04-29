@@ -1,7 +1,7 @@
 #include "phaser/backend/alignment/phase-aligner.h"
+#include "phaser/backend/correlation/spatial-correlation-cuda.h"
+#include "phaser/backend/correlation/spatial-correlation.h"
 #include "phaser/common/point-cloud-utils.h"
-#include "phaser/backend/alignment/spatial-correlation.h"
-#include "phaser/backend/alignment/spatial-correlation-cuda.h"
 
 #include <complex.h>  // needs to be included before fftw
 
@@ -71,8 +71,9 @@ void PhaseAligner::discretizePointcloud(
 
   VLOG(1) << "Discretizing point cloud...";
   Eigen::MatrixXf data = cloud.getRawCloud()->getMatrixXfMap();
-  Eigen::VectorXf edges = Eigen::VectorXf::LinSpaced(FLAGS_phase_n_voxels,
-      FLAGS_phase_discretize_lower, FLAGS_phase_discretize_upper);
+  Eigen::VectorXf edges = Eigen::VectorXf::LinSpaced(
+      FLAGS_phase_n_voxels, FLAGS_phase_discretize_lower,
+      FLAGS_phase_discretize_upper);
 
   // Discretize the point cloud using an cartesian grid.
   VLOG(1) << "Performing histogram counts.";
@@ -124,11 +125,11 @@ std::array<uint32_t, 3> PhaseAligner::ind2sub(
 double PhaseAligner::computeTranslationFromIndex(double index) const {
   static double n_voxels_half = FLAGS_phase_n_voxels / 2.0;
   static double width = std::abs(FLAGS_phase_discretize_lower) +
-    std::abs(FLAGS_phase_discretize_upper);
+                        std::abs(FLAGS_phase_discretize_upper);
   if (index <= n_voxels_half) {
     return ((index)*width) / FLAGS_phase_n_voxels;
   }
-  return (index-FLAGS_phase_n_voxels) * width/ FLAGS_phase_n_voxels;
+  return (index - FLAGS_phase_n_voxels) * width / FLAGS_phase_n_voxels;
 }
 
 std::vector<double> PhaseAligner::getCorrelation() const {

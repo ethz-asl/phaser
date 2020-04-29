@@ -1,9 +1,9 @@
-#ifndef PHASER_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_H_
-#define PHASER_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_H_
+#ifndef PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_H_
+#define PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_H_
 
 #include <fftw3/fftw3.h>
 
-#include "phaser/backend/alignment/base-spatial-correlation.h"
+#include "phaser/backend/correlation/base-spatial-correlation.h"
 
 namespace alignment {
 
@@ -31,4 +31,4 @@ class SpatialCorrelation : public BaseSpatialCorrelation {
 
 }  // namespace alignment
 
-#endif  // PHASER_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_H_
+#endif  // PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_H_

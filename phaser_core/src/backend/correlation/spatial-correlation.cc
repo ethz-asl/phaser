@@ -1,4 +1,4 @@
-#include "phaser/backend/alignment/spatial-correlation.h"
+#include "phaser/backend/correlation/spatial-correlation.h"
 
 #include <emmintrin.h>
 #include <glog/logging.h>

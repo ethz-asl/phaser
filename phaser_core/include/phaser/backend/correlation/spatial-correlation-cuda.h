@@ -1,20 +1,20 @@
-#ifndef PACKLO_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_CUDA_H_
-#define PACKLO_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_CUDA_H_
+#ifndef PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_CUDA_H_
+#define PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_CUDA_H_
 
-#include "phaser/backend/alignment/base-spatial-correlation.h"
+#include "phaser/backend/correlation/base-spatial-correlation.h"
 
 #include <array>
 #include <vector>
 
-#include <cufft.h>
 #include <cuda.h>
 #include <cuda_runtime.h>
+#include <cufft.h>
 
 namespace alignment {
 
 class SpatialCorrelationCuda : public BaseSpatialCorrelation {
  public:
-  SpatialCorrelationCuda(const uint32_t voxels_per_dim);
+  explicit SpatialCorrelationCuda(const uint32_t voxels_per_dim);
   ~SpatialCorrelationCuda();
 
   double* correlateSignals(double* const f, double* const g) override;
@@ -32,4 +32,4 @@ class SpatialCorrelationCuda : public BaseSpatialCorrelation {
 
 }  // namespace alignment
 
-#endif  // PACKLO_BACKEND_ALIGNMENT_SPATIAL_CORRELATION_CUDA_H_
+#endif  // PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_CUDA_H_
