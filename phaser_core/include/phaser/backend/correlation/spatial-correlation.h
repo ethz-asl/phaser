@@ -5,7 +5,7 @@
 
 #include "phaser/backend/correlation/base-spatial-correlation.h"
 
-namespace alignment {
+namespace correlation {
 
 class SpatialCorrelation : public BaseSpatialCorrelation {
  public:
@@ -29,6 +29,6 @@ class SpatialCorrelation : public BaseSpatialCorrelation {
   const uint32_t n_voxels_per_dim_;
 };
 
-}  // namespace alignment
+}  // namespace correlation
 
 #endif  // PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_H_

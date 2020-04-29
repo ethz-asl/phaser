@@ -3,7 +3,7 @@
 #include <emmintrin.h>
 #include <glog/logging.h>
 
-namespace alignment {
+namespace correlation {
 
 SpatialCorrelation::SpatialCorrelation(const uint32_t n_voxels)
     : total_n_voxels_(n_voxels * n_voxels * n_voxels),
@@ -110,4 +110,4 @@ double* SpatialCorrelation::correlateSignals(double* const f, double* const g) {
   return c_;
 }
 
-}  // namespace alignment
+}  // namespace correlation

@@ -9,7 +9,7 @@ extern "C" {
 
 #include <algorithm>
 
-namespace backend {
+namespace correlation {
 
 SphericalCorrelation::SphericalCorrelation()
     : statistics_manager_(kReferenceName) {}
@@ -49,7 +49,7 @@ void SphericalCorrelation::correlateSignals(
   // convertSignalValues(signal_values, bw);
   // convertSignalCoeff(signal_coeff, bw);
   delete[] signal_values;
-  delete [] signal_coeff;
+  delete[] signal_coeff;
 }
 
 std::array<double, 3> SphericalCorrelation::getZYZFromIndex(
@@ -65,18 +65,18 @@ void SphericalCorrelation::getStatistics(
 }
 
 void SphericalCorrelation::convertSignalValues(
-    double *signal_values, const int bw) {
+    double* signal_values, const int bw) {
   VLOG(1) << "ADDING CORR KEYS FOR BW " << bw;
-  const std::size_t n_values = 8*bw*bw*bw;
+  const std::size_t n_values = 8 * bw * bw * bw;
   for (std::size_t i = 0u; i < n_values; ++i) {
     statistics_manager_.emplaceValue(kSignalKey, signal_values[i]);
   }
 }
 
 void SphericalCorrelation::convertSignalCoeff(
-    double *signal_coeff, const int bw) {
+    double* signal_coeff, const int bw) {
   VLOG(1) << "ADDING CORR KEYS FOR BW " << bw;
-  const std::size_t n_values = (4*bw*bw*bw-bw)/3;
+  const std::size_t n_values = (4 * bw * bw * bw - bw) / 3;
   for (std::size_t i = 0u; i < n_values; ++i) {
     statistics_manager_.emplaceValue(kCoeffKey, signal_coeff[i]);
   }
@@ -109,4 +109,4 @@ void SphericalCorrelation::convertSO3toZYZ(
   (*zyz)[1] = M_PI * (2 * ii + 1) / (4. * bw);
   (*zyz)[2] = M_PI * kk / (bandwith);
 }
-}  // namespace backend
+}  // namespace correlation

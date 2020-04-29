@@ -14,12 +14,13 @@ DEFINE_int32(
 
 GmmPeakBasedEval::GmmPeakBasedEval(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation& sph)
+    const correlation::SphericalCorrelation& sph)
     : ZScoreEval(aligner, sph) {}
 
 common::BaseDistributionPtr GmmPeakBasedEval::evaluatePeakBasedCorrelation(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation& sph, const std::set<uint32_t>& signals,
+    const correlation::SphericalCorrelation& sph,
+    const std::set<uint32_t>& signals,
     const std::vector<double>& n_corr) const {
   common::GaussianMixturePtr gmm = std::make_shared<common::GaussianMixture>();
   fitTranslationalGmmDistribution(aligner, signals, n_corr, gmm);

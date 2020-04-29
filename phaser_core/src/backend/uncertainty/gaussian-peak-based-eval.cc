@@ -12,12 +12,13 @@ namespace uncertainty {
 
 GaussianPeakBasedEval::GaussianPeakBasedEval(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation& sph)
+    const correlation::SphericalCorrelation& sph)
     : ZScoreEval(aligner, sph) {}
 
 common::BaseDistributionPtr GaussianPeakBasedEval::evaluatePeakBasedCorrelation(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation& sph, const std::set<uint32_t>& signals,
+    const correlation::SphericalCorrelation& sph,
+    const std::set<uint32_t>& signals,
     const std::vector<double>& norm_corr) const {
   common::GaussianPtr gaussian = std::make_shared<common::Gaussian>(
       fitTranslationalNormalDist(aligner, signals, norm_corr));
@@ -57,8 +58,10 @@ common::Gaussian GaussianPeakBasedEval::fitTranslationalNormalDist(
   uint32_t start, end;
   calculateStartEndNeighbor(*max_signal, n_corr, &start, &end);
   const uint32_t num_elements = end - start + 1u;
-  Eigen::ArrayXXd samples = Eigen::MatrixXd::Zero(3, 2*FLAGS_gaussian_peak_neighbors+1);
-  Eigen::VectorXd weights = Eigen::VectorXd::Zero(2*FLAGS_gaussian_peak_neighbors+1);
+  Eigen::ArrayXXd samples =
+      Eigen::MatrixXd::Zero(3, 2 * FLAGS_gaussian_peak_neighbors + 1);
+  Eigen::VectorXd weights =
+      Eigen::VectorXd::Zero(2 * FLAGS_gaussian_peak_neighbors + 1);
   retrievePeakNeighbors(start, end, norm_corr, aligner, &samples, &weights);
 
   VLOG(1) << "samples:\n" << samples;

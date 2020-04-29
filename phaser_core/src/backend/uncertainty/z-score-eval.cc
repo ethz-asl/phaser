@@ -19,12 +19,12 @@ namespace uncertainty {
 
 ZScoreEval::ZScoreEval(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation& sph)
+    const correlation::SphericalCorrelation& sph)
     : manager_("z-score"), BaseEval(aligner, sph) {}
 
 common::BaseDistributionPtr ZScoreEval::evaluateCorrelation(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation&) {
+    const correlation::SphericalCorrelation&) {
   return evaluateCorrelationFromTranslation();
 }
 

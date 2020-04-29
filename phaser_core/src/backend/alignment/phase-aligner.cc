@@ -33,7 +33,8 @@ PhaseAligner::PhaseAligner()
   f_ = Eigen::VectorXd::Zero(total_n_voxels_);
   g_ = Eigen::VectorXd::Zero(total_n_voxels_);
   hist_ = Eigen::VectorXd::Zero(total_n_voxels_);
-  spatial_correlation_.reset(new SpatialCorrelation(FLAGS_phase_n_voxels));
+  spatial_correlation_.reset(
+      new correlation::SpatialCorrelation(FLAGS_phase_n_voxels));
 }
 
 void PhaseAligner::alignRegistered(

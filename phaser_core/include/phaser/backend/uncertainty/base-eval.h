@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_UNCERTAINTY_BASE_EVAL_H_
-#define PACKLO_BACKEND_UNCERTAINTY_BASE_EVAL_H_
+#ifndef PHASER_BACKEND_UNCERTAINTY_BASE_EVAL_H_
+#define PHASER_BACKEND_UNCERTAINTY_BASE_EVAL_H_
 
 #include "phaser/backend/alignment/base-aligner.h"
 #include "phaser/backend/correlation/spherical-correlation.h"
@@ -34,4 +34,4 @@ using BaseEvalPtr = std::unique_ptr<BaseEval>;
 
 }  // namespace uncertainty
 
-#endif  // PACKLO_BACKEND_UNCERTAINTY_BASE_EVAL_H_
+#endif  // PHASER_BACKEND_UNCERTAINTY_BASE_EVAL_H_

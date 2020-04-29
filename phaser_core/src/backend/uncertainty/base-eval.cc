@@ -4,7 +4,7 @@ namespace uncertainty {
 
 BaseEval::BaseEval(
     const alignment::BaseAligner& aligner,
-    const backend::SphericalCorrelation& sph)
+    const correlation::SphericalCorrelation& sph)
     : aligner_(aligner), sph_(sph) {}
 
 }  // namespace uncertainty
