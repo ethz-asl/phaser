@@ -35,6 +35,9 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/gflags-interface.cc
    src/common/math-utils.cc
    src/common/dual-quaternion.cc
+   src/common/thread-pool.cc
+   src/common/base-worker.cc
+   src/common/test-worker.cc
 
    src/common/test/testing-entrypoint.cc
 
