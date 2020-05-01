@@ -11,8 +11,8 @@ void SegmentCloudCmd::execute(model::PointCloudPtr cloud) {
   const SegmentationResult seg_result =
       seg_.segment(proj_result, cluster_result, ground_result);
 
-  const common::PointCloud_tPtr& seg_cloud = seg_result.getSegmentedCloud();
-  cloud->getRawCloud() = seg_cloud;
+  cloud->getRawCloud() = seg_result.getSegmentedCloud();
+  cloud->getRawInfoCloud() = seg_result.getSegmentedInfoCloud();
 }
 
 }  // namespace preproc

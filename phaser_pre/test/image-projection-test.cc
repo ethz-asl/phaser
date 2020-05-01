@@ -86,6 +86,23 @@ TEST_F(ImageProjectionTest, ProjectionVecTest) {
   ds_->startStreaming(1);
 }
 
+TEST_F(ImageProjectionTest, FullCloudTest) {
+  CHECK(ds_);
+  ImageProjection proj;
+  ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
+    CHECK(cloud);
+    const ProjectionResult result = proj.projectPointCloud(cloud);
+
+    common::PointCloud_tPtr full_cloud = result.getFullCloud();
+    common::PointCloud_tPtr full_info_cloud = result.getFullInfoCloud();
+    EXPECT_NE(full_cloud, nullptr);
+    EXPECT_NE(full_info_cloud, nullptr);
+    EXPECT_GT(full_cloud->size(), 0);
+    EXPECT_GT(full_info_cloud->size(), 0);
+  });
+  ds_->startStreaming(1);
+}
+
 TEST_F(ImageProjectionTest, ProjectionSeqVecEqualResultTest) {
   CHECK(ds_);
   ImageProjection proj;

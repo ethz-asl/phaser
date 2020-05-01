@@ -11,6 +11,7 @@ SegmentationResult::SegmentationResult(const AlgorithmSettings& settings) {
   col_ind_.assign(n_points, 0);
   range_.assign(n_points, 0);
   segmented_cloud_.reset(new common::PointCloud_t);
+  segmented_info_cloud_.reset(new common::PointCloud_t);
 }
 
 const std::vector<int>& SegmentationResult::getStartRingIndex() const {
@@ -83,6 +84,15 @@ common::PointCloud_tPtr& SegmentationResult::getSegmentedCloud() {
 
 const common::PointCloud_tPtr& SegmentationResult::getSegmentedCloud() const {
   return segmented_cloud_;
+}
+
+common::PointCloud_tPtr& SegmentationResult::getSegmentedInfoCloud() {
+  return segmented_info_cloud_;
+}
+
+const common::PointCloud_tPtr& SegmentationResult::getSegmentedInfoCloud()
+    const {
+  return segmented_info_cloud_;
 }
 
 }  // namespace preproc

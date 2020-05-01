@@ -125,14 +125,40 @@ common::PointCloud_tPtr& PointCloud::getRawCloud() {
   return cloud_;
 }
 
+common::PointCloud_tPtr PointCloud::getRawInfoCloud() const {
+  return info_cloud_;
+}
+
+common::PointCloud_tPtr& PointCloud::getRawInfoCloud() {
+  return info_cloud_;
+}
+
+bool PointCloud::hasInfoCloud() const {
+  return info_cloud_ != nullptr;
+}
+
 common::Point_t& PointCloud::pointAt(const std::size_t idx) {
   CHECK_NOTNULL(cloud_);
+  CHECK(idx < cloud_->size());
   return cloud_->points[idx];
 }
 
 const common::Point_t& PointCloud::pointAt(const std::size_t idx) const {
   CHECK_NOTNULL(cloud_);
+  CHECK(idx < cloud_->size());
   return cloud_->points[idx];
+}
+
+common::Point_t& PointCloud::infoPointAt(const std::size_t idx) {
+  CHECK_NOTNULL(cloud_);
+  CHECK(idx < info_cloud_->size());
+  return info_cloud_->points[idx];
+}
+
+const common::Point_t& PointCloud::infoPointAt(const std::size_t idx) const {
+  CHECK_NOTNULL(cloud_);
+  CHECK(idx < info_cloud_->size());
+  return info_cloud_->points[idx];
 }
 
 std::size_t PointCloud::size() const {
