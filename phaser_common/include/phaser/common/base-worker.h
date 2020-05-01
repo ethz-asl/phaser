@@ -1,6 +1,8 @@
 #ifndef PHASER_COMMON_BASE_WORKER_H_
 #define PHASER_COMMON_BASE_WORKER_H_
 
+#include <memory>
+
 namespace common {
 
 class BaseWorker {
@@ -11,6 +13,8 @@ class BaseWorker {
  protected:
   bool is_completed_ = false;
 };
+
+using BaseWorkerPtr = std::shared_ptr<BaseWorker>;
 
 }  // namespace common
 
