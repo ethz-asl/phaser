@@ -23,6 +23,7 @@ namespace model {
 
 PointCloud::PointCloud()
     : cloud_(new common::PointCloud_t),
+      info_cloud_(new common::PointCloud_t),
       kd_tree_is_initialized_(false),
       ply_directory_(FLAGS_PlyWriteDirectory) {}
 
@@ -76,6 +77,8 @@ void PointCloud::getNearestPoints(
   std::vector<float> pointNKNSquaredDistance(FLAGS_sampling_neighbors);
 
   const bool info_cloud_is_available = hasInfoCloud();
+  VLOG(1) << "Sampling using info cloud: " << std::boolalpha
+          << info_cloud_is_available;
   for (const common::Point_t& query_point : query_points) {
     // First, find the closest points.
     const int kd_tree_res = kd_tree_.nearestKSearch(
@@ -165,7 +168,7 @@ common::PointCloud_tPtr& PointCloud::getRawInfoCloud() {
 }
 
 bool PointCloud::hasInfoCloud() const {
-  return info_cloud_ != nullptr;
+  return info_cloud_ != nullptr && info_cloud_->size() > 0;
 }
 
 common::Point_t& PointCloud::pointAt(const std::size_t idx) {
@@ -199,7 +202,12 @@ std::size_t PointCloud::size() const {
 
 PointCloud PointCloud::clone() const {
   PointCloud cloned_cloud;
+  CHECK_NOTNULL(cloud_);
+  CHECK_NOTNULL(cloned_cloud.cloud_);
+  CHECK_NOTNULL(info_cloud_);
+  CHECK_NOTNULL(cloned_cloud.info_cloud_);
   pcl::copyPointCloud(*cloud_, *cloned_cloud.cloud_);
+  pcl::copyPointCloud(*info_cloud_, *cloned_cloud.info_cloud_);
   cloned_cloud.ranges_ = ranges_;
   return cloned_cloud;
 }

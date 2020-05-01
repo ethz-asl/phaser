@@ -190,6 +190,8 @@ void SphRegistration::correlatePointcloud(
     std::array<double, 3>* const zyz) {
   CHECK(zyz);
 
+  CHECK(source.hasInfoCloud());
+  CHECK(target.hasInfoCloud());
   const double duration_sample_f_ms = common::executeTimedFunction(
       &common::SphericalSampler::sampleUniformly, &sampler_, source,
       &f_values_);
