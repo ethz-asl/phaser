@@ -29,6 +29,7 @@ cs_add_library(${PROJECT_NAME}_lib
   src/model/feature-extraction-result.cc
   src/model/smoothness-result.cc
   src/model/occlusion-result.cc
+  src/model/gradient-result.cc
 
   src/commands/voxel-grid-cmd.cc
   src/commands/pass-through-gnd-filter-cmd.cc
@@ -41,6 +42,7 @@ cs_add_library(${PROJECT_NAME}_lib
   src/algorithm/extract-loam-features.cc
   src/algorithm/calc-smoothness.cc
   src/algorithm/mark-occluded.cc
+  src/algorithm/image-gradient.cc
 )
 
 #############
@@ -73,6 +75,10 @@ phaser_import_test_maps(test_mark_occluded)
 catkin_add_gtest(test_loam_features test/loam-feature-extraction-test.cc)
 target_link_libraries(test_loam_features ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_loam_features)
+
+catkin_add_gtest(test_image_gradient test/image-gradient-test.cc)
+target_link_libraries(test_image_gradient ${PROJECT_NAME}_lib)
+phaser_import_test_maps(test_image_gradient)
 
 cs_install()
 cs_export()

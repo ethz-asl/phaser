@@ -40,6 +40,9 @@ class SegmentationResult {
   common::PointCloud_tPtr& getSegmentedCloud();
   const common::PointCloud_tPtr& getSegmentedCloud() const;
 
+  common::PointCloud_tPtr& getSegmentedInfoCloud();
+  const common::PointCloud_tPtr& getSegmentedInfoCloud() const;
+
  private:
   std::vector<int> start_ring_index_;
   std::vector<int> end_ring_index_;
@@ -50,6 +53,7 @@ class SegmentationResult {
   std::vector<uint32_t> col_ind_;
   std::vector<float> range_;
   common::PointCloud_tPtr segmented_cloud_;
+  common::PointCloud_tPtr segmented_info_cloud_;
 };
 
 }  // namespace preproc

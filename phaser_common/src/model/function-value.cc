@@ -1,29 +1,17 @@
 #include "phaser/model/function-value.h"
 
-#include <numeric>
 #include <algorithm>
+#include <numeric>
 
 #include <glog/logging.h>
 
 namespace model {
 
 FunctionValue::FunctionValue()
-    : interpolation_(0.0),
-      range_(0.0),
-      intensity_(0.0),
-      points_(new common::PointCloud_t) {}
+    : range_(0.0), intensity_(0.0), points_(new common::PointCloud_t) {}
 
-FunctionValue::FunctionValue(
-    double interpolation, double range, double intensity)
-    : interpolation_(interpolation),
-      range_(range),
-      intensity_(intensity),
-      points_(new common::PointCloud_t) {}
-
-double FunctionValue::getAveragedInterpolation() const noexcept {
-  return std::accumulate(interpolation_.cbegin(), interpolation_.cend(), 0.0) /
-         static_cast<double>(interpolation_.size());
-}
+FunctionValue::FunctionValue(double range, double intensity)
+    : range_(range), intensity_(intensity), points_(new common::PointCloud_t) {}
 
 double FunctionValue::getAveragedRange() const noexcept {
   return std::accumulate(range_.cbegin(), range_.cend(), 0.0) /
@@ -48,10 +36,6 @@ common::Point_t FunctionValue::getAveragedPoint() const noexcept {
   avg.y = avg.y / n_points;
   avg.z = avg.z / n_points;
   return avg;
-}
-
-void FunctionValue::addInterpolation(const double interpolation) {
-  interpolation_.emplace_back(interpolation);
 }
 
 void FunctionValue::addRange(const double range) {

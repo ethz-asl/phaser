@@ -35,9 +35,14 @@ class PointCloud {
 
   common::PointCloud_tPtr getRawCloud() const;
   common::PointCloud_tPtr& getRawCloud();
+  common::PointCloud_tPtr getRawInfoCloud() const;
+  common::PointCloud_tPtr& getRawInfoCloud();
+  bool hasInfoCloud() const;
 
   common::Point_t& pointAt(const std::size_t idx);
   const common::Point_t& pointAt(const std::size_t idx) const;
+  common::Point_t& infoPointAt(const std::size_t idx);
+  const common::Point_t& infoPointAt(const std::size_t idx) const;
 
   std::size_t size() const;
   PointCloud clone() const;
@@ -52,7 +57,17 @@ class PointCloud {
 
  private:
   void readFromFile(const std::string& ply);
+  void sampleNearestWithoutCloudInfo(
+      const std::vector<int>& pointIdxNKNSearch,
+      const std::vector<float>& pointNKNSquaredDistance,
+      std::vector<FunctionValue>* function_values) const;
+  void sampleNearestWithCloudInfo(
+      const std::vector<int>& pointIdxNKNSearch,
+      const std::vector<float>& pointNKNSquaredDistance,
+      std::vector<FunctionValue>* function_values) const;
+
   common::PointCloud_tPtr cloud_;
+  common::PointCloud_tPtr info_cloud_;
   pcl::KdTreeFLANN<common::Point_t> kd_tree_;
 
   bool kd_tree_is_initialized_;

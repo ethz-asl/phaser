@@ -1,5 +1,5 @@
-#ifndef PACKLO_MODEL_FUNCTION_VALUE_H_
-#define PACKLO_MODEL_FUNCTION_VALUE_H_
+#ifndef PHASER_MODEL_FUNCTION_VALUE_H_
+#define PHASER_MODEL_FUNCTION_VALUE_H_
 
 #include "phaser/common/point-types.h"
 
@@ -11,14 +11,12 @@ namespace model {
 class FunctionValue {
  public:
   FunctionValue();
-  explicit FunctionValue(double interpolation, double range, double intensity);
+  explicit FunctionValue(double range, double intensity);
 
-  double getAveragedInterpolation() const noexcept;
   double getAveragedRange() const noexcept;
   double getAveragedIntensity() const noexcept;
   common::Point_t getAveragedPoint() const noexcept;
 
-  void addInterpolation(const double interpolation);
   void addRange(const double range);
   void addIntensity(const double intensity);
   void addSemanticClass(const uint16_t class_id);
@@ -28,7 +26,6 @@ class FunctionValue {
   common::PointCloud_tPtr getAllPoints() const;
 
  private:
-  std::vector<double> interpolation_;
   std::vector<double> range_;
   std::vector<double> intensity_;
   std::vector<uint16_t> semantic_classes_;
@@ -38,4 +35,4 @@ class FunctionValue {
 
 }  // namespace model
 
-#endif  // PACKLO_MODEL_FUNCTION_VALUE_H_
+#endif  // PHASER_MODEL_FUNCTION_VALUE_H_

@@ -50,11 +50,17 @@ TEST_F(CloudSegmentationTest, SegmentCloudTest) {
         seg.segment(proj_result, cluster_result, ground_result);
 
     const common::PointCloud_tPtr& seg_cloud = seg_result.getSegmentedCloud();
-    CHECK_NOTNULL(seg_cloud);
+    const common::PointCloud_tPtr& seg_info_cloud =
+        seg_result.getSegmentedInfoCloud();
+    EXPECT_NE(seg_cloud, nullptr);
+    EXPECT_NE(seg_info_cloud, nullptr);
     EXPECT_GT(seg_cloud->size(), 0);
+    EXPECT_GT(seg_info_cloud->size(), 0);
+    /*
     std::stringstream ss;
     ss << "/home/berlukas/Documents/ply/reg" << ++ply_counter << ".ply";
     pcl::io::savePLYFileASCII(ss.str(), *seg_cloud);
+    */
   });
   ds_->startStreaming(1);
 }

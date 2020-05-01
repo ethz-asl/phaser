@@ -72,5 +72,10 @@ catkin_add_gtest(test_bingham_mixture test/distribution/bingham-mixture-test.cc)
 target_link_libraries(test_bingham_mixture
   ${PROJECT_NAME}_lib)
 
+# Function value
+catkin_add_gtest(test_function_value test/model/function-value-test.cc)
+target_link_libraries(test_function_value
+  ${PROJECT_NAME}_lib)
+
 cs_install()
 cs_export()
