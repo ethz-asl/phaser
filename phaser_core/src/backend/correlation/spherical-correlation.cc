@@ -88,7 +88,7 @@ void SphericalCorrelation::retrieveInterpolation(
   std::transform(
       f.cbegin(), f.cend(), std::back_inserter(*interpolation),
       [](const model::FunctionValue& interp) {
-        return interp.getAveragedInterpolation();
+        return interp.getAveragedIntensity();
       });
 }
 

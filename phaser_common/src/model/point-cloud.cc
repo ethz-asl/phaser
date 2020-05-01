@@ -70,6 +70,8 @@ void PointCloud::getNearestPoints(
     const std::vector<common::Point_t>& query_points,
     std::vector<FunctionValue>* function_values) const {
   CHECK(kd_tree_is_initialized_);
+  CHECK_NOTNULL(cloud_);
+  CHECK_NOTNULL(info_cloud_);
   std::vector<int> pointIdxNKNSearch(FLAGS_sampling_neighbors);
   std::vector<float> pointNKNSquaredDistance(FLAGS_sampling_neighbors);
 
@@ -88,17 +90,11 @@ void PointCloud::getNearestPoints(
     CHECK_GT(FLAGS_sampling_neighbors, 0);
     for (int16_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
       const int current_idx = pointIdxNKNSearch[i];
-      const float current_dist = pointNKNSquaredDistance[i];
       const common::Point_t& point = cloud_->points[current_idx];
-      double penality = 1;
-      // if (current_dist > 1)
-      // penality = 0.5;
-      const double dist = ranges_.at(current_idx);
+      const common::Point_t& info_point = info_cloud_->points[current_idx];
       value.addPoint(point);
-      value.addRange(dist);
-      value.addIntensity(point.intensity);
-      value.addInterpolation(
-          (0.55f * point.intensity + 0.45f * dist) * penality);
+      value.addRange(info_point.x);
+      value.addIntensity(info_point.y);
     }
     function_values->emplace_back(std::move(value));
   }
