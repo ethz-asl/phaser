@@ -30,8 +30,6 @@ model::RegistrationResult CloudController::registerPointCloud(
   preprocessor_.process(target);
   preprocessor_.process(source);
 
-  CHECK(target->hasInfoCloud());
-  CHECK(source->hasInfoCloud());
   return registrator_->registerPointCloud(target, source);
 }
 

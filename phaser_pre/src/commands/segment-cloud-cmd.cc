@@ -16,7 +16,6 @@ void SegmentCloudCmd::execute(model::PointCloudPtr cloud) {
 
   cloud->getRawCloud() = seg_result.getSegmentedCloud();
   cloud->getRawInfoCloud() = seg_result.getSegmentedInfoCloud();
-  CHECK(cloud->hasInfoCloud());
 }
 
 }  // namespace preproc

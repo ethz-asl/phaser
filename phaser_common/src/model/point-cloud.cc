@@ -29,6 +29,7 @@ PointCloud::PointCloud()
 
 PointCloud::PointCloud(common::PointCloud_tPtr cloud)
     : cloud_(cloud),
+      info_cloud_(new common::PointCloud_t),
       kd_tree_is_initialized_(false),
       ply_directory_(FLAGS_PlyWriteDirectory) {
   ranges_.resize(cloud_->size());
@@ -36,6 +37,7 @@ PointCloud::PointCloud(common::PointCloud_tPtr cloud)
 
 PointCloud::PointCloud(const std::string& ply)
     : cloud_(new common::PointCloud_t),
+      info_cloud_(new common::PointCloud_t),
       kd_tree_is_initialized_(false),
       ply_directory_(FLAGS_PlyWriteDirectory) {
   readFromFile(ply);
@@ -44,6 +46,7 @@ PointCloud::PointCloud(const std::string& ply)
 
 PointCloud::PointCloud(const std::vector<common::Point_t>& points)
     : cloud_(new common::PointCloud_t),
+      info_cloud_(new common::PointCloud_t),
       kd_tree_is_initialized_(false),
       ply_directory_(FLAGS_PlyWriteDirectory) {
   for (const common::Point_t& point : points) {
@@ -77,8 +80,8 @@ void PointCloud::getNearestPoints(
   std::vector<float> pointNKNSquaredDistance(FLAGS_sampling_neighbors);
 
   const bool info_cloud_is_available = hasInfoCloud();
-  VLOG(1) << "Sampling using info cloud: " << std::boolalpha
-          << info_cloud_is_available;
+  VLOG(2) << "Sampling using info cloud: " << std::boolalpha
+          << info_cloud_is_available << ".";
   for (const common::Point_t& query_point : query_points) {
     // First, find the closest points.
     const int kd_tree_res = kd_tree_.nearestKSearch(
