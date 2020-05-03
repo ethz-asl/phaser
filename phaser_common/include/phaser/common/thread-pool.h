@@ -6,18 +6,18 @@
 #include <thread>
 #include <vector>
 
+#include "phaser/common/base-worker.h"
+
 namespace common {
 
 class ThreadPool {
  public:
-  explicit ThreadPool(const std::size_t num_threads);
-
-  void run_all();
-  void add_task(std::function<void()> func);
+  void run_and_wait_all();
+  void add_worker(BaseWorkerPtr worker);
 
  private:
-  std::size_t num_threads_;
   std::vector<std::unique_ptr<std::thread>> threads_;
+  std::vector<BaseWorkerPtr> workers_;
 };
 
 }  // namespace common
