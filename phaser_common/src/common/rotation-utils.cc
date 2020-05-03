@@ -34,8 +34,8 @@ void RotationUtils::RotateAroundXYZInv(
 }
 
 void RotationUtils::RotateAroundZYX(
-    model::PointCloudPtr cloud, const float alpha_rad, 
-    const float beta_rad, const float gamma_rad) {
+    model::PointCloudPtr cloud, const float alpha_rad, const float beta_rad,
+    const float gamma_rad) {
   Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
                       createTransformationAroundY(beta_rad) *
                       createTransformationAroundX(alpha_rad);
@@ -76,17 +76,6 @@ model::PointCloud RotationUtils::RotateAroundXYZCopy(
   model::PointCloud copy(copyCloud);
   cloud.transformPointCloudCopy(T, &copy);
   return copy;
-}
-
-std::vector<model::FunctionValue> RotationUtils::RotateAroundZYZCopy(
-    const std::vector<model::FunctionValue>& values,
-    const double alpha_rad, const double beta_rad, const double gamma_rad) {
-  Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
-                      createTransformationAroundY(beta_rad) *
-                      createTransformationAroundZ(alpha_rad);
-  std::vector<model::FunctionValue> rotated_values;
-  // TODO(lbern:) rotate or remove
-  return rotated_values;
 }
 
 Eigen::Vector3d RotationUtils::ConvertZYZtoXYZ(
@@ -164,8 +153,8 @@ void RotationUtils::RotateAroundZYZ(
 }
 
 model::PointCloud RotationUtils::RotateAroundZYZCopy(
-    const model::PointCloud &cloud,
-    const double alpha_rad, const double beta_rad, const double gamma_rad) {
+    const model::PointCloud& cloud, const double alpha_rad,
+    const double beta_rad, const double gamma_rad) {
   Eigen::Matrix4f T = createTransformationAroundZ(gamma_rad) *
                       createTransformationAroundY(beta_rad) *
                       createTransformationAroundZ(alpha_rad);
@@ -175,8 +164,9 @@ model::PointCloud RotationUtils::RotateAroundZYZCopy(
   return copy;
 }
 
-Eigen::Vector3d RotationUtils::fromRotation(const double r11, const double r12,
-    const double r21, const double r31, const double r32) {
+Eigen::Vector3d RotationUtils::fromRotation(
+    const double r11, const double r12, const double r21, const double r31,
+    const double r32) {
   Eigen::Vector3d res;
   res(2) = -std::atan2(r31, r32);
   res(1) = std::asin(r21);
@@ -196,6 +186,26 @@ Eigen::MatrixXd RotationUtils::ConvertQuaternionsToMatrix(
   }
 
   return samples;
+}
+
+std::array<double, 3> RotationUtils::GetZYZFromIndex(
+    const uint32_t index, const uint32_t bw) {
+  std::array<double, 3> zyz;
+  convertSO3toZYZ(index, bw, &zyz);
+  return zyz;
+}
+
+void RotationUtils::convertSO3toZYZ(
+    const uint32_t loc, const uint32_t bw, std::array<double, 3>* const zyz) {
+  const int32_t ii = floor(loc / (4. * bw * bw));
+  int32_t tmp = loc - (ii * 4. * bw * bw);
+  const int32_t jj = floor(tmp / (2. * bw));
+  const int32_t kk = loc - (ii * 4 * bw * bw) - jj * (2 * bw);
+
+  const double bandwith = static_cast<double>(bw);
+  (*zyz)[0] = M_PI * jj / (bandwith);
+  (*zyz)[1] = M_PI * (2 * ii + 1) / (4. * bw);
+  (*zyz)[2] = M_PI * kk / (bandwith);
 }
 
 }  // namespace common
