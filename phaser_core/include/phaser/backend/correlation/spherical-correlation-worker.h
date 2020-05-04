@@ -7,6 +7,7 @@
 #include "phaser/backend/correlation/spherical-correlation.h"
 #include "phaser/common/base-worker.h"
 #include "phaser/common/spherical-sampler.h"
+#include "phaser/common/thread-pool.h"
 #include "phaser/model/point-cloud.h"
 
 namespace correlation {
@@ -14,8 +15,8 @@ namespace correlation {
 class SphericalCorrelationWorker : public common::BaseWorker {
  public:
   explicit SphericalCorrelationWorker(
-      model::PointCloudPtr target, model::PointCloudPtr source,
-      const uint16_t bandwidth);
+      const model::FunctionValueVec& f_values,
+      const model::FunctionValueVec& h_values, const uint16_t bandwidth);
 
   void run() override;
 
@@ -23,10 +24,10 @@ class SphericalCorrelationWorker : public common::BaseWorker {
   const SphericalCorrelation& getCorrelationObject() const noexcept;
 
  private:
-  model::PointCloudPtr source_;
-  model::PointCloudPtr target_;
-  common::SphericalSampler sampler_;
   SphericalCorrelation sph_corr_;
+  const model::FunctionValueVec& f_values_;
+  const model::FunctionValueVec& h_values_;
+  const uint32_t bw_;
 };
 using SphericalCorrelationWorkerPtr =
     std::shared_ptr<SphericalCorrelationWorker>;

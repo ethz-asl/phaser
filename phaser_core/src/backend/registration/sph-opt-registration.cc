@@ -103,9 +103,18 @@ void SphOptRegistration::getStatistics(common::StatisticsManager* manager) const
 std::vector<correlation::SphericalCorrelation>
 SphOptRegistration::correlatePointcloud(
     model::PointCloudPtr target, model::PointCloudPtr source) {
+  source->initialize_kd_tree();
+  target->initialize_kd_tree();
+
+  // Sample the sphere at the grid points.
+  std::vector<model::FunctionValue> f_values;
+  std::vector<model::FunctionValue> h_values;
+  sampler_.sampleUniformly(*target, &f_values);
+  sampler_.sampleUniformly(*source, &h_values);
+
   correlation::SphericalCorrelationWorkerPtr corr_intensity_worker =
       std::make_shared<correlation::SphericalCorrelationWorker>(
-          source, target, bandwidth_);
+          f_values, h_values, sampler_.getInitializedBandwith());
   th_pool_.add_worker(corr_intensity_worker);
   th_pool_.run_and_wait_all();
 
