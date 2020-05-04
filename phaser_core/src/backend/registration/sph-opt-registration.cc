@@ -3,11 +3,13 @@
 #include <algorithm>
 #include <iostream>
 
+#include <fftw3/fftw3.h>
 #include <glog/logging.h>
 
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/correlation/spatial-correlation-cuda.h"
 #include "phaser/backend/correlation/spherical-intensity-worker.h"
+#include "phaser/backend/correlation/spherical-range-worker.h"
 #include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
 #include "phaser/common/rotation-utils.h"
@@ -24,6 +26,8 @@ SphOptRegistration::SphOptRegistration()
       std::make_unique<uncertainty::GaussianPeakBasedEval>();
   correlation_eval_ = std::make_unique<uncertainty::PhaseCorrelationEval>(
       std::move(rot_eval), std::move(pos_eval));
+  CHECK_NE(fftw_init_threads(), 0);
+  fftw_plan_with_nthreads(12);
 }
 
 model::RegistrationResult SphOptRegistration::registerPointCloud(
@@ -112,12 +116,27 @@ SphOptRegistration::correlatePointcloud(
   sampler_.sampleUniformly(*target, &f_values);
   sampler_.sampleUniformly(*source, &h_values);
 
+  // Create workers for the spherical correlation.
   correlation::SphericalIntensityWorkerPtr corr_intensity_worker =
-      std::make_shared<correlation::SphericalIntensityWorker>(
-          f_values, h_values, sampler_.getInitializedBandwith());
+      CHECK_NOTNULL(std::make_shared<correlation::SphericalIntensityWorker>(
+          f_values, h_values, sampler_.getInitializedBandwith()));
+  correlation::SphericalRangeWorkerPtr corr_range_worker =
+      CHECK_NOTNULL(std::make_shared<correlation::SphericalRangeWorker>(
+          f_values, h_values, sampler_.getInitializedBandwith()));
+
+  // Add workers to pool and execute them.
+  auto start = std::chrono::high_resolution_clock::now();
   th_pool_.add_worker(corr_intensity_worker);
   th_pool_.run_and_wait_all();
-  return {corr_intensity_worker->getCorrelationObject()};
+  th_pool_.add_worker(corr_range_worker);
+  th_pool_.run_and_wait_all();
+  auto end = std::chrono::high_resolution_clock::now();
+  VLOG(1) << "Time for rot est: "
+          << std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
+                 .count()
+          << "ms";
+  return {corr_intensity_worker->getCorrelationObject(),
+          corr_range_worker->getCorrelationObject()};
 }
 
 void SphOptRegistration::setBandwith(const int bandwith) {

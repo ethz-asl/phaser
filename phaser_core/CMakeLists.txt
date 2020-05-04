@@ -48,6 +48,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/correlation/base-spatial-correlation.cc
    src/backend/correlation/spatial-correlation.cc
    src/backend/correlation/spherical-intensity-worker.cc
+   src/backend/correlation/spherical-range-worker.cc
 
    src/backend/uncertainty/base-eval.cc
    src/backend/uncertainty/z-score-eval.cc

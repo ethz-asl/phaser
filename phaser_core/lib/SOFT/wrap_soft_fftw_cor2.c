@@ -155,86 +155,79 @@ void softFFTWCor2(
       exit( 1 ) ;
     }
 
-  /* create fftw plans for the S^2 transforms */
-  /* first for the dct */
-  dctPlan = fftw_plan_r2r_1d( 2*bwIn, weights, workspace3,
-            FFTW_REDFT10, FFTW_ESTIMATE ) ;
+    /* make all plan thread safe */
+    fftw_make_planner_thread_safe();
 
-  /* now for the fft */
-  /*
-     IMPORTANT NOTE!!! READ THIS!!!
+    /* create fftw plans for the S^2 transforms */
+    /* first for the dct */
+    dctPlan = fftw_plan_r2r_1d(
+        2 * bwIn, weights, workspace3, FFTW_REDFT10, FFTW_ESTIMATE);
 
-     Now to make the fft plans.
+    /* now for the fft */
+    /*
+       IMPORTANT NOTE!!! READ THIS!!!
 
-     Please note that the planning-rigor flag *must be* FFTW_ESTIMATE!
-     Why? Well, to try to keep things simple. I am using some of the
-     pointers to arrays in rotateFct's arguments in the fftw-planning
-     routines. If the planning-rigor is *not* FFTW_ESTIMATE, then
-     the arrays will be written over during the planning stage.
+       Now to make the fft plans.
 
-     Therefore, unless you are really really sure you know what
-     you're doing, keep the rigor as FFTW_ESTIMATE !!!
-  */
+       Please note that the planning-rigor flag *must be* FFTW_ESTIMATE!
+       Why? Well, to try to keep things simple. I am using some of the
+       pointers to arrays in rotateFct's arguments in the fftw-planning
+       routines. If the planning-rigor is *not* FFTW_ESTIMATE, then
+       the arrays will be written over during the planning stage.
 
-  /*
-    fftw "preamble" ;
-    note  that this places in the transposed array
-  */
+       Therefore, unless you are really really sure you know what
+       you're doing, keep the rigor as FFTW_ESTIMATE !!!
+    */
 
-  rank = 1 ;
-  dims[0].n = 2*bwIn ;
-  dims[0].is = 1 ;
-  dims[0].os = 2*bwIn ;
-  howmany_rank = 1 ;
-  howmany_dims[0].n = 2*bwIn ;
-  howmany_dims[0].is = 2*bwIn ;
-  howmany_dims[0].os = 1 ;
+    /*
+      fftw "preamble" ;
+      note  that this places in the transposed array
+    */
 
-  fftPlan = fftw_plan_guru_split_dft( rank, dims,
-              howmany_rank, howmany_dims,
-              tmpR, tmpI,
-              (double *) workspace2,
-              (double *) workspace2 + (n*n),
-              FFTW_ESTIMATE );
+    rank = 1;
+    dims[0].n = 2 * bwIn;
+    dims[0].is = 1;
+    dims[0].os = 2 * bwIn;
+    howmany_rank = 1;
+    howmany_dims[0].n = 2 * bwIn;
+    howmany_dims[0].is = 2 * bwIn;
+    howmany_dims[0].os = 1;
 
-  /* create plan for inverse SO(3) transform */
-  n = 2 * bwOut ;
-  howmany = n*n ;
-  idist = n ;
-  odist = n ;
-  rank = 2 ;
-  inembed[0] = n ;
-  inembed[1] = n*n ;
-  onembed[0] = n ;
-  onembed[1] = n*n ;
-  istride = 1 ;
-  ostride = 1 ;
-  na[0] = 1 ;
-  na[1] = n ;
+    fftPlan = fftw_plan_guru_split_dft(
+        rank, dims, howmany_rank, howmany_dims, tmpR, tmpI, (double*)workspace2,
+        (double*)workspace2 + (n * n), FFTW_ESTIMATE);
 
-  p1 = fftw_plan_many_dft( rank, na, howmany,
-         workspace1, inembed,
-         istride, idist,
-         so3Sig, onembed,
-         ostride, odist,
-         FFTW_FORWARD, FFTW_ESTIMATE );
+    /* create plan for inverse SO(3) transform */
+    n = 2 * bwOut;
+    howmany = n * n;
+    idist = n;
+    odist = n;
+    rank = 2;
+    inembed[0] = n;
+    inembed[1] = n * n;
+    onembed[0] = n;
+    onembed[1] = n * n;
+    istride = 1;
+    ostride = 1;
+    na[0] = 1;
+    na[1] = n;
 
+    p1 = fftw_plan_many_dft(
+        rank, na, howmany, workspace1, inembed, istride, idist, so3Sig, onembed,
+        ostride, odist, FFTW_FORWARD, FFTW_ESTIMATE);
 
-  seminaive_naive_table = SemiNaive_Naive_Pml_Table(bwIn, bwIn,
-                seminaive_naive_tablespace,
-                (double *) workspace2);
+    seminaive_naive_table = SemiNaive_Naive_Pml_Table(
+        bwIn, bwIn, seminaive_naive_tablespace, (double*)workspace2);
 
+    /* make quadrature weights for the S^2 transform */
+    makeweights(bwIn, weights);
 
-  /* make quadrature weights for the S^2 transform */
-  makeweights( bwIn, weights ) ;
-
-  n = 2 * bwIn ;
-  /* load SIGNAL samples into temp array */
-  if ( isReal )
-    for ( i = 0 ; i < n * n ; i ++ )
-      {
-  tmpR[i] = sig[i];
-  tmpI[i] = 0. ;
+    n = 2 * bwIn;
+    /* load SIGNAL samples into temp array */
+    if (isReal)
+      for (i = 0; i < n * n; i++) {
+        tmpR[i] = sig[i];
+        tmpI[i] = 0.;
       }
   else
     for ( i = 0 ; i < n * n ; i ++ )
