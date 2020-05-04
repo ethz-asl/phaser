@@ -10,15 +10,9 @@ DEFINE_int32(
 
 namespace uncertainty {
 
-GaussianPeakBasedEval::GaussianPeakBasedEval(
-    const alignment::BaseAligner& aligner,
-    const correlation::SphericalCorrelation& sph)
-    : ZScoreEval(aligner, sph) {}
-
 common::BaseDistributionPtr GaussianPeakBasedEval::evaluatePeakBasedCorrelation(
-    const alignment::BaseAligner& aligner,
-    const correlation::SphericalCorrelation& sph,
-    const std::set<uint32_t>& signals,
+    const uint32_t n_voxels, const int discretize_lower_bound,
+    const int discretize_upper_bound, const std::set<uint32_t>& signals,
     const std::vector<double>& norm_corr) const {
   common::GaussianPtr gaussian = std::make_shared<common::Gaussian>(
       fitTranslationalNormalDist(aligner, signals, norm_corr));
@@ -39,7 +33,8 @@ void GaussianPeakBasedEval::calculateStartEndNeighbor(
 }
 
 common::Gaussian GaussianPeakBasedEval::fitTranslationalNormalDist(
-    const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
+    const uint32_t n_voxels, const int discretize_lower_bound,
+    const int discretize_upper_bound, const std::set<uint32_t>& signals,
     const std::vector<double>& norm_corr) const {
   const uint32_t n_signals = signals.size();
   const uint32_t n_corr = norm_corr.size();
@@ -72,23 +67,25 @@ common::Gaussian GaussianPeakBasedEval::fitTranslationalNormalDist(
 }
 
 void GaussianPeakBasedEval::retrievePeakNeighbors(
-    const uint32_t start, const uint32_t end,
-    const std::vector<double>& norm_corr, const alignment::BaseAligner& aligner,
-    Eigen::ArrayXXd* samples, Eigen::VectorXd* weights) const {
+    const uint32_t n_voxels, const int discretize_lower_bound,
+    const int discretize_upper_bound, const uint32_t start, const uint32_t end,
+    const std::vector<double>& norm_corr, Eigen::ArrayXXd* samples,
+    Eigen::VectorXd* weights) const {
   VLOG(1) << "Checking neighbors from " << start << " to " << end;
-  const alignment::PhaseAligner& phase =
-      dynamic_cast<const alignment::PhaseAligner&>(aligner);
 
   // Extract translational estimates.
   uint32_t k = 0u;
   for (uint32_t i = start; i <= end; ++i) {
-    std::array<uint32_t, 3> xyz = phase.ind2sub(i);
-    (*samples)(0, k) =
-        phase.computeTranslationFromIndex(static_cast<double>(xyz[0]));
-    (*samples)(1, k) =
-        phase.computeTranslationFromIndex(static_cast<double>(xyz[1]));
-    (*samples)(2, k) =
-        phase.computeTranslationFromIndex(static_cast<double>(xyz[2]));
+    std::array<uint32_t, 3> xyz = common::TranlationUtils::ind2sub(i, n_voxels);
+    (*samples)(0, k) = common::TranlationUtils::ComputeTranslationFromIndex(
+        static_cast<double>(xyz[0]), n_voxels, discretize_lower_bound,
+        discretize_upper_bound);
+    (*samples)(1, k) = common::TranlationUtils::ComputeTranslationFromIndex(
+        static_cast<double>(xyz[1]), n_voxels, discretize_lower_bound,
+        discretize_upper_bound);
+    (*samples)(2, k) = common::TranlationUtils::ComputeTranslationFromIndex(
+        static_cast<double>(xyz[2]), n_voxels, discretize_lower_bound,
+        discretize_upper_bound);
     (*weights)(k) = norm_corr.at(i);
     ++k;
   }

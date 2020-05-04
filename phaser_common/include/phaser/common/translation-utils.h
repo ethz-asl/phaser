@@ -19,9 +19,15 @@ class TranslationUtils {
       const model::PointCloud& cloud, const float x, const float y,
       const float z);
 
-  static double computeTranslationFromIndex(
+  static double ComputeTranslationFromIndex(
       const double index, const uint32_t n_voxels,
       const int discretize_lower_bound, const int discretize_upper_bound);
+
+  static std::array<uint32_t, 3> Ind2sub(
+      const uint32_t lin_index, const uint32_t n_voxels);
+
+  static std::array<uint32_t, 3> Ind2sub(
+      const uint32_t lin_index, const uint32_t rows, const uint32_t cols);
 
  private:
   static Eigen::Matrix4f createTransformationXYZ(

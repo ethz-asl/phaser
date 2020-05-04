@@ -109,6 +109,7 @@ uint32_t PhaseAligner::sub2ind(
     const uint32_t cols) const {
   return (i * cols + j) + (rows * cols * k);
 }
+
 std::array<uint32_t, 3> PhaseAligner::ind2sub(const uint32_t lin_index) const {
   return ind2sub(lin_index, FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);
 }

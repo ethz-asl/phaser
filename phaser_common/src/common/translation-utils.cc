@@ -37,7 +37,7 @@ Eigen::Matrix4f TranslationUtils::createTransformationXYZ(
   return T;
 }
 
-double TranslationUtils::computeTranslationFromIndex(
+double TranslationUtils::ComputeTranslationFromIndex(
     const double index, const uint32_t n_voxels,
     const int discretize_lower_bound, const int discretize_upper_bound) {
   const double n_voxels_half = n_voxels / 2.0;
@@ -47,6 +47,21 @@ double TranslationUtils::computeTranslationFromIndex(
     return ((index)*width) / n_voxels;
   }
   return (index - n_voxels) * width / n_voxels;
+}
+
+std::array<uint32_t, 3> TranslationUtils::Ind2sub(
+    const uint32_t lin_index, const uint32_t n_voxels) {
+  return Ind2sub(lin_index, n_voxels, n_voxels);
+}
+
+std::array<uint32_t, 3> TranslationUtils::Ind2sub(
+    const uint32_t lin_index, const uint32_t rows, const uint32_t cols) {
+  std::array<uint32_t, 3> xyz;
+  xyz[1] = lin_index % cols;
+  const int updated_index = lin_index / cols;
+  xyz[0] = updated_index % rows;
+  xyz[2] = updated_index / rows;
+  return xyz;
 }
 
 }  // namespace common
