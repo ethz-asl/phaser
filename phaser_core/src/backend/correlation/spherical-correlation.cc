@@ -25,19 +25,9 @@ void SphericalCorrelation::correlateSignals(
   std::vector<double> averaged_pattern;
   retrieveInterpolation(f1, &averaged_signal);
   retrieveInterpolation(f2, &averaged_pattern);
-  // correlateSampledSignals(bw, averaged_signal, averaged_pattern);
 
   // Start signal correlation process
-  double* signal_values;
-  constexpr int is_real = 1;
-  softFFTWCor2(
-      bw, averaged_signal.data(), averaged_pattern.data(), &signal_values,
-      is_real);
-  CHECK_NOTNULL(signal_values);
-
-  const uint32_t len_corr = 8 * bw * bw * bw;
-  corr_.assign(signal_values, signal_values + len_corr);
-  delete[] signal_values;
+  correlateSampledSignals(bw, averaged_signal, averaged_pattern);
 }
 
 void SphericalCorrelation::correlateSampledSignals(
@@ -47,6 +37,8 @@ void SphericalCorrelation::correlateSampledSignals(
   double* signal_values;
   constexpr int is_real = 1;
   softFFTWCor2(bw, f1.data(), f2.data(), &signal_values, is_real);
+  CHECK_NOTNULL(signal_values);
+
   const uint32_t len_corr = 8 * bw * bw * bw;
   corr_.assign(signal_values, signal_values + len_corr);
   delete[] signal_values;
