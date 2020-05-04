@@ -39,11 +39,9 @@ class SphOptRegistration : public BaseRegistration {
   uncertainty::BaseEval& getPosEvaluation();
 
  protected:
-  void correlatePointcloud(
-      model::PointCloudPtr target, model::PointCloudPtr source,
-      std::array<double, 3>* const zyz);
+  std::vector<correlation::SphericalCorrelation> correlatePointcloud(
+      model::PointCloudPtr target, model::PointCloudPtr source);
 
-  correlation::SphericalCorrelation sph_corr_;
   const uint32_t bandwidth_;
   common::SphericalSampler sampler_;
   std::vector<model::FunctionValue> f_values_;

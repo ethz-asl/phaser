@@ -16,8 +16,7 @@ SphericalCorrelation::SphericalCorrelation()
 
 void SphericalCorrelation::correlateSignals(
     const std::vector<model::FunctionValue>& f1,
-    const std::vector<model::FunctionValue>& f2, const int bw,
-    std::array<double, 3>* const zyz) {
+    const std::vector<model::FunctionValue>& f2, const int bw) {
   bw_ = bw;
   VLOG(1) << "Starting the correlation with a " << bw << " bandwidth";
   double alpha, beta, gamma, maxcoeff = 0.0;
@@ -39,11 +38,6 @@ void SphericalCorrelation::correlateSignals(
   VLOG(2) << "max at: " << maxcoeff;
   const uint32_t len_corr = 8 * bw * bw * bw;
   corr_.assign(signal_values, signal_values + len_corr);
-
-  // Get result
-  (*zyz)[0] = std::fmod(alpha, two_pi_);
-  (*zyz)[1] = std::fmod(beta, two_pi_);
-  (*zyz)[2] = std::fmod(gamma, two_pi_);
 
   // CHECK_NOTNULL(signal_values);
   // convertSignalValues(signal_values, bw);

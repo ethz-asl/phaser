@@ -10,12 +10,6 @@ RegistrationResult::RegistrationResult()
       found_solution_for_translation_(true) {}
 
 RegistrationResult::RegistrationResult(
-    model::PointCloud&& reg_cloud, std::array<double, 3>&& rotation)
-    : rotation_(rotation), found_solution_for_rotation_(true) {
-  reg_cloud_ = std::make_shared<model::PointCloud>(reg_cloud);
-}
-
-RegistrationResult::RegistrationResult(
     model::PointCloud&& reg_cloud, common::Vector_t&& translation)
     : translation_(translation), found_solution_for_translation_(true) {
   reg_cloud_ = std::make_shared<model::PointCloud>(reg_cloud);

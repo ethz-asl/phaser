@@ -102,15 +102,13 @@ model::RegistrationResult SphRegistration::estimateRotation(
   cloud_cur->initialize_kd_tree();
 
   // Correlate point cloud and get uncertainty measure.
-  std::array<double, 3> zyz;
-  correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
+  correlatePointcloud(*cloud_prev, *cloud_cur);
   common::BaseDistributionPtr rot =
       correlation_eval_->calcRotationUncertainty(sph_corr_);
   Eigen::Vector4d inv = rot->getEstimate();
   inv.block(1, 0, 3, 1) = -inv.block(1, 0, 3, 1);
   Eigen::VectorXd b_est =
       common::RotationUtils::ConvertQuaternionToXYZ(rot->getEstimate());
-  Eigen::VectorXd corr_est = common::RotationUtils::ConvertZYZtoXYZ(zyz);
   if (!FLAGS_refine_rot_x)
     b_est(0) = 0;
   if (!FLAGS_refine_rot_y)
@@ -118,7 +116,6 @@ model::RegistrationResult SphRegistration::estimateRotation(
   if (!FLAGS_refine_rot_z)
     b_est(2) = 0;
 
-  VLOG(1) << "Corr rotation: " << corr_est.transpose();
   VLOG(1) << "Bingham q: " << rot->getEstimate().transpose();
   VLOG(1) << "Bingham rotation: " << b_est.transpose();
   common::RotationUtils::RotateAroundXYZ(
@@ -129,7 +126,7 @@ model::RegistrationResult SphRegistration::estimateRotation(
       cloud_cur, corr_est(0), corr_est(1), corr_est(2));
       */
 
-  model::RegistrationResult result(std::move(*cloud_cur), std::move(zyz));
+  model::RegistrationResult result(std::move(*cloud_cur));
   result.setRotUncertaintyEstimate(rot);
   result.setRotationCorrelation(sph_corr_.getCorrelation());
   return result;
@@ -172,10 +169,7 @@ void SphRegistration::getStatistics(common::StatisticsManager* manager) const
 }
 
 void SphRegistration::correlatePointcloud(
-    const model::PointCloud& source, const model::PointCloud& target,
-    std::array<double, 3>* const zyz) {
-  CHECK(zyz);
-
+    const model::PointCloud& source, const model::PointCloud& target) {
   const double duration_sample_f_ms = common::executeTimedFunction(
       &common::SphericalSampler::sampleUniformly, &sampler_, source,
       &f_values_);
@@ -186,7 +180,7 @@ void SphRegistration::correlatePointcloud(
 
   const double duration_correlation_ms = common::executeTimedFunction(
       &correlation::SphericalCorrelation::correlateSignals, &sph_corr_,
-      f_values_, h_values_, sampler_.getInitializedBandwith(), zyz);
+      f_values_, h_values_, sampler_.getInitializedBandwith());
 
   VLOG(1) << "Registered point cloud.\n"
           << "Sampling took for f and h: [" << duration_sample_f_ms << "ms,"

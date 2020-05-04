@@ -42,8 +42,7 @@ class SphRegistration : public BaseRegistration {
 
  protected:
   void correlatePointcloud(
-      const model::PointCloud& source, const model::PointCloud& target,
-      std::array<double, 3>* const zyz);
+      const model::PointCloud& source, const model::PointCloud& target);
 
   correlation::SphericalCorrelation sph_corr_;
   common::SphericalSampler sampler_;

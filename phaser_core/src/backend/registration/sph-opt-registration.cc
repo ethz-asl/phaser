@@ -49,25 +49,25 @@ model::RegistrationResult SphOptRegistration::estimateRotation(
   cloud_cur->initialize_kd_tree();
 
   // Correlate point cloud and get uncertainty measure.
-  std::array<double, 3> zyz;
-  correlatePointcloud(cloud_prev, cloud_cur, &zyz);
+  std::vector<correlation::SphericalCorrelation> correlations =
+      correlatePointcloud(cloud_prev, cloud_cur);
+  correlation::SphericalCorrelation& corr = correlations[0];
+
   common::BaseDistributionPtr rot =
-      correlation_eval_->calcRotationUncertainty(sph_corr_);
+      correlation_eval_->calcRotationUncertainty(corr);
   Eigen::Vector4d inv = rot->getEstimate();
   inv.block(1, 0, 3, 1) = -inv.block(1, 0, 3, 1);
   Eigen::VectorXd b_est =
       common::RotationUtils::ConvertQuaternionToXYZ(rot->getEstimate());
-  Eigen::VectorXd corr_est = common::RotationUtils::ConvertZYZtoXYZ(zyz);
 
-  VLOG(1) << "Corr rotation: " << corr_est.transpose();
   VLOG(1) << "Bingham q: " << rot->getEstimate().transpose();
   VLOG(1) << "Bingham rotation: " << b_est.transpose();
   common::RotationUtils::RotateAroundXYZ(
       cloud_cur, b_est(0), b_est(1), b_est(2));
 
-  model::RegistrationResult result(std::move(*cloud_cur), std::move(zyz));
+  model::RegistrationResult result(std::move(*cloud_cur));
   result.setRotUncertaintyEstimate(rot);
-  result.setRotationCorrelation(sph_corr_.getCorrelation());
+  result.setRotationCorrelation(corr.getCorrelation());
   return result;
 }
 
@@ -98,15 +98,12 @@ void SphOptRegistration::estimateTranslation(
 void SphOptRegistration::getStatistics(common::StatisticsManager* manager) const
     noexcept {
   BaseRegistration::getStatistics(manager);
-  sph_corr_.getStatistics(manager);
 }
 
-void SphOptRegistration::correlatePointcloud(
-    model::PointCloudPtr target, model::PointCloudPtr source,
-    std::array<double, 3>* const zyz) {
-  CHECK(zyz);
-
-  common::BaseWorkerPtr corr_intensity_worker =
+std::vector<correlation::SphericalCorrelation>
+SphOptRegistration::correlatePointcloud(
+    model::PointCloudPtr target, model::PointCloudPtr source) {
+  correlation::SphericalCorrelationWorkerPtr corr_intensity_worker =
       std::make_shared<correlation::SphericalCorrelationWorker>(
           source, target, bandwidth_);
   th_pool_.add_worker(corr_intensity_worker);
@@ -129,6 +126,7 @@ void SphOptRegistration::correlatePointcloud(
           << duration_sample_h_ms << "ms]. \n"
           << "Correlation took: " << duration_correlation_ms << "ms.";
   */
+  return {corr_intensity_worker->getCorrelationObject()};
 }
 
 void SphOptRegistration::setBandwith(const int bandwith) {

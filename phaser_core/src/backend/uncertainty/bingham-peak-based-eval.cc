@@ -34,7 +34,6 @@ common::Bingham BinghamPeakBasedEval::fitRotationalBinghamDistribution(
 
   uint32_t start, end;
   calculateStartEndNeighbor(*max_signal, n_corr, &start, &end);
-  const uint32_t num_elements = end - start + 1u;
   Eigen::MatrixXd samples =
       Eigen::MatrixXd::Zero(4, 2 * FLAGS_bingham_peak_neighbors + 1);
   Eigen::RowVectorXd weights =

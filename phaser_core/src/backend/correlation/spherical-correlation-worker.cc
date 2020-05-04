@@ -20,9 +20,8 @@ void SphericalCorrelationWorker::run() {
   sampler_.sampleUniformly(*target_, &f_values);
   sampler_.sampleUniformly(*source_, &h_values);
 
-  std::array<double, 3> zyz;
   sph_corr_.correlateSignals(
-      f_values, h_values, sampler_.getInitializedBandwith(), &zyz);
+      f_values, h_values, sampler_.getInitializedBandwith());
 
   is_completed_ = true;
 }
@@ -30,6 +29,11 @@ void SphericalCorrelationWorker::run() {
 std::vector<double> SphericalCorrelationWorker::getCorrelation() const
     noexcept {
   return sph_corr_.getCorrelation();
+}
+
+const SphericalCorrelation& SphericalCorrelationWorker::getCorrelationObject()
+    const noexcept {
+  return sph_corr_;
 }
 
 }  // namespace correlation

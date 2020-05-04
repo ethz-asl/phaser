@@ -15,8 +15,7 @@ class SphericalCorrelation {
   SphericalCorrelation();
   void correlateSignals(
       const std::vector<model::FunctionValue>& f1,
-      const std::vector<model::FunctionValue>& f2, const int bw,
-      std::array<double, 3>* const zyz);
+      const std::vector<model::FunctionValue>& f2, const int bw);
 
   void getStatistics(common::StatisticsManager* manager) const noexcept;
   std::vector<double> getCorrelation() const noexcept;

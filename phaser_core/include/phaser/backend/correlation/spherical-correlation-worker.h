@@ -1,6 +1,7 @@
 #ifndef PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_WORKER_H_
 #define PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_WORKER_H_
 
+#include <memory>
 #include <vector>
 
 #include "phaser/backend/correlation/spherical-correlation.h"
@@ -19,6 +20,7 @@ class SphericalCorrelationWorker : public common::BaseWorker {
   void run() override;
 
   std::vector<double> getCorrelation() const noexcept;
+  const SphericalCorrelation& getCorrelationObject() const noexcept;
 
  private:
   model::PointCloudPtr source_;
@@ -26,6 +28,8 @@ class SphericalCorrelationWorker : public common::BaseWorker {
   common::SphericalSampler sampler_;
   SphericalCorrelation sph_corr_;
 };
+using SphericalCorrelationWorkerPtr =
+    std::shared_ptr<SphericalCorrelationWorker>;
 
 }  // namespace correlation
 
