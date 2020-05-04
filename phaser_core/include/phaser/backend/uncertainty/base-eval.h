@@ -12,7 +12,9 @@ namespace uncertainty {
 
 class BaseEval {
  public:
-  virtual common::BaseDistributionPtr evaluateCorrelationFromTranslation() = 0;
+  virtual common::BaseDistributionPtr evaluateCorrelationFromTranslation(
+      const uint32_t n_voxels, const int discretize_lower_bound,
+      const int discretize_upper_bound, const std::vector<double>& corr) = 0;
   virtual common::BaseDistributionPtr evaluateCorrelationFromRotation(
       const uint32_t bw, const std::vector<double>& corr) = 0;
 };

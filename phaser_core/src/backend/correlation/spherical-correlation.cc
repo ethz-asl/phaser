@@ -89,4 +89,8 @@ std::vector<double> SphericalCorrelation::getCorrelation() const noexcept {
   return corr_;
 }
 
+uint32_t SphericalCorrelation::getBandwidth() const noexcept {
+  return bw_;
+}
+
 }  // namespace correlation

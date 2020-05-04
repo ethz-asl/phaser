@@ -1,5 +1,5 @@
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
-#include "phaser/backend/alignment/phase-aligner.h"
+#include "phaser/common/translation-utils.h"
 #include "phaser/distribution/gaussian.h"
 
 #include <glog/logging.h>
@@ -14,8 +14,10 @@ common::BaseDistributionPtr GaussianPeakBasedEval::evaluatePeakBasedCorrelation(
     const uint32_t n_voxels, const int discretize_lower_bound,
     const int discretize_upper_bound, const std::set<uint32_t>& signals,
     const std::vector<double>& norm_corr) const {
-  common::GaussianPtr gaussian = std::make_shared<common::Gaussian>(
-      fitTranslationalNormalDist(aligner, signals, norm_corr));
+  common::GaussianPtr gaussian =
+      std::make_shared<common::Gaussian>(fitTranslationalNormalDist(
+          n_voxels, discretize_lower_bound, discretize_upper_bound, signals,
+          norm_corr));
   return gaussian;
 }
 
@@ -57,7 +59,9 @@ common::Gaussian GaussianPeakBasedEval::fitTranslationalNormalDist(
       Eigen::MatrixXd::Zero(3, 2 * FLAGS_gaussian_peak_neighbors + 1);
   Eigen::VectorXd weights =
       Eigen::VectorXd::Zero(2 * FLAGS_gaussian_peak_neighbors + 1);
-  retrievePeakNeighbors(start, end, norm_corr, aligner, &samples, &weights);
+  retrievePeakNeighbors(
+      n_voxels, discretize_lower_bound, discretize_upper_bound, start, end,
+      norm_corr, &samples, &weights);
 
   VLOG(1) << "samples:\n" << samples;
   VLOG(1) << "b_weights: " << weights.transpose();
@@ -76,14 +80,15 @@ void GaussianPeakBasedEval::retrievePeakNeighbors(
   // Extract translational estimates.
   uint32_t k = 0u;
   for (uint32_t i = start; i <= end; ++i) {
-    std::array<uint32_t, 3> xyz = common::TranlationUtils::ind2sub(i, n_voxels);
-    (*samples)(0, k) = common::TranlationUtils::ComputeTranslationFromIndex(
+    std::array<uint32_t, 3> xyz =
+        common::TranslationUtils::Ind2sub(i, n_voxels);
+    (*samples)(0, k) = common::TranslationUtils::ComputeTranslationFromIndex(
         static_cast<double>(xyz[0]), n_voxels, discretize_lower_bound,
         discretize_upper_bound);
-    (*samples)(1, k) = common::TranlationUtils::ComputeTranslationFromIndex(
+    (*samples)(1, k) = common::TranslationUtils::ComputeTranslationFromIndex(
         static_cast<double>(xyz[1]), n_voxels, discretize_lower_bound,
         discretize_upper_bound);
-    (*samples)(2, k) = common::TranlationUtils::ComputeTranslationFromIndex(
+    (*samples)(2, k) = common::TranslationUtils::ComputeTranslationFromIndex(
         static_cast<double>(xyz[2]), n_voxels, discretize_lower_bound,
         discretize_upper_bound);
     (*weights)(k) = norm_corr.at(i);

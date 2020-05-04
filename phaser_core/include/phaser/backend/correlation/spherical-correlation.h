@@ -20,6 +20,7 @@ class SphericalCorrelation {
 
   void getStatistics(common::StatisticsManager* manager) const noexcept;
   std::vector<double> getCorrelation() const noexcept;
+  uint32_t getBandwidth() const noexcept;
 
  private:
   void convertSignalValues(double* signal_values, const int bw);

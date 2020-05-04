@@ -18,13 +18,10 @@ namespace registration {
 
 SphOptRegistration::SphOptRegistration()
     : BaseRegistration("SphOptRegistration"), sampler_(150) {
-  aligner_ = std::make_unique<alignment::PhaseAligner>();
-
   uncertainty::BaseEvalPtr rot_eval =
-      std::make_unique<uncertainty::BinghamPeakBasedEval>(*aligner_, sph_corr_);
+      std::make_unique<uncertainty::BinghamPeakBasedEval>();
   uncertainty::BaseEvalPtr pos_eval =
-      std::make_unique<uncertainty::GaussianPeakBasedEval>(
-          *aligner_, sph_corr_);
+      std::make_unique<uncertainty::GaussianPeakBasedEval>();
   correlation_eval_ = std::make_unique<uncertainty::PhaseCorrelationEval>(
       std::move(rot_eval), std::move(pos_eval));
 }
@@ -55,7 +52,7 @@ model::RegistrationResult SphOptRegistration::estimateRotation(
   std::array<double, 3> zyz;
   correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
   common::BaseDistributionPtr rot =
-      correlation_eval_->calcRotationUncertainty();
+      correlation_eval_->calcRotationUncertainty(sph_corr_);
   Eigen::Vector4d inv = rot->getEstimate();
   inv.block(1, 0, 3, 1) = -inv.block(1, 0, 3, 1);
   Eigen::VectorXd b_est =
@@ -81,11 +78,11 @@ void SphOptRegistration::estimateTranslation(
   common::Vector_t xyz;
   model::PointCloudPtr rot_cloud = result->getRegisteredCloud();
   const double duration_translation_f_ms = common::executeTimedFunction(
-      &alignment::BaseAligner::alignRegistered, &(*aligner_), *cloud_prev,
+      &alignment::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
       f_values_, *rot_cloud, h_values_, &xyz);
   CHECK_EQ(xyz.rows(), 3);
   common::BaseDistributionPtr pos =
-      correlation_eval_->calcTranslationUncertainty();
+      correlation_eval_->calcTranslationUncertainty(aligner_);
   Eigen::VectorXd g_est = pos->getEstimate();
 
   VLOG(1) << "Corr translation: " << xyz.transpose();
@@ -131,10 +128,12 @@ void SphOptRegistration::setBandwith(const int bandwith) {
 }
 
 uncertainty::BaseEval& SphOptRegistration::getRotEvaluation() {
+  CHECK_NOTNULL(correlation_eval_);
   return correlation_eval_->getRotationEval();
 }
 
 uncertainty::BaseEval& SphOptRegistration::getPosEvaluation() {
+  CHECK_NOTNULL(correlation_eval_);
   return correlation_eval_->getPositionEval();
 }
 

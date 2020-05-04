@@ -13,12 +13,12 @@ namespace uncertainty {
 class BinghamPeakBasedEval : public ZScoreEval {
  public:
   common::BaseDistributionPtr evaluatePeakBasedCorrelation(
-      const int bw, const std::set<uint32_t>& signals,
+      const uint32_t bw, const std::set<uint32_t>& signals,
       const std::vector<double>& normalized_corr) const override;
 
  private:
   common::Bingham fitRotationalBinghamDistribution(
-      const int bw, const std::set<uint32_t>& signals,
+      const uint32_t bw, const std::set<uint32_t>& signals,
       const std::vector<double>& norm_corr) const;
 
   void calculateStartEndNeighbor(
@@ -26,7 +26,7 @@ class BinghamPeakBasedEval : public ZScoreEval {
       uint32_t* end) const;
 
   void retrievePeakNeighbors(
-      const int bw, const uint32_t start, const uint32_t end,
+      const uint32_t bw, const uint32_t start, const uint32_t end,
       const std::vector<double>& norm_corr, Eigen::MatrixXd* samples,
       Eigen::RowVectorXd* weights) const;
 };

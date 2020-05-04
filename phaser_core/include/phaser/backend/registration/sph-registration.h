@@ -49,7 +49,7 @@ class SphRegistration : public BaseRegistration {
   common::SphericalSampler sampler_;
   std::vector<model::FunctionValue> f_values_;
   std::vector<model::FunctionValue> h_values_;
-  alignment::BaseAlignerPtr aligner_;
+  alignment::PhaseAligner aligner_;
   uncertainty::PhaseCorrelationEvalPtr correlation_eval_;
 
   // Statistics

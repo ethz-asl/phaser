@@ -30,8 +30,8 @@ common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromTranslation(
       n_corr_ds);
 }
 
-void ZScoreEval::evaluateCorrelationFromRotation(
-    const int bw, const std::vector<double>& corr) {
+common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromRotation(
+    const uint32_t bw, const std::vector<double>& corr) {
   std::set<uint32_t> signals;
   std::vector<double> n_corr_ds;
   evaluateCorrelationVector(corr, &signals, &n_corr_ds);
@@ -74,7 +74,7 @@ ZScorePeakExtraction& ZScoreEval::getPeakExtraction() {
 }
 
 common::BaseDistributionPtr ZScoreEval::evaluatePeakBasedCorrelation(
-    const int bw, const std::set<uint32_t>& signals,
+    const uint32_t bw, const std::set<uint32_t>& signals,
     const std::vector<double>& normalized_corr) const {
   LOG(FATAL)
       << "Peak based eval using bw is not implemented for this correlation.";
@@ -89,4 +89,3 @@ common::BaseDistributionPtr ZScoreEval::evaluatePeakBasedCorrelation(
 }
 
 }  // namespace uncertainty
-y
