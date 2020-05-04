@@ -1,5 +1,5 @@
-#ifndef PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_WORKER_H_
-#define PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_WORKER_H_
+#ifndef PHASER_BACKEND_CORRELATION_SPHERICAL_INTENSITY_WORKER_H_
+#define PHASER_BACKEND_CORRELATION_SPHERICAL_INTENSITY_WORKER_H_
 
 #include <memory>
 #include <vector>
@@ -12,9 +12,9 @@
 
 namespace correlation {
 
-class SphericalCorrelationWorker : public common::BaseWorker {
+class SphericalIntensityWorker : public common::BaseWorker {
  public:
-  explicit SphericalCorrelationWorker(
+  explicit SphericalIntensityWorker(
       const model::FunctionValueVec& f_values,
       const model::FunctionValueVec& h_values, const uint16_t bandwidth);
 
@@ -29,9 +29,8 @@ class SphericalCorrelationWorker : public common::BaseWorker {
   const model::FunctionValueVec& h_values_;
   const uint32_t bw_;
 };
-using SphericalCorrelationWorkerPtr =
-    std::shared_ptr<SphericalCorrelationWorker>;
+using SphericalIntensityWorkerPtr = std::shared_ptr<SphericalIntensityWorker>;
 
 }  // namespace correlation
 
-#endif  // PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_WORKER_H_
+#endif  // PHASER_BACKEND_CORRELATION_SPHERICAL_INTENSITY_WORKER_H_

@@ -7,7 +7,7 @@
 
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/correlation/spatial-correlation-cuda.h"
-#include "phaser/backend/correlation/spherical-correlation-worker.h"
+#include "phaser/backend/correlation/spherical-intensity-worker.h"
 #include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
 #include "phaser/common/rotation-utils.h"
@@ -112,8 +112,8 @@ SphOptRegistration::correlatePointcloud(
   sampler_.sampleUniformly(*target, &f_values);
   sampler_.sampleUniformly(*source, &h_values);
 
-  correlation::SphericalCorrelationWorkerPtr corr_intensity_worker =
-      std::make_shared<correlation::SphericalCorrelationWorker>(
+  correlation::SphericalIntensityWorkerPtr corr_intensity_worker =
+      std::make_shared<correlation::SphericalIntensityWorker>(
           f_values, h_values, sampler_.getInitializedBandwith());
   th_pool_.add_worker(corr_intensity_worker);
   th_pool_.run_and_wait_all();
