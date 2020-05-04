@@ -1,23 +1,23 @@
 #include "phaser/backend/registration/sph-opt-registration.h"
+
+#include <algorithm>
+#include <iostream>
+
+#include <glog/logging.h>
+
 #include "phaser/backend/alignment/phase-aligner.h"
-#include "phaser/backend/alignment/range-based-aligner.h"
 #include "phaser/backend/correlation/spatial-correlation-cuda.h"
+#include "phaser/backend/correlation/spherical-correlation-worker.h"
 #include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
-#include "phaser/backend/uncertainty/bmm-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
-#include "phaser/backend/uncertainty/gmm-peak-based-eval.h"
 #include "phaser/common/rotation-utils.h"
 #include "phaser/common/statistic-utils.h"
 #include "phaser/common/translation-utils.h"
 
-#include <algorithm>
-#include <glog/logging.h>
-#include <iostream>
-
 namespace registration {
 
 SphOptRegistration::SphOptRegistration()
-    : BaseRegistration("SphOptRegistration"), sampler_(150) {
+    : BaseRegistration("SphOptRegistration"), bandwidth_(150), sampler_(150) {
   uncertainty::BaseEvalPtr rot_eval =
       std::make_unique<uncertainty::BinghamPeakBasedEval>();
   uncertainty::BaseEvalPtr pos_eval =
@@ -50,7 +50,7 @@ model::RegistrationResult SphOptRegistration::estimateRotation(
 
   // Correlate point cloud and get uncertainty measure.
   std::array<double, 3> zyz;
-  correlatePointcloud(*cloud_prev, *cloud_cur, &zyz);
+  correlatePointcloud(cloud_prev, cloud_cur, &zyz);
   common::BaseDistributionPtr rot =
       correlation_eval_->calcRotationUncertainty(sph_corr_);
   Eigen::Vector4d inv = rot->getEstimate();
@@ -102,10 +102,17 @@ void SphOptRegistration::getStatistics(common::StatisticsManager* manager) const
 }
 
 void SphOptRegistration::correlatePointcloud(
-    const model::PointCloud& source, const model::PointCloud& target,
+    model::PointCloudPtr target, model::PointCloudPtr source,
     std::array<double, 3>* const zyz) {
   CHECK(zyz);
 
+  common::BaseWorkerPtr corr_intensity_worker =
+      std::make_shared<correlation::SphericalCorrelationWorker>(
+          source, target, bandwidth_);
+  th_pool_.add_worker(corr_intensity_worker);
+  th_pool_.run_and_wait_all();
+
+  /*
   const double duration_sample_f_ms = common::executeTimedFunction(
       &common::SphericalSampler::sampleUniformly, &sampler_, source,
       &f_values_);
@@ -121,6 +128,7 @@ void SphOptRegistration::correlatePointcloud(
           << "Sampling took for f and h: [" << duration_sample_f_ms << "ms,"
           << duration_sample_h_ms << "ms]. \n"
           << "Correlation took: " << duration_correlation_ms << "ms.";
+  */
 }
 
 void SphOptRegistration::setBandwith(const int bandwith) {

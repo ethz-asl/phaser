@@ -1,17 +1,18 @@
 #ifndef PHASER_BACKEND_REGISTRATION_SPH_OPT_REGISTRATION_H_
 #define PHASER_BACKEND_REGISTRATION_SPH_OPT_REGISTRATION_H_
 
+#include <array>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "phaser/backend/alignment/base-aligner.h"
 #include "phaser/backend/correlation/spherical-correlation.h"
 #include "phaser/backend/registration/base-registration.h"
 #include "phaser/backend/uncertainty/base-eval.h"
 #include "phaser/backend/uncertainty/phase-correlation-eval.h"
 #include "phaser/common/spherical-sampler.h"
-
-#include <array>
-#include <memory>
-#include <string>
-#include <vector>
+#include "phaser/common/thread-pool.h"
 
 namespace registration {
 
@@ -39,15 +40,17 @@ class SphOptRegistration : public BaseRegistration {
 
  protected:
   void correlatePointcloud(
-      const model::PointCloud& source, const model::PointCloud& target,
+      model::PointCloudPtr target, model::PointCloudPtr source,
       std::array<double, 3>* const zyz);
 
   correlation::SphericalCorrelation sph_corr_;
+  const uint32_t bandwidth_;
   common::SphericalSampler sampler_;
   std::vector<model::FunctionValue> f_values_;
   std::vector<model::FunctionValue> h_values_;
   alignment::PhaseAligner aligner_;
   uncertainty::PhaseCorrelationEvalPtr correlation_eval_;
+  common::ThreadPool th_pool_;
 };
 
 using SphCudaRegistrationPtr = std::unique_ptr<SphOptRegistration>;
