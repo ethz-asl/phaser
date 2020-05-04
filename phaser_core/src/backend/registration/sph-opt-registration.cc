@@ -117,24 +117,6 @@ SphOptRegistration::correlatePointcloud(
           f_values, h_values, sampler_.getInitializedBandwith());
   th_pool_.add_worker(corr_intensity_worker);
   th_pool_.run_and_wait_all();
-
-  /*
-  const double duration_sample_f_ms = common::executeTimedFunction(
-      &common::SphericalSampler::sampleUniformly, &sampler_, source,
-      &f_values_);
-  const double duration_sample_h_ms = common::executeTimedFunction(
-      &common::SphericalSampler::sampleUniformly, &sampler_, target,
-      &h_values_);
-
-  const double duration_correlation_ms = common::executeTimedFunction(
-      &correlation::SphericalCorrelation::correlateSignals, &sph_corr_,
-      f_values_, h_values_, sampler_.getInitializedBandwith(), zyz);
-
-  VLOG(1) << "Registered point cloud.\n"
-          << "Sampling took for f and h: [" << duration_sample_f_ms << "ms,"
-          << duration_sample_h_ms << "ms]. \n"
-          << "Correlation took: " << duration_correlation_ms << "ms.";
-  */
   return {corr_intensity_worker->getCorrelationObject()};
 }
 

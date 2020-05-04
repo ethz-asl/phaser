@@ -12,7 +12,13 @@ SphericalCorrelationWorker::SphericalCorrelationWorker(
 void SphericalCorrelationWorker::run() {
   VLOG(1) << "[SphRegistrationWorker] Estimating rotation...";
 
-  sph_corr_.correlateSignals(f_values_, h_values_, bw_);
+  std::vector<double> f_intensities;
+  std::vector<double> h_intensities;
+  std::function<double(const model::FunctionValue&)> func =
+      [](const model::FunctionValue& v) { return v.getAveragedIntensity(); };
+  convertFunctionValues(f_values_, func, &f_intensities);
+  convertFunctionValues(h_values_, func, &h_intensities);
+  sph_corr_.correlateSampledSignals(bw_, f_intensities, h_intensities);
 
   is_completed_ = true;
 }

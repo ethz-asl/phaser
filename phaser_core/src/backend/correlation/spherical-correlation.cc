@@ -19,31 +19,37 @@ void SphericalCorrelation::correlateSignals(
     const std::vector<model::FunctionValue>& f2, const int bw) {
   bw_ = bw;
   VLOG(1) << "Starting the correlation with a " << bw << " bandwidth";
-  double alpha, beta, gamma, maxcoeff = 0.0;
-  constexpr int is_real = 1;
 
   // Retrieve S2 function values
   std::vector<double> averaged_signal;
   std::vector<double> averaged_pattern;
   retrieveInterpolation(f1, &averaged_signal);
   retrieveInterpolation(f2, &averaged_pattern);
+  // correlateSampledSignals(bw, averaged_signal, averaged_pattern);
 
   // Start signal correlation process
-  double* signal_coeff;
   double* signal_values;
+  constexpr int is_real = 1;
   softFFTWCor2(
-      bw, averaged_signal.data(), averaged_pattern.data(), &alpha, &beta,
-      &gamma, &maxcoeff, &signal_values, &signal_coeff, is_real);
-  VLOG(2) << "done, result: " << alpha << ", " << beta << ", " << gamma;
-  VLOG(2) << "max at: " << maxcoeff;
+      bw, averaged_signal.data(), averaged_pattern.data(), &signal_values,
+      is_real);
+  CHECK_NOTNULL(signal_values);
+
   const uint32_t len_corr = 8 * bw * bw * bw;
   corr_.assign(signal_values, signal_values + len_corr);
-
-  // CHECK_NOTNULL(signal_values);
-  // convertSignalValues(signal_values, bw);
-  // convertSignalCoeff(signal_coeff, bw);
   delete[] signal_values;
-  delete[] signal_coeff;
+}
+
+void SphericalCorrelation::correlateSampledSignals(
+    const int bw, std::vector<double>& f1, std::vector<double>& f2) {
+  VLOG(1) << "Starting the correlation with a " << bw << " bandwidth";
+  bw_ = bw;
+  double* signal_values;
+  constexpr int is_real = 1;
+  softFFTWCor2(bw, f1.data(), f2.data(), &signal_values, is_real);
+  const uint32_t len_corr = 8 * bw * bw * bw;
+  corr_.assign(signal_values, signal_values + len_corr);
+  delete[] signal_values;
 }
 
 void SphericalCorrelation::getStatistics(

@@ -86,13 +86,8 @@ change the bandwidth you want to correlate at, or correlate complex-valued
 
 ***********************************/
 
-void softFFTWCor2( int bw,
-       double *sig,
-       double *pat,
-       double *alpha, double *beta, double *gamma,
-       double *maxval, double **signal_values,
-       double **signal_coeff, int isReal )
-{
+void softFFTWCor2(
+    int bw, double* sig, double* pat, double** signal_values, int isReal) {
   int i ;
   int n, bwIn, bwOut, degLim ;
   fftw_complex *workspace1, *workspace2  ;
@@ -118,12 +113,6 @@ void softFFTWCor2( int bw,
   degLim = bw - 1 ;
   n = 2 * bwIn ;
 
-  if (signal_values != NULL) {
-    if (*signal_values != NULL) {
-      free(*signal_values);
-    }
-  }
-
   const int bwOutp2 = bwOut * bwOut;
   const int bwOutp3 = bwOutp2 * bwOut;
   const int so3bw = 8 * bwOutp3;
@@ -132,7 +121,6 @@ void softFFTWCor2( int bw,
   tmpI = (double *) malloc( sizeof(double) * ( n * n ) );
   so3Sig = fftw_malloc(sizeof(fftw_complex) * (so3bw));
   *signal_values = (double*)malloc(sizeof(double) * (so3bw));
-  *signal_coeff = (double*)malloc(sizeof(double) * bwInp2);
   workspace1 = fftw_malloc(sizeof(fftw_complex) * (so3bw));
   workspace2 =
       fftw_malloc(sizeof(fftw_complex) * ((14 * bwInp2) + (48 * bwIn)));
@@ -308,32 +296,11 @@ void softFFTWCor2( int bw,
         &p1,
         isReal ) ;
 
-  /* now find max value */
-  *maxval = 0.0 ;
-  maxloc = 0 ;
+  /* copy values for now. */
   for (i = 0; i < so3bw; ++i) {
     tmpval = NORM( so3Sig[i] );
     (*signal_values)[i] = tmpval;
-    if ( tmpval > *maxval ) {
-      *maxval = tmpval;
-      maxloc = i ;
-    }
   }
-  printf("found maximum at: %d", maxloc);
-  *maxval = maxloc;
-  for (i = 0; i < bwIn * bwIn; ++i) {
-    (*signal_coeff)[i] = patCoefR[i];
-  }
-
-  ii = floor(maxloc / (4. * bwOutp2));
-  tmp = maxloc - (ii * 4. * bwOutp2);
-  jj = floor( tmp / (2.*bwOut) );
-  tmp = maxloc - (ii * 4 * bwOutp2) - jj * (2 * bwOut);
-  kk = tmp;
-
-  *alpha = M_PI*jj/((double) bwOut) ;
-  *beta =  M_PI*(2*ii+1)/(4.*bwOut) ;
-  *gamma = M_PI*kk/((double) bwOut) ;
 
   /* clean up */
   fftw_destroy_plan( p1 );
