@@ -1,5 +1,5 @@
-#ifndef PACKLO_MODEL_REGISTRATION_RESULT_H_
-#define PACKLO_MODEL_REGISTRATION_RESULT_H_
+#ifndef PHASER_MODEL_REGISTRATION_RESULT_H_
+#define PHASER_MODEL_REGISTRATION_RESULT_H_
 
 #include "phaser/distribution/base-distribution.h"
 #include "phaser/model/point-cloud.h"
@@ -14,8 +14,6 @@ namespace model {
 class RegistrationResult {
  public:
   RegistrationResult();
-  explicit RegistrationResult(
-      model::PointCloud&& reg_cloud, std::array<double, 3>&& rotation);
   explicit RegistrationResult(
       model::PointCloud&& reg_cloud, common::Vector_t&& rotation);
   explicit RegistrationResult(model::PointCloudPtr reg_cloud);
@@ -57,4 +55,4 @@ class RegistrationResult {
 
 }  // namespace model
 
-#endif  // PACKLO_MODEL_REGISTRATION_RESULT_H_
+#endif  // PHASER_MODEL_REGISTRATION_RESULT_H_

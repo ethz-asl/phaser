@@ -42,14 +42,13 @@ class SphRegistration : public BaseRegistration {
 
  protected:
   void correlatePointcloud(
-      const model::PointCloud& source, const model::PointCloud& target,
-      std::array<double, 3>* const zyz);
+      const model::PointCloud& source, const model::PointCloud& target);
 
   correlation::SphericalCorrelation sph_corr_;
   common::SphericalSampler sampler_;
   std::vector<model::FunctionValue> f_values_;
   std::vector<model::FunctionValue> h_values_;
-  alignment::BaseAlignerPtr aligner_;
+  alignment::PhaseAligner aligner_;
   uncertainty::PhaseCorrelationEvalPtr correlation_eval_;
 
   // Statistics

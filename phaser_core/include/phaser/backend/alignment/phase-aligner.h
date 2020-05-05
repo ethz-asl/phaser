@@ -23,6 +23,9 @@ class PhaseAligner : public BaseAligner {
       common::Vector_t* xyz) override;
 
   std::vector<double> getCorrelation() const override;
+  uint32_t getNumberOfVoxels() const noexcept;
+  uint32_t getLowerBound() const noexcept;
+  uint32_t getUpperBound() const noexcept;
   double computeTranslationFromIndex(double index) const;
   std::array<uint32_t, 3> ind2sub(const uint32_t lin_index) const;
 
@@ -39,7 +42,10 @@ class PhaseAligner : public BaseAligner {
   Eigen::VectorXd f_;
   Eigen::VectorXd g_;
   Eigen::VectorXd hist_;
+  const uint32_t n_voxels_;
   const uint32_t total_n_voxels_;
+  const int lower_bound_;
+  const int upper_bound_;
   correlation::BaseSpatialCorrelationPtr spatial_correlation_;
   std::vector<double> previous_correlation_;
 };

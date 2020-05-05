@@ -24,17 +24,18 @@ DEFINE_double(
 namespace alignment {
 
 PhaseAligner::PhaseAligner()
-    : total_n_voxels_(
-          FLAGS_phase_n_voxels * FLAGS_phase_n_voxels * FLAGS_phase_n_voxels) {
+    : n_voxels_(FLAGS_phase_n_voxels),
+      total_n_voxels_(
+          FLAGS_phase_n_voxels * FLAGS_phase_n_voxels * FLAGS_phase_n_voxels),
+      lower_bound_(FLAGS_phase_discretize_lower),
+      upper_bound_(FLAGS_phase_discretize_upper) {
   VLOG(1) << "Initializing phase alignment with " << FLAGS_phase_n_voxels
-          << " voxels in [" << FLAGS_phase_discretize_lower << ", "
-          << FLAGS_phase_discretize_upper << "].";
+          << " voxels in [" << lower_bound_ << ", " << upper_bound_ << "].";
   // Allocate memory for the function signals in the time domain.
   f_ = Eigen::VectorXd::Zero(total_n_voxels_);
   g_ = Eigen::VectorXd::Zero(total_n_voxels_);
   hist_ = Eigen::VectorXd::Zero(total_n_voxels_);
-  spatial_correlation_.reset(
-      new correlation::SpatialCorrelation(FLAGS_phase_n_voxels));
+  spatial_correlation_.reset(new correlation::SpatialCorrelation(n_voxels_));
 }
 
 void PhaseAligner::alignRegistered(
@@ -53,8 +54,7 @@ void PhaseAligner::alignRegistered(
   // Find the index that maximizes the correlation.
   const auto max_corr = std::max_element(c, c + total_n_voxels_);
   const uint32_t max = std::distance(c, max_corr);
-  std::array<uint32_t, 3> max_xyz =
-      ind2sub(max, FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);
+  std::array<uint32_t, 3> max_xyz = ind2sub(max, n_voxels_, n_voxels_);
   VLOG(1) << "Found max correlation at " << max
           << " with the value:" << *max_corr << " xyz: " << max_xyz[0] << " , "
           << max_xyz[1] << " , " << max_xyz[2];
@@ -72,9 +72,8 @@ void PhaseAligner::discretizePointcloud(
 
   VLOG(1) << "Discretizing point cloud...";
   Eigen::MatrixXf data = cloud.getRawCloud()->getMatrixXfMap();
-  Eigen::VectorXf edges = Eigen::VectorXf::LinSpaced(
-      FLAGS_phase_n_voxels, FLAGS_phase_discretize_lower,
-      FLAGS_phase_discretize_upper);
+  Eigen::VectorXf edges =
+      Eigen::VectorXf::LinSpaced(n_voxels_, lower_bound_, upper_bound_);
 
   // Discretize the point cloud using an cartesian grid.
   VLOG(1) << "Performing histogram counts.";
@@ -89,9 +88,8 @@ void PhaseAligner::discretizePointcloud(
   const uint32_t n_points = data.cols();
   const uint32_t n_f = f->rows();
   for (uint32_t i = 0u; i < n_points; ++i) {
-    const uint32_t lin_index = sub2ind(
-        x_bins(i), y_bins(i), z_bins(i), FLAGS_phase_n_voxels,
-        FLAGS_phase_n_voxels);
+    const uint32_t lin_index =
+        sub2ind(x_bins(i), y_bins(i), z_bins(i), n_voxels_, n_voxels_);
     if (lin_index > n_f) {
       continue;
     }
@@ -109,8 +107,9 @@ uint32_t PhaseAligner::sub2ind(
     const uint32_t cols) const {
   return (i * cols + j) + (rows * cols * k);
 }
+
 std::array<uint32_t, 3> PhaseAligner::ind2sub(const uint32_t lin_index) const {
-  return ind2sub(lin_index, FLAGS_phase_n_voxels, FLAGS_phase_n_voxels);
+  return ind2sub(lin_index, n_voxels_, n_voxels_);
 }
 
 std::array<uint32_t, 3> PhaseAligner::ind2sub(
@@ -124,17 +123,28 @@ std::array<uint32_t, 3> PhaseAligner::ind2sub(
 }
 
 double PhaseAligner::computeTranslationFromIndex(double index) const {
-  static double n_voxels_half = FLAGS_phase_n_voxels / 2.0;
-  static double width = std::abs(FLAGS_phase_discretize_lower) +
-                        std::abs(FLAGS_phase_discretize_upper);
+  static double n_voxels_half = n_voxels_ / 2.0;
+  static double width = std::abs(lower_bound_) + std::abs(upper_bound_);
   if (index <= n_voxels_half) {
-    return ((index)*width) / FLAGS_phase_n_voxels;
+    return ((index)*width) / n_voxels_;
   }
-  return (index - FLAGS_phase_n_voxels) * width / FLAGS_phase_n_voxels;
+  return (index - n_voxels_) * width / n_voxels_;
 }
 
 std::vector<double> PhaseAligner::getCorrelation() const {
   return previous_correlation_;
+}
+
+uint32_t PhaseAligner::getNumberOfVoxels() const noexcept {
+  return n_voxels_;
+}
+
+uint32_t PhaseAligner::getLowerBound() const noexcept {
+  return lower_bound_;
+}
+
+uint32_t PhaseAligner::getUpperBound() const noexcept {
+  return upper_bound_;
 }
 
 }  // namespace alignment

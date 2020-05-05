@@ -1,45 +1,41 @@
 #include "phaser/backend/uncertainty/z-score-eval.h"
-#include "phaser/backend/uncertainty/signal-analysis.h"
 #include "phaser/backend/alignment/phase-aligner.h"
- #include "phaser/distribution/bingham.h"
- #include "phaser/distribution/gaussian.h"
+#include "phaser/backend/uncertainty/signal-analysis.h"
+#include "phaser/distribution/bingham.h"
+#include "phaser/distribution/gaussian.h"
 
 #include "phaser/visualization/plotty-visualizer.h"
 
-#include <cmath>
-#include <numeric>
 #include <algorithm>
-#include <functional>
-#include <sstream>
+#include <cmath>
 #include <fstream>
+#include <functional>
+#include <numeric>
+#include <sstream>
 
 #include <glog/logging.h>
 
 namespace uncertainty {
 
-ZScoreEval::ZScoreEval(
-    const alignment::BaseAligner& aligner,
-    const correlation::SphericalCorrelation& sph)
-    : manager_("z-score"), BaseEval(aligner, sph) {}
+ZScoreEval::ZScoreEval() : manager_("z-score") {}
 
-common::BaseDistributionPtr ZScoreEval::evaluateCorrelation(
-    const alignment::BaseAligner& aligner,
-    const correlation::SphericalCorrelation&) {
-  return evaluateCorrelationFromTranslation();
-}
-
-common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromTranslation() {
+common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromTranslation(
+    const uint32_t n_voxels, const int discretize_lower_bound,
+    const int discretize_upper_bound, const std::vector<double>& corr) {
   std::set<uint32_t> signals;
   std::vector<double> n_corr_ds;
-  evaluateCorrelationVector(aligner_.getCorrelation(), &signals, &n_corr_ds);
-  return evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
+  evaluateCorrelationVector(corr, &signals, &n_corr_ds);
+  return evaluatePeakBasedCorrelation(
+      n_voxels, discretize_lower_bound, discretize_upper_bound, signals,
+      n_corr_ds);
 }
 
-common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromRotation() {
+common::BaseDistributionPtr ZScoreEval::evaluateCorrelationFromRotation(
+    const uint32_t bw, const std::vector<double>& corr) {
   std::set<uint32_t> signals;
   std::vector<double> n_corr_ds;
-  evaluateCorrelationVector(sph_.getCorrelation(), &signals, &n_corr_ds);
-  return evaluatePeakBasedCorrelation(aligner_, sph_, signals, n_corr_ds);
+  evaluateCorrelationVector(corr, &signals, &n_corr_ds);
+  return evaluatePeakBasedCorrelation(bw, signals, n_corr_ds);
 }
 
 void ZScoreEval::evaluateCorrelationVector(
@@ -73,67 +69,23 @@ void ZScoreEval::evaluateCorrelationVector(
   // peak_extraction_.extractPeaks(*n_corr_ds, signals);
 }
 
-std::pair<double, double> ZScoreEval::fitSmoothedNormalDist(
-    const std::set<uint32_t>& signals, const std::vector<double>& input) const {
-  if (signals.empty()) return std::make_pair(0.0, 0.0);
-  std::vector<double> peak_values;
-  const double max = static_cast<double>(input.size());
-
-  // Normalize peak distances.
-  std::transform(
-      signals.cbegin(), signals.cend(), std::back_inserter(peak_values),
-      [&max](const uint32_t& signal) {
-        return (static_cast<double>(signal)) / max;
-      });
-
-  // Calculate mean distances.
-  const uint32_t n_values = peak_values.size();
-  const double mean =
-      std::accumulate(peak_values.cbegin(), peak_values.cend(), 0.0) / n_values;
-
-  const double std = SignalAnalysis::stdDev(peak_values, mean, 0, n_values);
-  return std::make_pair(mean, std);
-}
-
-std::pair<Eigen::VectorXd, Eigen::MatrixXd>
-ZScoreEval::fitTranslationalNormalDist(
-    const alignment::BaseAligner& aligner,
-    const std::set<uint32_t>& signals) const {
-  const alignment::PhaseAligner& phase =
-      dynamic_cast<const alignment::PhaseAligner&>(aligner);
-  const uint32_t n_signals = signals.size();
-  if (n_signals == 0) {
-    return std::make_pair(
-        Eigen::VectorXd::Zero(3), Eigen::MatrixXd::Identity(3, 3));
-  }
-  Eigen::ArrayXXd samples(3, n_signals);
-  uint32_t i = 0u;
-
-  // Extract translational estimates.
-  for (uint32_t signal_idx : signals) {
-    std::array<uint32_t, 3> xyz = phase.ind2sub(signal_idx);
-    samples(0, i) =
-        phase.computeTranslationFromIndex(static_cast<double>(xyz[0]));
-    samples(1, i) =
-        phase.computeTranslationFromIndex(static_cast<double>(xyz[1]));
-    samples(2, i) =
-        phase.computeTranslationFromIndex(static_cast<double>(xyz[2]));
-    ++i;
-  }
-
-  // Calculate mean and covariance.
-  Eigen::VectorXd mean = samples.rowwise().mean();
-  Eigen::VectorXd var =
-      ((samples.colwise() - mean.array()).square().rowwise().sum() /
-       (n_signals - 1));
-  return std::make_pair(mean, var.asDiagonal());
-}
-
 ZScorePeakExtraction& ZScoreEval::getPeakExtraction() {
   return peak_extraction_;
 }
 
-void ZScoreEval::evaluateCorrelationFromRotation(
-    const std::vector<double>& corr) {}
+common::BaseDistributionPtr ZScoreEval::evaluatePeakBasedCorrelation(
+    const uint32_t bw, const std::set<uint32_t>& signals,
+    const std::vector<double>& normalized_corr) const {
+  LOG(FATAL)
+      << "Peak based eval using bw is not implemented for this correlation.";
+}
+
+common::BaseDistributionPtr ZScoreEval::evaluatePeakBasedCorrelation(
+    const uint32_t n_voxels, const int discretize_lower_bound,
+    const int discretize_upper_bound, const std::set<uint32_t>& signals,
+    const std::vector<double>& normalized_corr) const {
+  LOG(FATAL) << "Peak based eval using voxels and bounds is not implemented "
+                "for this correlation.";
+}
 
 }  // namespace uncertainty

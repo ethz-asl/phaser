@@ -86,13 +86,8 @@ change the bandwidth you want to correlate at, or correlate complex-valued
 
 ***********************************/
 
-void softFFTWCor2( int bw,
-       double *sig,
-       double *pat,
-       double *alpha, double *beta, double *gamma,
-       double *maxval, double **signal_values,
-       double **signal_coeff, int isReal )
-{
+void softFFTWCor2(
+    int bw, double* sig, double* pat, double** signal_values, int isReal) {
   int i ;
   int n, bwIn, bwOut, degLim ;
   fftw_complex *workspace1, *workspace2  ;
@@ -118,12 +113,6 @@ void softFFTWCor2( int bw,
   degLim = bw - 1 ;
   n = 2 * bwIn ;
 
-  if (signal_values != NULL) {
-    if (*signal_values != NULL) {
-      free(*signal_values);
-    }
-  }
-
   const int bwOutp2 = bwOut * bwOut;
   const int bwOutp3 = bwOutp2 * bwOut;
   const int so3bw = 8 * bwOutp3;
@@ -132,7 +121,6 @@ void softFFTWCor2( int bw,
   tmpI = (double *) malloc( sizeof(double) * ( n * n ) );
   so3Sig = fftw_malloc(sizeof(fftw_complex) * (so3bw));
   *signal_values = (double*)malloc(sizeof(double) * (so3bw));
-  *signal_coeff = (double*)malloc(sizeof(double) * bwInp2);
   workspace1 = fftw_malloc(sizeof(fftw_complex) * (so3bw));
   workspace2 =
       fftw_malloc(sizeof(fftw_complex) * ((14 * bwInp2) + (48 * bwIn)));
@@ -167,86 +155,79 @@ void softFFTWCor2( int bw,
       exit( 1 ) ;
     }
 
-  /* create fftw plans for the S^2 transforms */
-  /* first for the dct */
-  dctPlan = fftw_plan_r2r_1d( 2*bwIn, weights, workspace3,
-            FFTW_REDFT10, FFTW_ESTIMATE ) ;
+    /* make all plan thread safe */
+    fftw_make_planner_thread_safe();
 
-  /* now for the fft */
-  /*
-     IMPORTANT NOTE!!! READ THIS!!!
+    /* create fftw plans for the S^2 transforms */
+    /* first for the dct */
+    dctPlan = fftw_plan_r2r_1d(
+        2 * bwIn, weights, workspace3, FFTW_REDFT10, FFTW_ESTIMATE);
 
-     Now to make the fft plans.
+    /* now for the fft */
+    /*
+       IMPORTANT NOTE!!! READ THIS!!!
 
-     Please note that the planning-rigor flag *must be* FFTW_ESTIMATE!
-     Why? Well, to try to keep things simple. I am using some of the
-     pointers to arrays in rotateFct's arguments in the fftw-planning
-     routines. If the planning-rigor is *not* FFTW_ESTIMATE, then
-     the arrays will be written over during the planning stage.
+       Now to make the fft plans.
 
-     Therefore, unless you are really really sure you know what
-     you're doing, keep the rigor as FFTW_ESTIMATE !!!
-  */
+       Please note that the planning-rigor flag *must be* FFTW_ESTIMATE!
+       Why? Well, to try to keep things simple. I am using some of the
+       pointers to arrays in rotateFct's arguments in the fftw-planning
+       routines. If the planning-rigor is *not* FFTW_ESTIMATE, then
+       the arrays will be written over during the planning stage.
 
-  /*
-    fftw "preamble" ;
-    note  that this places in the transposed array
-  */
+       Therefore, unless you are really really sure you know what
+       you're doing, keep the rigor as FFTW_ESTIMATE !!!
+    */
 
-  rank = 1 ;
-  dims[0].n = 2*bwIn ;
-  dims[0].is = 1 ;
-  dims[0].os = 2*bwIn ;
-  howmany_rank = 1 ;
-  howmany_dims[0].n = 2*bwIn ;
-  howmany_dims[0].is = 2*bwIn ;
-  howmany_dims[0].os = 1 ;
+    /*
+      fftw "preamble" ;
+      note  that this places in the transposed array
+    */
 
-  fftPlan = fftw_plan_guru_split_dft( rank, dims,
-              howmany_rank, howmany_dims,
-              tmpR, tmpI,
-              (double *) workspace2,
-              (double *) workspace2 + (n*n),
-              FFTW_ESTIMATE );
+    rank = 1;
+    dims[0].n = 2 * bwIn;
+    dims[0].is = 1;
+    dims[0].os = 2 * bwIn;
+    howmany_rank = 1;
+    howmany_dims[0].n = 2 * bwIn;
+    howmany_dims[0].is = 2 * bwIn;
+    howmany_dims[0].os = 1;
 
-  /* create plan for inverse SO(3) transform */
-  n = 2 * bwOut ;
-  howmany = n*n ;
-  idist = n ;
-  odist = n ;
-  rank = 2 ;
-  inembed[0] = n ;
-  inembed[1] = n*n ;
-  onembed[0] = n ;
-  onembed[1] = n*n ;
-  istride = 1 ;
-  ostride = 1 ;
-  na[0] = 1 ;
-  na[1] = n ;
+    fftPlan = fftw_plan_guru_split_dft(
+        rank, dims, howmany_rank, howmany_dims, tmpR, tmpI, (double*)workspace2,
+        (double*)workspace2 + (n * n), FFTW_ESTIMATE);
 
-  p1 = fftw_plan_many_dft( rank, na, howmany,
-         workspace1, inembed,
-         istride, idist,
-         so3Sig, onembed,
-         ostride, odist,
-         FFTW_FORWARD, FFTW_ESTIMATE );
+    /* create plan for inverse SO(3) transform */
+    n = 2 * bwOut;
+    howmany = n * n;
+    idist = n;
+    odist = n;
+    rank = 2;
+    inembed[0] = n;
+    inembed[1] = n * n;
+    onembed[0] = n;
+    onembed[1] = n * n;
+    istride = 1;
+    ostride = 1;
+    na[0] = 1;
+    na[1] = n;
 
+    p1 = fftw_plan_many_dft(
+        rank, na, howmany, workspace1, inembed, istride, idist, so3Sig, onembed,
+        ostride, odist, FFTW_FORWARD, FFTW_ESTIMATE);
 
-  seminaive_naive_table = SemiNaive_Naive_Pml_Table(bwIn, bwIn,
-                seminaive_naive_tablespace,
-                (double *) workspace2);
+    seminaive_naive_table = SemiNaive_Naive_Pml_Table(
+        bwIn, bwIn, seminaive_naive_tablespace, (double*)workspace2);
 
+    /* make quadrature weights for the S^2 transform */
+    makeweights(bwIn, weights);
 
-  /* make quadrature weights for the S^2 transform */
-  makeweights( bwIn, weights ) ;
-
-  n = 2 * bwIn ;
-  /* load SIGNAL samples into temp array */
-  if ( isReal )
-    for ( i = 0 ; i < n * n ; i ++ )
-      {
-  tmpR[i] = sig[i];
-  tmpI[i] = 0. ;
+    n = 2 * bwIn;
+    /* load SIGNAL samples into temp array */
+    if (isReal)
+      for (i = 0; i < n * n; i++) {
+        tmpR[i] = sig[i];
+        tmpI[i] = 0.;
       }
   else
     for ( i = 0 ; i < n * n ; i ++ )
@@ -308,32 +289,11 @@ void softFFTWCor2( int bw,
         &p1,
         isReal ) ;
 
-  /* now find max value */
-  *maxval = 0.0 ;
-  maxloc = 0 ;
+  /* copy values for now. */
   for (i = 0; i < so3bw; ++i) {
     tmpval = NORM( so3Sig[i] );
     (*signal_values)[i] = tmpval;
-    if ( tmpval > *maxval ) {
-      *maxval = tmpval;
-      maxloc = i ;
-    }
   }
-  printf("found maximum at: %d", maxloc);
-  *maxval = maxloc;
-  for (i = 0; i < bwIn * bwIn; ++i) {
-    (*signal_coeff)[i] = patCoefR[i];
-  }
-
-  ii = floor(maxloc / (4. * bwOutp2));
-  tmp = maxloc - (ii * 4. * bwOutp2);
-  jj = floor( tmp / (2.*bwOut) );
-  tmp = maxloc - (ii * 4 * bwOutp2) - jj * (2 * bwOut);
-  kk = tmp;
-
-  *alpha = M_PI*jj/((double) bwOut) ;
-  *beta =  M_PI*(2*ii+1)/(4.*bwOut) ;
-  *gamma = M_PI*kk/((double) bwOut) ;
 
   /* clean up */
   fftw_destroy_plan( p1 );

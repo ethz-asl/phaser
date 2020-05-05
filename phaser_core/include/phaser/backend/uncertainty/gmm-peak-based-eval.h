@@ -15,13 +15,9 @@ namespace uncertainty {
 
 class GmmPeakBasedEval : public ZScoreEval {
  public:
-  GmmPeakBasedEval(
-      const alignment::BaseAligner& aligner,
-      const correlation::SphericalCorrelation& sph);
   common::BaseDistributionPtr evaluatePeakBasedCorrelation(
-      const alignment::BaseAligner& aligner,
-      const correlation::SphericalCorrelation& sph,
-      const std::set<uint32_t>& signals,
+      const uint32_t n_voxels, const int discretize_lower_bound,
+      const int discretize_upper_bound, const std::set<uint32_t>& signals,
       const std::vector<double>& normalized_corr) const override;
 
  private:
@@ -29,11 +25,13 @@ class GmmPeakBasedEval : public ZScoreEval {
       const uint32_t index, const uint32_t n_corr, uint32_t* start,
       uint32_t* end) const;
   void fitTranslationalGmmDistribution(
-      const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
+      const uint32_t n_voxels, const int discretize_lower_bound,
+      const int discretize_upper_bound, const std::set<uint32_t>& signals,
       const std::vector<double>& n_corr, common::GaussianMixturePtr gm) const;
   void retrievePeakNeighbors(
-      const uint32_t start, const uint32_t end,
-      const std::vector<double>& n_corr, const alignment::BaseAligner& aligner,
+      const uint32_t n_voxels, const int discretize_lower_bound,
+      const int discretize_upper_bound, const uint32_t start,
+      const uint32_t end, const std::vector<double>& n_corr,
       Eigen::MatrixXd* samples, Eigen::VectorXd* gaussian_weights) const;
 };
 

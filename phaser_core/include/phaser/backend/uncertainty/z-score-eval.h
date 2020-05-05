@@ -14,38 +14,28 @@ namespace uncertainty {
 
 class ZScoreEval : public BaseEval {
  public:
-  ZScoreEval(
-      const alignment::BaseAligner& aligner,
-      const correlation::SphericalCorrelation& sph);
+  ZScoreEval();
 
-  common::BaseDistributionPtr evaluateCorrelation(
-      const alignment::BaseAligner& aligner,
-      const correlation::SphericalCorrelation& sph) override;
-
-  common::BaseDistributionPtr evaluateCorrelationFromTranslation() override;
-  common::BaseDistributionPtr evaluateCorrelationFromRotation() override;
-
-  void evaluateCorrelationFromRotation(
+  common::BaseDistributionPtr evaluateCorrelationFromTranslation(
+      const uint32_t n_voxels, const int discretize_lower_bound,
+      const int discretize_upper_bound,
       const std::vector<double>& corr) override;
+  common::BaseDistributionPtr evaluateCorrelationFromRotation(
+      const uint32_t bw, const std::vector<double>& corr) override;
 
   ZScorePeakExtraction& getPeakExtraction();
-
   virtual common::BaseDistributionPtr evaluatePeakBasedCorrelation(
-      const alignment::BaseAligner& aligner,
-      const correlation::SphericalCorrelation& sph,
-      const std::set<uint32_t>& signals,
-      const std::vector<double>& normalized_corr) const = 0;
+      const uint32_t bw, const std::set<uint32_t>& signals,
+      const std::vector<double>& normalized_corr) const;
+  virtual common::BaseDistributionPtr evaluatePeakBasedCorrelation(
+      const uint32_t n_voxels, const int discretize_lower_bound,
+      const int discretize_upper_bound, const std::set<uint32_t>& signals,
+      const std::vector<double>& normalized_corr) const;
 
  private:
   void evaluateCorrelationVector(
       const std::vector<double>& corr, std::set<uint32_t>* signals,
       std::vector<double>* n_corr_ds);
-  std::pair<double, double> fitSmoothedNormalDist(
-      const std::set<uint32_t>& signals,
-      const std::vector<double>& input) const;
-  std::pair<Eigen::VectorXd, Eigen::MatrixXd> fitTranslationalNormalDist(
-      const alignment::BaseAligner& aligner,
-      const std::set<uint32_t>& signals) const;
 
   common::StatisticsManager manager_;
   ZScorePeakExtraction peak_extraction_;

@@ -35,6 +35,9 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/gflags-interface.cc
    src/common/math-utils.cc
    src/common/dual-quaternion.cc
+   src/common/thread-pool.cc
+   src/common/base-worker.cc
+   src/common/test-worker.cc
 
    src/common/test/testing-entrypoint.cc
 
@@ -54,28 +57,27 @@ cs_add_library(${PROJECT_NAME}_lib
 
 # Gaussian
 catkin_add_gtest(test_gaussian test/distribution/gaussian-test.cc)
-target_link_libraries(test_gaussian
-  ${PROJECT_NAME}_lib)
+target_link_libraries(test_gaussian ${PROJECT_NAME}_lib)
 
 # Gaussian Mixture
 catkin_add_gtest(test_gaussian_mixture test/distribution/gaussian-mixture-test.cc)
-target_link_libraries(test_gaussian_mixture
-  ${PROJECT_NAME}_lib)
+target_link_libraries(test_gaussian_mixture ${PROJECT_NAME}_lib)
 
 # Bingham
 catkin_add_gtest(test_bingham test/distribution/bingham-test.cc)
-target_link_libraries(test_bingham
-  ${PROJECT_NAME}_lib)
+target_link_libraries(test_bingham ${PROJECT_NAME}_lib)
 
 # Bingham Mixture
 catkin_add_gtest(test_bingham_mixture test/distribution/bingham-mixture-test.cc)
-target_link_libraries(test_bingham_mixture
-  ${PROJECT_NAME}_lib)
+target_link_libraries(test_bingham_mixture ${PROJECT_NAME}_lib)
 
 # Function value
 catkin_add_gtest(test_function_value test/model/function-value-test.cc)
-target_link_libraries(test_function_value
-  ${PROJECT_NAME}_lib)
+target_link_libraries(test_function_value ${PROJECT_NAME}_lib)
+
+# Thread pool and test worker
+catkin_add_gtest(test_thread_pool test/common/thread-pool-test.cc)
+target_link_libraries(test_thread_pool ${PROJECT_NAME}_lib)
 
 cs_install()
 cs_export()

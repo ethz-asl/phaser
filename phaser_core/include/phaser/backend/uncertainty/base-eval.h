@@ -12,22 +12,11 @@ namespace uncertainty {
 
 class BaseEval {
  public:
-  BaseEval(
-      const alignment::BaseAligner& aligner,
-      const correlation::SphericalCorrelation& sph);
-  virtual common::BaseDistributionPtr evaluateCorrelation(
-      const alignment::BaseAligner& aligner,
-      const correlation::SphericalCorrelation& sph) = 0;
-
-  virtual common::BaseDistributionPtr evaluateCorrelationFromTranslation() = 0;
-  virtual common::BaseDistributionPtr evaluateCorrelationFromRotation() = 0;
-
-  virtual void evaluateCorrelationFromRotation(
-      const std::vector<double>& corr) = 0;
-
- protected:
-  const alignment::BaseAligner& aligner_;
-  const correlation::SphericalCorrelation& sph_;
+  virtual common::BaseDistributionPtr evaluateCorrelationFromTranslation(
+      const uint32_t n_voxels, const int discretize_lower_bound,
+      const int discretize_upper_bound, const std::vector<double>& corr) = 0;
+  virtual common::BaseDistributionPtr evaluateCorrelationFromRotation(
+      const uint32_t bw, const std::vector<double>& corr) = 0;
 };
 
 using BaseEvalPtr = std::unique_ptr<BaseEval>;

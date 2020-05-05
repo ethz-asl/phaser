@@ -1,11 +1,11 @@
 /***************************************************************************
   **************************************************************************
-  
+
   SOFT: SO(3) Fourier Transforms
   Version 2.0
 
   Copyright (c) 2003, 2004, 2007 Peter Kostelec, Dan Rockmore
-  
+
   This file is part of SOFT.
 
   SOFT is free software; you can redistribute it and/or modify
@@ -20,17 +20,16 @@
 
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  
+
   See the accompanying LICENSE file for details.
-  
+
   ************************************************************************
   ************************************************************************/
 
 #include <fftw3/fftw3.h>
 
 #ifndef _WRAP_FFTW_H
-#define _WRAP_FFTW_H 
-
+#define _WRAP_FFTW_H
 
 extern void Forward_SO3_Naive_fftw_W( int ,
 				      fftw_complex * ,
@@ -45,11 +44,6 @@ extern void Inverse_SO3_Naive_fftw_W( int ,
 extern void softFFTWCor2( int ,
 			  double * ,
 			  double * ,
-			  double * ,
-			  double * ,
-			  double * ,
-			  double * ,
-			  double ** ,
 			  double ** ,
 			  int ) ;
 

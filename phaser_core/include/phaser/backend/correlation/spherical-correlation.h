@@ -15,12 +15,14 @@ class SphericalCorrelation {
   SphericalCorrelation();
   void correlateSignals(
       const std::vector<model::FunctionValue>& f1,
-      const std::vector<model::FunctionValue>& f2, const int bw,
-      std::array<double, 3>* const zyz);
+      const std::vector<model::FunctionValue>& f2, const int bw);
+
+  void correlateSampledSignals(
+      const int bw, std::vector<double>& f1, std::vector<double>& f2);
 
   void getStatistics(common::StatisticsManager* manager) const noexcept;
   std::vector<double> getCorrelation() const noexcept;
-  std::array<double, 3> getZYZFromIndex(const uint32_t index) const noexcept;
+  uint32_t getBandwidth() const noexcept;
 
  private:
   void convertSignalValues(double* signal_values, const int bw);
@@ -28,9 +30,6 @@ class SphericalCorrelation {
   void retrieveInterpolation(
       const std::vector<model::FunctionValue>& f,
       std::vector<double>* interpolation);
-  void convertSO3toZYZ(
-      const uint32_t loc, const uint32_t bw,
-      std::array<double, 3>* const zyz) const;
 
   const std::string kReferenceName = "SPH-Correlation";
   const std::string kSignalKey = "signal_values";

@@ -1,10 +1,11 @@
 #ifndef PHASER_MODEL_FUNCTION_VALUE_H_
 #define PHASER_MODEL_FUNCTION_VALUE_H_
 
-#include "phaser/common/point-types.h"
+#include <vector>
 
 #include <Eigen/Dense>
-#include <vector>
+
+#include "phaser/common/point-types.h"
 
 namespace model {
 
@@ -32,6 +33,8 @@ class FunctionValue {
   std::vector<uint16_t> semantic_instances_;
   common::PointCloud_tPtr points_;
 };
+
+using FunctionValueVec = std::vector<FunctionValue>;
 
 }  // namespace model
 

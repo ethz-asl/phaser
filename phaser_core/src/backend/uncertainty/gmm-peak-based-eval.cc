@@ -1,6 +1,6 @@
 #include "phaser/backend/uncertainty/gmm-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
-#include "phaser/backend/alignment/phase-aligner.h"
+#include "phaser/common/translation-utils.h"
 #include "phaser/distribution/gaussian.h"
 
 #include <glog/logging.h>
@@ -12,23 +12,20 @@ DEFINE_int32(
     gmm_peak_neighbors, 2,
     "Determines the number of neighbors used for the GMM calculation.");
 
-GmmPeakBasedEval::GmmPeakBasedEval(
-    const alignment::BaseAligner& aligner,
-    const correlation::SphericalCorrelation& sph)
-    : ZScoreEval(aligner, sph) {}
-
 common::BaseDistributionPtr GmmPeakBasedEval::evaluatePeakBasedCorrelation(
-    const alignment::BaseAligner& aligner,
-    const correlation::SphericalCorrelation& sph,
-    const std::set<uint32_t>& signals,
+    const uint32_t n_voxels, const int discretize_lower_bound,
+    const int discretize_upper_bound, const std::set<uint32_t>& signals,
     const std::vector<double>& n_corr) const {
   common::GaussianMixturePtr gmm = std::make_shared<common::GaussianMixture>();
-  fitTranslationalGmmDistribution(aligner, signals, n_corr, gmm);
+  fitTranslationalGmmDistribution(
+      n_voxels, discretize_lower_bound, discretize_upper_bound, signals, n_corr,
+      gmm);
   return gmm;
 }
 
 void GmmPeakBasedEval::fitTranslationalGmmDistribution(
-    const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
+    const uint32_t n_voxels, const int discretize_lower_bound,
+    const int discretize_upper_bound, const std::set<uint32_t>& signals,
     const std::vector<double>& norm_corr, common::GaussianMixturePtr gm) const {
   const uint32_t n_signals = signals.size();
   const uint32_t n_corr = norm_corr.size();
@@ -44,7 +41,9 @@ void GmmPeakBasedEval::fitTranslationalGmmDistribution(
     Eigen::MatrixXd samples = Eigen::MatrixXd::Zero(3, num_elements);
     Eigen::VectorXd weights = Eigen::VectorXd::Zero(num_elements);
 
-    retrievePeakNeighbors(start, end, norm_corr, aligner, &samples, &weights);
+    retrievePeakNeighbors(
+        n_voxels, discretize_lower_bound, discretize_upper_bound, start, end,
+        norm_corr, &samples, &weights);
     peak_gaussians.emplace_back(common::Gaussian(samples, weights));
     gm_weights(k) = norm_corr.at(i);
     ++k;
@@ -68,14 +67,13 @@ void GmmPeakBasedEval::calculateStartEndNeighbor(
 }
 
 void GmmPeakBasedEval::retrievePeakNeighbors(
-    const uint32_t start, const uint32_t end,
-    const std::vector<double>& norm_corr, const alignment::BaseAligner& aligner,
-    Eigen::MatrixXd* samples, Eigen::VectorXd* gaussian_weights) const {
+    const uint32_t n_voxels, const int discretize_lower_bound,
+    const int discretize_upper_bound, const uint32_t start, const uint32_t end,
+    const std::vector<double>& norm_corr, Eigen::MatrixXd* samples,
+    Eigen::VectorXd* gaussian_weights) const {
   CHECK_NOTNULL(samples);
   CHECK_NOTNULL(gaussian_weights);
   const uint32_t n_signals = norm_corr.size();
-  const alignment::PhaseAligner& phase =
-      dynamic_cast<const alignment::PhaseAligner&>(aligner);
 
   CHECK_GT(n_signals, 0u);
   CHECK_GE(start, 0u);
@@ -85,13 +83,17 @@ void GmmPeakBasedEval::retrievePeakNeighbors(
   VLOG(1) << "Checking neighbors from " << start << " to " << end;
   std::size_t k = 0u;
   for (uint32_t i = start; i <= end; ++i) {
-    std::array<uint32_t, 3> xyz = phase.ind2sub(i);
-    (*samples)(0, k) =
-        phase.computeTranslationFromIndex(static_cast<double>(xyz[0]));
-    (*samples)(1, k) =
-        phase.computeTranslationFromIndex(static_cast<double>(xyz[1]));
-    (*samples)(2, k) =
-        phase.computeTranslationFromIndex(static_cast<double>(xyz[2]));
+    std::array<uint32_t, 3> xyz =
+        common::TranslationUtils::Ind2sub(i, n_voxels);
+    (*samples)(0, k) = common::TranslationUtils::ComputeTranslationFromIndex(
+        static_cast<double>(xyz[0]), n_voxels, discretize_lower_bound,
+        discretize_upper_bound);
+    (*samples)(1, k) = common::TranslationUtils::ComputeTranslationFromIndex(
+        static_cast<double>(xyz[1]), n_voxels, discretize_lower_bound,
+        discretize_upper_bound);
+    (*samples)(2, k) = common::TranslationUtils::ComputeTranslationFromIndex(
+        static_cast<double>(xyz[2]), n_voxels, discretize_lower_bound,
+        discretize_upper_bound);
     (*gaussian_weights)(k) = norm_corr.at(i);
     ++k;
   }

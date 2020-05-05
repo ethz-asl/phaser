@@ -12,8 +12,7 @@ DEFINE_string(target_cloud, "", "Defines the path to the target cloud.");
 DEFINE_string(source_cloud, "", "Defines the path to the source cloud.");
 DEFINE_string(reg_cloud, "", "Defines the path to the registered cloud.");
 
-static model::PointCloudPtr readPointCloud(
-    const std::string& cloud) {
+static model::PointCloudPtr readPointCloud(const std::string& cloud) {
   CHECK(!cloud.empty());
   LOG(INFO) << "Reading point cloud from " << cloud;
   pcl::PointCloud<pcl::PointXYZI>::Ptr input_cloud(
@@ -43,9 +42,9 @@ static void registerCloud(
   CHECK_NOTNULL(source_cloud);
   CHECK(!reg_cloud.empty());
 
-  auto ctrl = std::make_unique<controller::CloudController>("sph");
+  auto ctrl = std::make_unique<controller::CloudController>("sph-opt");
   model::RegistrationResult result =
-    ctrl->registerPointCloud(target_cloud, source_cloud);
+      ctrl->registerPointCloud(target_cloud, source_cloud);
 
   LOG(INFO) << "Registration result: " << result.getStateAsVec().transpose();
   writePointCloud(reg_cloud, result.getRegisteredCloud());
@@ -58,8 +57,7 @@ int main(int argc, char** argv) {
   google::InstallFailureSignalHandler();
 
   VLOG(1) << "=== PHASER CORE DRIVER =====================";
-  registerCloud(
-      FLAGS_target_cloud, FLAGS_source_cloud, FLAGS_reg_cloud);
+  registerCloud(FLAGS_target_cloud, FLAGS_source_cloud, FLAGS_reg_cloud);
 
   return 0;
 }

@@ -13,19 +13,15 @@ namespace uncertainty {
 
 class GaussianPeakBasedEval : public ZScoreEval {
  public:
-  GaussianPeakBasedEval(
-      const alignment::BaseAligner& aligner,
-      const correlation::SphericalCorrelation& sph);
-
   common::BaseDistributionPtr evaluatePeakBasedCorrelation(
-      const alignment::BaseAligner& aligner,
-      const correlation::SphericalCorrelation& sph,
-      const std::set<uint32_t>& signals,
+      const uint32_t n_voxels, const int discretize_lower_bound,
+      const int discretize_upper_bound, const std::set<uint32_t>& signals,
       const std::vector<double>& norm_corr) const override;
 
  private:
   common::Gaussian fitTranslationalNormalDist(
-      const alignment::BaseAligner& aligner, const std::set<uint32_t>& signals,
+      const uint32_t n_voxels, const int discretize_lower_bound,
+      const int discretize_upper_bound, const std::set<uint32_t>& signals,
       const std::vector<double>& norm_corr) const;
 
   void calculateStartEndNeighbor(
@@ -33,11 +29,10 @@ class GaussianPeakBasedEval : public ZScoreEval {
       uint32_t* end) const;
 
   void retrievePeakNeighbors(
-      const uint32_t start, const uint32_t end,
-      const std::vector<double>& norm_corr, const alignment::BaseAligner& sph,
+      const uint32_t n_voxels, const int discretize_lower_bound,
+      const int discretize_upper_bound, const uint32_t start,
+      const uint32_t end, const std::vector<double>& norm_corr,
       Eigen::ArrayXXd* samples, Eigen::VectorXd* weights) const;
-
- private:
 };
 
 }  // namespace uncertainty
