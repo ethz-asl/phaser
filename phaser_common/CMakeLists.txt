@@ -79,5 +79,9 @@ target_link_libraries(test_function_value ${PROJECT_NAME}_lib)
 catkin_add_gtest(test_thread_pool test/common/thread-pool-test.cc)
 target_link_libraries(test_thread_pool ${PROJECT_NAME}_lib)
 
+# Utils
+catkin_add_gtest(test_signal_utils test/utils/signal-utils-test.cc)
+target_link_libraries(test_signal_utils ${PROJECT_NAME}_lib)
+
 cs_install()
 cs_export()
