@@ -38,6 +38,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/thread-pool.cc
    src/common/base-worker.cc
    src/common/test-worker.cc
+   src/common/signal-utils.cc
 
    src/common/test/testing-entrypoint.cc
 
