@@ -10,10 +10,10 @@ namespace correlation {
 class SpatialCorrelation : public BaseSpatialCorrelation {
  public:
   explicit SpatialCorrelation(const uint32_t n_voxels);
-  ~SpatialCorrelation();
+  virtual ~SpatialCorrelation();
   double* correlateSignals(double* const f, double* const g) override;
 
- private:
+ protected:
   void complexMulSeq(fftw_complex* F, fftw_complex* G, fftw_complex* C);
   void complexMulVec(fftw_complex* F, fftw_complex* G, fftw_complex* C);
 
