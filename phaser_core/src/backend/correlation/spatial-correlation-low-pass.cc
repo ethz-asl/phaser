@@ -21,17 +21,24 @@ SpatialCorrelationLowPass::SpatialCorrelationLowPass(const uint32_t n_voxels)
       low_pass_lower_bound_(FLAGS_phaser_core_spatial_low_pass_lower_bound),
       low_pass_upper_bound_(std::min(
           static_cast<uint32_t>(FLAGS_phaser_core_spatial_low_pass_upper_bound),
-          n_voxels)) {}
+          n_voxels)) {
+  computeIndicesBasedOnBounds();
+}
 
 SpatialCorrelationLowPass::SpatialCorrelationLowPass(
     const uint32_t n_voxels, const uint32_t lower_bound,
     const uint32_t upper_bound)
     : SpatialCorrelation(n_voxels),
       low_pass_lower_bound_(lower_bound),
-      low_pass_upper_bound_(upper_bound) {}
+      low_pass_upper_bound_(upper_bound) {
+  computeIndicesBasedOnBounds();
+}
 
 void SpatialCorrelationLowPass::complexMulSeq(
     fftw_complex* F, fftw_complex* G, fftw_complex* C) {
+  CHECK(!linear_indices_.empty());
+  VLOG(1) << "Performing low pass correlation using: " << linear_indices_.size()
+          << " samples.";
   for (const uint32_t i : linear_indices_) {
     C[i][0] = F[i][0] * G[i][0] - F[i][1] * (-G[i][1]);
     C[i][1] = F[i][0] * (-G[i][1]) + F[i][1] * G[i][0];
@@ -94,6 +101,8 @@ void SpatialCorrelationLowPass::computeIndicesBasedOnBounds() {
       }
     }
   }
+  VLOG(1) << "Computed indicies for bounds: " << low_pass_lower_bound_
+          << " and " << low_pass_upper_bound_ << ".";
 }
 
 uint32_t SpatialCorrelationLowPass::getNumberOfIndices() const noexcept {
