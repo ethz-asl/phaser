@@ -49,6 +49,7 @@ void PhaseAligner::alignRegistered(
     const std::vector<model::FunctionValue>&,
     const model::PointCloud& cloud_reg,
     const std::vector<model::FunctionValue>&) {
+  CHECK_NOTNULL(spatial_correlation_);
   discretizePointcloud(cloud_prev, &f_, &hist_);
   discretizePointcloud(cloud_reg, &g_, &hist_);
 
