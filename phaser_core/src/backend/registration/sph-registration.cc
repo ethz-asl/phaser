@@ -1,6 +1,5 @@
-#include "phaser/backend/registration/sph-registration.h"
 #include "phaser/backend/alignment/phase-aligner.h"
-#include "phaser/backend/alignment/range-based-aligner.h"
+#include "phaser/backend/registration/sph-registration.h"
 #include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
 #include "phaser/backend/uncertainty/bmm-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
@@ -136,29 +135,22 @@ void SphRegistration::estimateTranslation(
     model::PointCloudPtr cloud_prev, model::RegistrationResult* result) {
   VLOG(1) << "[SphRegistration] Estimating translation...";
 
-  common::Vector_t xyz;
   model::PointCloudPtr rot_cloud = result->getRegisteredCloud();
   const double duration_translation_f_ms = common::executeTimedFunction(
       &alignment::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
-      f_values_, *rot_cloud, h_values_, &xyz);
-  CHECK_EQ(xyz.rows(), 3);
+      f_values_, *rot_cloud, h_values_);
   statistics_manager_.emplaceValue(
       kTranslationDurationKey, duration_translation_f_ms);
   common::BaseDistributionPtr pos =
       correlation_eval_->calcTranslationUncertainty(aligner_);
   Eigen::VectorXd g_est = pos->getEstimate();
 
-  VLOG(1) << "Corr translation: " << xyz.transpose();
   VLOG(1) << "Gaussian translation: " << g_est.transpose();
   VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
           << "ms.";
 
   common::TranslationUtils::TranslateXYZ(
       rot_cloud, g_est(0), g_est(1), g_est(2));
-  /*
-common::TranslationUtils::TranslateXYZ(
-rot_cloud, xyz(0), xyz(1), xyz(2));
-*/
   result->setPosUncertaintyEstimate(pos);
 }
 

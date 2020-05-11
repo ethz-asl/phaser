@@ -78,17 +78,14 @@ void SphOptRegistration::estimateTranslation(
     model::PointCloudPtr cloud_prev, model::RegistrationResult* result) {
   VLOG(1) << "[SphOptRegistration] Estimating translation...";
 
-  common::Vector_t xyz;
   model::PointCloudPtr rot_cloud = result->getRegisteredCloud();
   const double duration_translation_f_ms = common::executeTimedFunction(
       &alignment::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
-      f_values_, *rot_cloud, h_values_, &xyz);
-  CHECK_EQ(xyz.rows(), 3);
+      f_values_, *rot_cloud, h_values_);
   common::BaseDistributionPtr pos =
       correlation_eval_->calcTranslationUncertainty(aligner_);
   Eigen::VectorXd g_est = pos->getEstimate();
 
-  VLOG(1) << "Corr translation: " << xyz.transpose();
   VLOG(1) << "Gaussian translation: " << g_est.transpose();
   VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
           << "ms.";

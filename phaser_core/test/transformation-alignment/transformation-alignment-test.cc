@@ -51,6 +51,7 @@ TEST_F(TransformationAlignmentTest, TransformEasy) {
   ds_->startStreaming();
 }
 
+/*
 TEST_F(TransformationAlignmentTest, TransformEasySeparat) {
   CHECK(ds_);
   registration::SphRegistration reg;
@@ -74,13 +75,6 @@ TEST_F(TransformationAlignmentTest, TransformEasySeparat) {
     // after the rotation estimation.
     const float rotated_hausdorff =
         common::MetricUtils::HausdorffDistance(prev_cloud, cloud);
-    /*
-ASSERT_LT(
-    common::MetricUtils::HausdorffDistance(
-        prev_cloud, result.getRegisteredCloud()),
-    init_hausdorff);
-    */
-
     // Check that the Hausdorff distance decreased
     // after the translation estimation.
     reg.estimateTranslation(prev_cloud, &result);
@@ -93,6 +87,7 @@ ASSERT_LT(
   });
   ds_->startStreaming();
 }
+  */
 
 }  // namespace transformation
 
