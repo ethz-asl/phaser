@@ -42,7 +42,6 @@ model::RegistrationResult SphOptRegistration::registerPointCloud(
   // Register the point cloud.
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   estimateTranslation(cloud_prev, &result);
-  result.getRegisteredCloud()->writeToFile("./");
 
   return result;
 }
