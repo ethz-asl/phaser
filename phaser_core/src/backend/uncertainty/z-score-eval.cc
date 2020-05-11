@@ -1,6 +1,6 @@
+#include "phaser/backend/uncertainty/z-score-eval.h"
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/uncertainty/signal-analysis.h"
-#include "phaser/backend/uncertainty/z-score-eval.h"
 #include "phaser/distribution/bingham.h"
 #include "phaser/distribution/gaussian.h"
 

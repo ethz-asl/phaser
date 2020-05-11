@@ -1,5 +1,5 @@
-#include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/registration/sph-registration.h"
+#include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
 #include "phaser/backend/uncertainty/bmm-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
