@@ -61,11 +61,11 @@ double* SpatialCorrelationLowPass::correlateSignals(
   shiftSignals(F_, G_);
 
   // Correlate the signals in the frequency domain.
-  complexMulSeqUsingIndices(linear_indices_, F_, G_, C_);
+  complexMulVecUsingIndices(linear_indices_, F_, G_, C_);
 
   // Perform the IFFT on the correlation tensor.
   VLOG(1) << "Shifting back the signals. Performing IFFT on low passed filtered"
-             "correlation.";
+             " correlation.";
   inverseShiftSignals(C_);
   fftw_execute(c_plan_);
   return c_;

@@ -22,6 +22,9 @@ class SpatialCorrelation : public BaseSpatialCorrelation {
   void complexMulSeqUsingIndices(
       const std::vector<uint32_t>& indices, fftw_complex* F, fftw_complex* G,
       fftw_complex* C);
+  void complexMulVecUsingIndices(
+      const std::vector<uint32_t>& indices, fftw_complex* F, fftw_complex* G,
+      fftw_complex* C);
 
   fftw_plan f_plan_;
   fftw_plan g_plan_;

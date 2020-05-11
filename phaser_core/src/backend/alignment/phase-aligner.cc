@@ -19,7 +19,7 @@ DEFINE_double(
     phase_discretize_upper, 50,
     "Specifies the upper bound for the discretization.");
 DEFINE_double(
-    phase_n_voxels, 201,
+    phase_n_voxels, 200,
     "Specifies the number of voxels for the discretization.");
 
 namespace alignment {
