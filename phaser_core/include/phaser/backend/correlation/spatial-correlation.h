@@ -2,6 +2,7 @@
 #define PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_H_
 
 #include <complex>
+#include <vector>
 
 #include <fftw3/fftw3.h>
 
@@ -18,6 +19,9 @@ class SpatialCorrelation : public BaseSpatialCorrelation {
  protected:
   void complexMulSeq(fftw_complex* F, fftw_complex* G, fftw_complex* C);
   void complexMulVec(fftw_complex* F, fftw_complex* G, fftw_complex* C);
+  void complexMulSeqUsingIndices(
+      const std::vector<uint32_t>& indices, fftw_complex* F, fftw_complex* G,
+      fftw_complex* C);
 
   fftw_plan f_plan_;
   fftw_plan g_plan_;

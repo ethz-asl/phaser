@@ -24,7 +24,6 @@ class SpatialCorrelationLowPass : public SpatialCorrelation {
   uint32_t getNumberOfIndices() const noexcept;
 
  private:
-  void complexMulSeq(fftw_complex* F, fftw_complex* G, fftw_complex* C);
   void computeIndicesBasedOnBounds();
 
   uint32_t low_pass_lower_bound_;

@@ -34,17 +34,6 @@ SpatialCorrelationLowPass::SpatialCorrelationLowPass(
   computeIndicesBasedOnBounds();
 }
 
-void SpatialCorrelationLowPass::complexMulSeq(
-    fftw_complex* F, fftw_complex* G, fftw_complex* C) {
-  CHECK(!linear_indices_.empty());
-  VLOG(1) << "Performing low pass correlation using: " << linear_indices_.size()
-          << " samples.";
-  for (const uint32_t i : linear_indices_) {
-    C[i][0] = F[i][0] * G[i][0] - F[i][1] * (-G[i][1]);
-    C[i][1] = F[i][0] * (-G[i][1]) + F[i][1] * G[i][0];
-  }
-}
-
 void SpatialCorrelationLowPass::shiftSignals(fftw_complex* F, fftw_complex* G) {
   common::SignalUtils::FFTShift(F, total_n_voxels_);
   common::SignalUtils::FFTShift(G, total_n_voxels_);
@@ -72,7 +61,7 @@ double* SpatialCorrelationLowPass::correlateSignals(
   shiftSignals(F_, G_);
 
   // Correlate the signals in the frequency domain.
-  complexMulSeq(F_, G_, C_);
+  complexMulSeqUsingIndices(linear_indices_, F_, G_, C_);
 
   // Perform the IFFT on the correlation tensor.
   VLOG(1) << "Shifting back the signals. Performing IFFT on low passed filtered"

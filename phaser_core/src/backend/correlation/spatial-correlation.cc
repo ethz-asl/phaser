@@ -1,5 +1,7 @@
 #include "phaser/backend/correlation/spatial-correlation.h"
 
+#include <numeric>
+
 #include <emmintrin.h>
 #include <glog/logging.h>
 
@@ -45,10 +47,9 @@ SpatialCorrelation::~SpatialCorrelation() {
 
 void SpatialCorrelation::complexMulSeq(
     fftw_complex* F, fftw_complex* G, fftw_complex* C) {
-  for (uint32_t i = 0u; i < total_n_voxels_; ++i) {
-    C[i][0] = F[i][0] * G[i][0] - F[i][1] * (-G[i][1]);
-    C[i][1] = F[i][0] * (-G[i][1]) + F[i][1] * G[i][0];
-  }
+  std::vector<uint32_t> indices(total_n_voxels_);
+  std::iota(indices.begin(), indices.end(), 0);
+  complexMulSeqUsingIndices(indices, F, G, C);
 }
 
 void SpatialCorrelation::complexMulVec(
@@ -87,6 +88,17 @@ void SpatialCorrelation::complexMulVec(
     C[i][1] = vec_C_img[0];
     C[i + 1][0] = vec_C_real[1];
     C[i + 1][1] = vec_C_img[1];
+  }
+}
+
+void SpatialCorrelation::complexMulSeqUsingIndices(
+    const std::vector<uint32_t>& indices, fftw_complex* F, fftw_complex* G,
+    fftw_complex* C) {
+  CHECK(!indices.empty());
+  VLOG(1) << "Performing correlation using: " << indices.size() << " samples.";
+  for (const uint32_t i : indices) {
+    C[i][0] = F[i][0] * G[i][0] - F[i][1] * (-G[i][1]);
+    C[i][1] = F[i][0] * (-G[i][1]) + F[i][1] * G[i][0];
   }
 }
 
