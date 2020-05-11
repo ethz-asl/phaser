@@ -1,5 +1,6 @@
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/correlation/spatial-correlation-cuda.h"
+#include "phaser/backend/correlation/spatial-correlation-low-pass.h"
 #include "phaser/backend/correlation/spatial-correlation.h"
 #include "phaser/common/point-cloud-utils.h"
 
@@ -35,7 +36,8 @@ PhaseAligner::PhaseAligner()
   f_ = Eigen::VectorXd::Zero(total_n_voxels_);
   g_ = Eigen::VectorXd::Zero(total_n_voxels_);
   hist_ = Eigen::VectorXd::Zero(total_n_voxels_);
-  spatial_correlation_.reset(new correlation::SpatialCorrelation(n_voxels_));
+  spatial_correlation_.reset(
+      new correlation::SpatialCorrelationLowPass(n_voxels_));
 }
 
 void PhaseAligner::alignRegistered(

@@ -1,0 +1,36 @@
+#ifndef PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_LOW_PASS_H_
+#define PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_LOW_PASS_H_
+
+#include <vector>
+
+#include "phaser/backend/correlation/spatial-correlation.h"
+
+namespace correlation {
+
+class SpatialCorrelationLowPass : public SpatialCorrelation {
+ public:
+  explicit SpatialCorrelationLowPass(const uint32_t n_voxels);
+  explicit SpatialCorrelationLowPass(
+      const uint32_t n_voxels, const uint32_t lower_bound,
+      const uint32_t upper_bound);
+  virtual ~SpatialCorrelationLowPass() = default;
+  double* correlateSignals(double* const f, double* const g) override;
+
+  void shiftSignals(fftw_complex* F, fftw_complex* G);
+  void inverseShiftSignals(fftw_complex* C);
+
+  uint32_t getLowerBound() const noexcept;
+  uint32_t getUpperBound() const noexcept;
+  uint32_t getNumberOfIndices() const noexcept;
+
+ private:
+  void computeIndicesBasedOnBounds();
+
+  uint32_t low_pass_lower_bound_;
+  uint32_t low_pass_upper_bound_;
+  std::vector<uint32_t> linear_indices_;
+};
+
+}  // namespace correlation
+
+#endif  // PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_LOW_PASS_H_
