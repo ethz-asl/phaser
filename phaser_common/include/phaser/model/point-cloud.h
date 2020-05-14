@@ -58,11 +58,11 @@ class PointCloud {
  private:
   void readFromFile(const std::string& ply);
   void sampleNearestWithoutCloudInfo(
-      const std::vector<int>& pointIdxNKNSearch,
+      const uint32_t idx, const std::vector<int>& pointIdxNKNSearch,
       const std::vector<float>& pointNKNSquaredDistance,
       std::vector<FunctionValue>* function_values) const;
   void sampleNearestWithCloudInfo(
-      const std::vector<int>& pointIdxNKNSearch,
+      const uint32_t idx, const std::vector<int>& pointIdxNKNSearch,
       const std::vector<float>& pointNKNSquaredDistance,
       std::vector<FunctionValue>* function_values) const;
 

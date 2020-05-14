@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(phaser_common)
 
+find_package(OpenMP REQUIRED)
+
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
 if(COMPILER_SUPPORTS_CXX14)
@@ -11,6 +13,10 @@ if(COMPILER_SUPPORTS_CXX14)
 else()
   message(FATAL_ERROR "The compiler does not support C++14.")
 endif()
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+set(OpenMP_LIBS gomp)
 
 find_package(catkin_simple REQUIRED)
 catkin_simple(ALL_DEPS_REQUIRED)

@@ -9,6 +9,7 @@
 
 #include <chrono>
 #include <glog/logging.h>
+#include <omp.h>
 
 DEFINE_string(
     PlyWriteDirectory, "", "Defines the directory to store the point clouds.");
@@ -82,7 +83,11 @@ void PointCloud::getNearestPoints(
   const bool info_cloud_is_available = hasInfoCloud();
   VLOG(2) << "Sampling using info cloud: " << std::boolalpha
           << info_cloud_is_available << ".";
-  for (const common::Point_t& query_point : query_points) {
+  const uint32_t n_points = query_points.size();
+  function_values->resize(n_points);
+#pragma omp parallel for num_threads(8)
+  for (uint32_t i = 0; i < n_points; ++i) {
+    const common::Point_t& query_point = query_points[i];
     // First, find the closest points.
     const int kd_tree_res = kd_tree_.nearestKSearch(
         query_point, FLAGS_sampling_neighbors, pointIdxNKNSearch,
@@ -93,22 +98,22 @@ void PointCloud::getNearestPoints(
     }
     if (info_cloud_is_available) {
       sampleNearestWithCloudInfo(
-          pointIdxNKNSearch, pointNKNSquaredDistance, function_values);
+          i, pointIdxNKNSearch, pointNKNSquaredDistance, function_values);
     } else {
       sampleNearestWithoutCloudInfo(
-          pointIdxNKNSearch, pointNKNSquaredDistance, function_values);
+          i, pointIdxNKNSearch, pointNKNSquaredDistance, function_values);
     }
   }
 }
 
 void PointCloud::sampleNearestWithoutCloudInfo(
-    const std::vector<int>& pointIdxNKNSearch,
+    const uint32_t idx, const std::vector<int>& pointIdxNKNSearch,
     const std::vector<float>& pointNKNSquaredDistance,
     std::vector<FunctionValue>* function_values) const {
   CHECK_NOTNULL(cloud_);
   CHECK_NOTNULL(function_values);
   // Approximate the function value given the neighbors.
-  FunctionValue value;
+  FunctionValue& value = (*function_values)[idx];
   CHECK_GT(FLAGS_sampling_neighbors, 0);
   for (int16_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
     const int current_idx = pointIdxNKNSearch[i];
@@ -117,18 +122,17 @@ void PointCloud::sampleNearestWithoutCloudInfo(
     value.addRange(ranges_.at(current_idx));
     value.addIntensity(point.intensity);
   }
-  function_values->emplace_back(std::move(value));
 }
 
 void PointCloud::sampleNearestWithCloudInfo(
-    const std::vector<int>& pointIdxNKNSearch,
+    const uint32_t idx, const std::vector<int>& pointIdxNKNSearch,
     const std::vector<float>& pointNKNSquaredDistance,
     std::vector<FunctionValue>* function_values) const {
   CHECK_NOTNULL(function_values);
   CHECK_NOTNULL(info_cloud_);
   CHECK_NOTNULL(cloud_);
   // Approximate the function value given the neighbors.
-  FunctionValue value;
+  FunctionValue& value = (*function_values)[idx];
   CHECK_GT(FLAGS_sampling_neighbors, 0);
   for (int16_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
     const int current_idx = pointIdxNKNSearch[i];
@@ -138,7 +142,6 @@ void PointCloud::sampleNearestWithCloudInfo(
     value.addRange(info_point.x);
     value.addIntensity(info_point.y);
   }
-  function_values->emplace_back(std::move(value));
 }
 
 void PointCloud::transformPointCloud(const Eigen::Matrix4f& T) {

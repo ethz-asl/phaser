@@ -109,7 +109,9 @@ void SpatialCorrelation::complexMulSeqUsingIndices(
     fftw_complex* C) {
   CHECK(!indices.empty());
   VLOG(1) << "Performing correlation using: " << indices.size() << " samples.";
-  for (const uint32_t i : indices) {
+  const uint32_t n_points = indices.size();
+#pragma omp parallel for num_threads(8)
+  for (uint32_t i = 0u; i < n_points; ++i) {
     C[i][0] = F[i][0] * G[i][0] - F[i][1] * (-G[i][1]);
     C[i][1] = F[i][0] * (-G[i][1]) + F[i][1] * G[i][0];
   }

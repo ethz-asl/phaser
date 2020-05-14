@@ -10,6 +10,7 @@
 #include <chrono>
 #include <gflags/gflags.h>
 #include <glog/logging.h>
+#include <omp.h>
 #include "igl/histc.h"
 
 DEFINE_double(
@@ -29,7 +30,10 @@ PhaseAligner::PhaseAligner()
       total_n_voxels_(
           FLAGS_phase_n_voxels * FLAGS_phase_n_voxels * FLAGS_phase_n_voxels),
       lower_bound_(FLAGS_phase_discretize_lower),
-      upper_bound_(FLAGS_phase_discretize_upper) {
+      upper_bound_(FLAGS_phase_discretize_upper),
+      edges_(Eigen::VectorXf::LinSpaced(
+          FLAGS_phase_n_voxels, FLAGS_phase_discretize_lower,
+          FLAGS_phase_discretize_upper)) {
   VLOG(1) << "Initializing phase alignment with " << FLAGS_phase_n_voxels
           << " voxels in [" << lower_bound_ << ", " << upper_bound_ << "].";
   // Allocate memory for the function signals in the time domain.
@@ -44,26 +48,13 @@ void PhaseAligner::alignRegistered(
     const model::PointCloud& cloud_prev,
     const std::vector<model::FunctionValue>&,
     const model::PointCloud& cloud_reg,
-    const std::vector<model::FunctionValue>&, common::Vector_t* xyz) {
-  CHECK(xyz);
-
+    const std::vector<model::FunctionValue>&) {
+  CHECK_NOTNULL(spatial_correlation_);
   discretizePointcloud(cloud_prev, &f_, &hist_);
   discretizePointcloud(cloud_reg, &g_, &hist_);
 
   double* c = spatial_correlation_->correlateSignals(f_.data(), g_.data());
   previous_correlation_ = std::vector<double>(c, c + total_n_voxels_);
-
-  // Find the index that maximizes the correlation.
-  const auto max_corr = std::max_element(c, c + total_n_voxels_);
-  const uint32_t max = std::distance(c, max_corr);
-  std::array<uint32_t, 3> max_xyz = ind2sub(max, n_voxels_, n_voxels_);
-  VLOG(1) << "Found max correlation at " << max
-          << " with the value:" << *max_corr << " xyz: " << max_xyz[0] << " , "
-          << max_xyz[1] << " , " << max_xyz[2];
-
-  (*xyz)(0) = computeTranslationFromIndex(static_cast<double>(max_xyz[0]));
-  (*xyz)(1) = computeTranslationFromIndex(static_cast<double>(max_xyz[1]));
-  (*xyz)(2) = computeTranslationFromIndex(static_cast<double>(max_xyz[2]));
 }
 
 void PhaseAligner::discretizePointcloud(
@@ -74,21 +65,20 @@ void PhaseAligner::discretizePointcloud(
 
   VLOG(1) << "Discretizing point cloud...";
   Eigen::MatrixXf data = cloud.getRawCloud()->getMatrixXfMap();
-  Eigen::VectorXf edges =
-      Eigen::VectorXf::LinSpaced(n_voxels_, lower_bound_, upper_bound_);
 
   // Discretize the point cloud using an cartesian grid.
   VLOG(1) << "Performing histogram counts.";
   Eigen::VectorXd x_bins, y_bins, z_bins;
-  igl::histc(data.row(0), edges, x_bins);
-  igl::histc(data.row(1), edges, y_bins);
-  igl::histc(data.row(2), edges, z_bins);
+  igl::histc(data.row(0), edges_, x_bins);
+  igl::histc(data.row(1), edges_, y_bins);
+  igl::histc(data.row(2), edges_, z_bins);
 
   // Calculate an average function value for each voxel.
   f->setZero();
   hist->setZero();
   const uint32_t n_points = data.cols();
   const uint32_t n_f = f->rows();
+#pragma omp parallel for num_threads(8)
   for (uint32_t i = 0u; i < n_points; ++i) {
     const uint32_t lin_index =
         sub2ind(x_bins(i), y_bins(i), z_bins(i), n_voxels_, n_voxels_);

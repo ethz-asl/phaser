@@ -19,8 +19,7 @@ class PhaseAligner : public BaseAligner {
       const model::PointCloud& cloud_prev,
       const std::vector<model::FunctionValue>& f_prev,
       const model::PointCloud& cloud_reg,
-      const std::vector<model::FunctionValue>& f_reg,
-      common::Vector_t* xyz) override;
+      const std::vector<model::FunctionValue>& f_reg) override;
 
   std::vector<double> getCorrelation() const override;
   uint32_t getNumberOfVoxels() const noexcept;
@@ -46,6 +45,7 @@ class PhaseAligner : public BaseAligner {
   const uint32_t total_n_voxels_;
   const int lower_bound_;
   const int upper_bound_;
+  Eigen::VectorXf edges_;
   correlation::BaseSpatialCorrelationPtr spatial_correlation_;
   std::vector<double> previous_correlation_;
 };

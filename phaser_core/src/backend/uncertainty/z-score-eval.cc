@@ -69,6 +69,36 @@ void ZScoreEval::evaluateCorrelationVector(
   // peak_extraction_.extractPeaks(*n_corr_ds, signals);
 }
 
+/*
+
+uint32_t findMax(double* data, const uint32_t total_n_voxels) {
+  CHECK_NOTNULL(data);
+  uint32_t max_idx = 0u;
+  double max_val;
+
+#pragma omp parallel
+  {
+    double max_val_private = 0;
+    uint32_t max_idx_private = 0;
+#pragma omp for nowait
+    for (uint32_t i = 0u; i < total_n_voxels; ++i) {
+      if (data[i] > max_val_private) {
+        max_val_private = data[i];
+        max_idx_private = i;
+      }
+    }
+#pragma omp critical
+    {
+      if (max_val_private > max_val) {
+        max_val = max_val_private;
+        max_idx = max_idx_private;
+      }
+    }
+  }
+  return max_idx;
+}
+*/
+
 ZScorePeakExtraction& ZScoreEval::getPeakExtraction() {
   return peak_extraction_;
 }

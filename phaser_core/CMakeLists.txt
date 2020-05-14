@@ -3,6 +3,7 @@ project(phaser_core)
 
 set(CMAKE_CUDA_COMPILER  /usr/local/cuda/bin/nvcc)
 find_package(CUDA REQUIRED)
+find_package(OpenMP REQUIRED)
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14)
@@ -15,6 +16,9 @@ else()
   message(FATAL_ERROR "The compiler does not support C++14.")
 endif()
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+set(OpenMP_LIBS gomp)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 find_package(catkin_simple REQUIRED)
@@ -62,9 +66,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/uncertainty/phase-correlation-eval.cc
    src/backend/uncertainty/signal-analysis.cc
 
-   src/backend/alignment/range-based-aligner.cc
    src/backend/alignment/phase-aligner.cc
-   src/backend/alignment/feature-aligner.cc
 
    src/experiments/experiment-handler.cc
 )
@@ -81,7 +83,7 @@ cuda_add_executable(${PROJECT_NAME}_driver test/driver.cc)
 cuda_add_cufft_to_target(${PROJECT_NAME}_driver)
 target_link_libraries(${PROJECT_NAME}_driver
   ${PROJECT_NAME}_lib ${PROJECT_NAME}_cuda_lib
-  ${CUDA_LIBRARIES} ${CUDA_CUFFT_LIBRARIES})
+  ${CUDA_LIBRARIES} ${CUDA_CUFFT_LIBRARIES} ${OpenMP_LIBS})
 
 # Sanity check.
 catkin_add_gtest(test_sanity_check test/sanity-check/sanity-check-test.cc)
