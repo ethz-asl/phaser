@@ -1,12 +1,14 @@
 #ifndef PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_
 #define PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_
 
-#include "phaser/common/statistics-manager.h"
-#include "phaser/model/function-value.h"
-
 #include <array>
 #include <string>
 #include <vector>
+
+#include <fftw3/fftw3.h>
+
+#include "phaser/common/statistics-manager.h"
+#include "phaser/model/function-value.h"
 
 namespace correlation {
 
@@ -30,6 +32,7 @@ class SphericalCorrelation {
   void retrieveInterpolation(
       const std::vector<model::FunctionValue>& f,
       std::vector<double>* interpolation);
+  void initializeAll(const uint32_t bw);
 
   const std::string kReferenceName = "SPH-Correlation";
   const std::string kSignalKey = "signal_values";
@@ -38,6 +41,26 @@ class SphericalCorrelation {
   uint32_t bw_;
   std::vector<double> corr_;
   common::StatisticsManager statistics_manager_;
+
+  fftw_plan dct_plan_;
+  fftw_plan fft_plan_;
+  fftw_plan inverse_so3_;
+  fftw_complex* workspace1_;
+  fftw_complex* workspace2_;
+  fftw_complex* so3_sig_;
+  double* workspace3_;
+  double* seminaive_naive_tablespace_;
+  double** seminaive_naive_table_;
+
+  double* weights_;
+  int rank_, howmany_, howmany_rank_, istride_, idist_, ostride_, odist_;
+  fftw_iodim dims_[1], howmany_dims_[1];
+  int na_[2], inembed_[2], onembed_[2];
+
+  double* tmp_coef_[2];
+  double* sig_coef_[2];
+  double* pat_coef_[2];
+  fftw_complex* so3_coef_;
 };
 
 }  // namespace correlation

@@ -2,7 +2,13 @@
 #include "phaser/model/function-value.h"
 
 extern "C" {
-#include <soft/wrap_fftw.h>
+#include "soft/makeweights.h"
+#include "soft/s2_cospmls.h"
+#include "soft/s2_legendreTransforms.h"
+#include "soft/s2_semi_memo.h"
+#include "soft/so3_correlate_fftw.h"
+#include "soft/soft_fftw.h"
+#include "soft/wrap_fftw.h"
 }
 
 #include <glog/logging.h>
@@ -83,6 +89,75 @@ std::vector<double> SphericalCorrelation::getCorrelation() const noexcept {
 
 uint32_t SphericalCorrelation::getBandwidth() const noexcept {
   return bw_;
+}
+
+void SphericalCorrelation::initializeAll(const uint32_t bw) {
+  const uint32_t bwp2 = bw * bw;
+  const uint32_t bwp3 = bwp2 * bw;
+  const uint32_t so3bw = 8u * bwp3;
+  const uint32_t n = 2 * bw;
+  rank_ = 1;
+  dims_[0].n = n;
+  dims_[0].is = 1;
+  dims_[0].os = n;
+  howmany_rank_ = 1;
+  howmany_dims_[0].n = n;
+  howmany_dims_[0].is = n;
+  howmany_dims_[0].os = 1;
+
+  workspace1_ =
+      static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * (so3bw)));
+  workspace2_ = static_cast<fftw_complex*>(
+      fftw_malloc(sizeof(fftw_complex) * ((14 * bwp2) + (48 * bw))));
+  workspace3_ =
+      static_cast<double*>(malloc(sizeof(double) * (12 * n + n * bw)));
+
+  weights_ = static_cast<double*>(malloc(sizeof(double) * (4 * bw)));
+  sig_coef_[0] = static_cast<double*>(malloc(sizeof(double) * bwp2));
+  sig_coef_[1] = static_cast<double*>(malloc(sizeof(double) * bwp2));
+  pat_coef_[0] = static_cast<double*>(malloc(sizeof(double) * bwp2));
+  pat_coef_[1] = static_cast<double*>(malloc(sizeof(double) * bwp2));
+  tmp_coef_[0] = static_cast<double*>(malloc(sizeof(double) * (n * n)));
+  tmp_coef_[1] = static_cast<double*>(malloc(sizeof(double) * (n * n)));
+  so3_sig_ =
+      static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * (so3bw)));
+  so3_coef_ = static_cast<fftw_complex*>(
+      fftw_malloc(sizeof(fftw_complex) * ((4 * bwp3 - bw) / 3)));
+  seminaive_naive_tablespace_ = static_cast<double*>(malloc(
+      sizeof(double) *
+      (Reduced_Naive_TableSize(bw, bw) + Reduced_SpharmonicTableSize(bw, bw))));
+
+  dct_plan_ =
+      fftw_plan_r2r_1d(n, weights_, workspace3_, FFTW_REDFT10, FFTW_ESTIMATE);
+
+  fft_plan_ = fftw_plan_guru_split_dft(
+      rank_, dims_, howmany_rank_, howmany_dims_, tmp_coef_[0], tmp_coef_[1],
+      reinterpret_cast<double*>(workspace2_),
+      reinterpret_cast<double*>(workspace2_) + (n * n), FFTW_ESTIMATE);
+
+  howmany_ = n * n;
+  idist_ = n;
+  odist_ = n;
+  rank_ = 2;
+  inembed_[0] = n;
+  inembed_[1] = n * n;
+  onembed_[0] = n;
+  onembed_[1] = n * n;
+  istride_ = 1;
+  ostride_ = 1;
+  na_[0] = 1;
+  na_[1] = n;
+
+  inverse_so3_ = fftw_plan_many_dft(
+      rank_, na_, howmany_, workspace1_, inembed_, istride_, idist_, so3_sig_,
+      onembed_, ostride_, odist_, FFTW_FORWARD, FFTW_ESTIMATE);
+
+  seminaive_naive_table_ = SemiNaive_Naive_Pml_Table(
+      bw, bw, seminaive_naive_tablespace_,
+      reinterpret_cast<double*>(workspace2_));
+
+  // make quadrature weights for the S^2 transform.
+  makeweights(bw, weights_);
 }
 
 }  // namespace correlation

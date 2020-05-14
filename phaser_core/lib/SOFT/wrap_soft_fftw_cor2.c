@@ -169,9 +169,6 @@ void softFFTWCor2(
       exit( 1 ) ;
     }
 
-    /* make all plan thread safe */
-    fftw_make_planner_thread_safe();
-
     /* create fftw plans for the S^2 transforms */
     /* first for the dct */
     dctPlan = fftw_plan_r2r_1d(
