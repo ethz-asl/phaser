@@ -17,13 +17,14 @@ extern "C" {
 
 namespace correlation {
 
-SphericalCorrelation::SphericalCorrelation()
-    : statistics_manager_(kReferenceName) {}
+SphericalCorrelation::SphericalCorrelation(const uint32_t bw)
+    : statistics_manager_(kReferenceName), bw_(bw) {
+  initializeAll(bw);
+}
 
 void SphericalCorrelation::correlateSignals(
     const std::vector<model::FunctionValue>& f1,
     const std::vector<model::FunctionValue>& f2, const int bw) {
-  bw_ = bw;
   VLOG(1) << "Starting the correlation with a " << bw << " bandwidth";
 
   // Retrieve S2 function values

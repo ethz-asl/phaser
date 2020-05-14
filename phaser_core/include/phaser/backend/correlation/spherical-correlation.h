@@ -14,7 +14,7 @@ namespace correlation {
 
 class SphericalCorrelation {
  public:
-  SphericalCorrelation();
+  explicit SphericalCorrelation(const uint32_t bw = 100);
   void correlateSignals(
       const std::vector<model::FunctionValue>& f1,
       const std::vector<model::FunctionValue>& f2, const int bw);
