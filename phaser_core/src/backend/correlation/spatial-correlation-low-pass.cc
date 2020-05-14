@@ -60,6 +60,8 @@ double* SpatialCorrelationLowPass::correlateSignals(
       << "Shifting the low frequency components to the center of the spectrum.";
   shiftSignals(F_, G_);
 
+  // TODO(lbern): Fill C_ with zeros.
+
   // Correlate the signals in the frequency domain.
   complexMulVecUsingIndices(linear_indices_, F_, G_, C_);
 

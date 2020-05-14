@@ -27,6 +27,7 @@
   ************************************************************************/
 
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include <fftw3/fftw3.h>
@@ -85,6 +86,19 @@ change the bandwidth you want to correlate at, or correlate complex-valued
 
 
 ***********************************/
+
+static void writeCoeffToFile(
+    const char* filename, double* signal, int n_signal) {
+  if (signal == NULL)
+    return;
+  FILE* fp;
+  fp = fopen(filename, "w+");
+  for (int i = 0; i < n_signal; ++i) {
+    fprintf(fp, "%f; ", signal[i]);
+  }
+  fprintf(fp, "\n");
+  fclose(fp);
+}
 
 void softFFTWCor2(
     int bw, double* sig, double* pat, double** signal_values, int isReal) {
@@ -272,6 +286,11 @@ void softFFTWCor2(
   free( seminaive_naive_table ) ;
   free( seminaive_naive_tablespace ) ;
 
+  writeCoeffToFile("./F1-r.txt", sigCoefR, bwInp2);
+  writeCoeffToFile("./F1-i.txt", sigCoefI, bwInp2);
+
+  writeCoeffToFile("./F2-r.txt", patCoefR, bwInp2);
+  writeCoeffToFile("./F2-i.txt", patCoefI, bwInp2);
 
   /* combine coefficients */
   so3CombineCoef_fftw( bwIn, bwOut, degLim,
