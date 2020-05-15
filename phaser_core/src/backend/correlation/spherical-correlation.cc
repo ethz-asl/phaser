@@ -155,7 +155,17 @@ void SphericalCorrelation::initializeAll(const uint32_t bw) {
 
 void SphericalCorrelation::performSphericalTransforms(
     const std::vector<double>& f1, const std::vector<double>& f2) {
-  CHECK_NOTNULL(tmp_coef_);
+  CHECK_NOTNULL(tmp_coef_[0]);
+  CHECK_NOTNULL(tmp_coef_[1]);
+  CHECK_NOTNULL(sig_coef_[0]);
+  CHECK_NOTNULL(sig_coef_[1]);
+  CHECK_NOTNULL(pat_coef_[0]);
+  CHECK_NOTNULL(pat_coef_[1]);
+  CHECK_NOTNULL(workspace2_);
+  CHECK_NOTNULL(dct_plan_);
+  CHECK_NOTNULL(fft_plan_);
+  CHECK_NOTNULL(weights_);
+
 #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < howmany_; ++i) {
     tmp_coef_[0][i] = f1[i];
@@ -182,6 +192,16 @@ void SphericalCorrelation::performSphericalTransforms(
 }
 
 void SphericalCorrelation::correlateAndInverseTransform() {
+  CHECK_NOTNULL(sig_coef_[0]);
+  CHECK_NOTNULL(sig_coef_[1]);
+  CHECK_NOTNULL(pat_coef_[0]);
+  CHECK_NOTNULL(pat_coef_[1]);
+  CHECK_NOTNULL(so3_sig_);
+  CHECK_NOTNULL(so3_coef_);
+  CHECK_NOTNULL(workspace1_);
+  CHECK_NOTNULL(workspace2_);
+  CHECK_NOTNULL(workspace3_);
+
   so3CombineCoef_fftw(
       bw_, bw_, bw_ - 1, sig_coef_[0], sig_coef_[1], pat_coef_[0], pat_coef_[1],
       so3_coef_);
