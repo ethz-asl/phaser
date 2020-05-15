@@ -17,7 +17,7 @@ class SphericalCorrelation {
   explicit SphericalCorrelation(const uint32_t bw = 100);
   void correlateSignals(
       const std::vector<model::FunctionValue>& f1,
-      const std::vector<model::FunctionValue>& f2, const int bw);
+      const std::vector<model::FunctionValue>& f2);
 
   void correlateSampledSignals(
       const std::vector<double>& f1, const std::vector<double>& f2);

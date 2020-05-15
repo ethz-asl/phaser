@@ -24,9 +24,7 @@ SphericalCorrelation::SphericalCorrelation(const uint32_t bw)
 
 void SphericalCorrelation::correlateSignals(
     const std::vector<model::FunctionValue>& f1,
-    const std::vector<model::FunctionValue>& f2, const int bw) {
-  VLOG(1) << "Starting the correlation with a " << bw << " bandwidth";
-
+    const std::vector<model::FunctionValue>& f2) {
   // Retrieve S2 function values
   std::vector<double> averaged_signal;
   std::vector<double> averaged_pattern;
@@ -40,15 +38,6 @@ void SphericalCorrelation::correlateSignals(
 void SphericalCorrelation::correlateSampledSignals(
     const std::vector<double>& f1, const std::vector<double>& f2) {
   VLOG(1) << "Starting the correlation with a " << bw_ << " bandwidth";
-  /* double* signal_values;
-  constexpr int is_real = 1;
-  softFFTWCor2(bw, f1.data(), f2.data(), &signal_values, is_real);
-  CHECK_NOTNULL(signal_values);
-
-  const uint32_t len_corr = 8 * bw * bw * bw;
-  corr_.assign(signal_values, signal_values + len_corr);
-  delete[] signal_values;
-  */
   performSphericalTransforms(f1, f2);
   correlateAndInverseTransform();
 }
