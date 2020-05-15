@@ -30,7 +30,6 @@ cs_add_library(${PROJECT_NAME}_lib
    lib/SOFT/s2_primitive.c
    lib/SOFT/makeWigner.c
    lib/SOFT/utils_so3.c
-   lib/SOFT/wrap_soft_fftw_cor2.c
    lib/SOFT/s2_semi_memo.c
    lib/SOFT/utils_vec_cx.c
    lib/SOFT/so3_correlate_fftw.c
