@@ -156,6 +156,7 @@ void SphericalCorrelation::initializeAll(const uint32_t bw) {
 void SphericalCorrelation::performSphericalTransforms(
     const std::vector<double>& f1, const std::vector<double>& f2) {
   CHECK_NOTNULL(tmp_coef_);
+#pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < howmany_; ++i) {
     tmp_coef_[0][i] = f1[i];
     tmp_coef_[1][i] = 0.;
@@ -167,6 +168,7 @@ void SphericalCorrelation::performSphericalTransforms(
       seminaive_naive_table_, reinterpret_cast<double*>(workspace2_), 1, bw_,
       &dct_plan_, &fft_plan_, weights_);
 
+#pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < howmany_; ++i) {
     tmp_coef_[0][i] = f2[i];
     tmp_coef_[1][i] = 0.;
@@ -188,6 +190,7 @@ void SphericalCorrelation::correlateAndInverseTransform() {
       &inverse_so3_, 1);
 
   so3_mag_sig_ = std::vector<double>(so3_bw_);
+#pragma omp parallel for num_threads(2)
   for (uint32_t i = 0; i < so3_bw_; ++i) {
     const double real = so3_sig_[i][0];
     const double imag = so3_sig_[i][1];
