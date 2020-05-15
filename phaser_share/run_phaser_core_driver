@@ -4,9 +4,9 @@ REST=$@
 rosrun phaser_core phaser_core_driver \
   --v=3 \
   --alsologtostderr=1 \
-  --phaser_pre_enable_geometric_cloud_segmentation=true \
-  --target_cloud=/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_test_data/test_clouds/arche/penguin/cloud0061.ply \
-  --source_cloud=/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_test_data/test_clouds/arche/penguin/cloud0062.ply \
+  --phaser_pre_enable_geometric_cloud_segmentation=false \
+  --target_cloud="/home/berlukas/Documents/PhD/research/2019/Spherical Registration/ply/exp1/cloud001.ply" \
+  --source_cloud="/home/berlukas/Documents/PhD/research/2019/Spherical Registration/ply/exp1/cloud002.ply" \
   --reg_cloud=./cloud01.ply \
   --phaser_core_spatial_low_pass_lower_bound=85 \
   --phaser_core_spatial_low_pass_upper_bound=115 \

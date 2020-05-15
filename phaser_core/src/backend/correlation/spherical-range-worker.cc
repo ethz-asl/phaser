@@ -7,7 +7,10 @@ namespace correlation {
 SphericalRangeWorker::SphericalRangeWorker(
     const model::FunctionValueVec& f_values,
     const model::FunctionValueVec& h_values, const uint16_t bandwidth)
-    : f_values_(f_values), h_values_(h_values), bw_(bandwidth) {}
+    : f_values_(f_values),
+      h_values_(h_values),
+      bw_(bandwidth),
+      sph_corr_(bandwidth) {}
 
 void SphericalRangeWorker::run() {
   VLOG(1) << "[SphericalIntensityWorker] Estimating rotation...";
@@ -18,7 +21,7 @@ void SphericalRangeWorker::run() {
       [](const model::FunctionValue& v) { return v.getAveragedRange(); };
   convertFunctionValues(f_values_, func, &f_range);
   convertFunctionValues(h_values_, func, &h_range);
-  sph_corr_.correlateSampledSignals(bw_, f_range, h_range);
+  sph_corr_.correlateSampledSignals(f_range, h_range);
 
   is_completed_ = true;
 }

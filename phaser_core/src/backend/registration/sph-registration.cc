@@ -1,5 +1,5 @@
-#include "phaser/backend/registration/sph-registration.h"
 #include "phaser/backend/alignment/phase-aligner.h"
+#include "phaser/backend/registration/sph-registration.h"
 #include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
 #include "phaser/backend/uncertainty/bmm-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
@@ -35,6 +35,7 @@ namespace registration {
 SphRegistration::SphRegistration()
     : BaseRegistration("SphRegistration"),
       sampler_(FLAGS_spherical_bandwith),
+      sph_corr_(FLAGS_spherical_bandwith),
       alignment_algorithm_(FLAGS_alignment_algorithm),
       rot_evaluation_algorithm_(FLAGS_rot_evaluation_algorithm),
       pos_evaluation_algorithm_(FLAGS_pos_evaluation_algorithm) {
@@ -45,6 +46,7 @@ SphRegistration::SphRegistration(
     std::string&& pos_evaluation_algorithm)
     : BaseRegistration("SphRegistration"),
       sampler_(FLAGS_spherical_bandwith),
+      sph_corr_(FLAGS_spherical_bandwith),
       alignment_algorithm_(alignment_algorithm),
       rot_evaluation_algorithm_(rot_evaluation_algorithm),
       pos_evaluation_algorithm_(pos_evaluation_algorithm) {
@@ -172,7 +174,7 @@ void SphRegistration::correlatePointcloud(
 
   const double duration_correlation_ms = common::executeTimedFunction(
       &correlation::SphericalCorrelation::correlateSignals, &sph_corr_,
-      f_values_, h_values_, sampler_.getInitializedBandwith());
+      f_values_, h_values_);
 
   VLOG(1) << "Registered point cloud.\n"
           << "Sampling took for f and h: [" << duration_sample_f_ms << "ms,"
