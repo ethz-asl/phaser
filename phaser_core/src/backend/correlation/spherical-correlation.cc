@@ -34,14 +34,13 @@ void SphericalCorrelation::correlateSignals(
   retrieveInterpolation(f2, &averaged_pattern);
 
   // Start signal correlation process
-  correlateSampledSignals(bw, averaged_signal, averaged_pattern);
+  correlateSampledSignals(averaged_signal, averaged_pattern);
 }
 
 void SphericalCorrelation::correlateSampledSignals(
-    const int bw, std::vector<double>& f1, std::vector<double>& f2) {
-  VLOG(1) << "Starting the correlation with a " << bw << " bandwidth";
-  bw_ = bw;
-  double* signal_values;
+    const std::vector<double>& f1, const std::vector<double>& f2) {
+  VLOG(1) << "Starting the correlation with a " << bw_ << " bandwidth";
+  /* double* signal_values;
   constexpr int is_real = 1;
   softFFTWCor2(bw, f1.data(), f2.data(), &signal_values, is_real);
   CHECK_NOTNULL(signal_values);
@@ -49,6 +48,9 @@ void SphericalCorrelation::correlateSampledSignals(
   const uint32_t len_corr = 8 * bw * bw * bw;
   corr_.assign(signal_values, signal_values + len_corr);
   delete[] signal_values;
+  */
+  performSphericalTransforms(f1, f2);
+  correlateAndInverseTransform();
 }
 
 void SphericalCorrelation::getStatistics(
@@ -85,7 +87,7 @@ void SphericalCorrelation::retrieveInterpolation(
 }
 
 std::vector<double> SphericalCorrelation::getCorrelation() const noexcept {
-  return corr_;
+  return so3_mag_sig_;
 }
 
 uint32_t SphericalCorrelation::getBandwidth() const noexcept {
@@ -95,7 +97,7 @@ uint32_t SphericalCorrelation::getBandwidth() const noexcept {
 void SphericalCorrelation::initializeAll(const uint32_t bw) {
   const uint32_t bwp2 = bw * bw;
   const uint32_t bwp3 = bwp2 * bw;
-  const uint32_t so3bw = 8u * bwp3;
+  so3_bw_ = 8u * bwp3;
   const uint32_t n = 2 * bw;
   rank_ = 1;
   dims_[0].n = n;
@@ -107,7 +109,7 @@ void SphericalCorrelation::initializeAll(const uint32_t bw) {
   howmany_dims_[0].os = 1;
 
   workspace1_ =
-      static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * (so3bw)));
+      static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * (so3_bw_)));
   workspace2_ = static_cast<fftw_complex*>(
       fftw_malloc(sizeof(fftw_complex) * ((14 * bwp2) + (48 * bw))));
   workspace3_ =
@@ -121,12 +123,13 @@ void SphericalCorrelation::initializeAll(const uint32_t bw) {
   tmp_coef_[0] = static_cast<double*>(malloc(sizeof(double) * (n * n)));
   tmp_coef_[1] = static_cast<double*>(malloc(sizeof(double) * (n * n)));
   so3_sig_ =
-      static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * (so3bw)));
+      static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * (so3_bw_)));
   so3_coef_ = static_cast<fftw_complex*>(
       fftw_malloc(sizeof(fftw_complex) * ((4 * bwp3 - bw) / 3)));
   seminaive_naive_tablespace_ = static_cast<double*>(malloc(
       sizeof(double) *
       (Reduced_Naive_TableSize(bw, bw) + Reduced_SpharmonicTableSize(bw, bw))));
+  so3_mag_sig_ = std::vector<double>(so3_bw_);
 
   dct_plan_ =
       fftw_plan_r2r_1d(n, weights_, workspace3_, FFTW_REDFT10, FFTW_ESTIMATE);
@@ -159,6 +162,48 @@ void SphericalCorrelation::initializeAll(const uint32_t bw) {
 
   // make quadrature weights for the S^2 transform.
   makeweights(bw, weights_);
+}
+
+void SphericalCorrelation::performSphericalTransforms(
+    const std::vector<double>& f1, const std::vector<double>& f2) {
+  CHECK_NOTNULL(tmp_coef_);
+  for (uint32_t i = 0u; i < howmany_; ++i) {
+    tmp_coef_[0][i] = f1[i];
+    tmp_coef_[1][i] = 0.;
+  }
+
+  // Perform spherical transform of f1.
+  FST_semi_memo(
+      tmp_coef_[0], tmp_coef_[1], sig_coef_[0], sig_coef_[1], bw_,
+      seminaive_naive_table_, reinterpret_cast<double*>(workspace2_), 1, bw_,
+      &dct_plan_, &fft_plan_, weights_);
+
+  for (uint32_t i = 0u; i < howmany_; ++i) {
+    tmp_coef_[0][i] = f2[i];
+    tmp_coef_[1][i] = 0.;
+  }
+
+  // Perform spherical transform of f2.
+  FST_semi_memo(
+      tmp_coef_[0], tmp_coef_[1], pat_coef_[0], pat_coef_[1], bw_,
+      seminaive_naive_table_, reinterpret_cast<double*>(workspace2_), 1, bw_,
+      &dct_plan_, &fft_plan_, weights_);
+}
+
+void SphericalCorrelation::correlateAndInverseTransform() {
+  so3CombineCoef_fftw(
+      bw_, bw_, bw_ - 1, sig_coef_[0], sig_coef_[1], pat_coef_[0], pat_coef_[1],
+      so3_coef_);
+  Inverse_SO3_Naive_fftw(
+      bw_, so3_coef_, so3_sig_, workspace1_, workspace2_, workspace3_,
+      &inverse_so3_, 1);
+
+  so3_mag_sig_ = std::vector<double>(so3_bw_);
+  for (uint32_t i = 0; i < so3_bw_; ++i) {
+    const double real = so3_sig_[i][0];
+    const double imag = so3_sig_[i][1];
+    so3_mag_sig_[i] = real * real + imag * imag;
+  }
 }
 
 }  // namespace correlation

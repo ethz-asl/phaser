@@ -283,11 +283,13 @@ void softFFTWCor2(
   free( seminaive_naive_table ) ;
   free( seminaive_naive_tablespace ) ;
 
+  /*
   writeCoeffToFile("./F1-r.txt", sigCoefR, bwInp2);
   writeCoeffToFile("./F1-i.txt", sigCoefI, bwInp2);
 
   writeCoeffToFile("./F2-r.txt", patCoefR, bwInp2);
   writeCoeffToFile("./F2-i.txt", patCoefI, bwInp2);
+  */
 
   /* combine coefficients */
   so3CombineCoef_fftw( bwIn, bwOut, degLim,

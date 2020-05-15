@@ -20,7 +20,7 @@ class SphericalCorrelation {
       const std::vector<model::FunctionValue>& f2, const int bw);
 
   void correlateSampledSignals(
-      const int bw, std::vector<double>& f1, std::vector<double>& f2);
+      const std::vector<double>& f1, const std::vector<double>& f2);
 
   void getStatistics(common::StatisticsManager* manager) const noexcept;
   std::vector<double> getCorrelation() const noexcept;
@@ -33,12 +33,16 @@ class SphericalCorrelation {
       const std::vector<model::FunctionValue>& f,
       std::vector<double>* interpolation);
   void initializeAll(const uint32_t bw);
+  void performSphericalTransforms(
+      const std::vector<double>& f1, const std::vector<double>& f2);
+  void correlateAndInverseTransform();
 
   const std::string kReferenceName = "SPH-Correlation";
   const std::string kSignalKey = "signal_values";
   const std::string kCoeffKey = "signal_coeff";
   const double two_pi_ = 2 * M_PI;
   uint32_t bw_;
+  uint32_t so3_bw_;
   std::vector<double> corr_;
   common::StatisticsManager statistics_manager_;
 
@@ -47,8 +51,8 @@ class SphericalCorrelation {
   fftw_plan inverse_so3_;
   fftw_complex* workspace1_;
   fftw_complex* workspace2_;
-  fftw_complex* so3_sig_;
   double* workspace3_;
+  fftw_complex* so3_sig_;
   double* seminaive_naive_tablespace_;
   double** seminaive_naive_table_;
 
@@ -61,6 +65,7 @@ class SphericalCorrelation {
   double* sig_coef_[2];
   double* pat_coef_[2];
   fftw_complex* so3_coef_;
+  std::vector<double> so3_mag_sig_;
 };
 
 }  // namespace correlation
