@@ -3,11 +3,10 @@
 #include "tinyply/tinyply.h"
 
 #include "phaser/common/data/ply-helper.h"
-#include "phaser/model/ply-point-cloud.h"
 
 namespace data {
 
-void PlyHelper::readPlyFromFile(const std::string& filename) {
+model::PlyPointCloud PlyHelper::readPlyFromFile(const std::string& filename) {
   std::ifstream in_stream(filename);
   if (!stream_ply.is_open()) {
     LOG(ERROR) << "Unable to open ply file: " << filename;
@@ -33,6 +32,8 @@ void PlyHelper::readPlyFromFile(const std::string& filename) {
   const int range_point_count = ply_file.request_properties_from_element(
       "vertex", {"range"}, ply_cloud.getRange());
   LOG_IF(WARNING) << "No range channel found.";
+
+  return ply_cloud;
 }
 
 }  // namespace data

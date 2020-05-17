@@ -1,5 +1,6 @@
 #include "phaser/model/point-cloud.h"
 #include "phaser/common/data/file-system-helper.h"
+#include "phaser/common/data/ply-helper.h"
 
 #include <pcl/common/io.h>
 #include <pcl/common/transforms.h>
@@ -249,14 +250,32 @@ void PointCloud::readFromFile(const std::string& ply) {
   CHECK_NOTNULL(cloud_);
   VLOG(2) << "Reading PLY file from: " << ply;
   ply_read_directory_ = ply;
-  pcl::PLYReader reader;
-  reader.read(ply, *cloud_);
+  data::PlyHelper ply_helper;
+  model::PlyPointCloud ply_cloud = ply_helper.readPlyFromFile(ply);
+
+  // pcl::PLYReader reader;
+  // reader.read(ply, *cloud_);
   VLOG(2) << "Cloud size: " << cloud_->size();
   // convertInputPointCloud(cloud);
 }
 
 std::string PointCloud::getPlyReadDirectory() const noexcept {
   return ply_read_directory_;
+}
+
+void PointCloud::parsePlyPointCloud(PlyPointCloud&& ply_point_cloud) {
+  CHECK_NOTNULL(cloud_);
+  const std::vector<float>& xyz = ply_point_cloud.getXYZPoints();
+  const std::vector<float>& intensities = ply_point_cloud.getIntentsities();
+  const uint32_t n_points = xyz.size();
+  CHECK_GT(n_points, 0);
+  for (uint32_t i = 0; i < n_points; i += 3) {
+    common::Point_t p(intensities[i]);
+    p.x = xyz[i];
+    p.y = xyz[i + 1];
+    p.z = xyz[i + 2];
+    cloud_->points.push_back(p);
+  }
 }
 
 }  // namespace model
