@@ -106,6 +106,7 @@ uint32_t SphericalCorrelation::getBandwidth() const noexcept {
 }
 
 void SphericalCorrelation::initializeAll(const uint32_t bw) {
+  VLOG(1) << "Initializing spherical correlation.";
   const uint32_t bwp2 = bw * bw;
   const uint32_t bwp3 = bwp2 * bw;
   so3_bw_ = 8u * bwp3;
@@ -177,6 +178,7 @@ void SphericalCorrelation::initializeAll(const uint32_t bw) {
 
 void SphericalCorrelation::performSphericalTransforms(
     const std::vector<double>& f1, const std::vector<double>& f2) {
+  VLOG(1) << "Performing spherical transformations for input.";
   CHECK_NOTNULL(tmp_coef_[0]);
   CHECK_NOTNULL(tmp_coef_[1]);
   CHECK_NOTNULL(sig_coef_[0]);

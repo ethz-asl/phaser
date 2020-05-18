@@ -2,13 +2,15 @@
 
 #include <glog/logging.h>
 
+#include "phaser/backend/correlation/spherical-correlation-low-pass.h"
+
 namespace correlation {
 
 SphericalIntensityWorker::SphericalIntensityWorker(
     const model::FunctionValueVec& f_values,
     const model::FunctionValueVec& h_values, const uint16_t bandwidth)
     : f_values_(f_values), h_values_(h_values), bw_(bandwidth) {
-  sph_corr_.reset(new SphericalCorrelation(bandwidth));
+  sph_corr_.reset(new SphericalCorrelationLowPass(bandwidth));
 }
 
 void SphericalIntensityWorker::run() {

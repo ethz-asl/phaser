@@ -24,32 +24,46 @@ void SphericalCorrelationLowPass::filterAndCorrelateCoefficients() {
   CHECK_NOTNULL(pat_coef_[1]);
 
   const uint32_t full_bw = bw_ * bw_;
-  const uint32_t third_bw = std::round(full_bw / 3.0);
+  const uint32_t third_bw = std::round(full_bw / 4.0);
+  const uint32_t upper_third_bw = full_bw - third_bw;
   shiftSignals(full_bw);
+  VLOG(1) << "starting lower third: " << 0 << " to " << third_bw;
   for (uint32_t i = 0u; i < third_bw; ++i) {
     sig_coef_[0][i] = 0.0;
     sig_coef_[1][i] = 0.0;
     pat_coef_[0][i] = 0.0;
     pat_coef_[1][i] = 0.0;
   }
-  const uint32_t upper_third_bw = full_bw - third_bw;
+  VLOG(1) << "finished lower third.";
   for (uint32_t i = upper_third_bw; i < full_bw; ++i) {
     sig_coef_[0][i] = 0.0;
     sig_coef_[1][i] = 0.0;
     pat_coef_[0][i] = 0.0;
     pat_coef_[1][i] = 0.0;
   }
-  correlate();
+  VLOG(1) << "Left "
+          << (upper_third_bw - third_bw) / static_cast<float>(full_bw) * 100.0
+          << "% in the spectrum.";
   inverseShiftSignals(full_bw);
+  correlate();
 }
 
 void SphericalCorrelationLowPass::shiftSignals(const uint32_t n_points) {
-  common::SignalUtils::FFTShift(sig_coef_, n_points);
-  common::SignalUtils::FFTShift(pat_coef_, n_points);
+  common::SignalUtils::FFTShift(sig_coef_[0], n_points);
+  common::SignalUtils::FFTShift(sig_coef_[1], n_points);
+  common::SignalUtils::FFTShift(pat_coef_[0], n_points);
+  common::SignalUtils::FFTShift(pat_coef_[1], n_points);
 }
 
 void SphericalCorrelationLowPass::inverseShiftSignals(const uint32_t n_points) {
-  common::SignalUtils::IFFTShift(so3_coef_, n_points);
+  common::SignalUtils::IFFTShift(sig_coef_[0], n_points);
+  common::SignalUtils::IFFTShift(sig_coef_[1], n_points);
+  common::SignalUtils::IFFTShift(pat_coef_[0], n_points);
+  common::SignalUtils::IFFTShift(pat_coef_[1], n_points);
+  /*
+  common::SignalUtils::IFFTShift(so3_coef_[0], n_points);
+  common::SignalUtils::IFFTShift(so3_coef_[1], n_points);
+  */
 }
 
 }  // namespace correlation
