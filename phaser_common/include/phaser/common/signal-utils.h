@@ -16,6 +16,9 @@ class SignalUtils {
   template <typename T_input>
   static void IFFTShift(T_input* input, const std::size_t n);
 
+  static void FFTShift(fftw_complex* input, const std::size_t n);
+  static void IFFTShift(fftw_complex* input, const std::size_t n);
+
   static uint32_t Sub2Ind(
       const uint32_t i, const uint32_t j, const uint32_t k, const uint32_t rows,
       const uint32_t cols);
@@ -31,19 +34,6 @@ void SignalUtils::FFTShift(T_input* input, const std::size_t n) {
   }
 }
 
-template <>
-void SignalUtils::FFTShift(fftw_complex* input, const std::size_t n) {
-  CHECK_NOTNULL(input);
-  std::complex<double>* complex_input =
-      reinterpret_cast<std::complex<double>*>(input);
-  if (n % 2 == 0) {
-    std::rotate(&complex_input[0], &complex_input[n >> 1], &complex_input[n]);
-  } else {
-    std::rotate(
-        &complex_input[0], &complex_input[(n >> 1) + 1], &complex_input[n]);
-  }
-}
-
 template <typename T_input>
 void SignalUtils::IFFTShift(T_input* input, const std::size_t n) {
   CHECK_NOTNULL(input);
@@ -51,18 +41,6 @@ void SignalUtils::IFFTShift(T_input* input, const std::size_t n) {
     std::rotate(&input[0], &input[n >> 1], &input[n]);
   } else {
     std::rotate(&input[0], &input[(n >> 1)], &input[n]);
-  }
-}
-
-template <>
-void SignalUtils::IFFTShift(fftw_complex* input, const std::size_t n) {
-  CHECK_NOTNULL(input);
-  std::complex<double>* complex_input =
-      reinterpret_cast<std::complex<double>*>(input);
-  if (n % 2 == 0) {
-    std::rotate(&complex_input[0], &complex_input[n >> 1], &complex_input[n]);
-  } else {
-    std::rotate(&complex_input[0], &complex_input[(n >> 1)], &complex_input[n]);
   }
 }
 

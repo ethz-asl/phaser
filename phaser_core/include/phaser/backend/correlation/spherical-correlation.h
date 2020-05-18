@@ -2,6 +2,7 @@
 #define PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_
 
 #include <array>
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -36,8 +37,8 @@ class SphericalCorrelation {
   void initializeAll(const uint32_t bw);
   void performSphericalTransforms(
       const std::vector<double>& f1, const std::vector<double>& f2);
-  void correlateAndInverseTransform();
-  void freeAll();
+  void correlate();
+  void inverseTransform();
 
   const std::string kReferenceName = "SPH-Correlation";
   const std::string kSignalKey = "signal_values";
@@ -69,6 +70,8 @@ class SphericalCorrelation {
   fftw_complex* so3_coef_;
   std::vector<double> so3_mag_sig_;
 };
+
+using SphericalCorrelationPtr = std::unique_ptr<SphericalCorrelation>;
 
 }  // namespace correlation
 

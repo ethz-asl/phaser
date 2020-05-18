@@ -24,7 +24,7 @@ class SphericalIntensityWorker : public common::BaseWorker {
   const SphericalCorrelation& getCorrelationObject() const noexcept;
 
  private:
-  SphericalCorrelation sph_corr_;
+  SphericalCorrelationPtr sph_corr_;
   const model::FunctionValueVec& f_values_;
   const model::FunctionValueVec& h_values_;
   const uint32_t bw_;
