@@ -258,8 +258,6 @@ void PointCloud::readFromFile(const std::string& ply) {
   data::PlyHelper ply_helper;
   model::PlyPointCloud ply_cloud = ply_helper.readPlyFromFile(ply);
   parsePlyPointCloud(std::move(ply_cloud));
-  // pcl::PLYReader reader;
-  // reader.read(ply, *cloud_);
   VLOG(2) << "Cloud size: " << cloud_->size();
   initialize_kd_tree();
 }
