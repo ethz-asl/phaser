@@ -21,6 +21,27 @@ SphericalCorrelation::SphericalCorrelation(const uint32_t bw)
     : statistics_manager_(kReferenceName), bw_(bw) {
   initializeAll(bw);
 }
+SphericalCorrelation::~SphericalCorrelation() {
+  /*
+    free(seminaive_naive_table_);
+    free(seminaive_naive_tablespace_);
+    fftw_destroy_plan(inverse_so3_);
+  fftw_destroy_plan(inverse_so3_);
+  fftw_destroy_plan(fft_plan_);
+  fftw_destroy_plan(dct_plan_);
+  fftw_free(workspace1_);
+  fftw_free(workspace2_);
+  fftw_free(so3_sig_);
+  fftw_free(so3_coef_);
+  free(workspace3_);
+  free(weights_);
+  for (std::size_t i = 0u; i < 2u; ++i) {
+    free(pat_coef_[i]);
+    free(sig_coef_[i]);
+    free(tmp_coef_[i]);
+  }
+  */
+}
 
 void SphericalCorrelation::correlateSignals(
     const std::vector<model::FunctionValue>& f1,
@@ -39,7 +60,8 @@ void SphericalCorrelation::correlateSampledSignals(
     const std::vector<double>& f1, const std::vector<double>& f2) {
   VLOG(1) << "Starting the correlation with a " << bw_ << " bandwidth";
   performSphericalTransforms(f1, f2);
-  correlateAndInverseTransform();
+  correlate();
+  inverseTransform();
 }
 
 void SphericalCorrelation::getStatistics(
@@ -84,6 +106,7 @@ uint32_t SphericalCorrelation::getBandwidth() const noexcept {
 }
 
 void SphericalCorrelation::initializeAll(const uint32_t bw) {
+  VLOG(1) << "Initializing spherical correlation.";
   const uint32_t bwp2 = bw * bw;
   const uint32_t bwp3 = bwp2 * bw;
   so3_bw_ = 8u * bwp3;
@@ -155,6 +178,7 @@ void SphericalCorrelation::initializeAll(const uint32_t bw) {
 
 void SphericalCorrelation::performSphericalTransforms(
     const std::vector<double>& f1, const std::vector<double>& f2) {
+  VLOG(1) << "Performing spherical transformations for input.";
   CHECK_NOTNULL(tmp_coef_[0]);
   CHECK_NOTNULL(tmp_coef_[1]);
   CHECK_NOTNULL(sig_coef_[0]);
@@ -191,20 +215,25 @@ void SphericalCorrelation::performSphericalTransforms(
       &dct_plan_, &fft_plan_, weights_);
 }
 
-void SphericalCorrelation::correlateAndInverseTransform() {
+void SphericalCorrelation::correlate() {
   CHECK_NOTNULL(sig_coef_[0]);
   CHECK_NOTNULL(sig_coef_[1]);
   CHECK_NOTNULL(pat_coef_[0]);
   CHECK_NOTNULL(pat_coef_[1]);
+  CHECK_NOTNULL(so3_coef_);
+
+  so3CombineCoef_fftw(
+      bw_, bw_, bw_ - 1, sig_coef_[0], sig_coef_[1], pat_coef_[0], pat_coef_[1],
+      so3_coef_);
+}
+
+void SphericalCorrelation::inverseTransform() {
   CHECK_NOTNULL(so3_sig_);
   CHECK_NOTNULL(so3_coef_);
   CHECK_NOTNULL(workspace1_);
   CHECK_NOTNULL(workspace2_);
   CHECK_NOTNULL(workspace3_);
 
-  so3CombineCoef_fftw(
-      bw_, bw_, bw_ - 1, sig_coef_[0], sig_coef_[1], pat_coef_[0], pat_coef_[1],
-      so3_coef_);
   Inverse_SO3_Naive_fftw(
       bw_, so3_coef_, so3_sig_, workspace1_, workspace2_, workspace3_,
       &inverse_so3_, 1);

@@ -48,6 +48,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/registration/mock/sph-registration-mock-transformed.cc
 
    src/backend/correlation/spherical-correlation.cc
+   src/backend/correlation/spherical-correlation-low-pass.cc
    src/backend/correlation/base-spatial-correlation.cc
    src/backend/correlation/spatial-correlation.cc
    src/backend/correlation/spatial-correlation-low-pass.cc

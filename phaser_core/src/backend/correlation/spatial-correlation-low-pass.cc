@@ -11,7 +11,7 @@ DEFINE_int32(
     "Defines the lower frequency bound of the spatial low pass filtering.");
 
 DEFINE_int32(
-    phaser_core_spatial_low_pass_upper_bound, 1000,
+    phaser_core_spatial_low_pass_upper_bound, 100000,
     "Defines the lower frequency bound of the spatial low pass filtering.");
 
 namespace correlation {
