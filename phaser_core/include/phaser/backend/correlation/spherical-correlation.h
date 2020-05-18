@@ -15,18 +15,19 @@ namespace correlation {
 class SphericalCorrelation {
  public:
   explicit SphericalCorrelation(const uint32_t bw = 100);
+  virtual ~SphericalCorrelation();
   void correlateSignals(
       const std::vector<model::FunctionValue>& f1,
       const std::vector<model::FunctionValue>& f2);
 
-  void correlateSampledSignals(
+  virtual void correlateSampledSignals(
       const std::vector<double>& f1, const std::vector<double>& f2);
 
   void getStatistics(common::StatisticsManager* manager) const noexcept;
   std::vector<double> getCorrelation() const noexcept;
   uint32_t getBandwidth() const noexcept;
 
- private:
+ protected:
   void convertSignalValues(double* signal_values, const int bw);
   void convertSignalCoeff(double* signal_coeff, const int bw);
   void retrieveInterpolation(
@@ -36,6 +37,7 @@ class SphericalCorrelation {
   void performSphericalTransforms(
       const std::vector<double>& f1, const std::vector<double>& f2);
   void correlateAndInverseTransform();
+  void freeAll();
 
   const std::string kReferenceName = "SPH-Correlation";
   const std::string kSignalKey = "signal_values";

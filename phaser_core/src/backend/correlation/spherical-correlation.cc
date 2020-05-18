@@ -21,6 +21,27 @@ SphericalCorrelation::SphericalCorrelation(const uint32_t bw)
     : statistics_manager_(kReferenceName), bw_(bw) {
   initializeAll(bw);
 }
+SphericalCorrelation::~SphericalCorrelation() {
+  /*
+    free(seminaive_naive_table_);
+    free(seminaive_naive_tablespace_);
+    fftw_destroy_plan(inverse_so3_);
+  fftw_destroy_plan(inverse_so3_);
+  fftw_destroy_plan(fft_plan_);
+  fftw_destroy_plan(dct_plan_);
+  fftw_free(workspace1_);
+  fftw_free(workspace2_);
+  fftw_free(so3_sig_);
+  fftw_free(so3_coef_);
+  free(workspace3_);
+  free(weights_);
+  for (std::size_t i = 0u; i < 2u; ++i) {
+    free(pat_coef_[i]);
+    free(sig_coef_[i]);
+    free(tmp_coef_[i]);
+  }
+  */
+}
 
 void SphericalCorrelation::correlateSignals(
     const std::vector<model::FunctionValue>& f1,
