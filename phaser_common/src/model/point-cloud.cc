@@ -273,14 +273,17 @@ void PointCloud::parsePlyPointCloud(PlyPointCloud&& ply_point_cloud) {
   const std::vector<float>& xyz = ply_point_cloud.getXYZPoints();
   const std::vector<float>& intensities = ply_point_cloud.getIntentsities();
   const uint32_t n_points = xyz.size();
+  const uint32_t n_intensities = intensities.size();
   CHECK_GT(n_points, 0u);
-  for (uint32_t i = 0u; i < n_points; i += 3u) {
+  uint32_t k = 0u;
+  for (uint32_t i = 0u; i < n_points && k < n_intensities; i += 3u) {
     common::Point_t p;
     p.x = xyz[i];
     p.y = xyz[i + 1u];
     p.z = xyz[i + 2u];
-    p.intensity = intensities[i];
+    p.intensity = intensities[k];
     cloud_->points.push_back(p);
+    ++k;
   }
 }
 
