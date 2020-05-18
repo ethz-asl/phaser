@@ -8,6 +8,8 @@ rosrun phaser_core phaser_core_driver \
   --target_cloud="/home/berlukas/Documents/PhD/research/2019/Spherical Registration/ply/exp1/cloud001.ply" \
   --source_cloud="/home/berlukas/Documents/PhD/research/2019/Spherical Registration/ply/exp1/cloud002.ply" \
   --reg_cloud=./cloud01.ply \
+  --phaser_core_spherical_low_pass_lower_bound=8250 \
+  --phaser_core_spherical_low_pass_upper_bound=14250 \
   --phaser_core_spatial_low_pass_lower_bound=85 \
   --phaser_core_spatial_low_pass_upper_bound=115 \
   $REST
