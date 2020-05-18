@@ -224,14 +224,24 @@ PointCloud PointCloud::clone() const {
   return cloned_cloud;
 }
 
-void PointCloud::setRange(const double range, const uint32_t i) {
+void PointCloud::setRange(const float range, const uint32_t i) {
   CHECK_LT(i, ranges_.size());
   ranges_.at(i) = range;
 }
 
-double PointCloud::getRange(const uint32_t i) const {
+float PointCloud::getRange(const uint32_t i) const {
   CHECK_LT(i, ranges_.size());
   return ranges_.at(i);
+}
+
+float PointCloud::getReflectivity(const uint32_t i) const {
+  CHECK_LT(i, reflectivities_.size());
+  return reflectivities_.at(i);
+}
+
+float PointCloud::getAmbientNoise(const uint32_t i) const {
+  CHECK_LT(i, ambient_points_.size());
+  return ambient_points_.at(i);
 }
 
 void PointCloud::writeToFile(std::string&& directory) {
@@ -283,6 +293,9 @@ void PointCloud::parsePlyPointCloud(PlyPointCloud&& ply_point_cloud) {
     cloud_->points.push_back(p);
     ++k;
   }
+  ambient_points_ = ply_point_cloud.getAmbientPoints();
+  ranges_ = ply_point_cloud.getRange();
+  reflectivities_ = ply_point_cloud.getReflectivities();
 }
 
 }  // namespace model
