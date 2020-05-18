@@ -11,11 +11,11 @@ const std::vector<float>& PlyPointCloud::getXYZPoints() const {
 }
 
 std::vector<float>& PlyPointCloud::getIntentsities() {
-  return intentsities_;
+  return intensities_;
 }
 
 const std::vector<float>& PlyPointCloud::getIntentsities() const {
-  return intentsities_;
+  return intensities_;
 }
 
 std::vector<float>& PlyPointCloud::getReflectivities() {

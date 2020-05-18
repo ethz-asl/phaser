@@ -23,6 +23,7 @@ catkin_simple(ALL_DEPS_REQUIRED)
 
 cs_add_library(${PROJECT_NAME}_lib
    src/model/point-cloud.cc
+   src/model/ply-point-cloud.cc
    src/model/function-value.cc
    src/model/registration-result.cc
    src/model/gmm-parameters.cc
@@ -31,6 +32,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/data/datasource-ros.cc
    src/common/data/datasource-ply.cc
    src/common/data/file-system-helper.cc
+   src/common/data/ply-helper.cc
    src/common/spherical-projection.cc
    src/common/spherical-sampler.cc
    src/common/rotation-utils.cc

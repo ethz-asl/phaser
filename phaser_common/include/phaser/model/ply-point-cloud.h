@@ -25,7 +25,7 @@ class PlyPointCloud {
  private:
   std::vector<float> xyz_points_;
   std::vector<float> intensities_;
-  std::vector<float> reflectivies_;
+  std::vector<float> reflectivities_;
   std::vector<float> ambient_points_;
   std::vector<float> range_;
 };
