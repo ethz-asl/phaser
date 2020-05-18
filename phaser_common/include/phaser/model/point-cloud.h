@@ -3,6 +3,7 @@
 
 #include "phaser/common/point-types.h"
 #include "phaser/model/function-value.h"
+#include "phaser/model/ply-point-cloud.h"
 #include "phaser/model/point.h"
 
 #include <pcl/common/projection_matrix.h>
@@ -47,8 +48,11 @@ class PointCloud {
   std::size_t size() const;
   PointCloud clone() const;
 
-  void setRange(const double range, const uint32_t i);
-  double getRange(const uint32_t i) const;
+  void setRange(const float range, const uint32_t i);
+  float getRange(const uint32_t i) const;
+
+  float getReflectivity(const uint32_t i) const;
+  float getAmbientNoise(const uint32_t i) const;
 
   void initialize_kd_tree();
   void writeToFile(std::string&& directory = "");
@@ -65,6 +69,7 @@ class PointCloud {
       const uint32_t idx, const std::vector<int>& pointIdxNKNSearch,
       const std::vector<float>& pointNKNSquaredDistance,
       std::vector<FunctionValue>* function_values) const;
+  void parsePlyPointCloud(PlyPointCloud&& ply_point_cloud);
 
   common::PointCloud_tPtr cloud_;
   common::PointCloud_tPtr info_cloud_;
@@ -72,7 +77,9 @@ class PointCloud {
 
   bool kd_tree_is_initialized_;
   std::string ply_directory_;
-  std::vector<double> ranges_;
+  std::vector<float> ranges_;
+  std::vector<float> reflectivities_;
+  std::vector<float> ambient_points_;
   std::string ply_read_directory_;
 };
 

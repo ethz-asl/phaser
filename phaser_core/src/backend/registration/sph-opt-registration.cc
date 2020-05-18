@@ -49,8 +49,6 @@ model::RegistrationResult SphOptRegistration::registerPointCloud(
 model::RegistrationResult SphOptRegistration::estimateRotation(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
   VLOG(1) << "[SphOptRegistration] Estimating rotation...";
-  cloud_cur->initialize_kd_tree();
-
   // Correlate point cloud and get uncertainty measure.
   std::vector<correlation::SphericalCorrelation> correlations =
       correlatePointcloud(cloud_prev, cloud_cur);
@@ -116,9 +114,11 @@ SphOptRegistration::correlatePointcloud(
   correlation::SphericalIntensityWorkerPtr corr_intensity_worker =
       CHECK_NOTNULL(std::make_shared<correlation::SphericalIntensityWorker>(
           f_values, h_values, sampler_.getInitializedBandwith()));
+  /*
   correlation::SphericalRangeWorkerPtr corr_range_worker =
       CHECK_NOTNULL(std::make_shared<correlation::SphericalRangeWorker>(
           f_values, h_values, sampler_.getInitializedBandwith()));
+          */
 
   // Add workers to pool and execute them.
   auto start = std::chrono::high_resolution_clock::now();
@@ -131,8 +131,8 @@ SphOptRegistration::correlatePointcloud(
           << std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
                  .count()
           << "ms";
-  return {corr_intensity_worker->getCorrelationObject(),
-          corr_range_worker->getCorrelationObject()};
+  return {corr_intensity_worker->getCorrelationObject()};
+  // corr_range_worker->getCorrelationObject()};
 }
 
 void SphOptRegistration::setBandwith(const int bandwith) {

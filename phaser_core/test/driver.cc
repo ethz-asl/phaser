@@ -12,17 +12,11 @@ DEFINE_string(target_cloud, "", "Defines the path to the target cloud.");
 DEFINE_string(source_cloud, "", "Defines the path to the source cloud.");
 DEFINE_string(reg_cloud, "", "Defines the path to the registered cloud.");
 
-static model::PointCloudPtr readPointCloud(const std::string& cloud) {
-  CHECK(!cloud.empty());
-  LOG(INFO) << "Reading point cloud from " << cloud;
-  pcl::PointCloud<pcl::PointXYZI>::Ptr input_cloud(
-      new pcl::PointCloud<pcl::PointXYZI>);
-  if (pcl::io::loadPLYFile<pcl::PointXYZI>(cloud, *input_cloud) == -1) {
-    LOG(FATAL) << "Unable to load point cloud.";
-    return nullptr;
-  }
-  LOG(INFO) << "Point cloud loaded with size " << input_cloud->size();
-  return std::make_shared<model::PointCloud>(input_cloud);
+static model::PointCloudPtr readPointCloud(const std::string& path_to_ply) {
+  CHECK(!path_to_ply.empty());
+  LOG(INFO) << "Reading point cloud from " << path_to_ply;
+  model::PointCloudPtr cloud = std::make_shared<model::PointCloud>(path_to_ply);
+  return cloud;
 }
 
 static void writePointCloud(

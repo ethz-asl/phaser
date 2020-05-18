@@ -17,7 +17,6 @@ void DatasourcePly::subscribeToPointClouds(
 }
 
 void DatasourcePly::startStreaming(const uint32_t number_of_clouds) {
-  VLOG(1) << "path: " << boost::filesystem::current_path();
   VLOG(1) << "reading ply from: " << datasource_folder_;
   std::vector<model::PointCloudPtr> clouds =
       readPly(datasource_folder_, number_of_clouds);

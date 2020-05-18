@@ -1,5 +1,6 @@
 #include "phaser/model/point-cloud.h"
 #include "phaser/common/data/file-system-helper.h"
+#include "phaser/common/data/ply-helper.h"
 
 #include <pcl/common/io.h>
 #include <pcl/common/transforms.h>
@@ -57,10 +58,14 @@ PointCloud::PointCloud(const std::vector<common::Point_t>& points)
 }
 
 void PointCloud::initialize_kd_tree() {
+  VLOG(1) << "Kd tree is initialized: " << std::boolalpha
+          << kd_tree_is_initialized_ << ". for file: " << ply_read_directory_
+          << ".";
   if (kd_tree_is_initialized_)
     return;
   kd_tree_.setInputCloud(cloud_);
   kd_tree_is_initialized_ = true;
+  VLOG(1) << "Initialized kd tree.";
 }
 
 common::PointCloud_t::iterator PointCloud::begin() {
@@ -215,17 +220,28 @@ PointCloud PointCloud::clone() const {
   pcl::copyPointCloud(*cloud_, *cloned_cloud.cloud_);
   pcl::copyPointCloud(*info_cloud_, *cloned_cloud.info_cloud_);
   cloned_cloud.ranges_ = ranges_;
+  cloned_cloud.ply_read_directory_ = ply_read_directory_;
   return cloned_cloud;
 }
 
-void PointCloud::setRange(const double range, const uint32_t i) {
+void PointCloud::setRange(const float range, const uint32_t i) {
   CHECK_LT(i, ranges_.size());
   ranges_.at(i) = range;
 }
 
-double PointCloud::getRange(const uint32_t i) const {
+float PointCloud::getRange(const uint32_t i) const {
   CHECK_LT(i, ranges_.size());
   return ranges_.at(i);
+}
+
+float PointCloud::getReflectivity(const uint32_t i) const {
+  CHECK_LT(i, reflectivities_.size());
+  return reflectivities_.at(i);
+}
+
+float PointCloud::getAmbientNoise(const uint32_t i) const {
+  CHECK_LT(i, ambient_points_.size());
+  return ambient_points_.at(i);
 }
 
 void PointCloud::writeToFile(std::string&& directory) {
@@ -249,14 +265,37 @@ void PointCloud::readFromFile(const std::string& ply) {
   CHECK_NOTNULL(cloud_);
   VLOG(2) << "Reading PLY file from: " << ply;
   ply_read_directory_ = ply;
-  pcl::PLYReader reader;
-  reader.read(ply, *cloud_);
+  data::PlyHelper ply_helper;
+  model::PlyPointCloud ply_cloud = ply_helper.readPlyFromFile(ply);
+  parsePlyPointCloud(std::move(ply_cloud));
   VLOG(2) << "Cloud size: " << cloud_->size();
-  // convertInputPointCloud(cloud);
+  initialize_kd_tree();
 }
 
 std::string PointCloud::getPlyReadDirectory() const noexcept {
   return ply_read_directory_;
+}
+
+void PointCloud::parsePlyPointCloud(PlyPointCloud&& ply_point_cloud) {
+  CHECK_NOTNULL(cloud_);
+  const std::vector<float>& xyz = ply_point_cloud.getXYZPoints();
+  const std::vector<float>& intensities = ply_point_cloud.getIntentsities();
+  const uint32_t n_points = xyz.size();
+  const uint32_t n_intensities = intensities.size();
+  CHECK_GT(n_points, 0u);
+  uint32_t k = 0u;
+  for (uint32_t i = 0u; i < n_points && k < n_intensities; i += 3u) {
+    common::Point_t p;
+    p.x = xyz[i];
+    p.y = xyz[i + 1u];
+    p.z = xyz[i + 2u];
+    p.intensity = intensities[k];
+    cloud_->points.push_back(p);
+    ++k;
+  }
+  ambient_points_ = ply_point_cloud.getAmbientPoints();
+  ranges_ = ply_point_cloud.getRange();
+  reflectivities_ = ply_point_cloud.getReflectivities();
 }
 
 }  // namespace model
