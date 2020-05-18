@@ -35,6 +35,8 @@ model::PlyPointCloud PlyHelper::readPlyFromFile(const std::string& filename) {
       "vertex", {"range"}, ply_cloud.getRange());
   LOG_IF(WARNING, range_point_count <= 0) << "No range channel found.";
 
+  ply_file.read(in_stream);
+  in_stream.close();
   return ply_cloud;
 }
 

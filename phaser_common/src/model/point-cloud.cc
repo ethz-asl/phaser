@@ -58,10 +58,14 @@ PointCloud::PointCloud(const std::vector<common::Point_t>& points)
 }
 
 void PointCloud::initialize_kd_tree() {
+  VLOG(1) << "Kd tree is initialized: " << std::boolalpha
+          << kd_tree_is_initialized_ << ". for file: " << ply_read_directory_
+          << ".";
   if (kd_tree_is_initialized_)
     return;
   kd_tree_.setInputCloud(cloud_);
   kd_tree_is_initialized_ = true;
+  VLOG(1) << "Initialized kd tree.";
 }
 
 common::PointCloud_t::iterator PointCloud::begin() {
@@ -216,6 +220,7 @@ PointCloud PointCloud::clone() const {
   pcl::copyPointCloud(*cloud_, *cloned_cloud.cloud_);
   pcl::copyPointCloud(*info_cloud_, *cloned_cloud.info_cloud_);
   cloned_cloud.ranges_ = ranges_;
+  cloned_cloud.ply_read_directory_ = ply_read_directory_;
   return cloned_cloud;
 }
 
@@ -256,7 +261,7 @@ void PointCloud::readFromFile(const std::string& ply) {
   // pcl::PLYReader reader;
   // reader.read(ply, *cloud_);
   VLOG(2) << "Cloud size: " << cloud_->size();
-  // convertInputPointCloud(cloud);
+  initialize_kd_tree();
 }
 
 std::string PointCloud::getPlyReadDirectory() const noexcept {
@@ -268,12 +273,13 @@ void PointCloud::parsePlyPointCloud(PlyPointCloud&& ply_point_cloud) {
   const std::vector<float>& xyz = ply_point_cloud.getXYZPoints();
   const std::vector<float>& intensities = ply_point_cloud.getIntentsities();
   const uint32_t n_points = xyz.size();
-  CHECK_GT(n_points, 0);
-  for (uint32_t i = 0; i < n_points; i += 3) {
-    common::Point_t p(intensities[i]);
+  CHECK_GT(n_points, 0u);
+  for (uint32_t i = 0u; i < n_points; i += 3u) {
+    common::Point_t p;
     p.x = xyz[i];
-    p.y = xyz[i + 1];
-    p.z = xyz[i + 2];
+    p.y = xyz[i + 1u];
+    p.z = xyz[i + 2u];
+    p.intensity = intensities[i];
     cloud_->points.push_back(p);
   }
 }
