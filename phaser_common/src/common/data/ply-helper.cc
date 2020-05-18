@@ -6,6 +6,22 @@
 
 #include "phaser/common/data/ply-helper.h"
 
+DEFINE_string(
+    phaser_ply_intensity_str, "intensity",
+    "Defines the name of the intensity field in the PLY.");
+
+DEFINE_string(
+    phaser_ply_reflectivity_str, "reflectivity",
+    "Defines the name of the reflectivity field in the PLY.");
+
+DEFINE_string(
+    phaser_ply_ambient_str, "noise",
+    "Defines the name of the ambient field in the PLY.");
+
+DEFINE_string(
+    phaser_ply_range_str, "range",
+    "Defines the name of the range field in the PLY.");
+
 namespace data {
 
 model::PlyPointCloud PlyHelper::readPlyFromFile(const std::string& filename) {
@@ -20,19 +36,20 @@ model::PlyPointCloud PlyHelper::readPlyFromFile(const std::string& filename) {
   CHECK_GT(xyz_point_count, 0);
 
   const int intensity_point_count = ply_file.request_properties_from_element(
-      "vertex", {"intensity"}, ply_cloud.getIntentsities());
+      "vertex", {FLAGS_phaser_ply_intensity_str}, ply_cloud.getIntentsities());
   CHECK_GT(intensity_point_count, 0);
 
   const int refl_point_count = ply_file.request_properties_from_element(
-      "vertex", {"reflectivity"}, ply_cloud.getReflectivities());
+      "vertex", {FLAGS_phaser_ply_reflectivity_str},
+      ply_cloud.getReflectivities());
   LOG_IF(WARNING, refl_point_count <= 0) << "No reflectivity channel found.";
 
   const int ambient_point_count = ply_file.request_properties_from_element(
-      "vertex", {"noise"}, ply_cloud.getAmbientPoints());
+      "vertex", {FLAGS_phaser_ply_ambient_str}, ply_cloud.getAmbientPoints());
   LOG_IF(WARNING, ambient_point_count <= 0) << "No ambient channel found.";
 
   const int range_point_count = ply_file.request_properties_from_element(
-      "vertex", {"range"}, ply_cloud.getRange());
+      "vertex", {FLAGS_phaser_ply_range_str}, ply_cloud.getRange());
   LOG_IF(WARNING, range_point_count <= 0) << "No range channel found.";
 
   ply_file.read(in_stream);
