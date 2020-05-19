@@ -32,8 +32,8 @@ PyramidLevel LaplacePyramid::reduce(
   }
 
   for (uint32_t i = 0; i < n_coeffs; ++i) {
-    coeff_laplace[i][0] = coefficients[i][0] - coeff_low_pass[i][0];
-    coeff_laplace[i][1] = coefficients[i][1] - coeff_low_pass[i][1];
+    coeff_laplace[i][0] = coefficients[i][0] - coeff_low_pass_full[i][0];
+    coeff_laplace[i][1] = coefficients[i][1] - coeff_low_pass_full[i][1];
   }
   return std::make_pair(std::move(coeff_low_pass), std::move(coeff_laplace));
 }

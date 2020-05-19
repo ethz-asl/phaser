@@ -40,12 +40,21 @@ TEST_F(LaplacePyramidTest, SimpleReduceTest) {
   fftw_complex* coeffs = createNCoefficients(n_coeffs);
   fusion::PyramidLevel first_level = laplace.reduce(coeffs, n_coeffs);
 
-  const float tol = 1e-3;
   const std::vector<fusion::complex_t>& low_pass = first_level.first;
   EXPECT_EQ(low_pass.size(), 4u);
   for (uint32_t i = 0u; i < 4u; ++i) {
     EXPECT_GT(low_pass[i][0], 0.0);
     EXPECT_GT(low_pass[i][1], 0.0);
+  }
+  const std::vector<fusion::complex_t>& coeff_laplace = first_level.second;
+  const float tol = 1e-3;
+  uint32_t k = 0u;
+  for (uint32_t i = 2u; i < 6u; ++i) {
+    const double real = coeff_laplace[i][0] + low_pass[k][0];
+    const double imag = coeff_laplace[i][1] + low_pass[k][1];
+    EXPECT_NEAR(real, coeffs[i][0], tol);
+    EXPECT_NEAR(imag, coeffs[i][1], tol);
+    ++k;
   }
 
   delete[] coeffs;
