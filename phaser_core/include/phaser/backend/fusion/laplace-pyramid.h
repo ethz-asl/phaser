@@ -12,12 +12,16 @@ namespace fusion {
 // using complex_t = std::complex<double>;
 using complex_t = double[2];
 
-using Pyramid = std::pair<std::vector<complex_t>, std::vector<complex_t>>;
+using PyramidLevel = std::pair<std::vector<complex_t>, std::vector<complex_t>>;
 
 class LaplacePyramid {
  public:
-  Pyramid reduce(fftw_complex* coefficients, const uint32_t n_coeffs);
+  explicit LaplacePyramid(const float div = 4.0);
+  PyramidLevel reduce(fftw_complex* coefficients, const uint32_t n_coeffs);
   void expand();
+
+ private:
+  const float divider_;
 };
 
 }  // namespace fusion
