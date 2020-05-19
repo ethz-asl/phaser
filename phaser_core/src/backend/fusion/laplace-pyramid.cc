@@ -66,11 +66,11 @@ void LaplacePyramid::fuseChannels(
   }
 }
 
-void LaplacePyramid::fuseLevelByMaxCoeff(
+std::vector<complex_t> LaplacePyramid::fuseLevelByMaxCoeff(
     const std::vector<PyramidLevel>& levels_per_channel) {
   CHECK_GT(levels_per_channel.size(), 0);
 
-  const uint32_t n_coeffs = levels_per_channel[0].first.size();
+  const uint32_t n_coeffs = levels_per_channel[0].second.size();
   std::vector<complex_t> fused(n_coeffs);
   for (uint32_t i = 0u; i < n_coeffs; ++i) {
     const uint32_t max_channel = findMaxCoeffForChannels(levels_per_channel, i);
@@ -78,6 +78,7 @@ void LaplacePyramid::fuseLevelByMaxCoeff(
     fused[i][0] = max_coeff[0];
     fused[i][1] = max_coeff[1];
   }
+  return fused;
 }
 
 uint32_t LaplacePyramid::findMaxCoeffForChannels(
