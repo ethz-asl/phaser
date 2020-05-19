@@ -38,6 +38,19 @@ PyramidLevel LaplacePyramid::reduce(
   return std::make_pair(std::move(coeff_low_pass), std::move(coeff_laplace));
 }
 
-void LaplacePyramid::expand() {}
+void LaplacePyramid::expand(
+    const std::vector<complex_t>& low_pass, std::vector<complex_t>* lapl) {
+  CHECK_NOTNULL(lapl);
+  const uint32_t n_coeffs = lapl->size();
+  const uint32_t lower_bound = std::round(n_coeffs / divider_);
+  const uint32_t upper_bound = n_coeffs - lower_bound;
+
+  uint32_t k = 0;
+  for (uint32_t i = lower_bound; i < upper_bound; ++i) {
+    (*lapl)[i][0] = low_pass[k][0];
+    (*lapl)[i][1] = low_pass[k][1];
+    ++k;
+  }
+}
 
 }  // namespace fusion

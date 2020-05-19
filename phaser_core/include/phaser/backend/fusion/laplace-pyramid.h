@@ -18,7 +18,8 @@ class LaplacePyramid {
  public:
   explicit LaplacePyramid(const float div = 4.0);
   PyramidLevel reduce(fftw_complex* coefficients, const uint32_t n_coeffs);
-  void expand();
+  void expand(
+      const std::vector<complex_t>& low_pass, std::vector<complex_t>* lapl);
 
  private:
   const float divider_;

@@ -25,6 +25,16 @@ class LaplacePyramidTest : public ::testing::Test {
     return coeffs;
   }
 
+  uint32_t nnz(const std::vector<complex_t>& coeffs) const {
+    uint32_t non_zeros = 0u;
+    for (const complex_t& coeff : coeffs) {
+      if (coeff[0] != 0.0 || coeff[1] != 0.0) {
+        ++non_zeros;
+      }
+    }
+    return non_zeros;
+  }
+
   float getRandomFloat() {
     return distribution_(generator_);
   }
@@ -58,6 +68,18 @@ TEST_F(LaplacePyramidTest, SimpleReduceTest) {
   }
 
   delete[] coeffs;
+}
+TEST_F(LaplacePyramidTest, SimpleExpandTest) {
+  fusion::LaplacePyramid laplace(4.0);
+  const uint32_t n_coeffs = 8u;
+  fftw_complex* coeffs = createNCoefficients(n_coeffs);
+  fusion::PyramidLevel first_level = laplace.reduce(coeffs, n_coeffs);
+
+  const std::vector<fusion::complex_t>& low_pass = first_level.first;
+  std::vector<fusion::complex_t>* lapl = &first_level.second;
+  EXPECT_LT(nnz(*lapl), n_coeffs);
+  laplace.expand(low_pass, lapl);
+  EXPECT_EQ(nnz(*lapl), n_coeffs);
 }
 
 }  // namespace fusion
