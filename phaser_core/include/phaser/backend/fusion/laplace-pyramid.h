@@ -20,8 +20,17 @@ class LaplacePyramid {
   PyramidLevel reduce(fftw_complex* coefficients, const uint32_t n_coeffs);
   void expand(
       const std::vector<complex_t>& low_pass, std::vector<complex_t>* lapl);
+  void fuseChannels(
+      const std::vector<fftw_complex*>& channels, const uint32_t n_coeffs,
+      const uint32_t n_levels);
 
  private:
+  void fuseLevelByMaxCoeff(const std::vector<PyramidLevel>& level);
+  uint32_t findMaxCoeffForChannels(
+      const std::vector<PyramidLevel>& levels_per_channel, const uint32_t idx);
+  double computeSignalEnergyForLevel(
+      const PyramidLevel& level, const uint32_t idx);
+
   const float divider_;
 };
 
