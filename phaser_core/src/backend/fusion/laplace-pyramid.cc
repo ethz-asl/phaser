@@ -4,6 +4,7 @@
 #include <cmath>
 
 #include <glog/logging.h>
+#include <omp.h>
 
 namespace fusion {
 
@@ -16,26 +17,21 @@ PyramidLevel LaplacePyramid::reduce(
   const uint32_t lower_bound = std::round(n_coeffs / divider_);
   const uint32_t upper_bound = n_coeffs - lower_bound;
   const uint32_t n_low_pass = upper_bound - lower_bound;
-  std::vector<complex_t> coeff_low_pass_full(n_coeffs);
   std::vector<complex_t> coeff_low_pass(n_low_pass);
-  std::vector<complex_t> coeff_laplace(n_coeffs);
+  complex_t* coeff = reinterpret_cast<complex_t*>(coefficients);
+  std::vector<complex_t> coeff_laplace(coeff, coeff + n_coeffs);
 
   VLOG(1) << "[LaplacePyramid] lower: " << lower_bound
           << ", upper: " << upper_bound << " n_low_pass: " << n_low_pass;
 
-  uint32_t k = 0;
   for (uint32_t i = lower_bound; i < upper_bound; ++i) {
-    coeff_low_pass_full[i][0] = coefficients[i][0];
-    coeff_low_pass_full[i][1] = coefficients[i][1];
+    const uint32_t k = i - lower_bound;
     coeff_low_pass[k][0] = coefficients[i][0];
     coeff_low_pass[k][1] = coefficients[i][1];
-    ++k;
+    coeff_laplace[i][0] = coeff_laplace[i][0] - coeff_low_pass[k][0];
+    coeff_laplace[i][1] = coeff_laplace[i][1] - coeff_low_pass[k][1];
   }
 
-  for (uint32_t i = 0; i < n_coeffs; ++i) {
-    coeff_laplace[i][0] = coefficients[i][0] - coeff_low_pass_full[i][0];
-    coeff_laplace[i][1] = coefficients[i][1] - coeff_low_pass_full[i][1];
-  }
   return std::make_pair(std::move(coeff_low_pass), std::move(coeff_laplace));
 }
 
@@ -46,11 +42,11 @@ void LaplacePyramid::expand(
   const uint32_t lower_bound = std::round(n_coeffs / divider_);
   const uint32_t upper_bound = n_coeffs - lower_bound;
 
-  uint32_t k = 0;
+#pragma omp parallel for num_threads(4)
   for (uint32_t i = lower_bound; i < upper_bound; ++i) {
+    const uint32_t k = i - lower_bound;
     (*lapl)[i][0] = low_pass[k][0];
     (*lapl)[i][1] = low_pass[k][1];
-    ++k;
   }
 }
 
@@ -59,23 +55,28 @@ std::vector<complex_t> LaplacePyramid::fuseChannels(
     const uint32_t n_levels) {
   const uint32_t n_channels = channels.size();
   std::vector<std::vector<complex_t>> fused_levels(n_levels);
-  std::vector<std::vector<PyramidLevel>> pyramids_per_channel;
+  std::vector<std::vector<PyramidLevel>> pyramids_per_channel(n_levels);
 
   // Build the pyramid levels per channel.
+  VLOG(2) << "Constructing " << n_levels << " pyramid levels for " << n_channels
+          << " channels.";
+#pragma omp parallel for num_threads(4)
   for (uint32_t i = 0u; i < n_levels; ++i) {
     std::vector<PyramidLevel> pyramid_level(n_channels);
     for (uint32_t j = 0u; j < n_channels; ++j) {
       pyramid_level[j] = reduce(channels[j], n_coeffs);
     }
     fused_levels[i] = fuseLevelByMaxCoeff(pyramid_level, n_coeffs);
-    pyramids_per_channel.emplace_back(std::move(pyramid_level));
+    pyramids_per_channel[i] = std::move(pyramid_level);
   }
 
   // Average the last low pass layer.
+  VLOG(2) << "Filtering the low pass layer.";
   std::vector<complex_t> low_pass =
       fuseLastLowPassLayer(pyramids_per_channel.back());
 
   // Based on the fused levels, reconstruct the signal.
+  VLOG(2) << "Reconstructing the fused signal.";
   std::vector<complex_t>* recon = &low_pass;
   for (int8_t i = n_levels - 1; i >= 0; --i) {
     CHECK_NOTNULL(recon);
@@ -107,6 +108,7 @@ std::vector<complex_t> LaplacePyramid::fuseLastLowPassLayer(
   CHECK_GT(levels_per_channel.size(), 0);
   const uint32_t n_coeffs = levels_per_channel[0].first.size();
   std::vector<complex_t> fused(n_coeffs);
+#pragma omp parallel for num_threads(4)
   for (uint32_t i = 0; i < n_coeffs; ++i) {
     std::array<double, 2> avg = averageCoeffForChannels(levels_per_channel, i);
     fused[i][0] = avg[0];
