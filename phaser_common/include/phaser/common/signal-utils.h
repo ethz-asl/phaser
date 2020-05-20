@@ -2,6 +2,7 @@
 #define PHASER_COMMON_SIGNAL_UTILS_H_
 
 #include <algorithm>
+#include <array>
 #include <complex>
 
 #include <fftw3/fftw3.h>
@@ -22,6 +23,8 @@ class SignalUtils {
   static uint32_t Sub2Ind(
       const uint32_t i, const uint32_t j, const uint32_t k, const uint32_t rows,
       const uint32_t cols);
+  static std::array<uint32_t, 3> Ind2Sub(
+      const uint32_t lin_index, const uint32_t rows, const uint32_t cols);
 };
 
 template <typename T_input>

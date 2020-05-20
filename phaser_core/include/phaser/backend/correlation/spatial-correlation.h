@@ -30,6 +30,7 @@ class SpatialCorrelation : public BaseSpatialCorrelation {
   void complexMulVecUsingIndices(
       const std::vector<uint32_t>& indices, fftw_complex* F, fftw_complex* G,
       fftw_complex* C);
+  uint32_t computeZeroPaddedIndex(const uint32_t idx);
 
   fftw_plan f_plan_;
   fftw_plan g_plan_;
