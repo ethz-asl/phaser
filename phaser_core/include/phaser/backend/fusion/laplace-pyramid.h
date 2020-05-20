@@ -1,6 +1,7 @@
 #ifndef PHASER_BACKEND_FUSION_LAPLACE_PYRAMID_H_
 #define PHASER_BACKEND_FUSION_LAPLACE_PYRAMID_H_
 
+#include <array>
 #include <cstdint>
 #include <utility>
 #include <vector>
@@ -24,13 +25,19 @@ class LaplacePyramid {
       const std::vector<fftw_complex*>& channels, const uint32_t n_coeffs,
       const uint32_t n_levels);
   std::vector<complex_t> fuseLevelByMaxCoeff(
-      const std::vector<PyramidLevel>& level);
+      const std::vector<PyramidLevel>& level, const uint32_t n_coeffs);
 
  private:
   uint32_t findMaxCoeffForChannels(
       const std::vector<PyramidLevel>& levels_per_channel, const uint32_t idx);
   double computeSignalEnergyForLevel(
       const PyramidLevel& level, const uint32_t idx);
+  std::vector<complex_t> fuseLastLowPassLayer(
+      const std::vector<PyramidLevel>& levels_per_channel);
+
+  std::array<double, 2> averageCoeffForChannels(
+      const std::vector<PyramidLevel>& levels_per_channel, const uint32_t idx);
+  std::array<double, 2> averageSignal(const std::vector<complex_t>& signals);
 
   const float divider_;
 };

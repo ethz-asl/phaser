@@ -58,25 +58,45 @@ void LaplacePyramid::fuseChannels(
     const std::vector<fftw_complex*>& channels, const uint32_t n_coeffs,
     const uint32_t n_levels) {
   const uint32_t n_channels = channels.size();
+  std::vector<std::vector<complex_t>> fused_levels(n_levels);
+  std::vector<std::vector<PyramidLevel>> pyramids_per_channel;
+
+  // Build the pyramid levels per channel.
   for (uint32_t i = 0u; i < n_levels; ++i) {
     std::vector<PyramidLevel> pyramid_level(n_channels);
     for (uint32_t j = 0u; j < n_channels; ++j) {
       pyramid_level[j] = reduce(channels[j], n_coeffs);
     }
+    fused_levels[i] = fuseLevelByMaxCoeff(pyramid_level, n_coeffs);
+    pyramids_per_channel.emplace_back(std::move(pyramid_level));
   }
 }
 
 std::vector<complex_t> LaplacePyramid::fuseLevelByMaxCoeff(
-    const std::vector<PyramidLevel>& levels_per_channel) {
+    const std::vector<PyramidLevel>& levels_per_channel,
+    const uint32_t n_coeffs) {
   CHECK_GT(levels_per_channel.size(), 0);
+  CHECK_GT(n_coeffs, 0);
 
-  const uint32_t n_coeffs = levels_per_channel[0].second.size();
   std::vector<complex_t> fused(n_coeffs);
   for (uint32_t i = 0u; i < n_coeffs; ++i) {
     const uint32_t max_channel = findMaxCoeffForChannels(levels_per_channel, i);
     const complex_t& max_coeff = levels_per_channel[max_channel].second[i];
     fused[i][0] = max_coeff[0];
     fused[i][1] = max_coeff[1];
+  }
+  return fused;
+}
+
+std::vector<complex_t> LaplacePyramid::fuseLastLowPassLayer(
+    const std::vector<PyramidLevel>& levels_per_channel) {
+  CHECK_GT(levels_per_channel.size(), 0);
+  const uint32_t n_coeffs = levels_per_channel[0].first.size();
+  std::vector<complex_t> fused(n_coeffs);
+  for (uint32_t i = 0; i < n_coeffs; ++i) {
+    std::array<double, 2> avg = averageCoeffForChannels(levels_per_channel, i);
+    fused[i][0] = avg[0];
+    fused[i][1] = avg[1];
   }
   return fused;
 }
@@ -100,6 +120,30 @@ double LaplacePyramid::computeSignalEnergyForLevel(
   const double energy =
       std::sqrt(signal[0] * signal[0] + signal[1] * signal[1]);
   return energy * energy;
+}
+
+std::array<double, 2> LaplacePyramid::averageCoeffForChannels(
+    const std::vector<PyramidLevel>& levels_per_channel, const uint32_t idx) {
+  const uint32_t n_channels = levels_per_channel.size();
+  std::vector<complex_t> signals(n_channels);
+  for (uint32_t i = 0; i < n_channels; ++i) {
+    const std::vector<complex_t>& low_pass = levels_per_channel[i].first;
+    signals[i][0] = low_pass[idx][0];
+    signals[i][1] = low_pass[idx][1];
+  }
+  return averageSignal(signals);
+}
+
+std::array<double, 2> LaplacePyramid::averageSignal(
+    const std::vector<complex_t>& signals) {
+  double accumulated_real = 0;
+  double accumulated_imag = 0;
+  double n_signals = static_cast<double>(signals.size());
+  for (const complex_t& signal : signals) {
+    accumulated_real += signal[0];
+    accumulated_imag += signal[1];
+  }
+  return {accumulated_real / n_signals, accumulated_imag / n_signals};
 }
 
 }  // namespace fusion
