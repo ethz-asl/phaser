@@ -103,7 +103,8 @@ TEST_F(LaplacePyramidTest, MaxCoeffTest) {
   levels.emplace_back(laplace.reduce(coeffs, n_coeffs));
   levels.emplace_back(laplace.reduce(coeffs_2, n_coeffs));
 
-  std::vector<fusion::complex_t> fused = laplace.fuseLevelByMaxCoeff(levels);
+  std::vector<fusion::complex_t> fused =
+      laplace.fuseLevelByMaxCoeff(levels, n_coeffs);
   const std::vector<fusion::complex_t>& lapl_1 = levels[0].second;
   const std::vector<fusion::complex_t>& lapl_2 = levels[1].second;
   const float tol = 1e-3;
@@ -118,6 +119,26 @@ TEST_F(LaplacePyramidTest, MaxCoeffTest) {
     EXPECT_GT(fused[i][1], lapl_1[i][1]);
     EXPECT_NEAR(fused[i][0], lapl_2[i][0], tol);
     EXPECT_NEAR(fused[i][1], lapl_2[i][1], tol);
+  }
+
+  delete[] coeffs;
+  delete[] coeffs_2;
+}
+
+TEST_F(LaplacePyramidTest, LowPassAverageTest) {
+  fusion::LaplacePyramid laplace(4.0);
+  const uint32_t n_coeffs = 8u;
+  fftw_complex* coeffs = createFixedCoefficients(5, n_coeffs);
+  fftw_complex* coeffs_2 = createFixedCoefficients(15, n_coeffs);
+  std::vector<fusion::PyramidLevel> levels;
+  levels.emplace_back(laplace.reduce(coeffs, n_coeffs));
+  levels.emplace_back(laplace.reduce(coeffs_2, n_coeffs));
+
+  std::vector<fusion::complex_t> fused = laplace.fuseLastLowPassLayer(levels);
+  const float tol = 1e-3;
+  for (uint32_t i = 0u; i < 4u; ++i) {
+    EXPECT_NEAR(fused[i][0], 10.0, tol);
+    EXPECT_NEAR(fused[i][1], 10.0, tol);
   }
 
   delete[] coeffs;

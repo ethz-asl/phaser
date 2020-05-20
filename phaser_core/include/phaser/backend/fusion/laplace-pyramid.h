@@ -26,14 +26,14 @@ class LaplacePyramid {
       const uint32_t n_levels);
   std::vector<complex_t> fuseLevelByMaxCoeff(
       const std::vector<PyramidLevel>& level, const uint32_t n_coeffs);
+  std::vector<complex_t> fuseLastLowPassLayer(
+      const std::vector<PyramidLevel>& levels_per_channel);
 
  private:
   uint32_t findMaxCoeffForChannels(
       const std::vector<PyramidLevel>& levels_per_channel, const uint32_t idx);
   double computeSignalEnergyForLevel(
       const PyramidLevel& level, const uint32_t idx);
-  std::vector<complex_t> fuseLastLowPassLayer(
-      const std::vector<PyramidLevel>& levels_per_channel);
 
   std::array<double, 2> averageCoeffForChannels(
       const std::vector<PyramidLevel>& levels_per_channel, const uint32_t idx);
