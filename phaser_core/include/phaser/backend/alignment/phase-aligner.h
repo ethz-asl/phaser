@@ -30,16 +30,19 @@ class PhaseAligner : public BaseAligner {
 
  private:
   void discretizePointcloud(
-      const model::PointCloud& cloud, Eigen::VectorXd* f,
-      Eigen::VectorXd* hist) const;
+      const model::PointCloud& cloud, Eigen::VectorXd* f_intensities,
+      Eigen::VectorXd* f_ranges, Eigen::VectorXd* hist) const;
   uint32_t sub2ind(
       const uint32_t i, const uint32_t j, const uint32_t k, const uint32_t rows,
       const uint32_t cols) const;
   std::array<uint32_t, 3> ind2sub(
       const uint32_t lin_index, const uint32_t rows, const uint32_t cols) const;
+  void normalizeSignal(const Eigen::VectorXd& hist, Eigen::VectorXd* f) const;
 
-  Eigen::VectorXd f_;
-  Eigen::VectorXd g_;
+  Eigen::VectorXd f_intensities_;
+  Eigen::VectorXd f_ranges_;
+  Eigen::VectorXd g_intensities_;
+  Eigen::VectorXd g_ranges_;
   Eigen::VectorXd hist_;
   const uint32_t n_voxels_;
   const uint32_t total_n_voxels_;

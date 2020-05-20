@@ -117,10 +117,15 @@ void SpatialCorrelation::complexMulSeqUsingIndices(
   }
 }
 
-double* SpatialCorrelation::correlateSignals(double* const f, double* const g) {
+double* SpatialCorrelation::correlateSignals(
+    const std::vector<Eigen::VectorXd*>& f,
+    const std::vector<Eigen::VectorXd*>& g) {
+  CHECK_GT(f.size(), 0u);
+  CHECK_GT(g.size(), 0u);
+
   const uint32_t function_size = total_n_voxels_ * sizeof(double);
-  memcpy(f_, f, function_size);
-  memcpy(g_, g, function_size);
+  memcpy(f_, f[0]->data(), function_size);
+  memcpy(g_, g[0]->data(), function_size);
 
   // Perform the two FFTs on the discretized signals.
   VLOG(1) << "Performing FFT on the first point cloud.";

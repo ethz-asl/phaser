@@ -17,7 +17,9 @@ class SpatialCorrelationCuda : public BaseSpatialCorrelation {
   explicit SpatialCorrelationCuda(const uint32_t voxels_per_dim);
   ~SpatialCorrelationCuda();
 
-  double* correlateSignals(double* const f, double* const g) override;
+  double* correlateSignals(
+      const std::vector<Eigen::VectorXd*>& f,
+      const std::vector<Eigen::VectorXd*>& g) override;
 
  private:
   cufftHandle f_plan_;

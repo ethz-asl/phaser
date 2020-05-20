@@ -229,9 +229,18 @@ void PointCloud::setRange(const float range, const uint32_t i) {
   ranges_.at(i) = range;
 }
 
-float PointCloud::getRange(const uint32_t i) const {
+float PointCloud::rangeAt(const uint32_t i) const {
   CHECK_LT(i, ranges_.size());
-  return ranges_.at(i);
+  float range = ranges_.at(i);
+  if (range == 0) {
+    return calcRangeAt(i);
+  }
+  return range;
+}
+
+float PointCloud::calcRangeAt(const uint32_t i) const {
+  const common::Point_t& p = pointAt(i);
+  return std::sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
 }
 
 float PointCloud::getReflectivity(const uint32_t i) const {

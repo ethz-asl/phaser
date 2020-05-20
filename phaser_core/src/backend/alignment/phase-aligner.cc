@@ -1,13 +1,15 @@
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/correlation/spatial-correlation-cuda.h"
+#include "phaser/backend/correlation/spatial-correlation-laplace.h"
 #include "phaser/backend/correlation/spatial-correlation-low-pass.h"
 #include "phaser/backend/correlation/spatial-correlation.h"
 #include "phaser/common/point-cloud-utils.h"
 
-#include <complex.h>  // needs to be included before fftw
-
 #include <algorithm>
 #include <chrono>
+#include <complex.h>  // needs to be included before fftw
+#include <vector>
+
 #include <gflags/gflags.h>
 #include <glog/logging.h>
 #include <omp.h>
@@ -37,11 +39,13 @@ PhaseAligner::PhaseAligner()
   VLOG(1) << "Initializing phase alignment with " << FLAGS_phase_n_voxels
           << " voxels in [" << lower_bound_ << ", " << upper_bound_ << "].";
   // Allocate memory for the function signals in the time domain.
-  f_ = Eigen::VectorXd::Zero(total_n_voxels_);
-  g_ = Eigen::VectorXd::Zero(total_n_voxels_);
+  f_intensities_ = Eigen::VectorXd::Zero(total_n_voxels_);
+  f_ranges_ = Eigen::VectorXd::Zero(total_n_voxels_);
+  g_intensities_ = Eigen::VectorXd::Zero(total_n_voxels_);
+  g_ranges_ = Eigen::VectorXd::Zero(total_n_voxels_);
   hist_ = Eigen::VectorXd::Zero(total_n_voxels_);
   spatial_correlation_.reset(
-      new correlation::SpatialCorrelationLowPass(n_voxels_));
+      new correlation::SpatialCorrelationLaplace(n_voxels_));
 }
 
 void PhaseAligner::alignRegistered(
@@ -50,17 +54,20 @@ void PhaseAligner::alignRegistered(
     const model::PointCloud& cloud_reg,
     const std::vector<model::FunctionValue>&) {
   CHECK_NOTNULL(spatial_correlation_);
-  discretizePointcloud(cloud_prev, &f_, &hist_);
-  discretizePointcloud(cloud_reg, &g_, &hist_);
+  discretizePointcloud(cloud_prev, &f_intensities_, &f_ranges_, &hist_);
+  discretizePointcloud(cloud_reg, &g_intensities_, &g_ranges_, &hist_);
+  std::vector<Eigen::VectorXd*> f = {&f_intensities_, &f_ranges_};
+  std::vector<Eigen::VectorXd*> g = {&g_intensities_, &g_ranges_};
 
-  double* c = spatial_correlation_->correlateSignals(f_.data(), g_.data());
+  double* c = spatial_correlation_->correlateSignals(f, g);
   previous_correlation_ = std::vector<double>(c, c + total_n_voxels_);
 }
 
 void PhaseAligner::discretizePointcloud(
-    const model::PointCloud& cloud, Eigen::VectorXd* f,
-    Eigen::VectorXd* hist) const {
-  CHECK_NOTNULL(f);
+    const model::PointCloud& cloud, Eigen::VectorXd* f_intensities,
+    Eigen::VectorXd* f_ranges, Eigen::VectorXd* hist) const {
+  CHECK_NOTNULL(f_intensities);
+  CHECK_NOTNULL(f_ranges);
   CHECK_NOTNULL(hist);
 
   VLOG(1) << "Discretizing point cloud...";
@@ -74,24 +81,31 @@ void PhaseAligner::discretizePointcloud(
   igl::histc(data.row(2), edges_, z_bins);
 
   // Calculate an average function value for each voxel.
-  f->setZero();
+  f_intensities->setZero();
+  f_ranges->setZero();
   hist->setZero();
   const uint32_t n_points = data.cols();
-  const uint32_t n_f = f->rows();
-#pragma omp parallel for num_threads(8)
+  const uint32_t n_f = f_intensities->rows();
+#pragma omp parallel for num_threads(4)
   for (uint32_t i = 0u; i < n_points; ++i) {
     const uint32_t lin_index =
         sub2ind(x_bins(i), y_bins(i), z_bins(i), n_voxels_, n_voxels_);
     if (lin_index > n_f) {
       continue;
     }
-    (*f)(lin_index) = (*f)(lin_index) + cloud.pointAt(i).intensity;
+    (*f_intensities)(lin_index) =
+        (*f_intensities)(lin_index) + cloud.pointAt(i).intensity;
+    (*f_ranges)(lin_index) = (*f_ranges)(lin_index) + cloud.rangeAt(i);
     (*hist)(lin_index) = (*hist)(lin_index) + 1;
   }
+  normalizeSignal(*hist, f_intensities);
+  normalizeSignal(*hist, f_ranges);
+}
 
-  *f = f->array() / hist->array();
+void PhaseAligner::normalizeSignal(
+    const Eigen::VectorXd& hist, Eigen::VectorXd* f) const {
+  *f = f->array() / hist.array();
   *f = f->unaryExpr([](double v) { return std::isfinite(v) ? v : 0.0; });
-  VLOG(1) << "done";
 }
 
 uint32_t PhaseAligner::sub2ind(

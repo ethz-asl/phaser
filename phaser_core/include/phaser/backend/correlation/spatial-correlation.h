@@ -14,7 +14,9 @@ class SpatialCorrelation : public BaseSpatialCorrelation {
  public:
   explicit SpatialCorrelation(const uint32_t n_voxels);
   virtual ~SpatialCorrelation();
-  double* correlateSignals(double* const f, double* const g) override;
+  double* correlateSignals(
+      const std::vector<Eigen::VectorXd*>& f,
+      const std::vector<Eigen::VectorXd*>& g) override;
 
  protected:
   void complexMulSeq(fftw_complex* F, fftw_complex* G, fftw_complex* C);
