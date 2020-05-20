@@ -36,8 +36,9 @@ double* SpatialCorrelationLaplace::correlateSignals(
   std::vector<fusion::complex_t> G_fused =
       laplace_.fuseChannels(channels, total_n_voxels_, 3);
 
-  complexMulSeq(convertFused(&F_fused), convertFused(&G_fused), C_);
-  // complexMulSeq(F_, G_, C_);
+  complexMulSeq(
+      reinterpret_cast<fftw_complex*>(F_fused.data()),
+      reinterpret_cast<fftw_complex*>(G_fused.data()), C_);
 
   // Perform the IFFT on the correlation tensor.
   VLOG(1) << "Shifting back the signals. Performing IFFT on low passed filtered"
@@ -51,11 +52,6 @@ void SpatialCorrelationLaplace::performFFTandShift() {
   fftw_execute(g_plan_);
   common::SignalUtils::FFTShift(F_, total_n_voxels_);
   common::SignalUtils::FFTShift(G_, total_n_voxels_);
-}
-
-fftw_complex* SpatialCorrelationLaplace::convertFused(
-    std::vector<fusion::complex_t>* fused) {
-  return reinterpret_cast<fftw_complex*>(fused->data());
 }
 
 }  // namespace correlation

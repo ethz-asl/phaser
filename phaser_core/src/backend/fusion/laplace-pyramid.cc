@@ -21,9 +21,6 @@ PyramidLevel LaplacePyramid::reduce(
   complex_t* coeff = reinterpret_cast<complex_t*>(coefficients);
   std::vector<complex_t> coeff_laplace(coeff, coeff + n_coeffs);
 
-  VLOG(1) << "[LaplacePyramid] lower: " << lower_bound
-          << ", upper: " << upper_bound << " n_low_pass: " << n_low_pass;
-
   for (uint32_t i = lower_bound; i < upper_bound; ++i) {
     const uint32_t k = i - lower_bound;
     coeff_low_pass[k][0] = coefficients[i][0];

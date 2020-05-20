@@ -19,7 +19,6 @@ class SpatialCorrelationLaplace : public SpatialCorrelation {
 
  private:
   void performFFTandShift();
-  fftw_complex* convertFused(std::vector<fusion::complex_t>* fused);
 
   fusion::LaplacePyramid laplace_;
   const uint32_t n_fftw_size_;
