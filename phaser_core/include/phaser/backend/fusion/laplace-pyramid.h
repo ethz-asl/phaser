@@ -11,7 +11,8 @@
 namespace fusion {
 
 // using complex_t = std::complex<double>;
-using complex_t = double[2];
+// using complex_t = double[2];
+using complex_t = std::array<double, 2>;
 
 using PyramidLevel = std::pair<std::vector<complex_t>, std::vector<complex_t>>;
 
@@ -21,7 +22,7 @@ class LaplacePyramid {
   PyramidLevel reduce(fftw_complex* coefficients, const uint32_t n_coeffs);
   void expand(
       const std::vector<complex_t>& low_pass, std::vector<complex_t>* lapl);
-  void fuseChannels(
+  std::vector<complex_t> fuseChannels(
       const std::vector<fftw_complex*>& channels, const uint32_t n_coeffs,
       const uint32_t n_levels);
   std::vector<complex_t> fuseLevelByMaxCoeff(

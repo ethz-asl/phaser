@@ -54,7 +54,7 @@ void LaplacePyramid::expand(
   }
 }
 
-void LaplacePyramid::fuseChannels(
+std::vector<complex_t> LaplacePyramid::fuseChannels(
     const std::vector<fftw_complex*>& channels, const uint32_t n_coeffs,
     const uint32_t n_levels) {
   const uint32_t n_channels = channels.size();
@@ -70,6 +70,20 @@ void LaplacePyramid::fuseChannels(
     fused_levels[i] = fuseLevelByMaxCoeff(pyramid_level, n_coeffs);
     pyramids_per_channel.emplace_back(std::move(pyramid_level));
   }
+
+  // Average the last low pass layer.
+  std::vector<complex_t> low_pass =
+      fuseLastLowPassLayer(pyramids_per_channel.back());
+
+  // Based on the fused levels, reconstruct the signal.
+  std::vector<complex_t>* recon = &low_pass;
+  for (uint32_t i = n_levels - 1; i >= 0; --i) {
+    CHECK_NOTNULL(recon);
+    expand(*recon, &fused_levels[i]);
+    recon = &fused_levels[i];
+  }
+  CHECK_NOTNULL(recon);
+  return *recon;
 }
 
 std::vector<complex_t> LaplacePyramid::fuseLevelByMaxCoeff(
@@ -116,7 +130,7 @@ uint32_t LaplacePyramid::findMaxCoeffForChannels(
 
 double LaplacePyramid::computeSignalEnergyForLevel(
     const PyramidLevel& level, const uint32_t idx) {
-  const double* signal = level.second[idx];
+  const std::array<double, 2>& signal = level.second[idx];
   const double energy =
       std::sqrt(signal[0] * signal[0] + signal[1] * signal[1]);
   return energy * energy;
