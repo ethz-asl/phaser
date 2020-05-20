@@ -46,19 +46,12 @@ void LaplacePyramid::expand(
   const uint32_t lower_bound = std::round(n_coeffs / divider_);
   const uint32_t upper_bound = n_coeffs - lower_bound;
 
-  VLOG(1) << "expand from " << lower_bound << " to " << upper_bound;
-
   uint32_t k = 0;
   for (uint32_t i = lower_bound; i < upper_bound; ++i) {
-    VLOG(1) << "lapl at " << i << " = " << (*lapl)[i][0] << " and "
-            << (*lapl)[i][1];
-    VLOG(1) << "low pass at " << k << " = " << low_pass[k][0] << " and "
-            << low_pass[k][1];
     (*lapl)[i][0] = low_pass[k][0];
     (*lapl)[i][1] = low_pass[k][1];
     ++k;
   }
-  VLOG(1) << "expand done";
 }
 
 std::vector<complex_t> LaplacePyramid::fuseChannels(
@@ -85,8 +78,6 @@ std::vector<complex_t> LaplacePyramid::fuseChannels(
   // Based on the fused levels, reconstruct the signal.
   std::vector<complex_t>* recon = &low_pass;
   for (int8_t i = n_levels - 1; i >= 0; --i) {
-    VLOG(1) << "================================= RECON WITH " << i
-            << " ==================";
     CHECK_NOTNULL(recon);
     expand(*recon, &fused_levels[i]);
     recon = &fused_levels[i];
