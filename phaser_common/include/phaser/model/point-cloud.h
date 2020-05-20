@@ -49,7 +49,7 @@ class PointCloud {
   PointCloud clone() const;
 
   void setRange(const float range, const uint32_t i);
-  float getRange(const uint32_t i) const;
+  float rangeAt(const uint32_t i) const;
 
   float getReflectivity(const uint32_t i) const;
   float getAmbientNoise(const uint32_t i) const;

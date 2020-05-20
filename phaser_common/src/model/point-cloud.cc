@@ -229,7 +229,7 @@ void PointCloud::setRange(const float range, const uint32_t i) {
   ranges_.at(i) = range;
 }
 
-float PointCloud::getRange(const uint32_t i) const {
+float PointCloud::rangeAt(const uint32_t i) const {
   CHECK_LT(i, ranges_.size());
   return ranges_.at(i);
 }
