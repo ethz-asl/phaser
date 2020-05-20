@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "phaser/backend/correlation/spatial-correlation.h"
+#include "phaser/backend/fusion/laplace-pyramid.h"
 
 namespace correlation {
 
@@ -15,6 +16,14 @@ class SpatialCorrelationLaplace : public SpatialCorrelation {
   double* correlateSignals(
       const std::vector<Eigen::VectorXd*>& f,
       const std::vector<Eigen::VectorXd*>& g) override;
+
+ private:
+  void performFFTandShift();
+  fftw_complex* convertFused(std::vector<fusion::complex_t>* fused);
+
+  fusion::LaplacePyramid laplace_;
+  const uint32_t n_fftw_size_;
+  fftw_complex *F_intensities_, *G_intensities_;
 };
 
 }  // namespace correlation

@@ -1,5 +1,6 @@
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/correlation/spatial-correlation-cuda.h"
+#include "phaser/backend/correlation/spatial-correlation-laplace.h"
 #include "phaser/backend/correlation/spatial-correlation-low-pass.h"
 #include "phaser/backend/correlation/spatial-correlation.h"
 #include "phaser/common/point-cloud-utils.h"
@@ -44,7 +45,7 @@ PhaseAligner::PhaseAligner()
   g_ranges_ = Eigen::VectorXd::Zero(total_n_voxels_);
   hist_ = Eigen::VectorXd::Zero(total_n_voxels_);
   spatial_correlation_.reset(
-      new correlation::SpatialCorrelationLowPass(n_voxels_));
+      new correlation::SpatialCorrelationLaplace(n_voxels_));
 }
 
 void PhaseAligner::alignRegistered(
@@ -55,8 +56,8 @@ void PhaseAligner::alignRegistered(
   CHECK_NOTNULL(spatial_correlation_);
   discretizePointcloud(cloud_prev, &f_intensities_, &f_ranges_, &hist_);
   discretizePointcloud(cloud_reg, &g_intensities_, &g_ranges_, &hist_);
-  std::vector<Eigen::VectorXd*> f = {&f_intensities_};
-  std::vector<Eigen::VectorXd*> g = {&g_intensities_};
+  std::vector<Eigen::VectorXd*> f = {&f_intensities_, &f_ranges_};
+  std::vector<Eigen::VectorXd*> g = {&g_intensities_, &g_ranges_};
 
   double* c = spatial_correlation_->correlateSignals(f, g);
   previous_correlation_ = std::vector<double>(c, c + total_n_voxels_);
