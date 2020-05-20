@@ -69,6 +69,8 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/alignment/phase-aligner.cc
 
    src/experiments/experiment-handler.cc
+
+   src/backend/fusion/laplace-pyramid.cc
 )
 
  cuda_add_library(${PROJECT_NAME}_cuda_lib
@@ -127,9 +129,12 @@ phaser_import_test_maps(test_translation_gaussian)
 
 catkin_add_gtest(test_rotation_bingham
   test/uncertainty-estimate/rot-bingham-test.cc)
-target_link_libraries(test_rotation_bingham
-  ${PROJECT_NAME}_lib)
+target_link_libraries(test_rotation_bingham ${PROJECT_NAME}_lib)
 phaser_import_test_maps(test_rotation_bingham)
+
+catkin_add_gtest(test_laplace_pyramid
+  test/fusion/laplace-pyramid-test.cc)
+target_link_libraries(test_laplace_pyramid ${PROJECT_NAME}_lib)
 
 cs_install()
 cs_export()
