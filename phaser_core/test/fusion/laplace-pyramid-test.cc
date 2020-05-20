@@ -145,6 +145,23 @@ TEST_F(LaplacePyramidTest, LowPassAverageTest) {
   delete[] coeffs_2;
 }
 
+TEST_F(LaplacePyramidTest, FuseChannelsUsing2LevelsTest) {
+  fusion::LaplacePyramid laplace(4.0);
+  const uint32_t n_coeffs = 8u;
+  fftw_complex* coeffs = createFixedCoefficients(5, n_coeffs);
+  fftw_complex* coeffs_2 = createFixedCoefficients(15, n_coeffs);
+  std::vector<complex_t> fused =
+      laplace.fuseChannels({coeffs, coeffs_2}, n_coeffs, 2);
+
+  for (uint32_t i = 0u; i < n_coeffs; ++i) {
+    EXPECT_GT(fused[i][0], 0.0);
+    EXPECT_GT(fused[i][1], 0.0);
+  }
+
+  delete[] coeffs;
+  delete[] coeffs_2;
+}
+
 }  // namespace fusion
 
 MAPLAB_UNITTEST_ENTRYPOINT
