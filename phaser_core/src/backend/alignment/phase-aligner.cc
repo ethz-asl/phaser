@@ -4,10 +4,11 @@
 #include "phaser/backend/correlation/spatial-correlation.h"
 #include "phaser/common/point-cloud-utils.h"
 
-#include <complex.h>  // needs to be included before fftw
-
 #include <algorithm>
 #include <chrono>
+#include <complex.h>  // needs to be included before fftw
+#include <vector>
+
 #include <gflags/gflags.h>
 #include <glog/logging.h>
 #include <omp.h>
@@ -54,9 +55,10 @@ void PhaseAligner::alignRegistered(
   CHECK_NOTNULL(spatial_correlation_);
   discretizePointcloud(cloud_prev, &f_intensities_, &f_ranges_, &hist_);
   discretizePointcloud(cloud_reg, &g_intensities_, &g_ranges_, &hist_);
+  std::vector<Eigen::VectorXd*> f = {&f_intensities_};
+  std::vector<Eigen::VectorXd*> g = {&g_intensities_};
 
-  double* c = spatial_correlation_->correlateSignals(
-      f_intensities_.data(), g_intensities_.data());
+  double* c = spatial_correlation_->correlateSignals(f, g);
   previous_correlation_ = std::vector<double>(c, c + total_n_voxels_);
 }
 

@@ -14,7 +14,9 @@ class SpatialCorrelationLowPass : public SpatialCorrelation {
       const uint32_t n_voxels, const uint32_t lower_bound,
       const uint32_t upper_bound);
   virtual ~SpatialCorrelationLowPass() = default;
-  double* correlateSignals(double* const f, double* const g) override;
+  double* correlateSignals(
+      const std::vector<Eigen::VectorXd*>& f,
+      const std::vector<Eigen::VectorXd*>& g) override;
 
   void shiftSignals(fftw_complex* F, fftw_complex* G);
   void inverseShiftSignals(fftw_complex* C);

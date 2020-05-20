@@ -12,7 +12,9 @@ class SpatialCorrelationLaplace : public SpatialCorrelation {
   explicit SpatialCorrelationLaplace(const uint32_t n_voxels);
 
   virtual ~SpatialCorrelationLaplace() = default;
-  double* correlateSignals(double* const f, double* const g) override;
+  double* correlateSignals(
+      const std::vector<Eigen::VectorXd*>& f,
+      const std::vector<Eigen::VectorXd*>& g) override;
 };
 
 }  // namespace correlation
