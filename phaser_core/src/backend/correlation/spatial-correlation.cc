@@ -7,9 +7,11 @@
 
 namespace correlation {
 
-SpatialCorrelation::SpatialCorrelation(const uint32_t n_voxels)
+SpatialCorrelation::SpatialCorrelation(
+    const uint32_t n_voxels, const uint32_t zero_padding)
     : total_n_voxels_(n_voxels * n_voxels * n_voxels),
-      n_voxels_per_dim_(n_voxels) {
+      n_voxels_per_dim_(n_voxels),
+      zero_padding_(zero_padding) {
   const uint32_t n_fftw_size = sizeof(fftw_complex) * total_n_voxels_;
   F_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size));
   G_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size));
@@ -140,6 +142,10 @@ double* SpatialCorrelation::correlateSignals(
   VLOG(1) << "Performing IFFT on correlation.";
   fftw_execute(c_plan_);
   return c_;
+}
+
+uint32_t SpatialCorrelation::getZeroPadding() const {
+  return zero_padding_;
 }
 
 }  // namespace correlation
