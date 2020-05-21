@@ -52,6 +52,28 @@ TEST_F(SpatialCorrelationTest, SimpleCorrelation) {
   EXPECT_GT(nnz(c, n_corr), 0);
 }
 
+TEST_F(SpatialCorrelationTest, SimplePaddedCorrelation) {
+  const uint32_t n_corr_per_dim = 3u;
+  const uint32_t n_corr = n_corr_per_dim * n_corr_per_dim * n_corr_per_dim;
+  Eigen::VectorXd f = Eigen::VectorXd::Zero(n_corr);
+  Eigen::VectorXd g = Eigen::VectorXd::Zero(n_corr);
+  for (uint32_t i = 0; i < n_corr; ++i) {
+    f(i) = getRandomFloat();
+    g(i) = getRandomFloat();
+  }
+  const uint32_t padding = 2u;
+  correlation::SpatialCorrelation corr(n_corr_per_dim, padding);
+  std::vector<Eigen::VectorXd*> signal_f = {&f};
+  std::vector<Eigen::VectorXd*> signal_g = {&g};
+  double* c = corr.correlateSignals(signal_f, signal_g);
+
+  CHECK_NOTNULL(c);
+  const uint32_t n_padded_corr_per_dim = n_corr_per_dim + padding;
+  const uint32_t n_padded_cor =
+      n_padded_corr_per_dim * n_padded_corr_per_dim * n_padded_corr_per_dim;
+  EXPECT_GT(nnz(c, n_padded_cor), 0);
+}
+
 }  // namespace translation
 
 MAPLAB_UNITTEST_ENTRYPOINT

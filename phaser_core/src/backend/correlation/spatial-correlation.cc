@@ -14,14 +14,27 @@ SpatialCorrelation::SpatialCorrelation(
     : total_n_voxels_(n_voxels * n_voxels * n_voxels),
       n_voxels_per_dim_(n_voxels),
       zero_padding_(zero_padding) {
+  // If padding is set calculate the ratio to the original size.
+  const uint32_t padding_per_dim = 2u * zero_padding;
+  const double ratio_n_padding_per_dim =
+      (n_voxels + padding_per_dim) / static_cast<double>(n_voxels);
+  const double total_n_padding_factor = ratio_n_padding_per_dim *
+                                        ratio_n_padding_per_dim *
+                                        ratio_n_padding_per_dim;
+  const uint32_t n_padded_size =
+      static_cast<uint32_t>(total_n_voxels_ * total_n_padding_factor);
+  VLOG(1) << "Initializing spatial correlation with padding " << zero_padding
+          << " (ratio: " << ratio_n_padding_per_dim
+          << ", factor: " << total_n_padding_factor << ").";
+  VLOG(1) << "padded size: " << n_padded_size;
+
   const uint32_t n_fftw_size = sizeof(fftw_complex) * total_n_voxels_;
-  const uint32_t n_fftw_padding_size = sizeof(fftw_complex) * zero_padding * 6;
   F_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size));
   G_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size));
   C_ = static_cast<fftw_complex*>(
-      fftw_malloc(n_fftw_size + n_fftw_padding_size));
+      fftw_malloc(sizeof(fftw_complex) * n_padded_size));
 
-  c_ = new double[total_n_voxels_]{};
+  c_ = new double[n_padded_size]{};
   f_ = new double[total_n_voxels_]{};
   g_ = new double[total_n_voxels_]{};
 
@@ -33,8 +46,8 @@ SpatialCorrelation::SpatialCorrelation(
       fftw_plan_dft_r2c_3d(n_voxels, n_voxels, n_voxels, g_, G_, FFTW_ESTIMATE);
 
   c_plan_ = fftw_plan_dft_c2r_3d(
-      n_voxels + zero_padding, n_voxels + zero_padding, n_voxels + zero_padding,
-      C_, c_, FFTW_ESTIMATE);
+      n_voxels + padding_per_dim, n_voxels + padding_per_dim,
+      n_voxels + padding_per_dim, C_, c_, FFTW_ESTIMATE);
 }
 
 SpatialCorrelation::~SpatialCorrelation() {
