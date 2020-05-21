@@ -6,8 +6,9 @@
 
 namespace correlation {
 
-SpatialCorrelationLaplace::SpatialCorrelationLaplace(const uint32_t n_voxels)
-    : SpatialCorrelation(n_voxels),
+SpatialCorrelationLaplace::SpatialCorrelationLaplace(
+    const uint32_t n_voxels, const uint32_t zero_padding)
+    : SpatialCorrelation(n_voxels, zero_padding),
       n_fftw_size_(sizeof(fftw_complex) * total_n_voxels_) {
   F_intensities_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size_));
   G_intensities_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size_));

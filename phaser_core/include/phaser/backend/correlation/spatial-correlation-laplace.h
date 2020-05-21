@@ -10,7 +10,8 @@ namespace correlation {
 
 class SpatialCorrelationLaplace : public SpatialCorrelation {
  public:
-  explicit SpatialCorrelationLaplace(const uint32_t n_voxels);
+  explicit SpatialCorrelationLaplace(
+      const uint32_t n_voxels, const uint32_t zero_padding);
 
   virtual ~SpatialCorrelationLaplace() = default;
   double* correlateSignals(

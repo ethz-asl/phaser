@@ -16,8 +16,9 @@ DEFINE_int32(
 
 namespace correlation {
 
-SpatialCorrelationLowPass::SpatialCorrelationLowPass(const uint32_t n_voxels)
-    : SpatialCorrelation(n_voxels),
+SpatialCorrelationLowPass::SpatialCorrelationLowPass(
+    const uint32_t n_voxels, const uint32_t zero_padding)
+    : SpatialCorrelation(n_voxels, zero_padding),
       low_pass_lower_bound_(FLAGS_phaser_core_spatial_low_pass_lower_bound),
       low_pass_upper_bound_(std::min(
           static_cast<uint32_t>(FLAGS_phaser_core_spatial_low_pass_upper_bound),
@@ -26,9 +27,9 @@ SpatialCorrelationLowPass::SpatialCorrelationLowPass(const uint32_t n_voxels)
 }
 
 SpatialCorrelationLowPass::SpatialCorrelationLowPass(
-    const uint32_t n_voxels, const uint32_t lower_bound,
-    const uint32_t upper_bound)
-    : SpatialCorrelation(n_voxels),
+    const uint32_t n_voxels, const uint32_t zero_padding,
+    const uint32_t lower_bound, const uint32_t upper_bound)
+    : SpatialCorrelation(n_voxels, zero_padding),
       low_pass_lower_bound_(lower_bound),
       low_pass_upper_bound_(upper_bound) {
   computeIndicesBasedOnBounds();
