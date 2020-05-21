@@ -1,7 +1,9 @@
 #include "phaser/backend/correlation/spatial-correlation.h"
+#include "phaser/common/signal-utils.h"
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
 
+#include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <gtest/gtest.h>
@@ -50,6 +52,28 @@ TEST_F(SpatialCorrelationTest, SimpleCorrelation) {
 
   CHECK_NOTNULL(c);
   EXPECT_GT(nnz(c, n_corr), 0);
+}
+
+TEST_F(SpatialCorrelationTest, CorrelationEndToEnd) {
+  const uint32_t n_corr = 27u;
+  Eigen::VectorXd f = Eigen::VectorXd::Zero(n_corr);
+  Eigen::VectorXd g = Eigen::VectorXd::Zero(n_corr);
+  f(0) = 1;
+  g(1) = 1;
+  correlation::SpatialCorrelation corr(3u);
+  std::vector<Eigen::VectorXd*> signal_f = {&f};
+  std::vector<Eigen::VectorXd*> signal_g = {&g};
+  double* c = corr.correlateSignals(signal_f, signal_g);
+  CHECK_NOTNULL(c);
+
+  const std::vector<double> c_vec(c, c + n_corr);
+  auto max_it = std::max_element(c_vec.cbegin(), c_vec.cend());
+  uint32_t lin_idx_max = std::distance(c_vec.cbegin(), max_it);
+  const std::array<uint32_t, 3> xyz =
+      common::SignalUtils::Ind2Sub(lin_idx_max, 3, 3);
+  EXPECT_EQ(xyz[0], 0u);
+  EXPECT_EQ(xyz[1], 2u);
+  EXPECT_EQ(xyz[2], 0u);
 }
 
 TEST_F(SpatialCorrelationTest, SimplePaddedCorrelation) {
