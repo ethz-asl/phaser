@@ -95,6 +95,11 @@ void SpatialCorrelation::complexMulVecUsingIndices(
   for (uint32_t idx = 0u; idx < n_points; idx += 2) {
     const uint32_t i = indices[idx];
     const uint32_t j = indices[idx + 1];
+    const uint32_t padded_i =
+        zero_padding_ != 0u ? computeZeroPaddedIndex(i) : i;
+    const uint32_t padded_j =
+        zero_padding_ != 0u ? computeZeroPaddedIndex(j) : j;
+
     vec_F_real[0] = F[i][0];
     vec_F_real[1] = F[j][0];
     vec_F_img[0] = F[i][1];
@@ -117,10 +122,10 @@ void SpatialCorrelation::complexMulVecUsingIndices(
         _mm_mul_pd(vec_F_img, vec_G_real));
 
     // Write the memory back to C.
-    C[i][0] = vec_C_real[0];
-    C[i][1] = vec_C_img[0];
-    C[j][0] = vec_C_real[1];
-    C[j][1] = vec_C_img[1];
+    C[padded_i][0] = vec_C_real[0];
+    C[padded_i][1] = vec_C_img[0];
+    C[padded_j][0] = vec_C_real[1];
+    C[padded_j][1] = vec_C_img[1];
   }
 }
 
@@ -130,9 +135,9 @@ void SpatialCorrelation::complexMulSeqUsingIndices(
   CHECK(!indices.empty());
   VLOG(1) << "Performing correlation using: " << indices.size() << " samples.";
   const uint32_t n_points = indices.size();
-#pragma omp parallel for num_threads(8)
+#pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < n_points; ++i) {
-    uint32_t idx = zero_padding_ != 0u ? computeZeroPaddedIndex(i) : i;
+    const uint32_t idx = zero_padding_ != 0u ? computeZeroPaddedIndex(i) : i;
     C[idx][0] = F[i][0] * G[i][0] - F[i][1] * (-G[i][1]);
     C[idx][1] = F[i][0] * (-G[i][1]) + F[i][1] * G[i][0];
   }
@@ -170,9 +175,10 @@ uint32_t SpatialCorrelation::getZeroPadding() const {
 uint32_t SpatialCorrelation::computeZeroPaddedIndex(const uint32_t idx) {
   std::array<uint32_t, 3> ijk =
       common::SignalUtils::Ind2Sub(idx, n_voxels_per_dim_, n_voxels_per_dim_);
-  const uint32_t padded_voxels_per_dim = n_voxels_per_dim_ + zero_padding_;
+  const uint32_t padded_voxels_per_dim = n_voxels_per_dim_ + 2 * zero_padding_;
   return common::SignalUtils::Sub2Ind(
-      ijk[0], ijk[1], ijk[2], padded_voxels_per_dim, padded_voxels_per_dim);
+      ijk[0] + zero_padding_, ijk[1] + zero_padding_, ijk[2] + zero_padding_,
+      padded_voxels_per_dim, padded_voxels_per_dim);
 }
 
 }  // namespace correlation
