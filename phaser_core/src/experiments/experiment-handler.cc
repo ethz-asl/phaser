@@ -17,7 +17,7 @@ DEFINE_string(truth_file, "", "Defines the path of the truth file.");
 namespace experiments {
 
 ExperimentHandler::ExperimentHandler() : prev_point_cloud_(nullptr) {
-  registrator_ = std::make_unique<registration::SphRegistration>();
+  registrator_ = std::make_unique<registration::SphOptRegistration>();
   readTruth();
 }
 

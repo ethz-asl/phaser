@@ -1,10 +1,8 @@
-#ifndef PACKLO_EXPERIMENTS_EXPERIMENT_HANDLER_H_
-#define PACKLO_EXPERIMENTS_EXPERIMENT_HANDLER_H_
+#ifndef PHASER_EXPERIMENTS_EXPERIMENT_HANDLER_H_
+#define PHASER_EXPERIMENTS_EXPERIMENT_HANDLER_H_
 
-#include "phaser/backend/registration/base-registration.h"
-#include "phaser/backend/registration/sph-registration.h"
+#include "phaser/backend/registration/sph-opt-registration.h"
 #include "phaser/model/point-cloud.h"
-
 
 #include <Eigen/Dense>
 #include <memory>
@@ -14,8 +12,6 @@ namespace experiments {
 
 class ExperimentHandler {
  public:
-  // explicit ExperimentHandler(registration::BaseRegistrationPtr&&
-  // registrator);
   ExperimentHandler();
   void shutdown();
 
@@ -33,7 +29,7 @@ class ExperimentHandler {
   void rotateToSensorFrame(const model::PointCloudPtr& cloud);
   void rotateToOdomFrame(const model::PointCloudPtr& cloud);
 
-  registration::SphRegistrationPtr registrator_;
+  registration::SphOptRegistrationPtr registrator_;
   model::PointCloudPtr prev_point_cloud_;
   std::vector<Eigen::VectorXd> states_;
   Eigen::MatrixXd gt_;
@@ -44,4 +40,4 @@ using ExperimentHandlerPtr = std::unique_ptr<ExperimentHandler>;
 
 }  // namespace experiments
 
-#endif  // PACKLO_EXPERIMENTS_EXPERIMENT_HANDLER_H_
+#endif  // PHASER_EXPERIMENTS_EXPERIMENT_HANDLER_H_

@@ -147,7 +147,7 @@ std::vector<double> PhaseAligner::getCorrelation() const {
 }
 
 uint32_t PhaseAligner::getNumberOfVoxels() const noexcept {
-  return n_voxels_;
+  return n_voxels_ + FLAGS_phaser_core_spatial_zero_padding;
 }
 
 uint32_t PhaseAligner::getLowerBound() const noexcept {

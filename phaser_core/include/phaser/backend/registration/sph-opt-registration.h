@@ -51,7 +51,7 @@ class SphOptRegistration : public BaseRegistration {
   common::ThreadPool th_pool_;
 };
 
-using SphCudaRegistrationPtr = std::unique_ptr<SphOptRegistration>;
+using SphOptRegistrationPtr = std::unique_ptr<SphOptRegistration>;
 
 }  // namespace registration
 

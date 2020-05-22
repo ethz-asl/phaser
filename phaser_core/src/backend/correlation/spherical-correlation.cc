@@ -17,8 +17,12 @@ extern "C" {
 
 namespace correlation {
 
-SphericalCorrelation::SphericalCorrelation(const uint32_t bw)
-    : statistics_manager_(kReferenceName), bw_(bw) {
+SphericalCorrelation::SphericalCorrelation(
+    const uint32_t bw, const uint32_t zero_padding)
+    : statistics_manager_(kReferenceName),
+      bw_(bw),
+      bw_out_(bw + zero_padding),
+      zero_padding_(zero_padding) {
   initializeAll(bw);
 }
 SphericalCorrelation::~SphericalCorrelation() {
@@ -103,15 +107,21 @@ std::vector<double> SphericalCorrelation::getCorrelation() const noexcept {
 }
 
 uint32_t SphericalCorrelation::getBandwidth() const noexcept {
-  return bw_;
+  return bw_out_;
 }
 
 void SphericalCorrelation::initializeAll(const uint32_t bw) {
   VLOG(1) << "Initializing spherical correlation.";
   const uint32_t bwp2 = bw * bw;
   const uint32_t bwp3 = bwp2 * bw;
-  so3_bw_ = 8u * bwp3;
+
+  const uint32_t bw_out_p2 = bw_out_ * bw_out_;
+  const uint32_t bw_out_p3 = bw_out_p2 * bw_out_;
+  so3_bw_ = 8u * bw_out_p3;
+
   const uint32_t n = 2 * bw;
+  const uint32_t n_out = 2 * bw_out_;
+
   rank_ = 1;
   dims_[0].n = n;
   dims_[0].is = 1;
@@ -128,6 +138,11 @@ void SphericalCorrelation::initializeAll(const uint32_t bw) {
   workspace3_ =
       static_cast<double*>(malloc(sizeof(double) * (12 * n + n * bw)));
 
+  workspace2_out_ = static_cast<fftw_complex*>(
+      fftw_malloc(sizeof(fftw_complex) * ((14 * bw_out_p2) + (48 * bw_out_))));
+  workspace3_out_ = static_cast<double*>(
+      malloc(sizeof(double) * (12 * n_out + n_out * bw_out_)));
+
   weights_ = static_cast<double*>(malloc(sizeof(double) * (4 * bw)));
   sig_coef_[0] = static_cast<double*>(malloc(sizeof(double) * bwp2));
   sig_coef_[1] = static_cast<double*>(malloc(sizeof(double) * bwp2));
@@ -135,10 +150,12 @@ void SphericalCorrelation::initializeAll(const uint32_t bw) {
   pat_coef_[1] = static_cast<double*>(malloc(sizeof(double) * bwp2));
   tmp_coef_[0] = static_cast<double*>(malloc(sizeof(double) * (n * n)));
   tmp_coef_[1] = static_cast<double*>(malloc(sizeof(double) * (n * n)));
+
   so3_sig_ =
       static_cast<fftw_complex*>(fftw_malloc(sizeof(fftw_complex) * (so3_bw_)));
   so3_coef_ = static_cast<fftw_complex*>(
-      fftw_malloc(sizeof(fftw_complex) * ((4 * bwp3 - bw) / 3)));
+      fftw_malloc(sizeof(fftw_complex) * ((4 * bw_out_p3 - bw_out_) / 3)));
+
   seminaive_naive_tablespace_ = static_cast<double*>(malloc(
       sizeof(double) *
       (Reduced_Naive_TableSize(bw, bw) + Reduced_SpharmonicTableSize(bw, bw))));
@@ -153,21 +170,22 @@ void SphericalCorrelation::initializeAll(const uint32_t bw) {
       reinterpret_cast<double*>(workspace2_) + (n * n), FFTW_ESTIMATE);
 
   howmany_ = n * n;
-  idist_ = n;
-  odist_ = n;
+  const uint32_t howmany_out = n_out * n_out;
+  idist_ = n_out;
+  odist_ = n_out;
   rank_ = 2;
-  inembed_[0] = n;
-  inembed_[1] = n * n;
-  onembed_[0] = n;
-  onembed_[1] = n * n;
+  inembed_[0] = n_out;
+  inembed_[1] = n_out * n_out;
+  onembed_[0] = n_out;
+  onembed_[1] = n_out * n_out;
   istride_ = 1;
   ostride_ = 1;
   na_[0] = 1;
-  na_[1] = n;
+  na_[1] = n_out;
 
   inverse_so3_ = fftw_plan_many_dft(
-      rank_, na_, howmany_, workspace1_, inembed_, istride_, idist_, so3_sig_,
-      onembed_, ostride_, odist_, FFTW_FORWARD, FFTW_ESTIMATE);
+      rank_, na_, howmany_out, workspace1_, inembed_, istride_, idist_,
+      so3_sig_, onembed_, ostride_, odist_, FFTW_FORWARD, FFTW_ESTIMATE);
 
   seminaive_naive_table_ = SemiNaive_Naive_Pml_Table(
       bw, bw, seminaive_naive_tablespace_,
@@ -222,10 +240,11 @@ void SphericalCorrelation::correlate() {
   CHECK_NOTNULL(pat_coef_[0]);
   CHECK_NOTNULL(pat_coef_[1]);
   CHECK_NOTNULL(so3_coef_);
+  VLOG(2) << "Performing correlation of the S^2 coefficients.";
 
   so3CombineCoef_fftw(
-      bw_, bw_, bw_ - 1, sig_coef_[0], sig_coef_[1], pat_coef_[0], pat_coef_[1],
-      so3_coef_);
+      bw_, bw_out_, bw_ - 1, sig_coef_[0], sig_coef_[1], pat_coef_[0],
+      pat_coef_[1], so3_coef_);
 }
 
 void SphericalCorrelation::inverseTransform() {
@@ -234,10 +253,12 @@ void SphericalCorrelation::inverseTransform() {
   CHECK_NOTNULL(workspace1_);
   CHECK_NOTNULL(workspace2_);
   CHECK_NOTNULL(workspace3_);
+  VLOG(2) << "Taking the inverse SO(3) transform with bandwidth " << bw_out_
+          << " of the SO(3) correlated coefficients.";
 
   Inverse_SO3_Naive_fftw(
-      bw_, so3_coef_, so3_sig_, workspace1_, workspace2_, workspace3_,
-      &inverse_so3_, 1);
+      bw_out_, so3_coef_, so3_sig_, workspace1_, workspace2_out_,
+      workspace3_out_, &inverse_so3_, 1);
 
   so3_mag_sig_ = std::vector<double>(so3_bw_);
 #pragma omp parallel for num_threads(2)
