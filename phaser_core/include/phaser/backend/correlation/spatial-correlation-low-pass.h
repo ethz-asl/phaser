@@ -9,10 +9,11 @@ namespace correlation {
 
 class SpatialCorrelationLowPass : public SpatialCorrelation {
  public:
-  explicit SpatialCorrelationLowPass(const uint32_t n_voxels);
   explicit SpatialCorrelationLowPass(
-      const uint32_t n_voxels, const uint32_t lower_bound,
-      const uint32_t upper_bound);
+      const uint32_t n_voxels, const uint32_t zero_padding);
+  explicit SpatialCorrelationLowPass(
+      const uint32_t n_voxels, const uint32_t zero_padding,
+      const uint32_t lower_bound, const uint32_t upper_bound);
   virtual ~SpatialCorrelationLowPass() = default;
   double* correlateSignals(
       const std::vector<Eigen::VectorXd*>& f,

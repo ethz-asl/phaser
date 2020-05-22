@@ -5,19 +5,38 @@
 #include <emmintrin.h>
 #include <glog/logging.h>
 
+#include "phaser/common/signal-utils.h"
+
 namespace correlation {
 
-SpatialCorrelation::SpatialCorrelation(const uint32_t n_voxels)
+SpatialCorrelation::SpatialCorrelation(
+    const uint32_t n_voxels, const uint32_t zero_padding)
     : total_n_voxels_(n_voxels * n_voxels * n_voxels),
-      n_voxels_per_dim_(n_voxels) {
+      n_voxels_per_dim_(n_voxels),
+      zero_padding_(zero_padding) {
+  // If padding is set calculate the ratio to the original size.
+  const uint32_t padding_per_dim = 2u * zero_padding;
+  const double ratio_n_padding_per_dim =
+      (n_voxels + padding_per_dim) / static_cast<double>(n_voxels);
+  const double total_n_padding_factor = ratio_n_padding_per_dim *
+                                        ratio_n_padding_per_dim *
+                                        ratio_n_padding_per_dim;
+  const uint32_t n_padded_size =
+      static_cast<uint32_t>(total_n_voxels_ * total_n_padding_factor);
+  VLOG(1) << "Initializing spatial correlation with padding " << zero_padding
+          << " (ratio: " << ratio_n_padding_per_dim
+          << ", factor: " << total_n_padding_factor << ").";
+  VLOG(1) << "padded size: " << n_padded_size;
+
   const uint32_t n_fftw_size = sizeof(fftw_complex) * total_n_voxels_;
   F_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size));
   G_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size));
-  C_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size));
+  C_ = static_cast<fftw_complex*>(
+      fftw_malloc(sizeof(fftw_complex) * n_padded_size));
 
-  c_ = new double[total_n_voxels_];
-  f_ = new double[total_n_voxels_];
-  g_ = new double[total_n_voxels_];
+  c_ = new double[n_padded_size]{};
+  f_ = new double[total_n_voxels_]{};
+  g_ = new double[total_n_voxels_]{};
 
   // Create the FFTW plans for two FFTs and one IFFT.
   f_plan_ =
@@ -26,8 +45,9 @@ SpatialCorrelation::SpatialCorrelation(const uint32_t n_voxels)
   g_plan_ =
       fftw_plan_dft_r2c_3d(n_voxels, n_voxels, n_voxels, g_, G_, FFTW_ESTIMATE);
 
-  c_plan_ =
-      fftw_plan_dft_c2r_3d(n_voxels, n_voxels, n_voxels, C_, c_, FFTW_ESTIMATE);
+  c_plan_ = fftw_plan_dft_c2r_3d(
+      n_voxels + padding_per_dim, n_voxels + padding_per_dim,
+      n_voxels + padding_per_dim, C_, c_, FFTW_ESTIMATE);
 }
 
 SpatialCorrelation::~SpatialCorrelation() {
@@ -75,6 +95,11 @@ void SpatialCorrelation::complexMulVecUsingIndices(
   for (uint32_t idx = 0u; idx < n_points; idx += 2) {
     const uint32_t i = indices[idx];
     const uint32_t j = indices[idx + 1];
+    const uint32_t padded_i =
+        zero_padding_ != 0u ? computeZeroPaddedIndex(i) : i;
+    const uint32_t padded_j =
+        zero_padding_ != 0u ? computeZeroPaddedIndex(j) : j;
+
     vec_F_real[0] = F[i][0];
     vec_F_real[1] = F[j][0];
     vec_F_img[0] = F[i][1];
@@ -97,10 +122,10 @@ void SpatialCorrelation::complexMulVecUsingIndices(
         _mm_mul_pd(vec_F_img, vec_G_real));
 
     // Write the memory back to C.
-    C[i][0] = vec_C_real[0];
-    C[i][1] = vec_C_img[0];
-    C[j][0] = vec_C_real[1];
-    C[j][1] = vec_C_img[1];
+    C[padded_i][0] = vec_C_real[0];
+    C[padded_i][1] = vec_C_img[0];
+    C[padded_j][0] = vec_C_real[1];
+    C[padded_j][1] = vec_C_img[1];
   }
 }
 
@@ -110,10 +135,11 @@ void SpatialCorrelation::complexMulSeqUsingIndices(
   CHECK(!indices.empty());
   VLOG(1) << "Performing correlation using: " << indices.size() << " samples.";
   const uint32_t n_points = indices.size();
-#pragma omp parallel for num_threads(8)
+#pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < n_points; ++i) {
-    C[i][0] = F[i][0] * G[i][0] - F[i][1] * (-G[i][1]);
-    C[i][1] = F[i][0] * (-G[i][1]) + F[i][1] * G[i][0];
+    const uint32_t idx = zero_padding_ != 0u ? computeZeroPaddedIndex(i) : i;
+    C[idx][0] = F[i][0] * G[i][0] - F[i][1] * (-G[i][1]);
+    C[idx][1] = F[i][0] * (-G[i][1]) + F[i][1] * G[i][0];
   }
 }
 
@@ -140,6 +166,19 @@ double* SpatialCorrelation::correlateSignals(
   VLOG(1) << "Performing IFFT on correlation.";
   fftw_execute(c_plan_);
   return c_;
+}
+
+uint32_t SpatialCorrelation::getZeroPadding() const {
+  return zero_padding_;
+}
+
+uint32_t SpatialCorrelation::computeZeroPaddedIndex(const uint32_t idx) {
+  std::array<uint32_t, 3> ijk =
+      common::SignalUtils::Ind2Sub(idx, n_voxels_per_dim_, n_voxels_per_dim_);
+  const uint32_t padded_voxels_per_dim = n_voxels_per_dim_ + 2 * zero_padding_;
+  return common::SignalUtils::Sub2Ind(
+      ijk[0] + zero_padding_, ijk[1] + zero_padding_, ijk[2] + zero_padding_,
+      padded_voxels_per_dim, padded_voxels_per_dim);
 }
 
 }  // namespace correlation
