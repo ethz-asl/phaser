@@ -45,10 +45,10 @@ double TranslationUtils::ComputeTranslationFromIndex(
   const double n_voxels_half = n_voxels / 2.0;
   const double width =
       std::abs(discretize_lower_bound) + std::abs(discretize_upper_bound) + 1;
-  if ((index - 1) <= n_voxels_half) {
-    return (index - 1) * width / n_voxels;
+  if ((index) <= n_voxels_half) {
+    return (index)*width / n_voxels;
   }
-  return (index - 1 - n_voxels) * width / n_voxels;
+  return (index - n_voxels) * width / n_voxels;
 }
 
 std::array<uint32_t, 3> TranslationUtils::Ind2sub(
