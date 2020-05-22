@@ -5,8 +5,8 @@ rosrun phaser_core phaser_core_driver \
   --v=3 \
   --alsologtostderr=1 \
   --phaser_pre_enable_geometric_cloud_segmentation=false \
-  --target_cloud="/home/berlukas/Documents/PhD/research/2019/Spherical Registration/ply/exp1/cloud001.ply" \
-  --source_cloud="/home/berlukas/Documents/PhD/research/2019/Spherical Registration/ply/exp1/cloud002.ply" \
+  --target_cloud="/home/berlukas/Documents/PhD/research/2019/Spherical Registration/ply/exp1/cloud029.ply" \
+  --source_cloud="/home/berlukas/Documents/PhD/research/2019/Spherical Registration/ply/exp1/cloud030.ply" \
   --reg_cloud=./cloud01.ply \
   --phaser_core_spherical_low_pass_lower_bound=8250 \
   --phaser_core_spherical_low_pass_upper_bound=14250 \

@@ -15,7 +15,8 @@ namespace correlation {
 
 class SphericalCorrelation {
  public:
-  explicit SphericalCorrelation(const uint32_t bw = 100);
+  explicit SphericalCorrelation(
+      const uint32_t bw = 100, const uint32_t zero_padding = 0);
   virtual ~SphericalCorrelation();
   void correlateSignals(
       const std::vector<model::FunctionValue>& f1,
@@ -44,6 +45,8 @@ class SphericalCorrelation {
   const std::string kSignalKey = "signal_values";
   const std::string kCoeffKey = "signal_coeff";
   const double two_pi_ = 2 * M_PI;
+  const uint32_t zero_padding_;
+  const uint32_t bw_out_;
   uint32_t bw_;
   uint32_t so3_bw_;
   std::vector<double> corr_;
@@ -55,6 +58,10 @@ class SphericalCorrelation {
   fftw_complex* workspace1_;
   fftw_complex* workspace2_;
   double* workspace3_;
+
+  fftw_complex* workspace2_out_;
+  double* workspace3_out_;
+
   fftw_complex* so3_sig_;
   double* seminaive_naive_tablespace_;
   double** seminaive_naive_table_;
