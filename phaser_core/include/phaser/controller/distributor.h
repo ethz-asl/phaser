@@ -1,5 +1,9 @@
-#ifndef PACKLO_CONTROLLER_DISTRIBUTOR_H_
-#define PACKLO_CONTROLLER_DISTRIBUTOR_H_
+#ifndef PHASER_CONTROLLER_DISTRIBUTOR_H_
+#define PHASER_CONTROLLER_DISTRIBUTOR_H_
+
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "phaser/backend/registration/base-registration.h"
 #include "phaser/common/data/datasource-ros.h"
@@ -7,15 +11,13 @@
 #include "phaser/experiments/experiment-handler.h"
 #include "phaser/model/point-cloud.h"
 
-#include <memory>
-#include <string>
-
 namespace controller {
 
 class Distributor {
  public:
-  explicit Distributor(const data::DatasourcePtr& ds,
-    registration::BaseRegistrationPtr&& registration);
+  explicit Distributor(
+      const data::DatasourcePtr& ds,
+      registration::BaseRegistrationPtr&& registration);
 
   void updateStatistics();
   void getStatistics(common::StatisticsManager*) const noexcept;
@@ -26,6 +28,7 @@ class Distributor {
 
  private:
   void subscribeToTopics();
+  void initializeRegistrationAlgorithm();
   void pointCloudCallback(const model::PointCloudPtr& cloud);
   model::RegistrationResult registerPointCloud(
       const model::PointCloudPtr& cloud);
@@ -49,4 +52,4 @@ class Distributor {
 
 }  // namespace controller
 
-#endif  // PACKLO_CONTROLLER_DISTRIBUTOR_H_
+#endif  // PHASER_CONTROLLER_DISTRIBUTOR_H_

@@ -160,7 +160,7 @@ double* SpatialCorrelation::correlateSignals(
   fftw_execute(g_plan_);
 
   // Correlate the signals in the frequency domain.
-  complexMulVec(F_, G_, C_);
+  complexMulSeq(F_, G_, C_);
 
   // Perform the IFFT on the correlation tensor.
   VLOG(1) << "Performing IFFT on correlation.";
