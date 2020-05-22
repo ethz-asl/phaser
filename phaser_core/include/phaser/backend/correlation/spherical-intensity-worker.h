@@ -16,7 +16,7 @@ class SphericalIntensityWorker : public common::BaseWorker {
  public:
   explicit SphericalIntensityWorker(
       const model::FunctionValueVec& f_values,
-      const model::FunctionValueVec& h_values, const uint16_t bandwidth);
+      const model::FunctionValueVec& h_values);
 
   void run() override;
 
@@ -27,7 +27,6 @@ class SphericalIntensityWorker : public common::BaseWorker {
   SphericalCorrelationPtr sph_corr_;
   const model::FunctionValueVec& f_values_;
   const model::FunctionValueVec& h_values_;
-  const uint32_t bw_;
 };
 using SphericalIntensityWorkerPtr = std::shared_ptr<SphericalIntensityWorker>;
 

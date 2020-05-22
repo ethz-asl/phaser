@@ -12,6 +12,7 @@
 #include "phaser/backend/correlation/spherical-range-worker.h"
 #include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
+#include "phaser/common/core-gflags.h"
 #include "phaser/common/rotation-utils.h"
 #include "phaser/common/statistic-utils.h"
 #include "phaser/common/translation-utils.h"
@@ -19,7 +20,9 @@
 namespace registration {
 
 SphOptRegistration::SphOptRegistration()
-    : BaseRegistration("SphOptRegistration"), bandwidth_(150), sampler_(150) {
+    : BaseRegistration("SphOptRegistration"),
+      bandwidth_(common::FLAGS_phaser_core_spherical_bandwidth),
+      sampler_(common::FLAGS_phaser_core_spherical_bandwidth) {
   uncertainty::BaseEvalPtr rot_eval =
       std::make_unique<uncertainty::BinghamPeakBasedEval>();
   uncertainty::BaseEvalPtr pos_eval =
@@ -113,7 +116,7 @@ SphOptRegistration::correlatePointcloud(
   // Create workers for the spherical correlation.
   correlation::SphericalIntensityWorkerPtr corr_intensity_worker =
       CHECK_NOTNULL(std::make_shared<correlation::SphericalIntensityWorker>(
-          f_values, h_values, sampler_.getInitializedBandwith()));
+          f_values, h_values));
   /*
   correlation::SphericalRangeWorkerPtr corr_range_worker =
       CHECK_NOTNULL(std::make_shared<correlation::SphericalRangeWorker>(
