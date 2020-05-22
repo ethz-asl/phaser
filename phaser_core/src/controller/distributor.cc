@@ -18,16 +18,18 @@ DEFINE_int32(take_every_n_cloud, 1, "As the name suggests.");
 
 namespace controller {
 
-Distributor::Distributor(const data::DatasourcePtr& ds,
+Distributor::Distributor(
+    const data::DatasourcePtr& ds,
     registration::BaseRegistrationPtr&& registration)
     : ds_(ds),
       statistics_manager_(kManagerReferenceName),
       registrator_(std::move(registration)) {
   subscribeToTopics();
+  initializeRegistrationAlgorithm();
 }
 
 void Distributor::shutdown() {
-  //writeResultsToFile();
+  // writeResultsToFile();
   if (experiment_handler_ != nullptr)
     experiment_handler_->shutdown();
 }
@@ -39,6 +41,13 @@ void Distributor::subscribeToTopics() {
   });
 }
 
+void Distributor::initializeRegistrationAlgorithm() {
+  if (FLAGS_app_mode == "experiment1" || FLAGS_app_mode == "experiment2" ||
+      FLAGS_app_mode == "experiment3" || FLAGS_app_mode == "gicp") {
+    experiment_handler_ = std::make_unique<experiments::ExperimentHandler>();
+  }
+}
+
 void Distributor::setRegistrationAlgorithm(std::string&& algorithm) {
   registration_algorithm_ = algorithm;
 }
@@ -48,13 +57,12 @@ void Distributor::setRegistrationAlgorithm(const std::string& algorithm) {
 }
 
 // TODO(lbern): should i just pass a different callback
-void Distributor::pointCloudCallback(
-    const model::PointCloudPtr& cloud) {
+void Distributor::pointCloudCallback(const model::PointCloudPtr& cloud) {
   ++cloud_counter_;
   if (cloud_counter_ % FLAGS_take_every_n_cloud != 0) {
     return;
   }
-  //preprocessPointCloud(cloud);
+  // preprocessPointCloud(cloud);
   if (FLAGS_app_mode == "registration") {
     if (prev_point_cloud_ == nullptr) {
       prev_point_cloud_ = cloud;
@@ -64,15 +72,16 @@ void Distributor::pointCloudCallback(
     // prev_point_cloud_ = result.getRegisteredCloud();
     prev_point_cloud_ = nullptr;
     appendResult(result);
-    //writeResultsToFile();
-  } else if (FLAGS_app_mode == "store_ply")
+    // writeResultsToFile();
+  } else if (FLAGS_app_mode == "store_ply") {
     cloud->writeToFile();
-  else if (FLAGS_app_mode == "experiment1")
+  } else if (FLAGS_app_mode == "experiment1") {
     experiment_handler_->runExperiment1(cloud);
-  else if (FLAGS_app_mode == "experiment3")
+  } else if (FLAGS_app_mode == "experiment3") {
     experiment_handler_->runExperiment3(cloud);
-  else
+  } else {
     LOG(FATAL) << "Unknown applicaiton mode. Aborting.";
+  }
 }
 
 model::RegistrationResult Distributor::registerPointCloud(
@@ -91,8 +100,7 @@ model::RegistrationResult Distributor::registerPointCloud(
   return result;
 }
 
-void Distributor::preprocessPointCloud(
-    const model::PointCloudPtr& cloud) {
+void Distributor::preprocessPointCloud(const model::PointCloudPtr& cloud) {
   common::PointCloud_tPtr input_cloud = cloud->getRawCloud();
   // Why is this needed?
   pcl::PassThrough<common::Point_t> pass;

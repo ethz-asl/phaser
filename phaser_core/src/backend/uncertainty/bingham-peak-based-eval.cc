@@ -80,6 +80,9 @@ void BinghamPeakBasedEval::retrievePeakNeighbors(
     (*weights)(k) = norm_corr.at(i);
     ++k;
   }
+  if (k == 1) {
+    return;
+  }
   const double weight_sum = weights->array().sum();
   CHECK_GT(weight_sum, 0);
   (*weights) = weights->array() / weight_sum;

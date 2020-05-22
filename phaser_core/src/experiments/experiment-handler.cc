@@ -1,6 +1,6 @@
 #include "phaser/experiments/experiment-handler.h"
-#include "phaser/common/translation-utils.h"
 #include "phaser/common/rotation-utils.h"
+#include "phaser/common/translation-utils.h"
 #include "phaser/visualization/plotty-visualizer.h"
 
 #include <fstream>
@@ -12,9 +12,7 @@ DEFINE_string(
     output_file, "experiment_results.txt",
     "Declares the name of the ouput file.");
 
-DEFINE_string(
-    truth_file, "",
-    "Defines the path of the truth file.");
+DEFINE_string(truth_file, "", "Defines the path of the truth file.");
 
 namespace experiments {
 
@@ -29,6 +27,7 @@ void ExperimentHandler::shutdown() {
 
 void ExperimentHandler::runExperiment1(const model::PointCloudPtr& cloud) {
   CHECK_NOTNULL(registrator_);
+  CHECK_NOTNULL(cloud);
   if (prev_point_cloud_ == nullptr) {
     prev_point_cloud_ = cloud;
     return;
@@ -40,7 +39,7 @@ void ExperimentHandler::runExperiment1(const model::PointCloudPtr& cloud) {
   VLOG(1) << "Cloud2: " << cloud->getPlyReadDirectory();
 
   translateToSensorFrame(cloud);
-  //rotateToSensorFrame(cloud);
+  // rotateToSensorFrame(cloud);
   model::RegistrationResult result =
       registrator_->estimateRotation(prev_point_cloud_, cloud);
   translateToOdomFrame(result.getRegisteredCloud());
@@ -139,6 +138,5 @@ void ExperimentHandler::rotateToOdomFrame(const model::PointCloudPtr& cloud) {
   Eigen::Vector3d rpy = gt_.block(0, n_registered_, 3, 1);
   common::RotationUtils::RotateAroundXYZ(cloud, rpy(0), rpy(1), rpy(2));
 }
-
 
 }  // namespace experiments

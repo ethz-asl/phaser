@@ -52,6 +52,7 @@ void ZScoreEval::evaluateCorrelationVector(
       [&](const double val) { return val / *max; });
       */
   VLOG(1) << "max is at: " << *max;
+  VLOG(1) << "max distance: " << std::distance(corr.begin(), max);
   signals->insert(std::distance(corr.begin(), max));
   *n_corr_ds = corr;
 

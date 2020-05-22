@@ -122,6 +122,10 @@ void PointCloud::sampleNearestWithoutCloudInfo(
   CHECK_GT(FLAGS_sampling_neighbors, 0);
   for (int16_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
     const int current_idx = pointIdxNKNSearch[i];
+    if (current_idx < 0 || current_idx >= cloud_->size()) {
+      continue;
+    }
+
     const common::Point_t& point = cloud_->points[current_idx];
     value.addPoint(point);
     value.addRange(ranges_.at(current_idx));
