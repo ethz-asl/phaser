@@ -26,6 +26,8 @@ class SphericalCorrelationLaplace : public SphericalCorrelation {
   void setFusedCoefficients(
       const std::vector<fusion::complex_t>& signal,
       const std::vector<fusion::complex_t>& pattern, const uint32_t n_coeffs);
+  void setFusedCoefficients(
+      fftw_complex* signal, fftw_complex* pattern, const uint32_t n_coeffs);
 
   void shiftSignals(const uint32_t n_points);
   void inverseShiftSignals(const uint32_t n_points);
