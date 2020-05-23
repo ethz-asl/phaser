@@ -14,19 +14,14 @@ void SphericalCorrelationLaplace::correlateSampledSignals(
   CHECK_EQ(f.size(), g.size());
   CHECK_GT(f.size(), 1u);
   VLOG(1) << "--- Spherical laplace correlation [" << bw_ << " bw] -----";
-  const uint32_t full_bw = bw_ * bw_;
-  VLOG(2) << "Performing SFT (1/2)";
-  auto F1G1 = performFFTandShift(f[0], g[0], full_bw);
-  VLOG(2) << "Performing SFT (2/2)";
-  auto F2G2 = performFFTandShift(f[1], g[1], full_bw);
+  std::vector<fftw_complex*> f_channels, g_channels;
+  extractTransformedChannels(f, g, &f_channels, &g_channels);
 
-  VLOG(2) << "Fusing channels together.";
-  std::vector<fftw_complex*> channels = {F1G1.first, F2G2.first};
+  const uint32_t full_bw = bw_ * bw_;
   std::vector<fusion::complex_t> F_fused =
-      laplace_.fuseChannels(channels, full_bw, 4);
-  channels = {F1G1.second, F2G2.second};
+      laplace_.fuseChannels(f_channels, full_bw, 4);
   std::vector<fusion::complex_t> G_fused =
-      laplace_.fuseChannels(channels, full_bw, 4);
+      laplace_.fuseChannels(g_channels, full_bw, 4);
 
   VLOG(2) << "Setting the fused values for the original input.";
   setFusedCoefficients(F_fused, G_fused, full_bw);
@@ -38,10 +33,27 @@ void SphericalCorrelationLaplace::correlateSampledSignals(
   inverseTransform();
 
   VLOG(2) << "Deleting the created values.";
-  delete[] F1G1.first;
-  delete[] F1G1.second;
-  delete[] F2G2.first;
-  delete[] F2G2.second;
+  freeChannels(&f_channels);
+  freeChannels(&g_channels);
+}
+
+void SphericalCorrelationLaplace::extractTransformedChannels(
+    const std::vector<SampledSignal>& fs, const std::vector<SampledSignal>& gs,
+    std::vector<fftw_complex*>* f_channels,
+    std::vector<fftw_complex*>* g_channels) {
+  CHECK_NOTNULL(f_channels);
+  CHECK_NOTNULL(g_channels);
+  const uint32_t n_channels = fs.size();
+  CHECK_EQ(n_channels, gs.size());
+  CHECK_GT(n_channels, 0u);
+
+  const uint32_t full_bw = bw_ * bw_;
+  for (uint32_t i = 0u; i < n_channels; ++i) {
+    VLOG(2) << "Performing SFT (" << i + 1 << "/" << n_channels << ")";
+    auto FiGi = performFFTandShift(fs[i], gs[i], full_bw);
+    f_channels->emplace_back(FiGi.first);
+    g_channels->emplace_back(FiGi.second);
+  }
 }
 
 std::pair<fftw_complex*, fftw_complex*>
@@ -96,6 +108,15 @@ void SphericalCorrelationLaplace::inverseShiftSignals(const uint32_t n_points) {
   common::SignalUtils::IFFTShift(sig_coef_[1], n_points);
   common::SignalUtils::IFFTShift(pat_coef_[0], n_points);
   common::SignalUtils::IFFTShift(pat_coef_[1], n_points);
+}
+
+void SphericalCorrelationLaplace::freeChannels(
+    std::vector<fftw_complex*>* channels) {
+  CHECK_NOTNULL(channels);
+  for (fftw_complex* channel : *channels) {
+    CHECK_NOTNULL(channel);
+    fftw_free(channel);
+  }
 }
 
 }  // namespace correlation

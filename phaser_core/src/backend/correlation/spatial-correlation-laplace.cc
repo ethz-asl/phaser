@@ -55,7 +55,7 @@ void SpatialCorrelationLaplace::extractTransformedChannels(
   CHECK_GT(n_channels, 0u);
 
   const uint32_t function_size = total_n_voxels_ * sizeof(double);
-  for (uint32_t i = 0; i < n_channels; ++i) {
+  for (uint32_t i = 0u; i < n_channels; ++i) {
     // Perform 3D FFT for channel i.
     CHECK_NOTNULL(fs[i]);
     CHECK_NOTNULL(gs[i]);
