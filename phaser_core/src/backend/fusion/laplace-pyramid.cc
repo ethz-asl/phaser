@@ -62,10 +62,11 @@ std::vector<complex_t> LaplacePyramid::fuseChannels(
   // Build the pyramid levels per channel.
   VLOG(2) << "Constructing " << n_levels << " pyramid levels for " << n_channels
           << " channels.";
-  // #pragma omp parallel for num_threads(4)
   std::vector<complex_t*> coefficients(n_channels);
-  coefficients[0] = reinterpret_cast<complex_t*>(channels[0]);
-  coefficients[1] = reinterpret_cast<complex_t*>(channels[1]);
+  for (uint32_t i = 0; i < n_channels; ++i) {
+    coefficients[i] = reinterpret_cast<complex_t*>(channels[i]);
+  }
+
   uint32_t coeffs_per_level = n_coeffs;
   for (uint32_t i = 0u; i < n_levels; ++i) {
     std::vector<PyramidLevel> pyramid_level(n_channels);
@@ -74,20 +75,21 @@ std::vector<complex_t> LaplacePyramid::fuseChannels(
       pyramid_level[j] = reduce(coefficients[j], coeffs_per_level);
       coefficients[j] = pyramid_level[j].first.data();
     }
-    // fused_levels[i] = fuseLevelByMaxCoeff(pyramid_level, coeffs_per_level);
-    fused_levels[i] = pyramid_level[0].second;
+    fused_levels[i] = fuseLevelByMaxCoeff(pyramid_level, coeffs_per_level);
     coeffs_per_level = pyramid_level[0].first.size();
     pyramids_per_channel[i] = std::move(pyramid_level);
   }
+  /*
   writeToFile("low_pass0.txt", pyramids_per_channel[0][0].first);
   writeToFile("laplace0.txt", pyramids_per_channel[0][0].second);
   writeToFile("low_pass1.txt", pyramids_per_channel[1][0].first);
   writeToFile("laplace1.txt", pyramids_per_channel[0][0].second);
+  */
 
   // Average the last low pass layer.
   VLOG(2) << "Filtering the low pass layer.";
-  std::vector<complex_t> low_pass = pyramids_per_channel.back()[0].first;
-  // fuseLastLowPassLayer(pyramids_per_channel.back());
+  std::vector<complex_t> low_pass =
+      fuseLastLowPassLayer(pyramids_per_channel.back());
 
   // Based on the fused levels, reconstruct the signal.
   VLOG(2) << "Reconstructing the fused signal.";
