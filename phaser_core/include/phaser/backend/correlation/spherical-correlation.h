@@ -13,6 +13,8 @@
 
 namespace correlation {
 
+using SampledSignal = std::vector<double>;
+
 class SphericalCorrelation {
  public:
   explicit SphericalCorrelation(
@@ -23,7 +25,8 @@ class SphericalCorrelation {
       const std::vector<model::FunctionValue>& f2);
 
   virtual void correlateSampledSignals(
-      const std::vector<double>& f1, const std::vector<double>& f2);
+      const std::vector<SampledSignal>& f1,
+      const std::vector<SampledSignal>& f2);
 
   void getStatistics(common::StatisticsManager* manager) const noexcept;
   std::vector<double> getCorrelation() const noexcept;

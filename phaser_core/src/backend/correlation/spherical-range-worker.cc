@@ -15,13 +15,13 @@ SphericalRangeWorker::SphericalRangeWorker(
 void SphericalRangeWorker::run() {
   VLOG(1) << "[SphericalIntensityWorker] Estimating rotation...";
 
-  std::vector<double> f_range;
-  std::vector<double> h_range;
+  correlation::SampledSignal f_range;
+  correlation::SampledSignal h_range;
   std::function<double(const model::FunctionValue&)> func =
       [](const model::FunctionValue& v) { return v.getAveragedRange(); };
   convertFunctionValues(f_values_, func, &f_range);
   convertFunctionValues(h_values_, func, &h_range);
-  sph_corr_.correlateSampledSignals(f_range, h_range);
+  sph_corr_.correlateSampledSignals({f_range}, {h_range});
 
   is_completed_ = true;
 }

@@ -21,13 +21,13 @@ void SphericalIntensityWorker::run() {
   CHECK_NOTNULL(sph_corr_);
   VLOG(1) << "[SphericalIntensityWorker] Estimating rotation...";
 
-  std::vector<double> f_intensities;
-  std::vector<double> h_intensities;
+  correlation::SampledSignal f_intensities;
+  correlation::SampledSignal h_intensities;
   std::function<double(const model::FunctionValue&)> func =
       [](const model::FunctionValue& v) { return v.getAveragedIntensity(); };
   convertFunctionValues(f_values_, func, &f_intensities);
   convertFunctionValues(h_values_, func, &h_intensities);
-  sph_corr_->correlateSampledSignals(f_intensities, h_intensities);
+  sph_corr_->correlateSampledSignals({f_intensities}, {h_intensities});
 
   is_completed_ = true;
 }

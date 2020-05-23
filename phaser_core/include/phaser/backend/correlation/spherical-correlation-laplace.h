@@ -13,7 +13,8 @@ class SphericalCorrelationLaplace : public SphericalCorrelation {
   explicit SphericalCorrelationLaplace(const uint32_t bw = 100);
   virtual ~SphericalCorrelationLaplace() = default;
   void correlateSampledSignals(
-      const std::vector<double>& f1, const std::vector<double>& f2) override;
+      const std::vector<SampledSignal>& f1,
+      const std::vector<SampledSignal>& f2) override;
 
  protected:
   fusion::LaplacePyramid laplace_;
