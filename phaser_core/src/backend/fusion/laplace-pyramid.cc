@@ -79,12 +79,6 @@ std::vector<complex_t> LaplacePyramid::fuseChannels(
     coeffs_per_level = pyramid_level[0].first.size();
     pyramids_per_channel[i] = std::move(pyramid_level);
   }
-  /*
-  writeToFile("low_pass0.txt", pyramids_per_channel[0][0].first);
-  writeToFile("laplace0.txt", pyramids_per_channel[0][0].second);
-  writeToFile("low_pass1.txt", pyramids_per_channel[1][0].first);
-  writeToFile("laplace1.txt", pyramids_per_channel[0][0].second);
-  */
 
   // Average the last low pass layer.
   VLOG(2) << "Filtering the low pass layer.";
@@ -111,9 +105,7 @@ std::vector<complex_t> LaplacePyramid::fuseLevelByMaxCoeff(
 
   std::vector<complex_t> fused(n_coeffs);
   for (uint32_t i = 0u; i < n_coeffs; ++i) {
-    // const uint32_t max_channel = findMaxCoeffForChannels(levels_per_channel,
-    // i);
-    const uint32_t max_channel = 0;
+    const uint32_t max_channel = findMaxCoeffForChannels(levels_per_channel, i);
     const complex_t& max_coeff = levels_per_channel[max_channel].second[i];
     fused[i][0] = max_coeff[0];
     fused[i][1] = max_coeff[1];
@@ -178,19 +170,6 @@ std::array<double, 2> LaplacePyramid::averageSignal(
     accumulated_imag += signal[1];
   }
   return {accumulated_real / n_signals, accumulated_imag / n_signals};
-}
-
-void LaplacePyramid::writeToFile(
-    const std::string& filename, const std::vector<complex_t>& signal) {
-  VLOG(1) << "Writing experiment to " << filename;
-  std::ofstream out_file(filename);
-  for (const auto& s : signal) {
-    out_file << s[0] << ", ";
-  }
-  out_file << "\n";
-  for (const auto& s : signal) {
-    out_file << s[1] << ", ";
-  }
 }
 
 }  // namespace fusion

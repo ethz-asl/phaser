@@ -18,24 +18,18 @@ void SphericalCorrelationLaplace::correlateSampledSignals(
   VLOG(2) << "Performing SFT (1/2)";
   auto F1G1 = performFFTandShift(f[0], g[0], full_bw);
   VLOG(2) << "Performing SFT (2/2)";
-  // auto F2G2 = performFFTandShift(f[1], g[1], full_bw);
+  auto F2G2 = performFFTandShift(f[1], g[1], full_bw);
 
   VLOG(2) << "Fusing channels together.";
-  std::vector<fftw_complex*> channels = {F1G1.first};
+  std::vector<fftw_complex*> channels = {F1G1.first, F2G2.first};
   std::vector<fusion::complex_t> F_fused =
-      laplace_.fuseChannels(channels, full_bw, 2);
-  /*
-channels = {F1G1.second};
-std::vector<fusion::complex_t> G_fused =
-  laplace_.fuseChannels(channels, full_bw, 3);
-  */
+      laplace_.fuseChannels(channels, full_bw, 4);
+  channels = {F1G1.second, F2G2.second};
+  std::vector<fusion::complex_t> G_fused =
+      laplace_.fuseChannels(channels, full_bw, 4);
 
   VLOG(2) << "Setting the fused values for the original input.";
-  // setFusedCoefficients(F_fused, G_fused, full_bw);
-  for (uint32_t i = 0; i < full_bw; ++i) {
-    sig_coef_[0][i] = F_fused[i][0];
-    sig_coef_[1][i] = F_fused[i][1];
-  }
+  setFusedCoefficients(F_fused, G_fused, full_bw);
   VLOG(2) << "Shifting back the signals.";
   inverseShiftSignals(full_bw);
 
@@ -46,8 +40,8 @@ std::vector<fusion::complex_t> G_fused =
   VLOG(2) << "Deleting the created values.";
   delete[] F1G1.first;
   delete[] F1G1.second;
-  // delete[] F2G2.first;
-  // delete[] F2G2.second;
+  delete[] F2G2.first;
+  delete[] F2G2.second;
 }
 
 std::pair<fftw_complex*, fftw_complex*>
