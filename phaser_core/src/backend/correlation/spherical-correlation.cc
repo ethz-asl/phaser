@@ -212,6 +212,7 @@ void SphericalCorrelation::performSphericalTransforms(
   CHECK_NOTNULL(fft_plan_);
   CHECK_NOTNULL(weights_);
 
+  VLOG(1) << "Performing SFT of the first signal.";
 #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < howmany_; ++i) {
     tmp_coef_[0][i] = f1[i];
@@ -224,6 +225,7 @@ void SphericalCorrelation::performSphericalTransforms(
       seminaive_naive_table_, reinterpret_cast<double*>(workspace2_), 1, bw_,
       &dct_plan_, &fft_plan_, weights_);
 
+  VLOG(1) << "Performing SFT of the second signal.";
 #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < howmany_; ++i) {
     tmp_coef_[0][i] = f2[i];

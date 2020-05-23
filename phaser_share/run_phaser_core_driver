@@ -8,6 +8,7 @@ rosrun phaser_core phaser_core_driver \
   --target_cloud="/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_test_data/test_clouds/kitti/sigma-level-1/cloud049.ply" \
   --source_cloud="/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_test_data/test_clouds/kitti/sigma-level-1/cloud050.ply" \
   --reg_cloud=./cloud01.ply \
+  --phaser_core_spherical_bandwidth=75 \
   --phaser_core_spherical_low_pass_lower_bound=8250 \
   --phaser_core_spherical_low_pass_upper_bound=14250 \
   --phaser_core_spatial_low_pass_lower_bound=85 \

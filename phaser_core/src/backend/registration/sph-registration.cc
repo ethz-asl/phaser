@@ -13,7 +13,7 @@
 #include <iostream>
 
 DEFINE_int32(
-    spherical_bandwith, 130,
+    spherical_bandwith, 75,
     "Defines the bandwith used for the spherical registration.");
 DEFINE_string(
     alignment_algorithm, "phase",

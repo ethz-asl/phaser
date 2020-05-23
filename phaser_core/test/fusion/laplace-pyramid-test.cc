@@ -58,7 +58,8 @@ TEST_F(LaplacePyramidTest, SimpleReduceTest) {
   fusion::LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 8u;
   fftw_complex* coeffs = createRandomCoefficients(n_coeffs);
-  fusion::PyramidLevel first_level = laplace.reduce(coeffs, n_coeffs);
+  fusion::PyramidLevel first_level =
+      laplace.reduce(reinterpret_cast<complex_t*>(coeffs), n_coeffs);
 
   const std::vector<fusion::complex_t>& low_pass = first_level.first;
   EXPECT_EQ(low_pass.size(), 4u);
@@ -83,7 +84,8 @@ TEST_F(LaplacePyramidTest, SimpleExpandTest) {
   fusion::LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 8u;
   fftw_complex* coeffs = createRandomCoefficients(n_coeffs);
-  fusion::PyramidLevel first_level = laplace.reduce(coeffs, n_coeffs);
+  fusion::PyramidLevel first_level =
+      laplace.reduce(reinterpret_cast<complex_t*>(coeffs), n_coeffs);
 
   const std::vector<fusion::complex_t>& low_pass = first_level.first;
   std::vector<fusion::complex_t>* lapl = &first_level.second;
@@ -100,8 +102,10 @@ TEST_F(LaplacePyramidTest, MaxCoeffTest) {
   fftw_complex* coeffs = createFixedCoefficients(1, n_coeffs);
   fftw_complex* coeffs_2 = createFixedCoefficients(15, n_coeffs);
   std::vector<fusion::PyramidLevel> levels;
-  levels.emplace_back(laplace.reduce(coeffs, n_coeffs));
-  levels.emplace_back(laplace.reduce(coeffs_2, n_coeffs));
+  levels.emplace_back(
+      laplace.reduce(reinterpret_cast<complex_t*>(coeffs), n_coeffs));
+  levels.emplace_back(
+      laplace.reduce(reinterpret_cast<complex_t*>(coeffs_2), n_coeffs));
 
   std::vector<fusion::complex_t> fused =
       laplace.fuseLevelByMaxCoeff(levels, n_coeffs);
@@ -131,8 +135,10 @@ TEST_F(LaplacePyramidTest, LowPassAverageTest) {
   fftw_complex* coeffs = createFixedCoefficients(5, n_coeffs);
   fftw_complex* coeffs_2 = createFixedCoefficients(15, n_coeffs);
   std::vector<fusion::PyramidLevel> levels;
-  levels.emplace_back(laplace.reduce(coeffs, n_coeffs));
-  levels.emplace_back(laplace.reduce(coeffs_2, n_coeffs));
+  levels.emplace_back(
+      laplace.reduce(reinterpret_cast<complex_t*>(coeffs), n_coeffs));
+  levels.emplace_back(
+      laplace.reduce(reinterpret_cast<complex_t*>(coeffs_2), n_coeffs));
 
   std::vector<fusion::complex_t> fused = laplace.fuseLastLowPassLayer(levels);
   const float tol = 1e-3;
