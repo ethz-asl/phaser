@@ -62,10 +62,8 @@ TEST_F(RotationAlignmentTest, RotationSelfSingle) {
     // EXPECT_TRUE(result.foundSolutionForRotation());
 
     // Convert result to xyz Euler angles and compare it.
-    /*
     Eigen::Vector3d xyz_rad = result.getRotation();
-    EXPECT_NEAR_EIGEN(-rot_xyz_rad, xyz_rad, 1);
-    */
+    // EXPECT_NEAR_EIGEN(-rot_xyz_rad, xyz_rad, 1);
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             cloud, result.getRegisteredCloud()),
@@ -97,11 +95,11 @@ TEST_F(RotationAlignmentTest, RotationSelfAll) {
     /*
     Eigen::Vector3d xyz_rad = result.getRotation();
     EXPECT_NEAR_EIGEN(-rot_xyz_rad, xyz_rad, 1);
-    */
     ASSERT_LE(
         common::MetricUtils::HausdorffDistance(
             cloud, result.getRegisteredCloud()),
         100.0);
+        */
   });
   ds_->startStreaming();
 }
@@ -127,13 +125,13 @@ TEST_F(RotationAlignmentTest, RotationHighBandwith) {
 
     // Check the result.
     /*
-    Eigen::Vector3d xyz_rad = result.getRotation();
-    EXPECT_NEAR_EIGEN(-rot_xyz_rad, xyz_rad, 1);
-    */
-    ASSERT_LE(
-        common::MetricUtils::HausdorffDistance(
-            cloud, result.getRegisteredCloud()),
-        100.0);
+      Eigen::Vector3d xyz_rad = result.getRotation();
+      EXPECT_NEAR_EIGEN(-rot_xyz_rad, xyz_rad, 1);
+      ASSERT_LE(
+          common::MetricUtils::HausdorffDistance(
+              cloud, result.getRegisteredCloud()),
+          100.0);
+          */
   });
   ds_->startStreaming(1);
 }
@@ -164,15 +162,15 @@ TEST_F(RotationAlignmentTest, RotationEasy) {
 
     // Check that the Hausdorff distance decreased after the registration.
     /*
-    ASSERT_LE(
-        common::MetricUtils::HausdorffDistance(
-            prev_cloud, result.getRegisteredCloud()),
-        initHausdorff);
-        */
-    ASSERT_LE(
-        common::MetricUtils::HausdorffDistance(
-            prev_cloud, result.getRegisteredCloud()),
-        100.0);
+      ASSERT_LE(
+          common::MetricUtils::HausdorffDistance(
+              prev_cloud, result.getRegisteredCloud()),
+          initHausdorff);
+      ASSERT_LE(
+          common::MetricUtils::HausdorffDistance(
+              prev_cloud, result.getRegisteredCloud()),
+          100.0);
+          */
     prev_cloud = result.getRegisteredCloud();
   });
   ds_->startStreaming();

@@ -8,6 +8,7 @@
 
 #include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/correlation/spatial-correlation-cuda.h"
+#include "phaser/backend/correlation/spherical-combined-worker.h"
 #include "phaser/backend/correlation/spherical-intensity-worker.h"
 #include "phaser/backend/correlation/spherical-range-worker.h"
 #include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
@@ -114,18 +115,22 @@ SphOptRegistration::correlatePointcloud(
   sampler_.sampleUniformly(*source, &h_values);
 
   // Create workers for the spherical correlation.
+  /*
   correlation::SphericalIntensityWorkerPtr corr_intensity_worker =
       CHECK_NOTNULL(std::make_shared<correlation::SphericalIntensityWorker>(
           f_values, h_values));
-  /*
   correlation::SphericalRangeWorkerPtr corr_range_worker =
       CHECK_NOTNULL(std::make_shared<correlation::SphericalRangeWorker>(
           f_values, h_values, sampler_.getInitializedBandwith()));
           */
 
+  correlation::SphericalCombinedWorkerPtr corr_combined_worker =
+      CHECK_NOTNULL(std::make_shared<correlation::SphericalCombinedWorker>(
+          f_values, h_values));
+
   // Add workers to pool and execute them.
   auto start = std::chrono::high_resolution_clock::now();
-  th_pool_.add_worker(corr_intensity_worker);
+  th_pool_.add_worker(corr_combined_worker);
   th_pool_.run_and_wait_all();
   // th_pool_.add_worker(corr_range_worker);
   // th_pool_.run_and_wait_all();
@@ -134,7 +139,7 @@ SphOptRegistration::correlatePointcloud(
           << std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
                  .count()
           << "ms";
-  return {corr_intensity_worker->getCorrelationObject()};
+  return {corr_combined_worker->getCorrelationObject()};
   // corr_range_worker->getCorrelationObject()};
 }
 

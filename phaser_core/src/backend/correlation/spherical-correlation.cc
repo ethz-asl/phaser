@@ -51,19 +51,22 @@ void SphericalCorrelation::correlateSignals(
     const std::vector<model::FunctionValue>& f1,
     const std::vector<model::FunctionValue>& f2) {
   // Retrieve S2 function values
-  std::vector<double> averaged_signal;
-  std::vector<double> averaged_pattern;
+  SampledSignal averaged_signal;
+  SampledSignal averaged_pattern;
   retrieveInterpolation(f1, &averaged_signal);
   retrieveInterpolation(f2, &averaged_pattern);
 
   // Start signal correlation process
-  correlateSampledSignals(averaged_signal, averaged_pattern);
+  correlateSampledSignals({averaged_signal}, {averaged_pattern});
 }
 
 void SphericalCorrelation::correlateSampledSignals(
-    const std::vector<double>& f1, const std::vector<double>& f2) {
+    const std::vector<SampledSignal>& f1,
+    const std::vector<SampledSignal>& f2) {
+  CHECK_EQ(f1.size(), f2.size());
+  CHECK_GT(f1.size(), 0u);
   VLOG(1) << "Starting the correlation with a " << bw_ << " bandwidth";
-  performSphericalTransforms(f1, f2);
+  performSphericalTransforms(f1[0], f2[0]);
   correlate();
   inverseTransform();
 }
@@ -209,6 +212,7 @@ void SphericalCorrelation::performSphericalTransforms(
   CHECK_NOTNULL(fft_plan_);
   CHECK_NOTNULL(weights_);
 
+  VLOG(1) << "Performing SFT of the first signal.";
 #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < howmany_; ++i) {
     tmp_coef_[0][i] = f1[i];
@@ -221,6 +225,7 @@ void SphericalCorrelation::performSphericalTransforms(
       seminaive_naive_table_, reinterpret_cast<double*>(workspace2_), 1, bw_,
       &dct_plan_, &fft_plan_, weights_);
 
+  VLOG(1) << "Performing SFT of the second signal.";
 #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < howmany_; ++i) {
     tmp_coef_[0][i] = f2[i];

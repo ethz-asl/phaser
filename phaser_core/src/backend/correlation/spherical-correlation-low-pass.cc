@@ -18,9 +18,12 @@ SphericalCorrelationLowPass::SphericalCorrelationLowPass(const uint32_t bw)
     : SphericalCorrelation(bw) {}
 
 void SphericalCorrelationLowPass::correlateSampledSignals(
-    const std::vector<double>& f1, const std::vector<double>& f2) {
+    const std::vector<SampledSignal>& f1,
+    const std::vector<SampledSignal>& f2) {
+  CHECK_EQ(f1.size(), f2.size());
+  CHECK_GT(f1.size(), 0u);
   VLOG(1) << "Starting the low pass correlation with a " << bw_ << " bandwidth";
-  performSphericalTransforms(f1, f2);
+  performSphericalTransforms(f1[0], f2[0]);
   filterAndCorrelateCoefficients();
   inverseTransform();
 }

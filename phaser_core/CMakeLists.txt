@@ -49,11 +49,14 @@ cs_add_library(${PROJECT_NAME}_lib
 
    src/backend/correlation/spherical-correlation.cc
    src/backend/correlation/spherical-correlation-low-pass.cc
+   src/backend/correlation/spherical-correlation-laplace.cc
    src/backend/correlation/spatial-correlation.cc
    src/backend/correlation/spatial-correlation-low-pass.cc
    src/backend/correlation/spatial-correlation-laplace.cc
+
    src/backend/correlation/spherical-intensity-worker.cc
    src/backend/correlation/spherical-range-worker.cc
+   src/backend/correlation/spherical-combined-worker.cc
 
    src/backend/uncertainty/base-eval.cc
    src/backend/uncertainty/z-score-eval.cc
