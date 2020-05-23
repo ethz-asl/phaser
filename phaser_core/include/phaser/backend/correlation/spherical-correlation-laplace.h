@@ -1,6 +1,7 @@
 #ifndef PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_LAPLACE_H_
 #define PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_LAPLACE_H_
 
+#include <utility>
 #include <vector>
 
 #include "phaser/backend/correlation/spherical-correlation.h"
