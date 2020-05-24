@@ -19,7 +19,13 @@ class SpatialCorrelationLaplace : public SpatialCorrelation {
       const std::vector<Eigen::VectorXd*>& g) override;
 
  private:
+  void extractTransformedChannels(
+      const std::vector<Eigen::VectorXd*>& fs,
+      const std::vector<Eigen::VectorXd*>& gs,
+      std::vector<fftw_complex*>* f_channels,
+      std::vector<fftw_complex*>* g_channels);
   void performFFTandShift();
+  void freeChannels(std::vector<fftw_complex*>* channels);
 
   fusion::LaplacePyramid laplace_;
   const uint32_t n_fftw_size_;
