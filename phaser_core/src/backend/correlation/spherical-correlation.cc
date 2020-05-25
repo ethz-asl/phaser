@@ -213,7 +213,7 @@ void SphericalCorrelation::performSphericalTransforms(
   CHECK_NOTNULL(weights_);
 
   VLOG(1) << "Performing SFT of the first signal.";
-#pragma omp parallel for num_threads(2)
+  // #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < howmany_; ++i) {
     tmp_coef_[0][i] = f1[i];
     tmp_coef_[1][i] = 0.;
@@ -226,7 +226,7 @@ void SphericalCorrelation::performSphericalTransforms(
       &dct_plan_, &fft_plan_, weights_);
 
   VLOG(1) << "Performing SFT of the second signal.";
-#pragma omp parallel for num_threads(2)
+  // #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < howmany_; ++i) {
     tmp_coef_[0][i] = f2[i];
     tmp_coef_[1][i] = 0.;
@@ -247,6 +247,16 @@ void SphericalCorrelation::correlate() {
   CHECK_NOTNULL(so3_coef_);
   VLOG(2) << "Performing correlation of the S^2 coefficients.";
 
+  VLOG(1) << "===============================================================";
+  for (uint32_t i = 0u; i < 20; ++i) {
+    VLOG(1) << "signal: " << sig_coef_[0][i] << ", " << sig_coef_[1][i];
+  }
+  VLOG(1) << "===============================================================";
+  for (uint32_t i = 0u; i < 20; ++i) {
+    VLOG(1) << "pattern: " << pat_coef_[0][i] << ", " << pat_coef_[1][i];
+  }
+  VLOG(1) << "===============================================================";
+
   so3CombineCoef_fftw(
       bw_, bw_out_, bw_ - 1, sig_coef_[0], sig_coef_[1], pat_coef_[0],
       pat_coef_[1], so3_coef_);
@@ -266,10 +276,16 @@ void SphericalCorrelation::inverseTransform() {
       workspace3_out_, &inverse_so3_, 1);
 
   so3_mag_sig_ = std::vector<double>(so3_bw_);
-#pragma omp parallel for num_threads(2)
+  // #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0; i < so3_bw_; ++i) {
     const double real = so3_sig_[i][0];
     const double imag = so3_sig_[i][1];
+    const double temp = real * real + imag * imag;
+    /*
+    if (std::isnan(temp)) {
+      VLOG(1) << "===================================== NAN =================";
+      VLOG(1) << "real: " << real << " imag: " << imag;
+    } */
     so3_mag_sig_[i] = real * real + imag * imag;
   }
 }

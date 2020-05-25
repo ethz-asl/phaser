@@ -16,7 +16,7 @@ class SphericalRangeWorker : public common::BaseWorker {
  public:
   explicit SphericalRangeWorker(
       const model::FunctionValueVec& f_values,
-      const model::FunctionValueVec& h_values, const uint16_t bandwidth);
+      const model::FunctionValueVec& h_values);
 
   void run() override;
 
@@ -27,7 +27,6 @@ class SphericalRangeWorker : public common::BaseWorker {
   SphericalCorrelation sph_corr_;
   const model::FunctionValueVec& f_values_;
   const model::FunctionValueVec& h_values_;
-  const uint32_t bw_;
 };
 
 using SphericalRangeWorkerPtr = std::shared_ptr<SphericalRangeWorker>;

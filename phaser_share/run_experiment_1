@@ -7,14 +7,9 @@ rosrun phaser_ros phaser_ros \
 		--enable_debug=true \
 		--registration_algorithm="sph-opt" \
 		--datasource="ply" \
-		--PlyReadDirectory="/home/berlukas/Documents/PhD/research/2019/Spherical Registration/ply/exp1/" \
+		--PlyReadDirectory="/home/berlukas/Documents/ply_datasets/phaser_v2/exp/" \
     --app_mode="experiment1" \
-    --truth_file="/home/berlukas/Documents/PhD/research/2019/Spherical Registration/ply/exp1/ground_truth.txt" \
-		--phaser_core_spherical_bandwidth=101 \
-		--phaser_core_spherical_zero_padding=50 \
-		--phase_n_voxels=105 \
-		--phase_discretize_lower=-50 \
-		--phase_discretize_upper=50 \
+    --truth_file="/home/berlukas/Documents/ply_datasets/phaser_v2/exp/ground_truth.txt" \
     --gaussian_peak_neighbors=0 \
     --bingham_peak_neighbors=0 \
     --z_score_filter_threshold=0.01 \

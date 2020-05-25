@@ -77,6 +77,9 @@ void ExperimentHandler::readTruth() {
   }
 
   std::ifstream input_gt(FLAGS_truth_file);
+  if (!input_gt.is_open() || !input_gt.good()) {
+    LOG(FATAL) << "Unable to open truth file. Aborting";
+  }
   std::vector<double> result;
   std::string line;
 
