@@ -9,6 +9,12 @@ DEFINE_int32(
     phaser_core_spherical_zero_padding, 0,
     "Specifies whether and how much zero padding should be applied to the "
     "spherical correlation.");
+DEFINE_int32(
+    phaser_core_spherical_low_pass_lower_bound, 0,
+    "Defines the lower bound of the spherical low pass.");
+DEFINE_int32(
+    phaser_core_spherical_low_pass_upper_bound, 100000,
+    "Defines the upper bound of the spherical low pass.");
 
 // Spatial correlation.
 DEFINE_int32(

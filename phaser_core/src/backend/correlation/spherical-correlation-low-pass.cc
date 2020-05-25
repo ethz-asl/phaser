@@ -2,15 +2,8 @@
 
 #include <glog/logging.h>
 
+#include "phaser/common/core-gflags.h"
 #include "phaser/common/signal-utils.h"
-
-DEFINE_int32(
-    phaser_core_spherical_low_pass_lower_bound, 0,
-    "Defines the lower bound of the low pass.");
-
-DEFINE_int32(
-    phaser_core_spherical_low_pass_upper_bound, 100000,
-    "Defines the lower bound of the low pass.");
 
 namespace phaser_core {
 
