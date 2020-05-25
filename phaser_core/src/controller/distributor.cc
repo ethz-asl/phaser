@@ -16,11 +16,10 @@ DEFINE_string(app_mode, "registration", "Defines the operating mode.");
 
 DEFINE_int32(take_every_n_cloud, 1, "As the name suggests.");
 
-namespace controller {
+namespace phaser_core {
 
 Distributor::Distributor(
-    const data::DatasourcePtr& ds,
-    registration::BaseRegistrationPtr&& registration)
+    const data::DatasourcePtr& ds, BaseRegistrationPtr&& registration)
     : ds_(ds),
       statistics_manager_(kManagerReferenceName),
       registrator_(std::move(registration)) {
@@ -44,7 +43,7 @@ void Distributor::subscribeToTopics() {
 void Distributor::initializeRegistrationAlgorithm() {
   if (FLAGS_app_mode == "experiment1" || FLAGS_app_mode == "experiment2" ||
       FLAGS_app_mode == "experiment3" || FLAGS_app_mode == "gicp") {
-    experiment_handler_ = std::make_unique<experiments::ExperimentHandler>();
+    experiment_handler_ = std::make_unique<ExperimentHandler>();
   }
 }
 
@@ -90,7 +89,7 @@ model::RegistrationResult Distributor::registerPointCloud(
   CHECK_NOTNULL(prev_point_cloud_);
   /*
   const double duration_sample_f_ms = common::executeTimedFunction(
-      &registration::BaseRegistration::registerPointCloud, &(*registrator_),
+      &BaseRegistration::registerPointCloud, &(*registrator_),
       prev_point_cloud_, cloud);
   VLOG(1) << "Full registration took: " << duration_sample_f_ms << "ms.";
       */
@@ -147,4 +146,4 @@ void Distributor::writeResultsToFile() {
   }
 }
 
-}  // namespace controller
+}  // namespace phaser_core

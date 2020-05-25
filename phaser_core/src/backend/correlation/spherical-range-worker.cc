@@ -2,7 +2,7 @@
 
 #include <glog/logging.h>
 
-namespace correlation {
+namespace phaser_core {
 
 SphericalRangeWorker::SphericalRangeWorker(
     const model::FunctionValueVec& f_values,
@@ -15,8 +15,8 @@ SphericalRangeWorker::SphericalRangeWorker(
 void SphericalRangeWorker::run() {
   VLOG(1) << "[SphericalIntensityWorker] Estimating rotation...";
 
-  correlation::SampledSignal f_range;
-  correlation::SampledSignal h_range;
+  SampledSignal f_range;
+  SampledSignal h_range;
   std::function<double(const model::FunctionValue&)> func =
       [](const model::FunctionValue& v) { return v.getAveragedRange(); };
   convertFunctionValues(f_values_, func, &f_range);
@@ -35,4 +35,4 @@ const SphericalCorrelation& SphericalRangeWorker::getCorrelationObject() const
   return sph_corr_;
 }
 
-}  // namespace correlation
+}  // namespace phaser_core

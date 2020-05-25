@@ -5,7 +5,7 @@
 #include <set>
 #include <vector>
 
-namespace uncertainty {
+namespace phaser_core {
 
 class BasePeakExtraction {
   virtual void extractPeaks(
@@ -14,6 +14,6 @@ class BasePeakExtraction {
 
 using BasePeakExtractionPtr = std::unique_ptr<BasePeakExtraction>;
 
-}  // namespace uncertainty
+}  // namespace phaser_core
 
 #endif  // PACKLO_BACKEND_UNCERTAINTY_BASE_PEAK_EXTRACTION_H_

@@ -8,7 +8,7 @@ DEFINE_int32(
     gaussian_peak_neighbors, 0,
     "Determines the number of neighbors used for the Bingham calculation.");
 
-namespace uncertainty {
+namespace phaser_core {
 
 common::BaseDistributionPtr GaussianPeakBasedEval::evaluatePeakBasedCorrelation(
     const uint32_t n_voxels, const int discretize_lower_bound,
@@ -99,4 +99,4 @@ void GaussianPeakBasedEval::retrievePeakNeighbors(
   (*weights) = weights->array() / weight_sum;
 }
 
-}  // namespace uncertainty
+}  // namespace phaser_core

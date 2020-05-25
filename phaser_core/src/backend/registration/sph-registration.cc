@@ -30,7 +30,7 @@ DEFINE_bool(refine_rot_z, true, "Perform a rotation over z.");
 DEFINE_bool(estimate_rotation, true, "Esttimates the rotation if true.");
 DEFINE_bool(estimate_translation, true, "Esttimates the translation if true.");
 
-namespace registration {
+namespace phaser_core {
 
 SphRegistration::SphRegistration()
     : BaseRegistration("SphRegistration"),
@@ -55,26 +55,26 @@ SphRegistration::SphRegistration(
 
 void SphRegistration::initializeAlgorithms() {
   // Rotational evaluation
-  uncertainty::BaseEvalPtr rot_eval;
+  BaseEvalPtr rot_eval;
   if (rot_evaluation_algorithm_ == "bingham")
-    rot_eval = std::make_unique<uncertainty::BinghamPeakBasedEval>();
+    rot_eval = std::make_unique<BinghamPeakBasedEval>();
   else if (rot_evaluation_algorithm_ == "bmm")
-    rot_eval = std::make_unique<uncertainty::BmmPeakBasedEval>();
+    rot_eval = std::make_unique<BmmPeakBasedEval>();
   else
     LOG(FATAL) << "Unknown rot evaluation algorithm specificed: "
                << rot_evaluation_algorithm_;
 
   // Positional evaluation
-  uncertainty::BaseEvalPtr pos_eval;
+  BaseEvalPtr pos_eval;
   if (pos_evaluation_algorithm_ == "gaussian")
-    pos_eval = std::make_unique<uncertainty::GaussianPeakBasedEval>();
+    pos_eval = std::make_unique<GaussianPeakBasedEval>();
   else if (pos_evaluation_algorithm_ == "gmm")
-    pos_eval = std::make_unique<uncertainty::GmmPeakBasedEval>();
+    pos_eval = std::make_unique<GmmPeakBasedEval>();
   else
     LOG(FATAL) << "Unknown pos evaluation algorithm specificed: "
                << pos_evaluation_algorithm_;
 
-  correlation_eval_ = std::make_unique<uncertainty::PhaseCorrelationEval>(
+  correlation_eval_ = std::make_unique<PhaseCorrelationEval>(
       std::move(rot_eval), std::move(pos_eval));
 }
 
@@ -139,7 +139,7 @@ void SphRegistration::estimateTranslation(
 
   model::PointCloudPtr rot_cloud = result->getRegisteredCloud();
   const double duration_translation_f_ms = common::executeTimedFunction(
-      &alignment::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
+      &phaser_core::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
       f_values_, *rot_cloud, h_values_);
   statistics_manager_.emplaceValue(
       kTranslationDurationKey, duration_translation_f_ms);
@@ -173,8 +173,8 @@ void SphRegistration::correlatePointcloud(
   // CHECK(f_values_.size() == h_values_.size());
 
   const double duration_correlation_ms = common::executeTimedFunction(
-      &correlation::SphericalCorrelation::correlateSignals, &sph_corr_,
-      f_values_, h_values_);
+      &SphericalCorrelation::correlateSignals, &sph_corr_, f_values_,
+      h_values_);
 
   VLOG(1) << "Registered point cloud.\n"
           << "Sampling took for f and h: [" << duration_sample_f_ms << "ms,"
@@ -200,12 +200,12 @@ void SphRegistration::setBandwith(const int bandwith) {
   sampler_.initialize(bandwith);
 }
 
-uncertainty::BaseEval& SphRegistration::getRotEvaluation() {
+BaseEval& SphRegistration::getRotEvaluation() {
   return correlation_eval_->getRotationEval();
 }
 
-uncertainty::BaseEval& SphRegistration::getPosEvaluation() {
+BaseEval& SphRegistration::getPosEvaluation() {
   return correlation_eval_->getPositionEval();
 }
 
-}  // namespace registration
+}  // namespace phaser_core

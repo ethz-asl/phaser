@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace uncertainty {
+namespace phaser_core {
 
 class SignalAnalysis {
  public:
@@ -13,6 +13,6 @@ class SignalAnalysis {
       const uint32_t to);
 };
 
-}  // namespace uncertainty
+}  // namespace phaser_core
 
 #endif  // PACKLO_BACKEND_UNCERTAINTY_SIGNAL_ANALYSIS_H_

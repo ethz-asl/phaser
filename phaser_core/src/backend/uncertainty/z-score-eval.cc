@@ -15,7 +15,7 @@
 
 #include <glog/logging.h>
 
-namespace uncertainty {
+namespace phaser_core {
 
 ZScoreEval::ZScoreEval() : manager_("z-score") {}
 
@@ -119,4 +119,4 @@ common::BaseDistributionPtr ZScoreEval::evaluatePeakBasedCorrelation(
                 "for this correlation.";
 }
 
-}  // namespace uncertainty
+}  // namespace phaser_core

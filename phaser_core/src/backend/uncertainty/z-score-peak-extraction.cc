@@ -24,7 +24,7 @@ DEFINE_double(
     z_score_filter_threshold, 0.405,
     "Removes all correlation input below this value.");
 
-namespace uncertainty {
+namespace phaser_core {
 
 ZScorePeakExtraction::ZScorePeakExtraction()
     : manager_("z-score"),
@@ -143,4 +143,4 @@ uint32_t& ZScorePeakExtraction::getMaxLag() {
   return lag_max_;
 }
 
-}  // namespace uncertainty
+}  // namespace phaser_core

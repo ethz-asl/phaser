@@ -7,7 +7,7 @@
 
 #include <memory>
 
-namespace uncertainty {
+namespace phaser_core {
 
 class PhaseCorrelationEval {
  public:
@@ -15,9 +15,9 @@ class PhaseCorrelationEval {
       BaseEvalPtr&& rotation, BaseEvalPtr&& positional);
 
   common::BaseDistributionPtr calcRotationUncertainty(
-      const correlation::SphericalCorrelation& sph_corr);
+      const SphericalCorrelation& sph_corr);
   common::BaseDistributionPtr calcTranslationUncertainty(
-      const alignment::PhaseAligner& aligner);
+      const phaser_core::PhaseAligner& aligner);
 
   BaseEval& getRotationEval();
   BaseEval& getPositionEval();
@@ -29,6 +29,6 @@ class PhaseCorrelationEval {
 
 using PhaseCorrelationEvalPtr = std::unique_ptr<PhaseCorrelationEval>;
 
-}  // namespace uncertainty
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_UNCERTAINTY_PHASE_CORRELATION_EVAL_H_

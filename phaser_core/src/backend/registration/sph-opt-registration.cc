@@ -18,17 +18,15 @@
 #include "phaser/common/statistic-utils.h"
 #include "phaser/common/translation-utils.h"
 
-namespace registration {
+namespace phaser_core {
 
 SphOptRegistration::SphOptRegistration()
     : BaseRegistration("SphOptRegistration"),
-      bandwidth_(common::FLAGS_phaser_core_spherical_bandwidth),
-      sampler_(common::FLAGS_phaser_core_spherical_bandwidth) {
-  uncertainty::BaseEvalPtr rot_eval =
-      std::make_unique<uncertainty::BinghamPeakBasedEval>();
-  uncertainty::BaseEvalPtr pos_eval =
-      std::make_unique<uncertainty::GaussianPeakBasedEval>();
-  correlation_eval_ = std::make_unique<uncertainty::PhaseCorrelationEval>(
+      bandwidth_(phaser_core::FLAGS_phaser_core_spherical_bandwidth),
+      sampler_(phaser_core::FLAGS_phaser_core_spherical_bandwidth) {
+  BaseEvalPtr rot_eval = std::make_unique<BinghamPeakBasedEval>();
+  BaseEvalPtr pos_eval = std::make_unique<GaussianPeakBasedEval>();
+  correlation_eval_ = std::make_unique<PhaseCorrelationEval>(
       std::move(rot_eval), std::move(pos_eval));
   CHECK_NE(fftw_init_threads(), 0);
   fftw_plan_with_nthreads(12);
@@ -54,9 +52,9 @@ model::RegistrationResult SphOptRegistration::estimateRotation(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
   VLOG(1) << "[SphOptRegistration] Estimating rotation...";
   // Correlate point cloud and get uncertainty measure.
-  std::vector<correlation::SphericalCorrelation> correlations =
+  std::vector<SphericalCorrelation> correlations =
       correlatePointcloud(cloud_prev, cloud_cur);
-  correlation::SphericalCorrelation& corr = correlations[0];
+  SphericalCorrelation& corr = correlations[0];
 
   common::BaseDistributionPtr rot =
       correlation_eval_->calcRotationUncertainty(corr);
@@ -82,7 +80,7 @@ void SphOptRegistration::estimateTranslation(
 
   model::PointCloudPtr rot_cloud = result->getRegisteredCloud();
   const double duration_translation_f_ms = common::executeTimedFunction(
-      &alignment::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
+      &phaser_core::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
       f_values_, *rot_cloud, h_values_);
   common::BaseDistributionPtr pos =
       correlation_eval_->calcTranslationUncertainty(aligner_);
@@ -102,8 +100,7 @@ void SphOptRegistration::getStatistics(common::StatisticsManager* manager) const
   BaseRegistration::getStatistics(manager);
 }
 
-std::vector<correlation::SphericalCorrelation>
-SphOptRegistration::correlatePointcloud(
+std::vector<SphericalCorrelation> SphOptRegistration::correlatePointcloud(
     model::PointCloudPtr target, model::PointCloudPtr source) {
   source->initialize_kd_tree();
   target->initialize_kd_tree();
@@ -116,17 +113,16 @@ SphOptRegistration::correlatePointcloud(
 
   // Create workers for the spherical correlation.
   /*
-  correlation::SphericalIntensityWorkerPtr corr_intensity_worker =
-      CHECK_NOTNULL(std::make_shared<correlation::SphericalIntensityWorker>(
+  SphericalIntensityWorkerPtr corr_intensity_worker =
+      CHECK_NOTNULL(std::make_shared<SphericalIntensityWorker>(
           f_values, h_values));
-  correlation::SphericalRangeWorkerPtr corr_range_worker =
-      CHECK_NOTNULL(std::make_shared<correlation::SphericalRangeWorker>(
+  SphericalRangeWorkerPtr corr_range_worker =
+      CHECK_NOTNULL(std::make_shared<SphericalRangeWorker>(
           f_values, h_values, sampler_.getInitializedBandwith()));
           */
 
-  correlation::SphericalCombinedWorkerPtr corr_combined_worker =
-      CHECK_NOTNULL(std::make_shared<correlation::SphericalCombinedWorker>(
-          f_values, h_values));
+  SphericalCombinedWorkerPtr corr_combined_worker = CHECK_NOTNULL(
+      std::make_shared<SphericalCombinedWorker>(f_values, h_values));
 
   // Add workers to pool and execute them.
   auto start = std::chrono::high_resolution_clock::now();
@@ -147,14 +143,14 @@ void SphOptRegistration::setBandwith(const int bandwith) {
   sampler_.initialize(bandwith);
 }
 
-uncertainty::BaseEval& SphOptRegistration::getRotEvaluation() {
+BaseEval& SphOptRegistration::getRotEvaluation() {
   CHECK_NOTNULL(correlation_eval_);
   return correlation_eval_->getRotationEval();
 }
 
-uncertainty::BaseEval& SphOptRegistration::getPosEvaluation() {
+BaseEval& SphOptRegistration::getPosEvaluation() {
   CHECK_NOTNULL(correlation_eval_);
   return correlation_eval_->getPositionEval();
 }
 
-}  // namespace registration
+}  // namespace phaser_core

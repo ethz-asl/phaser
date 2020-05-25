@@ -4,7 +4,7 @@
 
 #include "phaser/common/signal-utils.h"
 
-namespace correlation {
+namespace phaser_core {
 
 SpatialCorrelationLaplace::SpatialCorrelationLaplace(
     const uint32_t n_voxels, const uint32_t zero_padding)
@@ -21,9 +21,9 @@ double* SpatialCorrelationLaplace::correlateSignals(
   std::vector<fftw_complex*> g_channels;
   extractTransformedChannels(f, g, &f_channels, &g_channels);
 
-  std::vector<fusion::complex_t> F_fused =
+  std::vector<complex_t> F_fused =
       laplace_.fuseChannels(f_channels, total_n_voxels_, 3);
-  std::vector<fusion::complex_t> G_fused =
+  std::vector<complex_t> G_fused =
       laplace_.fuseChannels(g_channels, total_n_voxels_, 3);
 
   complexMulSeq(
@@ -89,4 +89,4 @@ void SpatialCorrelationLaplace::freeChannels(
   }
 }
 
-}  // namespace correlation
+}  // namespace phaser_core

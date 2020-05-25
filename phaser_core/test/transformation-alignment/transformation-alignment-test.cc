@@ -7,7 +7,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 
-namespace transformation {
+namespace phaser_core {
 
 class TransformationAlignmentTest : public ::testing::Test {
  protected:
@@ -22,8 +22,7 @@ class TransformationAlignmentTest : public ::testing::Test {
 
 TEST_F(TransformationAlignmentTest, TransformEasy) {
   CHECK(ds_);
-  registration::BaseRegistrationPtr reg =
-      std::make_unique<registration::SphRegistration>();
+  BaseRegistrationPtr reg = std::make_unique<SphRegistration>();
   model::RegistrationResult result;
   model::PointCloudPtr prev_cloud = nullptr;
   ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
@@ -54,7 +53,7 @@ TEST_F(TransformationAlignmentTest, TransformEasy) {
 /*
 TEST_F(TransformationAlignmentTest, TransformEasySeparat) {
   CHECK(ds_);
-  registration::SphRegistration reg;
+  SphRegistration reg;
   model::RegistrationResult result;
   model::PointCloudPtr prev_cloud = nullptr;
   ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
@@ -89,6 +88,6 @@ TEST_F(TransformationAlignmentTest, TransformEasySeparat) {
 }
   */
 
-}  // namespace transformation
+}  // namespace phaser_core
 
 MAPLAB_UNITTEST_ENTRYPOINT

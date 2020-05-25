@@ -5,7 +5,7 @@
 #include <pcl/common/common.h>
 #include <glog/logging.h>
 
-namespace registration {
+namespace phaser_core {
 
 model::RegistrationResult SphRegistrationMockCutted::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
@@ -54,4 +54,4 @@ model::PointCloudPtr SphRegistrationMockCutted::cutPointCloud(
   return std::make_shared<model::PointCloud>(mod_cloud);
 }
 
-} // namespace registration
+}  // namespace phaser_core

@@ -7,7 +7,7 @@
 #include <glog/logging.h>
 #include <omp.h>
 
-namespace fusion {
+namespace phaser_core {
 
 LaplacePyramid::LaplacePyramid(const float div) : divider_(div) {}
 
@@ -172,4 +172,4 @@ std::array<double, 2> LaplacePyramid::averageSignal(
   return {accumulated_real / n_signals, accumulated_imag / n_signals};
 }
 
-}  // namespace fusion
+}  // namespace phaser_core

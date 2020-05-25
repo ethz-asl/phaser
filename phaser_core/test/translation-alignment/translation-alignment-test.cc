@@ -11,7 +11,7 @@
 #include <memory>
 #include <random>
 
-namespace translation {
+namespace phaser_core {
 
 class TranslationAlignmentTest : public ::testing::Test {
  public:
@@ -25,12 +25,11 @@ class TranslationAlignmentTest : public ::testing::Test {
     ds_->setDatasetFolder("./test_clouds/arche/sigma-level-1/");
   }
 
-  registration::BaseRegistration* initializeRegistration(bool mocked) {
+  BaseRegistration* initializeRegistration(bool mocked) {
     if (mocked)
-      registrator_ =
-          std::make_unique<registration::SphRegistrationMockTranslated>();
+      registrator_ = std::make_unique<SphRegistrationMockTranslated>();
     else
-      registrator_ = std::make_unique<registration::SphRegistration>();
+      registrator_ = std::make_unique<SphRegistration>();
     return registrator_.get();
   }
 
@@ -39,15 +38,15 @@ class TranslationAlignmentTest : public ::testing::Test {
   }
 
   data::DatasourcePlyPtr ds_;
-  registration::BaseRegistrationPtr registrator_;
+  BaseRegistrationPtr registrator_;
   std::default_random_engine generator_;
   std::uniform_real_distribution<float> distribution_;
 };
 
 TEST_F(TranslationAlignmentTest, TranslationSelfSingle) {
   CHECK(ds_);
-  registration::SphRegistrationMockTranslated* reg =
-      dynamic_cast<registration::SphRegistrationMockTranslated*>(
+  SphRegistrationMockTranslated* reg =
+      dynamic_cast<SphRegistrationMockTranslated*>(
           initializeRegistration(true));
   // Define a random translation.
   Eigen::Vector3d trans_xyz(12.9f, 33.1f, 21.5f);
@@ -73,8 +72,8 @@ TEST_F(TranslationAlignmentTest, TranslationSelfSingle) {
 /*
 TEST_F(TranslationAlignmentTest, TranslationSelfAll) {
   CHECK(ds_);
-  registration::SphRegistrationMockTranslated* reg =
-      dynamic_cast<registration::SphRegistrationMockTranslated*>(
+  SphRegistrationMockTranslated* reg =
+      dynamic_cast<SphRegistrationMockTranslated*>(
           initializeRegistration(true));
 
   model::RegistrationResult result;
@@ -101,7 +100,7 @@ TEST_F(TranslationAlignmentTest, TranslationSelfAll) {
 /*
 TEST_F(TranslationAlignmentTest, TranslationEasy) {
   CHECK(ds_);
-  registration::SphRegistration* reg = dynamic_cast<registration::
+  SphRegistration* reg = dynamic_cast<
     SphRegistration*>(initializeRegistration(false));
 
   model::RegistrationResult result;
@@ -129,6 +128,6 @@ TEST_F(TranslationAlignmentTest, TranslationEasy) {
 }
 */
 
-}  // namespace translation
+}  // namespace phaser_core
 
 MAPLAB_UNITTEST_ENTRYPOINT

@@ -7,7 +7,7 @@
 #include "phaser/backend/correlation/spherical-correlation.h"
 #include "phaser/backend/fusion/laplace-pyramid.h"
 
-namespace correlation {
+namespace phaser_core {
 
 class SphericalCorrelationLaplace : public SphericalCorrelation {
  public:
@@ -29,8 +29,8 @@ class SphericalCorrelationLaplace : public SphericalCorrelation {
   fftw_complex* convertCoeffArrays(
       double* f_real, double* f_imag, const uint32_t n_coeffs);
   void setFusedCoefficients(
-      const std::vector<fusion::complex_t>& signal,
-      const std::vector<fusion::complex_t>& pattern, const uint32_t n_coeffs);
+      const std::vector<complex_t>& signal,
+      const std::vector<complex_t>& pattern, const uint32_t n_coeffs);
   void setFusedCoefficients(
       fftw_complex* signal, fftw_complex* pattern, const uint32_t n_coeffs);
   void freeChannels(std::vector<fftw_complex*>* channels);
@@ -38,9 +38,9 @@ class SphericalCorrelationLaplace : public SphericalCorrelation {
   void shiftSignals(const uint32_t n_points);
   void inverseShiftSignals(const uint32_t n_points);
 
-  fusion::LaplacePyramid laplace_;
+  LaplacePyramid laplace_;
 };
 
-}  // namespace correlation
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_LAPLACE_H_

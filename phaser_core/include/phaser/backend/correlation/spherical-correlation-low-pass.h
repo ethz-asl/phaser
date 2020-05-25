@@ -5,7 +5,7 @@
 
 #include "phaser/backend/correlation/spherical-correlation.h"
 
-namespace correlation {
+namespace phaser_core {
 
 class SphericalCorrelationLowPass : public SphericalCorrelation {
  public:
@@ -21,6 +21,6 @@ class SphericalCorrelationLowPass : public SphericalCorrelation {
   void inverseShiftSignals(const uint32_t n_points);
 };
 
-}  // namespace correlation
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_LOW_PASS_H_

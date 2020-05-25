@@ -4,7 +4,7 @@
 
 #include "phaser/common/signal-utils.h"
 
-namespace correlation {
+namespace phaser_core {
 
 SphericalCorrelationLaplace::SphericalCorrelationLaplace(const uint32_t bw)
     : SphericalCorrelation(bw) {}
@@ -18,9 +18,9 @@ void SphericalCorrelationLaplace::correlateSampledSignals(
   extractTransformedChannels(f, g, &f_channels, &g_channels);
 
   const uint32_t full_bw = bw_ * bw_;
-  std::vector<fusion::complex_t> F_fused =
+  std::vector<complex_t> F_fused =
       laplace_.fuseChannels(f_channels, full_bw, 4);
-  std::vector<fusion::complex_t> G_fused =
+  std::vector<complex_t> G_fused =
       laplace_.fuseChannels(g_channels, full_bw, 4);
 
   VLOG(2) << "Setting the fused values for the original input.";
@@ -77,8 +77,8 @@ fftw_complex* SphericalCorrelationLaplace::convertCoeffArrays(
 }
 
 void SphericalCorrelationLaplace::setFusedCoefficients(
-    const std::vector<fusion::complex_t>& signal,
-    const std::vector<fusion::complex_t>& pattern, const uint32_t n_coeffs) {
+    const std::vector<complex_t>& signal, const std::vector<complex_t>& pattern,
+    const uint32_t n_coeffs) {
   for (uint32_t i = 0; i < n_coeffs; ++i) {
     sig_coef_[0][i] = signal[i][0];
     sig_coef_[1][i] = signal[i][1];
@@ -119,4 +119,4 @@ void SphericalCorrelationLaplace::freeChannels(
   }
 }
 
-}  // namespace correlation
+}  // namespace phaser_core

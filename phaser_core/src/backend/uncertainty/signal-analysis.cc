@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-namespace uncertainty {
+namespace phaser_core {
 
 double SignalAnalysis::stdDev(
     const std::vector<double>& vec, const double mean, const uint32_t from,
@@ -18,4 +18,4 @@ double SignalAnalysis::stdDev(
   return std::sqrt(accum / (to - from - 1u));
 }
 
-}  // namespace uncertainty
+}  // namespace phaser_core

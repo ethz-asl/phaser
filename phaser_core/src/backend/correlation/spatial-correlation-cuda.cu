@@ -8,7 +8,7 @@
 
 DEFINE_double(phase_gpu_batch, 1, "");
 
-namespace correlation {
+namespace phaser_core {
 
 SpatialCorrelationCuda::SpatialCorrelationCuda(const uint32_t voxels_per_dim)
     : n_voxels_total_(voxels_per_dim * voxels_per_dim * voxels_per_dim),
@@ -93,4 +93,4 @@ double* SpatialCorrelationCuda::correlateSignals(
   return c_;
 }
 
-}  // namespace correlation
+}  // namespace phaser_core

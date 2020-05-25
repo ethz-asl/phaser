@@ -7,7 +7,7 @@
 
 #include "phaser/common/signal-utils.h"
 
-namespace correlation {
+namespace phaser_core {
 
 SpatialCorrelation::SpatialCorrelation(
     const uint32_t n_voxels, const uint32_t zero_padding)
@@ -181,4 +181,4 @@ uint32_t SpatialCorrelation::computeZeroPaddedIndex(const uint32_t idx) {
       padded_voxels_per_dim, padded_voxels_per_dim);
 }
 
-}  // namespace correlation
+}  // namespace phaser_core

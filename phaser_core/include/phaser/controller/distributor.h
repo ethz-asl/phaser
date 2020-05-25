@@ -11,13 +11,12 @@
 #include "phaser/experiments/experiment-handler.h"
 #include "phaser/model/point-cloud.h"
 
-namespace controller {
+namespace phaser_core {
 
 class Distributor {
  public:
   explicit Distributor(
-      const data::DatasourcePtr& ds,
-      registration::BaseRegistrationPtr&& registration);
+      const data::DatasourcePtr& ds, BaseRegistrationPtr&& registration);
 
   void updateStatistics();
   void getStatistics(common::StatisticsManager*) const noexcept;
@@ -37,11 +36,11 @@ class Distributor {
   void writeResultsToFile();
 
   data::DatasourcePtr ds_;
-  registration::BaseRegistrationPtr registrator_;
+  BaseRegistrationPtr registrator_;
   model::PointCloudPtr prev_point_cloud_;
   std::string registration_algorithm_;
 
-  experiments::ExperimentHandlerPtr experiment_handler_;
+  ExperimentHandlerPtr experiment_handler_;
 
   // Statistics
   const std::string kManagerReferenceName = "Distributor";
@@ -50,6 +49,6 @@ class Distributor {
   std::vector<Eigen::VectorXd> states_;
 };
 
-}  // namespace controller
+}  // namespace phaser_core
 
 #endif  // PHASER_CONTROLLER_DISTRIBUTOR_H_

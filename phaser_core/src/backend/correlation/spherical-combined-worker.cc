@@ -5,15 +5,15 @@
 #include "phaser/backend/correlation/spherical-correlation-laplace.h"
 #include "phaser/common/core-gflags.h"
 
-namespace correlation {
+namespace phaser_core {
 
 SphericalCombinedWorker::SphericalCombinedWorker(
     const model::FunctionValueVec& f_values,
     const model::FunctionValueVec& h_values)
     : f_values_(f_values), h_values_(h_values) {
-  sph_corr_.reset(new SphericalCorrelationLaplace(
-      common::FLAGS_phaser_core_spherical_bandwidth));
-  // common::FLAGS_phaser_core_spherical_zero_padding));
+  sph_corr_.reset(
+      new SphericalCorrelationLaplace(FLAGS_phaser_core_spherical_bandwidth));
+  // FLAGS_phaser_core_spherical_zero_padding));
 }
 
 void SphericalCombinedWorker::run() {
@@ -21,16 +21,16 @@ void SphericalCombinedWorker::run() {
   VLOG(1) << "[SphericalCombinedWorker] Estimating rotation...";
 
   // Get the intensities.
-  correlation::SampledSignal f_intensities;
-  correlation::SampledSignal h_intensities;
+  SampledSignal f_intensities;
+  SampledSignal h_intensities;
   std::function<double(const model::FunctionValue&)> func_intensities =
       [](const model::FunctionValue& v) { return v.getAveragedIntensity(); };
   convertFunctionValues(f_values_, func_intensities, &f_intensities);
   convertFunctionValues(h_values_, func_intensities, &h_intensities);
 
   // Get the ranges.
-  correlation::SampledSignal f_range;
-  correlation::SampledSignal h_range;
+  SampledSignal f_range;
+  SampledSignal h_range;
   std::function<double(const model::FunctionValue&)> func_range =
       [](const model::FunctionValue& v) { return v.getAveragedRange(); };
   convertFunctionValues(f_values_, func_range, &f_range);
@@ -52,4 +52,4 @@ const SphericalCorrelation& SphericalCombinedWorker::getCorrelationObject()
   return *sph_corr_;
 }
 
-}  // namespace correlation
+}  // namespace phaser_core

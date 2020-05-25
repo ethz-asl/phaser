@@ -1,10 +1,10 @@
 #include "phaser/backend/registration/base-registration.h"
 
-namespace registration {
+namespace phaser_core {
 
 void BaseRegistration::getStatistics(
     common::StatisticsManager* manager) const noexcept {
   manager->mergeManager(statistics_manager_);
 }
 
-} // namespace registration
+}  // namespace phaser_core

@@ -6,7 +6,7 @@
 #include "phaser/backend/correlation/spatial-correlation.h"
 #include "phaser/backend/fusion/laplace-pyramid.h"
 
-namespace correlation {
+namespace phaser_core {
 
 class SpatialCorrelationLaplace : public SpatialCorrelation {
  public:
@@ -27,11 +27,11 @@ class SpatialCorrelationLaplace : public SpatialCorrelation {
   void performFFTandShift();
   void freeChannels(std::vector<fftw_complex*>* channels);
 
-  fusion::LaplacePyramid laplace_;
+  LaplacePyramid laplace_;
   const uint32_t n_fftw_size_;
   fftw_complex *F_intensities_, *G_intensities_;
 };
 
-}  // namespace correlation
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_LAPLACE_H_

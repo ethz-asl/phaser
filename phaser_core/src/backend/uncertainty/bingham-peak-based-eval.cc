@@ -8,7 +8,7 @@ DEFINE_int32(
     bingham_peak_neighbors, 0,
     "Determines the number of neighbors used for the Bingham calculation.");
 
-namespace uncertainty {
+namespace phaser_core {
 
 common::BaseDistributionPtr BinghamPeakBasedEval::evaluatePeakBasedCorrelation(
     const uint32_t bw, const std::set<uint32_t>& signals,
@@ -88,4 +88,4 @@ void BinghamPeakBasedEval::retrievePeakNeighbors(
   (*weights) = weights->array() / weight_sum;
 }
 
-}  // namespace uncertainty
+}  // namespace phaser_core

@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 
-namespace uncertainty {
+namespace phaser_core {
 
 class BaseEval {
  public:
@@ -21,6 +21,6 @@ class BaseEval {
 
 using BaseEvalPtr = std::unique_ptr<BaseEval>;
 
-}  // namespace uncertainty
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_UNCERTAINTY_BASE_EVAL_H_

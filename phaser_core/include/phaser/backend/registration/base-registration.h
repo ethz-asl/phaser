@@ -5,7 +5,7 @@
 #include "phaser/common/statistics-manager.h"
 #include <memory>
 
-namespace registration {
+namespace phaser_core {
 
 class BaseRegistration {
   public:
@@ -29,4 +29,4 @@ class BaseRegistration {
 
 using BaseRegistrationPtr = std::unique_ptr<BaseRegistration>;
 
-} // namespace registration
+}  // namespace phaser_core

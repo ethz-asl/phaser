@@ -2,17 +2,17 @@
 
 #include <gtest/gtest.h>
 
-namespace sanity {
+namespace phaser_core {
 
 class SanityCheckTest : public ::testing::Test {
-  protected:
-    virtual void SetUp() { }
+ protected:
+  virtual void SetUp() {}
 };
 
 TEST(SanityCheckTest, SanityCheck) {
   EXPECT_TRUE(true);
 }
 
-} // namespace sanity
+}  // namespace phaser_core
 
 MAPLAB_UNITTEST_ENTRYPOINT

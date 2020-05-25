@@ -14,7 +14,7 @@
 #include "phaser/common/spherical-sampler.h"
 #include "phaser/common/thread-pool.h"
 
-namespace registration {
+namespace phaser_core {
 
 class SphOptRegistration : public BaseRegistration {
  public:
@@ -35,24 +35,24 @@ class SphOptRegistration : public BaseRegistration {
 
   void setBandwith(const int bandwith);
 
-  uncertainty::BaseEval& getRotEvaluation();
-  uncertainty::BaseEval& getPosEvaluation();
+  BaseEval& getRotEvaluation();
+  BaseEval& getPosEvaluation();
 
  protected:
-  std::vector<correlation::SphericalCorrelation> correlatePointcloud(
+  std::vector<SphericalCorrelation> correlatePointcloud(
       model::PointCloudPtr target, model::PointCloudPtr source);
 
   const uint32_t bandwidth_;
   common::SphericalSampler sampler_;
   std::vector<model::FunctionValue> f_values_;
   std::vector<model::FunctionValue> h_values_;
-  alignment::PhaseAligner aligner_;
-  uncertainty::PhaseCorrelationEvalPtr correlation_eval_;
+  phaser_core::PhaseAligner aligner_;
+  PhaseCorrelationEvalPtr correlation_eval_;
   common::ThreadPool th_pool_;
 };
 
 using SphOptRegistrationPtr = std::unique_ptr<SphOptRegistration>;
 
-}  // namespace registration
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_REGISTRATION_SPH_OPT_REGISTRATION_H_

@@ -5,7 +5,7 @@
 
 #include "phaser/backend/correlation/spatial-correlation.h"
 
-namespace correlation {
+namespace phaser_core {
 
 class SpatialCorrelationLowPass : public SpatialCorrelation {
  public:
@@ -34,6 +34,6 @@ class SpatialCorrelationLowPass : public SpatialCorrelation {
   std::vector<uint32_t> linear_indices_;
 };
 
-}  // namespace correlation
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_LOW_PASS_H_

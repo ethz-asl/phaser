@@ -12,7 +12,7 @@
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
 
-namespace rotation {
+namespace phaser_core {
 
 class RotationAlignmentTest : public ::testing::Test {
  public:
@@ -27,12 +27,11 @@ class RotationAlignmentTest : public ::testing::Test {
     ds_->setDatasetFolder("./test_clouds/kitti/sigma-level-1/");
   }
 
-  registration::BaseRegistration* initializeRegistration(bool mocked) {
+  BaseRegistration* initializeRegistration(bool mocked) {
     if (mocked)
-      registrator_ =
-          std::make_unique<registration::SphRegistrationMockRotated>();
+      registrator_ = std::make_unique<SphRegistrationMockRotated>();
     else
-      registrator_ = std::make_unique<registration::SphRegistration>();
+      registrator_ = std::make_unique<SphRegistration>();
     return registrator_.get();
   }
 
@@ -41,16 +40,15 @@ class RotationAlignmentTest : public ::testing::Test {
   }
 
   data::DatasourcePlyPtr ds_;
-  registration::BaseRegistrationPtr registrator_;
+  BaseRegistrationPtr registrator_;
   std::default_random_engine generator_;
   std::uniform_real_distribution<float> distribution_;
 };
 
 TEST_F(RotationAlignmentTest, RotationSelfSingle) {
   CHECK(ds_);
-  registration::SphRegistrationMockRotated* reg =
-      dynamic_cast<registration::SphRegistrationMockRotated*>(
-          initializeRegistration(true));
+  SphRegistrationMockRotated* reg =
+      dynamic_cast<SphRegistrationMockRotated*>(initializeRegistration(true));
   reg->setBandwith(100);
   Eigen::Vector3d rot_xyz_rad(M_PI / 2.5f, M_PI / 2.5f, M_PI / 2.5f);
   reg->setRandomRotation(rot_xyz_rad(0), rot_xyz_rad(1), rot_xyz_rad(2));
@@ -74,9 +72,8 @@ TEST_F(RotationAlignmentTest, RotationSelfSingle) {
 
 TEST_F(RotationAlignmentTest, RotationSelfAll) {
   CHECK(ds_);
-  registration::SphRegistrationMockRotated* reg =
-      dynamic_cast<registration::SphRegistrationMockRotated*>(
-          initializeRegistration(true));
+  SphRegistrationMockRotated* reg =
+      dynamic_cast<SphRegistrationMockRotated*>(initializeRegistration(true));
   reg->setBandwith(100);
 
   model::RegistrationResult result;
@@ -106,9 +103,8 @@ TEST_F(RotationAlignmentTest, RotationSelfAll) {
 
 TEST_F(RotationAlignmentTest, RotationHighBandwith) {
   CHECK(ds_);
-  registration::SphRegistrationMockRotated* reg =
-      dynamic_cast<registration::SphRegistrationMockRotated*>(
-          initializeRegistration(true));
+  SphRegistrationMockRotated* reg =
+      dynamic_cast<SphRegistrationMockRotated*>(initializeRegistration(true));
   reg->setBandwith(100);
 
   model::RegistrationResult result;
@@ -138,9 +134,8 @@ TEST_F(RotationAlignmentTest, RotationHighBandwith) {
 
 TEST_F(RotationAlignmentTest, RotationEasy) {
   CHECK(ds_);
-  registration::SphRegistration* reg =
-      dynamic_cast<registration::SphRegistration*>(
-          initializeRegistration(false));
+  SphRegistration* reg =
+      dynamic_cast<SphRegistration*>(initializeRegistration(false));
 
   model::RegistrationResult result;
   model::PointCloudPtr prev_cloud = nullptr;
@@ -176,6 +171,6 @@ TEST_F(RotationAlignmentTest, RotationEasy) {
   ds_->startStreaming();
 }
 
-}  // namespace rotation
+}  // namespace phaser_core
 
 MAPLAB_UNITTEST_ENTRYPOINT

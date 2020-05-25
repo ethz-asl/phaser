@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 
-namespace experiments {
+namespace phaser_core {
 
 class ExperimentHandler {
  public:
@@ -29,7 +29,7 @@ class ExperimentHandler {
   void rotateToSensorFrame(const model::PointCloudPtr& cloud);
   void rotateToOdomFrame(const model::PointCloudPtr& cloud);
 
-  registration::SphOptRegistrationPtr registrator_;
+  SphOptRegistrationPtr registrator_;
   model::PointCloudPtr prev_point_cloud_;
   std::vector<Eigen::VectorXd> states_;
   Eigen::MatrixXd gt_;
@@ -38,6 +38,6 @@ class ExperimentHandler {
 
 using ExperimentHandlerPtr = std::unique_ptr<ExperimentHandler>;
 
-}  // namespace experiments
+}  // namespace phaser_core
 
 #endif  // PHASER_EXPERIMENTS_EXPERIMENT_HANDLER_H_

@@ -10,7 +10,7 @@
 #include "phaser/common/thread-pool.h"
 #include "phaser/model/point-cloud.h"
 
-namespace correlation {
+namespace phaser_core {
 
 class SphericalCombinedWorker : public common::BaseWorker {
  public:
@@ -30,6 +30,6 @@ class SphericalCombinedWorker : public common::BaseWorker {
 };
 using SphericalCombinedWorkerPtr = std::shared_ptr<SphericalCombinedWorker>;
 
-}  // namespace correlation
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_CORRELATION_SPHERICAL_COMBINED_WORKER_H_

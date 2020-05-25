@@ -1,3 +1,3 @@
 #include "phaser/backend/uncertainty/base-eval.h"
 
-namespace uncertainty {}  // namespace uncertainty
+namespace phaser_core {}  // namespace phaser_core

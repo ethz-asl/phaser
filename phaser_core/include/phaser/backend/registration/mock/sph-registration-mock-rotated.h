@@ -3,7 +3,7 @@
 
 #include "phaser/backend/registration/sph-registration.h"
 
-namespace registration {
+namespace phaser_core {
 
 class SphRegistrationMockRotated : public SphRegistration {
  public:
@@ -25,6 +25,6 @@ class SphRegistrationMockRotated : public SphRegistration {
   double mock_gamma_rad_;
 };
 
-}  // namespace registration
+}  // namespace phaser_core
 
 #endif  // PACKLO_BACKEND_REGISTRATION_MOCK_SPH_REGISTRATION_MOCK_ROTATED_H_

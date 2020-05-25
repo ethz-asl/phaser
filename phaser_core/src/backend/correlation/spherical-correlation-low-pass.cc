@@ -2,17 +2,10 @@
 
 #include <glog/logging.h>
 
+#include "phaser/common/core-gflags.h"
 #include "phaser/common/signal-utils.h"
 
-DEFINE_int32(
-    phaser_core_spherical_low_pass_lower_bound, 0,
-    "Defines the lower bound of the low pass.");
-
-DEFINE_int32(
-    phaser_core_spherical_low_pass_upper_bound, 100000,
-    "Defines the lower bound of the low pass.");
-
-namespace correlation {
+namespace phaser_core {
 
 SphericalCorrelationLowPass::SphericalCorrelationLowPass(const uint32_t bw)
     : SphericalCorrelation(bw) {}
@@ -78,4 +71,4 @@ void SphericalCorrelationLowPass::inverseShiftSignals(const uint32_t n_points) {
   common::SignalUtils::IFFTShift(pat_coef_[1], n_points);
 }
 
-}  // namespace correlation
+}  // namespace phaser_core

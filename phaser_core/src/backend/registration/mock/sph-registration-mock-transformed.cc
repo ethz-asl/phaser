@@ -3,7 +3,7 @@
 
 #include <glog/logging.h>
 
-namespace registration {
+namespace phaser_core {
 
 model::RegistrationResult SphRegistrationMockTransformed::registerPointCloud(
     model::PointCloudPtr cloud_prev, 
