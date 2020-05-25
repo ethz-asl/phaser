@@ -7,7 +7,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 
-namespace transformation {
+namespace phaser_core {
 
 class VoxgraphAlignmentTest : public ::testing::Test {
  protected:
@@ -21,8 +21,7 @@ class VoxgraphAlignmentTest : public ::testing::Test {
 
 TEST_F(VoxgraphAlignmentTest, TransformVoxgraphEasy) {
   CHECK(ds_);
-  registration::BaseRegistrationPtr reg =
-      std::make_unique<registration::SphRegistration>();
+  BaseRegistrationPtr reg = std::make_unique<SphRegistration>();
   model::RegistrationResult result;
   model::PointCloudPtr prev_cloud = nullptr;
   ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
@@ -50,6 +49,6 @@ TEST_F(VoxgraphAlignmentTest, TransformVoxgraphEasy) {
   ds_->startStreaming(1);
 }
 
-}  // namespace transformation
+}  // namespace phaser_core
 
 MAPLAB_UNITTEST_ENTRYPOINT

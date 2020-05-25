@@ -9,7 +9,7 @@ DEFINE_double(mock_translate_x, 5, "Defines a mock translation in x.");
 DEFINE_double(mock_translate_y, 5, "Defines a mock translation in y.");
 DEFINE_double(mock_translate_z, 5, "Defines a mock translation in z.");
 
-namespace registration {
+namespace phaser_core {
 
 SphRegistrationMockTranslated::SphRegistrationMockTranslated()
     : mock_trans_x_(FLAGS_mock_translate_x),
@@ -64,4 +64,4 @@ SphRegistrationMockTranslated::pertubFunctionValues(
   return res;
 }
 
-}  // namespace registration
+}  // namespace phaser_core

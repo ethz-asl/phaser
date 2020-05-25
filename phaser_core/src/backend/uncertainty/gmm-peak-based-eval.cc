@@ -6,7 +6,7 @@
 #include <glog/logging.h>
 #include <vector>
 
-namespace uncertainty {
+namespace phaser_core {
 
 DEFINE_int32(
     gmm_peak_neighbors, 2,
@@ -103,4 +103,4 @@ void GmmPeakBasedEval::retrievePeakNeighbors(
   VLOG(1) << "gaussian weights: \n" << (*gaussian_weights);
 }
 
-}  // namespace uncertainty
+}  // namespace phaser_core

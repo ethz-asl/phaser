@@ -36,7 +36,7 @@ static void registerCloud(
   CHECK_NOTNULL(source_cloud);
   CHECK(!reg_cloud.empty());
 
-  auto ctrl = std::make_unique<controller::CloudController>("sph-opt");
+  auto ctrl = std::make_unique<phaser_core::CloudController>("sph-opt");
   model::RegistrationResult result =
       ctrl->registerPointCloud(target_cloud, source_cloud);
 

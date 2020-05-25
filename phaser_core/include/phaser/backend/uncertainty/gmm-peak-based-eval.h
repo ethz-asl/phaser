@@ -11,7 +11,7 @@
 #include <utility>
 #include <vector>
 
-namespace uncertainty {
+namespace phaser_core {
 
 class GmmPeakBasedEval : public ZScoreEval {
  public:
@@ -35,6 +35,6 @@ class GmmPeakBasedEval : public ZScoreEval {
       Eigen::MatrixXd* samples, Eigen::VectorXd* gaussian_weights) const;
 };
 
-}  // namespace uncertainty
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_UNCERTAINTY_GMM_PEAK_BASED_EVAL_H_

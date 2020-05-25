@@ -10,7 +10,7 @@
 #include <cuda_runtime.h>
 #include <cufft.h>
 
-namespace correlation {
+namespace phaser_core {
 
 class SpatialCorrelationCuda : public BaseSpatialCorrelation {
  public:
@@ -32,6 +32,6 @@ class SpatialCorrelationCuda : public BaseSpatialCorrelation {
   const uint32_t n_voxels_per_dim_;
 };
 
-}  // namespace correlation
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_CUDA_H_

@@ -10,7 +10,7 @@
 #include <memory>
 #include <random>
 
-namespace translation {
+namespace phaser_core {
 
 class SpatialCorrelationTest : public ::testing::Test {
  public:
@@ -45,7 +45,7 @@ TEST_F(SpatialCorrelationTest, SimpleCorrelation) {
     f(i) = getRandomFloat();
     g(i) = getRandomFloat();
   }
-  correlation::SpatialCorrelation corr(3u);
+  SpatialCorrelation corr(3u);
   std::vector<Eigen::VectorXd*> signal_f = {&f};
   std::vector<Eigen::VectorXd*> signal_g = {&g};
   double* c = corr.correlateSignals(signal_f, signal_g);
@@ -60,7 +60,7 @@ TEST_F(SpatialCorrelationTest, CorrelationEndToEnd) {
   Eigen::VectorXd g = Eigen::VectorXd::Zero(n_corr);
   f(0) = 1;
   g(1) = 1;
-  correlation::SpatialCorrelation corr(3u);
+  SpatialCorrelation corr(3u);
   std::vector<Eigen::VectorXd*> signal_f = {&f};
   std::vector<Eigen::VectorXd*> signal_g = {&g};
   double* c = corr.correlateSignals(signal_f, signal_g);
@@ -86,7 +86,7 @@ TEST_F(SpatialCorrelationTest, SimplePaddedCorrelation) {
     g(i) = getRandomFloat();
   }
   const uint32_t padding = 2u;
-  correlation::SpatialCorrelation corr(n_corr_per_dim, padding);
+  SpatialCorrelation corr(n_corr_per_dim, padding);
   std::vector<Eigen::VectorXd*> signal_f = {&f};
   std::vector<Eigen::VectorXd*> signal_g = {&g};
   double* c = corr.correlateSignals(signal_f, signal_g);
@@ -107,7 +107,7 @@ TEST_F(SpatialCorrelationTest, PaddedCorrelation) {
   g(1) = 1.0;
 
   const uint32_t padding = 2u;
-  correlation::SpatialCorrelation corr(n_corr_per_dim, padding);
+  SpatialCorrelation corr(n_corr_per_dim, padding);
   std::vector<Eigen::VectorXd*> signal_f = {&f};
   std::vector<Eigen::VectorXd*> signal_g = {&g};
   double* c = corr.correlateSignals(signal_f, signal_g);
@@ -126,6 +126,6 @@ TEST_F(SpatialCorrelationTest, PaddedCorrelation) {
   EXPECT_EQ(xyz[2], 0u);
 }
 
-}  // namespace translation
+}  // namespace phaser_core
 
 MAPLAB_UNITTEST_ENTRYPOINT

@@ -15,7 +15,7 @@ extern "C" {
 
 #include <algorithm>
 
-namespace correlation {
+namespace phaser_core {
 
 SphericalCorrelation::SphericalCorrelation(
     const uint32_t bw, const uint32_t zero_padding)
@@ -274,4 +274,4 @@ void SphericalCorrelation::inverseTransform() {
   }
 }
 
-}  // namespace correlation
+}  // namespace phaser_core

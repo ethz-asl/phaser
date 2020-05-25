@@ -8,7 +8,7 @@
 
 #include "phaser/backend/correlation/base-spatial-correlation.h"
 
-namespace correlation {
+namespace phaser_core {
 
 class SpatialCorrelation : public BaseSpatialCorrelation {
  public:
@@ -45,6 +45,6 @@ class SpatialCorrelation : public BaseSpatialCorrelation {
   const uint32_t zero_padding_;
 };
 
-}  // namespace correlation
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_H_

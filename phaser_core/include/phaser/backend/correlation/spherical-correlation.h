@@ -11,7 +11,7 @@
 #include "phaser/common/statistics-manager.h"
 #include "phaser/model/function-value.h"
 
-namespace correlation {
+namespace phaser_core {
 
 using SampledSignal = std::vector<double>;
 
@@ -83,6 +83,6 @@ class SphericalCorrelation {
 
 using SphericalCorrelationPtr = std::unique_ptr<SphericalCorrelation>;
 
-}  // namespace correlation
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_

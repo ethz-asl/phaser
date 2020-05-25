@@ -9,7 +9,7 @@
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
 
-namespace fusion {
+namespace phaser_core {
 
 class LaplacePyramidTest : public ::testing::Test {
  public:
@@ -55,19 +55,19 @@ class LaplacePyramidTest : public ::testing::Test {
 };
 
 TEST_F(LaplacePyramidTest, SimpleReduceTest) {
-  fusion::LaplacePyramid laplace(4.0);
+  LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 8u;
   fftw_complex* coeffs = createRandomCoefficients(n_coeffs);
-  fusion::PyramidLevel first_level =
+  PyramidLevel first_level =
       laplace.reduce(reinterpret_cast<complex_t*>(coeffs), n_coeffs);
 
-  const std::vector<fusion::complex_t>& low_pass = first_level.first;
+  const std::vector<complex_t>& low_pass = first_level.first;
   EXPECT_EQ(low_pass.size(), 4u);
   for (uint32_t i = 0u; i < 4u; ++i) {
     EXPECT_GT(low_pass[i][0], 0.0);
     EXPECT_GT(low_pass[i][1], 0.0);
   }
-  const std::vector<fusion::complex_t>& coeff_laplace = first_level.second;
+  const std::vector<complex_t>& coeff_laplace = first_level.second;
   const float tol = 1e-3;
   uint32_t k = 0u;
   for (uint32_t i = 2u; i < 6u; ++i) {
@@ -81,14 +81,14 @@ TEST_F(LaplacePyramidTest, SimpleReduceTest) {
 }
 
 TEST_F(LaplacePyramidTest, SimpleExpandTest) {
-  fusion::LaplacePyramid laplace(4.0);
+  LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 8u;
   fftw_complex* coeffs = createRandomCoefficients(n_coeffs);
-  fusion::PyramidLevel first_level =
+  PyramidLevel first_level =
       laplace.reduce(reinterpret_cast<complex_t*>(coeffs), n_coeffs);
 
-  const std::vector<fusion::complex_t>& low_pass = first_level.first;
-  std::vector<fusion::complex_t>* lapl = &first_level.second;
+  const std::vector<complex_t>& low_pass = first_level.first;
+  std::vector<complex_t>* lapl = &first_level.second;
   EXPECT_LT(nnz(*lapl), n_coeffs);
   laplace.expand(low_pass, lapl);
   EXPECT_EQ(nnz(*lapl), n_coeffs);
@@ -97,20 +97,19 @@ TEST_F(LaplacePyramidTest, SimpleExpandTest) {
 }
 
 TEST_F(LaplacePyramidTest, MaxCoeffTest) {
-  fusion::LaplacePyramid laplace(4.0);
+  LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 8u;
   fftw_complex* coeffs = createFixedCoefficients(1, n_coeffs);
   fftw_complex* coeffs_2 = createFixedCoefficients(15, n_coeffs);
-  std::vector<fusion::PyramidLevel> levels;
+  std::vector<PyramidLevel> levels;
   levels.emplace_back(
       laplace.reduce(reinterpret_cast<complex_t*>(coeffs), n_coeffs));
   levels.emplace_back(
       laplace.reduce(reinterpret_cast<complex_t*>(coeffs_2), n_coeffs));
 
-  std::vector<fusion::complex_t> fused =
-      laplace.fuseLevelByMaxCoeff(levels, n_coeffs);
-  const std::vector<fusion::complex_t>& lapl_1 = levels[0].second;
-  const std::vector<fusion::complex_t>& lapl_2 = levels[1].second;
+  std::vector<complex_t> fused = laplace.fuseLevelByMaxCoeff(levels, n_coeffs);
+  const std::vector<complex_t>& lapl_1 = levels[0].second;
+  const std::vector<complex_t>& lapl_2 = levels[1].second;
   const float tol = 1e-3;
   for (uint32_t i = 0u; i < 2u; ++i) {
     EXPECT_GT(fused[i][0], lapl_1[i][0]);
@@ -130,17 +129,17 @@ TEST_F(LaplacePyramidTest, MaxCoeffTest) {
 }
 
 TEST_F(LaplacePyramidTest, LowPassAverageTest) {
-  fusion::LaplacePyramid laplace(4.0);
+  LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 8u;
   fftw_complex* coeffs = createFixedCoefficients(5, n_coeffs);
   fftw_complex* coeffs_2 = createFixedCoefficients(15, n_coeffs);
-  std::vector<fusion::PyramidLevel> levels;
+  std::vector<PyramidLevel> levels;
   levels.emplace_back(
       laplace.reduce(reinterpret_cast<complex_t*>(coeffs), n_coeffs));
   levels.emplace_back(
       laplace.reduce(reinterpret_cast<complex_t*>(coeffs_2), n_coeffs));
 
-  std::vector<fusion::complex_t> fused = laplace.fuseLastLowPassLayer(levels);
+  std::vector<complex_t> fused = laplace.fuseLastLowPassLayer(levels);
   const float tol = 1e-3;
   for (uint32_t i = 0u; i < 4u; ++i) {
     EXPECT_NEAR(fused[i][0], 10.0, tol);
@@ -152,7 +151,7 @@ TEST_F(LaplacePyramidTest, LowPassAverageTest) {
 }
 
 TEST_F(LaplacePyramidTest, FuseChannelsUsing2LevelsTest) {
-  fusion::LaplacePyramid laplace(4.0);
+  LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 8u;
   fftw_complex* coeffs = createFixedCoefficients(5, n_coeffs);
   fftw_complex* coeffs_2 = createFixedCoefficients(15, n_coeffs);
@@ -169,7 +168,7 @@ TEST_F(LaplacePyramidTest, FuseChannelsUsing2LevelsTest) {
 }
 
 TEST_F(LaplacePyramidTest, FuseChannelsUsing5LevelsTest) {
-  fusion::LaplacePyramid laplace(4.0);
+  LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 80u;
   fftw_complex* coeffs = createFixedCoefficients(5, n_coeffs);
   fftw_complex* coeffs_2 = createFixedCoefficients(15, n_coeffs);
@@ -185,6 +184,6 @@ TEST_F(LaplacePyramidTest, FuseChannelsUsing5LevelsTest) {
   delete[] coeffs_2;
 }
 
-}  // namespace fusion
+}  // namespace phaser_core
 
 MAPLAB_UNITTEST_ENTRYPOINT

@@ -2,7 +2,7 @@
 
 #include "phaser/backend/registration/sph-registration.h"
 
-namespace registration {
+namespace phaser_core {
 
 class SphRegistrationMockTranslated : public SphRegistration {
   public:
@@ -28,4 +28,4 @@ class SphRegistrationMockTranslated : public SphRegistration {
     double mock_trans_z_;
 };
 
-} // namespace registration
+}  // namespace phaser_core

@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 
-namespace uncertainty {
+namespace phaser_core {
 
 class ZScorePeakExtraction : public BasePeakExtraction {
  public:
@@ -42,6 +42,6 @@ class ZScorePeakExtraction : public BasePeakExtraction {
   uint32_t lag_max_;
 };
 
-}  // namespace uncertainty
+}  // namespace phaser_core
 
 #endif  // PACKLO_BACKEND_UNCERTAINTY_Z_SCORE_PEAK_EXTRACTION_H_

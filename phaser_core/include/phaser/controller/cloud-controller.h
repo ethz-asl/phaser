@@ -7,7 +7,7 @@
 #include "phaser/model/point-cloud.h"
 #include "phaser_pre/cloud-pre-processor.h"
 
-namespace controller {
+namespace phaser_core {
 
 class CloudController {
  public:
@@ -17,10 +17,10 @@ class CloudController {
       model::PointCloudPtr target, model::PointCloudPtr source);
 
  private:
-  registration::BaseRegistrationPtr registrator_;
+  BaseRegistrationPtr registrator_;
   preproc::CloudPreProcessor preprocessor_;
 };
 
-}  // namespace controller
+}  // namespace phaser_core
 
 #endif  // PHASER_CONTROLLER_CLOUD_CONTROLLER_H_

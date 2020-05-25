@@ -14,10 +14,10 @@ DEFINE_string(
 
 DEFINE_string(truth_file, "", "Defines the path of the truth file.");
 
-namespace experiments {
+namespace phaser_core {
 
 ExperimentHandler::ExperimentHandler() : prev_point_cloud_(nullptr) {
-  registrator_ = std::make_unique<registration::SphOptRegistration>();
+  registrator_ = std::make_unique<SphOptRegistration>();
   readTruth();
 }
 
@@ -139,4 +139,4 @@ void ExperimentHandler::rotateToOdomFrame(const model::PointCloudPtr& cloud) {
   common::RotationUtils::RotateAroundXYZ(cloud, rpy(0), rpy(1), rpy(2));
 }
 
-}  // namespace experiments
+}  // namespace phaser_core

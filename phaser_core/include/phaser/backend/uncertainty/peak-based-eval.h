@@ -4,7 +4,7 @@
 #include <vector>
 #include "phaser/backend/uncertainty/base-peak-extraction.h"
 
-namespace uncertainty {
+namespace phaser_core {
 
 class PeakBasedEval {
  public:
@@ -16,6 +16,6 @@ class PeakBasedEval {
   BasePeakExtractionPtr peak_extraction_;
 };
 
-}  // namespace uncertainty
+}  // namespace phaser_core
 
 #endif  // PACKLO_BACKEND_UNCERTAINTY_PEAK_BASED_EVAL_H_

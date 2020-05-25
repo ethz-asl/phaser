@@ -10,7 +10,7 @@
 #include <utility>
 #include <vector>
 
-namespace uncertainty {
+namespace phaser_core {
 
 class ZScoreEval : public BaseEval {
  public:
@@ -41,6 +41,6 @@ class ZScoreEval : public BaseEval {
   ZScorePeakExtraction peak_extraction_;
 };
 
-}  // namespace uncertainty
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_UNCERTAINTY_Z_SCORE_EVAL_H_

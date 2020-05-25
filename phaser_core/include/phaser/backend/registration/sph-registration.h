@@ -13,7 +13,7 @@
 #include <string>
 #include <vector>
 
-namespace registration {
+namespace phaser_core {
 
 class SphRegistration : public BaseRegistration {
  public:
@@ -37,19 +37,19 @@ class SphRegistration : public BaseRegistration {
 
   void setBandwith(const int bandwith);
 
-  uncertainty::BaseEval& getRotEvaluation();
-  uncertainty::BaseEval& getPosEvaluation();
+  BaseEval& getRotEvaluation();
+  BaseEval& getPosEvaluation();
 
  protected:
   void correlatePointcloud(
       const model::PointCloud& source, const model::PointCloud& target);
 
-  correlation::SphericalCorrelation sph_corr_;
+  SphericalCorrelation sph_corr_;
   common::SphericalSampler sampler_;
   std::vector<model::FunctionValue> f_values_;
   std::vector<model::FunctionValue> h_values_;
   phaser_core::PhaseAligner aligner_;
-  uncertainty::PhaseCorrelationEvalPtr correlation_eval_;
+  PhaseCorrelationEvalPtr correlation_eval_;
 
   // Statistics
   const std::string kSampleDurationKey = "Sampling";
@@ -65,6 +65,6 @@ class SphRegistration : public BaseRegistration {
 
 using SphRegistrationPtr = std::unique_ptr<SphRegistration>;
 
-}  // namespace registration
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_REGISTRATION_SPH_REGISTRATION_H_

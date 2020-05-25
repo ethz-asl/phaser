@@ -6,7 +6,7 @@
 #include "phaser/backend/correlation/spherical-correlation.h"
 #include "phaser/common/core-gflags.h"
 
-namespace correlation {
+namespace phaser_core {
 
 SphericalIntensityWorker::SphericalIntensityWorker(
     const model::FunctionValueVec& f_values,
@@ -21,8 +21,8 @@ void SphericalIntensityWorker::run() {
   CHECK_NOTNULL(sph_corr_);
   VLOG(1) << "[SphericalIntensityWorker] Estimating rotation...";
 
-  correlation::SampledSignal f_intensities;
-  correlation::SampledSignal h_intensities;
+  SampledSignal f_intensities;
+  SampledSignal h_intensities;
   std::function<double(const model::FunctionValue&)> func =
       [](const model::FunctionValue& v) { return v.getAveragedIntensity(); };
   convertFunctionValues(f_values_, func, &f_intensities);
@@ -43,4 +43,4 @@ const SphericalCorrelation& SphericalIntensityWorker::getCorrelationObject()
   return *sph_corr_;
 }
 
-}  // namespace correlation
+}  // namespace phaser_core

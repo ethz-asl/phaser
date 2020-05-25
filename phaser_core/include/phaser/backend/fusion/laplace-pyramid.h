@@ -9,7 +9,7 @@
 
 #include <fftw3/fftw3.h>
 
-namespace fusion {
+namespace phaser_core {
 
 // using complex_t = std::complex<double>;
 // using complex_t = double[2];
@@ -46,6 +46,6 @@ class LaplacePyramid {
   const float divider_;
 };
 
-}  // namespace fusion
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_FUSION_LAPLACE_PYRAMID_H_

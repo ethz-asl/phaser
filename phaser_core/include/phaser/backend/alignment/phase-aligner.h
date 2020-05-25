@@ -49,7 +49,7 @@ class PhaseAligner : public BaseAligner {
   const int lower_bound_;
   const int upper_bound_;
   Eigen::VectorXf edges_;
-  correlation::BaseSpatialCorrelationPtr spatial_correlation_;
+  BaseSpatialCorrelationPtr spatial_correlation_;
   std::vector<double> previous_correlation_;
 };
 

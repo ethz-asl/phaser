@@ -13,7 +13,7 @@ DEFINE_double(
     mock_rotate_gamma_rad, M_PI / 2.5f,
     "Defines a mock rotation around yaw in rad");
 
-namespace registration {
+namespace phaser_core {
 
 SphRegistrationMockRotated::SphRegistrationMockRotated()
     : mock_alpha_rad_(FLAGS_mock_rotate_alpha_rad),
@@ -49,4 +49,4 @@ model::PointCloud SphRegistrationMockRotated::pertubPointCloud(
       cloud, alpha_rad, beta_rad, gamma_rad);
 }
 
-}  // namespace registration
+}  // namespace phaser_core

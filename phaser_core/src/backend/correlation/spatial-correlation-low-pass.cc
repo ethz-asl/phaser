@@ -4,17 +4,10 @@
 
 #include <glog/logging.h>
 
+#include "phaser/common/core-gflags.h"
 #include "phaser/common/signal-utils.h"
 
-DEFINE_int32(
-    phaser_core_spatial_low_pass_lower_bound, 0,
-    "Defines the lower frequency bound of the spatial low pass filtering.");
-
-DEFINE_int32(
-    phaser_core_spatial_low_pass_upper_bound, 100000,
-    "Defines the lower frequency bound of the spatial low pass filtering.");
-
-namespace correlation {
+namespace phaser_core {
 
 SpatialCorrelationLowPass::SpatialCorrelationLowPass(
     const uint32_t n_voxels, const uint32_t zero_padding)
@@ -104,4 +97,4 @@ uint32_t SpatialCorrelationLowPass::getNumberOfIndices() const noexcept {
   return linear_indices_.size();
 }
 
-}  // namespace correlation
+}  // namespace phaser_core

@@ -3,7 +3,7 @@
 #include <memory>
 #include "phaser/backend/registration/sph-registration.h"
 
-namespace registration {
+namespace phaser_core {
 
 class SphRegistrationMockCutted : public SphRegistration {
   public:

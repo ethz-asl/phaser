@@ -8,7 +8,7 @@
 
 #include <gtest/gtest.h>
 
-namespace uncertainty {
+namespace phaser_core {
 
 class TransGaussTest : public ::testing::Test {
  protected:
@@ -16,15 +16,15 @@ class TransGaussTest : public ::testing::Test {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
     ds_->setDatasetFolder("./test_clouds/arche/sigma-level-1/");
-    registrator_ = std::make_unique<registration::SphRegistration>(
-        "phase", "bingham", "gaussian");
-    z_score_eval_ = dynamic_cast<uncertainty::ZScoreEval*>(
-        &registrator_->getPosEvaluation());
+    registrator_ =
+        std::make_unique<SphRegistration>("phase", "bingham", "gaussian");
+    z_score_eval_ =
+        dynamic_cast<ZScoreEval*>(&registrator_->getPosEvaluation());
   }
 
   data::DatasourcePlyPtr ds_;
-  registration::SphRegistrationPtr registrator_;
-  uncertainty::ZScoreEval* z_score_eval_;
+  SphRegistrationPtr registrator_;
+  ZScoreEval* z_score_eval_;
 };
 
 TEST_F(TransGaussTest, LowUncertainty) {
@@ -62,6 +62,6 @@ TEST_F(TransGaussTest, LowUncertainty) {
   ds_->startStreaming(0);
 }
 
-}  // namespace uncertainty
+}  // namespace phaser_core
 
 MAPLAB_UNITTEST_ENTRYPOINT

@@ -7,7 +7,7 @@
 #include <set>
 #include <vector>
 
-namespace uncertainty {
+namespace phaser_core {
 
 class BmmPeakBasedEval : public ZScoreEval {
  public:
@@ -28,6 +28,6 @@ class BmmPeakBasedEval : public ZScoreEval {
       Eigen::RowVectorXd* weights) const;
 };
 
-}  // namespace uncertainty
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_UNCERTAINTY_BMM_PEAK_BASED_EVAL_H_

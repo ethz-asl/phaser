@@ -2,7 +2,7 @@
 
 #include <glog/logging.h>
 
-namespace uncertainty {
+namespace phaser_core {
 
 PhaseCorrelationEval::PhaseCorrelationEval(
     BaseEvalPtr&& rotation, BaseEvalPtr&& positional)
@@ -10,7 +10,7 @@ PhaseCorrelationEval::PhaseCorrelationEval(
       positional_eval_(std::move(positional)) {}
 
 common::BaseDistributionPtr PhaseCorrelationEval::calcRotationUncertainty(
-    const correlation::SphericalCorrelation& sph_corr) {
+    const SphericalCorrelation& sph_corr) {
   const uint32_t bw = sph_corr.getBandwidth();
   const std::vector<double> corr = sph_corr.getCorrelation();
   return rotation_eval_->evaluateCorrelationFromRotation(bw, corr);
@@ -36,4 +36,4 @@ BaseEval& PhaseCorrelationEval::getPositionEval() {
   return *positional_eval_;
 }
 
-}  // namespace uncertainty
+}  // namespace phaser_core

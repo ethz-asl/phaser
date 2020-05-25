@@ -8,7 +8,7 @@
 #include <set>
 #include <vector>
 
-namespace uncertainty {
+namespace phaser_core {
 
 class BinghamPeakBasedEval : public ZScoreEval {
  public:
@@ -31,6 +31,6 @@ class BinghamPeakBasedEval : public ZScoreEval {
       Eigen::RowVectorXd* weights) const;
 };
 
-}  // namespace uncertainty
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_UNCERTAINTY_BINGHAM_PEAK_BASED_EVAL_H_

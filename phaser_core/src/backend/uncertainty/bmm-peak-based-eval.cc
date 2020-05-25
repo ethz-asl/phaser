@@ -7,7 +7,7 @@ DEFINE_int32(
     bmm_peak_neighbors, 2,
     "Determines the number of neighbors used for the GMM calculation.");
 
-namespace uncertainty {
+namespace phaser_core {
 
 common::BaseDistributionPtr BmmPeakBasedEval::evaluatePeakBasedCorrelation(
     const uint32_t bw, const std::set<uint32_t>& signals,
@@ -84,4 +84,4 @@ void BmmPeakBasedEval::retrievePeakNeighbors(
   (*weights) = weights->array() / weight_sum;
 }
 
-}  // namespace uncertainty
+}  // namespace phaser_core
