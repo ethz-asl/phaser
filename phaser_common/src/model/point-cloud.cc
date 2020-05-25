@@ -16,7 +16,7 @@ DEFINE_string(
     PlyWriteDirectory, "", "Defines the directory to store the point clouds.");
 DEFINE_string(PlyPrefix, "cloud", "Defines the prefix name for the PLY.");
 DEFINE_int32(
-    sampling_neighbors, 1, "Defines the number of neighbors for the sampling.");
+    sampling_neighbors, 2, "Defines the number of neighbors for the sampling.");
 DEFINE_double(
     neighbor_max_distance, 5,
     "Defines the maximum allowed distance to neighbors.");
@@ -90,7 +90,7 @@ void PointCloud::getNearestPoints(
           << info_cloud_is_available << ".";
   const uint32_t n_points = query_points.size();
   function_values->resize(n_points);
-#pragma omp parallel for num_threads(8)
+  // #pragma omp parallel for num_threads(8)
   for (uint32_t i = 0; i < n_points; ++i) {
     const common::Point_t& query_point = query_points[i];
     // First, find the closest points.

@@ -14,8 +14,19 @@ FunctionValue::FunctionValue(double range, double intensity)
     : range_(range), intensity_(intensity), points_(new common::PointCloud_t) {}
 
 double FunctionValue::getAveragedRange() const noexcept {
-  return std::accumulate(range_.cbegin(), range_.cend(), 0.0) /
-         static_cast<double>(range_.size());
+  double avg = std::accumulate(range_.cbegin(), range_.cend(), 0.0) /
+               static_cast<double>(range_.size());
+  if (std::isnan(avg)) {
+    VLOG(1) << "============================  SOME RANGE IS NULLl";
+    for (const auto& r : range_) {
+      VLOG(1) << "r: " << r;
+    }
+  }
+
+  return avg;
+
+  // return std::accumulate(range_.cbegin(), range_.cend(), 0.0) /
+  // static_cast<double>(range_.size());
 }
 
 double FunctionValue::getAveragedIntensity() const noexcept {
