@@ -3,6 +3,7 @@
 #include "phaser/backend/correlation/spatial-correlation-laplace.h"
 #include "phaser/backend/correlation/spatial-correlation-low-pass.h"
 #include "phaser/backend/correlation/spatial-correlation.h"
+#include "phaser/common/core-gflags.h"
 #include "phaser/common/point-cloud-utils.h"
 
 #include <algorithm>
@@ -10,39 +11,26 @@
 #include <complex.h>  // needs to be included before fftw
 #include <vector>
 
-#include <gflags/gflags.h>
 #include <glog/logging.h>
 #include <omp.h>
 #include "igl/histc.h"
 
-DEFINE_double(
-    phase_discretize_lower, -50,
-    "Specifies the lower bound for the discretization.");
-DEFINE_double(
-    phase_discretize_upper, 50,
-    "Specifies the upper bound for the discretization.");
-DEFINE_double(
-    phase_n_voxels, 200,
-    "Specifies the number of voxels for the discretization.");
-
-DEFINE_int32(
-    phaser_core_spatial_zero_padding, 0,
-    "Specifies whether the spatial correlation should make use of zero "
-    "padding.");
-
-namespace alignment {
+namespace phaser_core {
 
 PhaseAligner::PhaseAligner()
-    : n_voxels_(FLAGS_phase_n_voxels),
+    : n_voxels_(FLAGS_phaser_core_spatial_n_voxels),
       total_n_voxels_(
-          FLAGS_phase_n_voxels * FLAGS_phase_n_voxels * FLAGS_phase_n_voxels),
-      lower_bound_(FLAGS_phase_discretize_lower),
-      upper_bound_(FLAGS_phase_discretize_upper),
+          FLAGS_phaser_core_spatial_n_voxels *
+          FLAGS_phaser_core_spatial_n_voxels *
+          FLAGS_phaser_core_spatial_n_voxels),
+      lower_bound_(FLAGS_phaser_core_spatial_discretize_lower),
+      upper_bound_(FLAGS_phaser_core_spatial_discretize_upper),
       edges_(Eigen::VectorXf::LinSpaced(
-          FLAGS_phase_n_voxels, FLAGS_phase_discretize_lower,
-          FLAGS_phase_discretize_upper)) {
-  VLOG(1) << "Initializing phase alignment with " << FLAGS_phase_n_voxels
-          << " voxels in [" << lower_bound_ << ", " << upper_bound_ << "].";
+          FLAGS_phaser_core_spatial_n_voxels,
+          FLAGS_phaser_core_spatial_discretize_lower,
+          FLAGS_phaser_core_spatial_discretize_upper)) {
+  VLOG(1) << "Initializing phase alignment with " << n_voxels_ << " voxels in ["
+          << lower_bound_ << ", " << upper_bound_ << "].";
   // Allocate memory for the function signals in the time domain.
   f_intensities_ = Eigen::VectorXd::Zero(total_n_voxels_);
   f_ranges_ = Eigen::VectorXd::Zero(total_n_voxels_);
@@ -158,4 +146,4 @@ uint32_t PhaseAligner::getUpperBound() const noexcept {
   return upper_bound_;
 }
 
-}  // namespace alignment
+}  // namespace phaser_core

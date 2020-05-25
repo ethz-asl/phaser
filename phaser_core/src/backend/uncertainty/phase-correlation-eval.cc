@@ -17,7 +17,7 @@ common::BaseDistributionPtr PhaseCorrelationEval::calcRotationUncertainty(
 }
 
 common::BaseDistributionPtr PhaseCorrelationEval::calcTranslationUncertainty(
-    const alignment::PhaseAligner& aligner) {
+    const phaser_core::PhaseAligner& aligner) {
   const std::vector<double> corr = aligner.getCorrelation();
   const uint32_t n_voxels = aligner.getNumberOfVoxels();
   const uint32_t lower_bound = aligner.getLowerBound();

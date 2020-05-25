@@ -139,7 +139,7 @@ void SphRegistration::estimateTranslation(
 
   model::PointCloudPtr rot_cloud = result->getRegisteredCloud();
   const double duration_translation_f_ms = common::executeTimedFunction(
-      &alignment::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
+      &phaser_core::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
       f_values_, *rot_cloud, h_values_);
   statistics_manager_.emplaceValue(
       kTranslationDurationKey, duration_translation_f_ms);

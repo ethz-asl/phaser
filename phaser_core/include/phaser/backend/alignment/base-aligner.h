@@ -7,7 +7,7 @@
 #include <memory>
 #include <vector>
 
-namespace alignment {
+namespace phaser_core {
 
 class BaseAligner {
  public:
@@ -22,6 +22,6 @@ class BaseAligner {
 
 using BaseAlignerPtr = std::unique_ptr<BaseAligner>;
 
-}  // namespace alignment
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_ALIGNMENT_BASE_ALIGNER_H_

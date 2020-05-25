@@ -17,7 +17,7 @@ class PhaseCorrelationEval {
   common::BaseDistributionPtr calcRotationUncertainty(
       const correlation::SphericalCorrelation& sph_corr);
   common::BaseDistributionPtr calcTranslationUncertainty(
-      const alignment::PhaseAligner& aligner);
+      const phaser_core::PhaseAligner& aligner);
 
   BaseEval& getRotationEval();
   BaseEval& getPositionEval();

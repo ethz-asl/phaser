@@ -12,8 +12,8 @@ SphericalCombinedWorker::SphericalCombinedWorker(
     const model::FunctionValueVec& h_values)
     : f_values_(f_values), h_values_(h_values) {
   sph_corr_.reset(new SphericalCorrelationLaplace(
-      common::FLAGS_phaser_core_spherical_bandwidth));
-  // common::FLAGS_phaser_core_spherical_zero_padding));
+      phaser_core::FLAGS_phaser_core_spherical_bandwidth));
+  // phaser_core::FLAGS_phaser_core_spherical_zero_padding));
 }
 
 void SphericalCombinedWorker::run() {

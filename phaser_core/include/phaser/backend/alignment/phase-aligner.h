@@ -9,7 +9,7 @@
 #include "phaser/backend/alignment/base-aligner.h"
 #include "phaser/backend/correlation/base-spatial-correlation.h"
 
-namespace alignment {
+namespace phaser_core {
 
 class PhaseAligner : public BaseAligner {
  public:
@@ -53,6 +53,6 @@ class PhaseAligner : public BaseAligner {
   std::vector<double> previous_correlation_;
 };
 
-}  // namespace alignment
+}  // namespace phaser_core
 
 #endif  // PHASER_BACKEND_ALIGNMENT_PHASE_ALIGNER_H_

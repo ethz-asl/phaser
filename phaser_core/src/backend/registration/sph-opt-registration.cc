@@ -22,8 +22,8 @@ namespace registration {
 
 SphOptRegistration::SphOptRegistration()
     : BaseRegistration("SphOptRegistration"),
-      bandwidth_(common::FLAGS_phaser_core_spherical_bandwidth),
-      sampler_(common::FLAGS_phaser_core_spherical_bandwidth) {
+      bandwidth_(phaser_core::FLAGS_phaser_core_spherical_bandwidth),
+      sampler_(phaser_core::FLAGS_phaser_core_spherical_bandwidth) {
   uncertainty::BaseEvalPtr rot_eval =
       std::make_unique<uncertainty::BinghamPeakBasedEval>();
   uncertainty::BaseEvalPtr pos_eval =
@@ -82,7 +82,7 @@ void SphOptRegistration::estimateTranslation(
 
   model::PointCloudPtr rot_cloud = result->getRegisteredCloud();
   const double duration_translation_f_ms = common::executeTimedFunction(
-      &alignment::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
+      &phaser_core::BaseAligner::alignRegistered, &aligner_, *cloud_prev,
       f_values_, *rot_cloud, h_values_);
   common::BaseDistributionPtr pos =
       correlation_eval_->calcTranslationUncertainty(aligner_);
