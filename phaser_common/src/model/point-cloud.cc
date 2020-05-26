@@ -1,4 +1,5 @@
 #include "phaser/model/point-cloud.h"
+#include "phaser/common/core-gflags.h"
 #include "phaser/common/data/file-system-helper.h"
 #include "phaser/common/data/ply-helper.h"
 
@@ -27,7 +28,9 @@ PointCloud::PointCloud()
     : cloud_(new common::PointCloud_t),
       info_cloud_(new common::PointCloud_t),
       kd_tree_is_initialized_(false),
-      ply_directory_(FLAGS_PlyWriteDirectory) {}
+      ply_directory_(FLAGS_PlyWriteDirectory) {
+  squared_voxel_size_ = calcSquaredVoxelSize();
+}
 
 PointCloud::PointCloud(common::PointCloud_tPtr cloud)
     : cloud_(cloud),
@@ -35,6 +38,7 @@ PointCloud::PointCloud(common::PointCloud_tPtr cloud)
       kd_tree_is_initialized_(false),
       ply_directory_(FLAGS_PlyWriteDirectory) {
   ranges_.resize(cloud_->size());
+  squared_voxel_size_ = calcSquaredVoxelSize();
 }
 
 PointCloud::PointCloud(const std::string& ply)
@@ -44,6 +48,7 @@ PointCloud::PointCloud(const std::string& ply)
       ply_directory_(FLAGS_PlyWriteDirectory) {
   readFromFile(ply);
   ranges_.resize(cloud_->size());
+  squared_voxel_size_ = calcSquaredVoxelSize();
 }
 
 PointCloud::PointCloud(const std::vector<common::Point_t>& points)
@@ -55,6 +60,15 @@ PointCloud::PointCloud(const std::vector<common::Point_t>& points)
     cloud_->push_back(point);
   }
   ranges_.resize(cloud_->size());
+  squared_voxel_size_ = calcSquaredVoxelSize();
+}
+
+float PointCloud::calcSquaredVoxelSize() const {
+  float voxel_size =
+      (std::abs(phaser_core::FLAGS_phaser_core_spatial_low_pass_lower_bound) +
+       std::abs(phaser_core::FLAGS_phaser_core_spatial_low_pass_upper_bound)) /
+      static_cast<float>(phaser_core::FLAGS_phaser_core_spatial_n_voxels);
+  return voxel_size * voxel_size;
 }
 
 void PointCloud::initialize_kd_tree() {
@@ -90,8 +104,9 @@ void PointCloud::getNearestPoints(
           << info_cloud_is_available << ".";
   const uint32_t n_points = query_points.size();
   function_values->resize(n_points);
-  // #pragma omp parallel for num_threads(8)
-  for (uint32_t i = 0; i < n_points; ++i) {
+
+  // #pragma omp parallel for num_threads(2)
+  for (uint32_t i = 0u; i < n_points; ++i) {
     const common::Point_t& query_point = query_points[i];
     // First, find the closest points.
     const int kd_tree_res = kd_tree_.nearestKSearch(
@@ -122,6 +137,7 @@ void PointCloud::sampleNearestWithoutCloudInfo(
   CHECK_GT(FLAGS_sampling_neighbors, 0);
   for (int16_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
     const int current_idx = pointIdxNKNSearch[i];
+    const float sq_dist = pointNKNSquaredDistance[i];
     if (current_idx < 0 || current_idx >= cloud_->size()) {
       continue;
     }
@@ -145,6 +161,7 @@ void PointCloud::sampleNearestWithCloudInfo(
   CHECK_GT(FLAGS_sampling_neighbors, 0);
   for (int16_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
     const int current_idx = pointIdxNKNSearch[i];
+    const float sq_dist = pointNKNSquaredDistance[i];
     const common::Point_t& point = cloud_->points[current_idx];
     const common::Point_t& info_point = info_cloud_->points[current_idx];
     value.addPoint(point);

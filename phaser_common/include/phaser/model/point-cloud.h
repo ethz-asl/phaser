@@ -71,6 +71,7 @@ class PointCloud {
       const std::vector<float>& pointNKNSquaredDistance,
       std::vector<FunctionValue>* function_values) const;
   void parsePlyPointCloud(PlyPointCloud&& ply_point_cloud);
+  float calcSquaredVoxelSize() const;
 
   common::PointCloud_tPtr cloud_;
   common::PointCloud_tPtr info_cloud_;
@@ -82,6 +83,7 @@ class PointCloud {
   std::vector<float> reflectivities_;
   std::vector<float> ambient_points_;
   std::string ply_read_directory_;
+  float squared_voxel_size_;
 };
 
 using PointCloudPtr = std::shared_ptr<PointCloud>;

@@ -75,7 +75,6 @@ cs_add_library(${PROJECT_NAME}_lib
 
    src/backend/fusion/laplace-pyramid.cc
 
-   src/common/core-gflags.cc
 )
 
  cuda_add_library(${PROJECT_NAME}_cuda_lib
