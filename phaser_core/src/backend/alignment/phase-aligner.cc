@@ -37,7 +37,7 @@ PhaseAligner::PhaseAligner()
   g_intensities_ = Eigen::VectorXd::Zero(total_n_voxels_);
   g_ranges_ = Eigen::VectorXd::Zero(total_n_voxels_);
   hist_ = Eigen::VectorXd::Zero(total_n_voxels_);
-  spatial_correlation_.reset(new SpatialCorrelationLaplace(
+  spatial_correlation_.reset(new SpatialCorrelation(
       n_voxels_, FLAGS_phaser_core_spatial_zero_padding));
 }
 
@@ -79,7 +79,7 @@ void PhaseAligner::discretizePointcloud(
   hist->setZero();
   const uint32_t n_points = data.cols();
   const uint32_t n_f = f_intensities->rows();
-#pragma omp parallel for num_threads(4)
+  // #pragma omp parallel for num_threads(4)
   for (uint32_t i = 0u; i < n_points; ++i) {
     const uint32_t lin_index =
         sub2ind(x_bins(i), y_bins(i), z_bins(i), n_voxels_, n_voxels_);

@@ -10,6 +10,10 @@ rosrun phaser_ros phaser_ros \
 		--PlyReadDirectory="/home/berlukas/Documents/ply_datasets/phaser_v2/exp/" \
     --app_mode="experiment1" \
     --truth_file="/home/berlukas/Documents/ply_datasets/phaser_v2/exp/ground_truth.txt" \
+    --phaser_core_spherical_bandwidth=100 \
+    --phaser_core_spatial_n_voxels=201 \
+    --phaser_core_spatial_discretize_lower=-50 \
+    --phaser_core_spatial_discretize_upper=50 \
     --gaussian_peak_neighbors=0 \
     --bingham_peak_neighbors=0 \
     --z_score_filter_threshold=0.01 \

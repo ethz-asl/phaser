@@ -17,7 +17,7 @@ DEFINE_string(
     PlyWriteDirectory, "", "Defines the directory to store the point clouds.");
 DEFINE_string(PlyPrefix, "cloud", "Defines the prefix name for the PLY.");
 DEFINE_int32(
-    sampling_neighbors, 2, "Defines the number of neighbors for the sampling.");
+    sampling_neighbors, 1, "Defines the number of neighbors for the sampling.");
 DEFINE_double(
     neighbor_max_distance, 5,
     "Defines the maximum allowed distance to neighbors.");
@@ -136,8 +136,11 @@ void PointCloud::sampleNearestWithoutCloudInfo(
   FunctionValue& value = (*function_values)[idx];
   CHECK_GT(FLAGS_sampling_neighbors, 0);
   for (int16_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
-    const int current_idx = pointIdxNKNSearch[i];
     const float sq_dist = pointNKNSquaredDistance[i];
+    if (sq_dist > squared_voxel_size_) {
+      continue;
+    }
+    const int current_idx = pointIdxNKNSearch[i];
     if (current_idx < 0 || current_idx >= cloud_->size()) {
       continue;
     }
@@ -160,8 +163,11 @@ void PointCloud::sampleNearestWithCloudInfo(
   FunctionValue& value = (*function_values)[idx];
   CHECK_GT(FLAGS_sampling_neighbors, 0);
   for (int16_t i = 0u; i < FLAGS_sampling_neighbors; ++i) {
-    const int current_idx = pointIdxNKNSearch[i];
     const float sq_dist = pointNKNSquaredDistance[i];
+    if (sq_dist > squared_voxel_size_) {
+      continue;
+    }
+    const int current_idx = pointIdxNKNSearch[i];
     const common::Point_t& point = cloud_->points[current_idx];
     const common::Point_t& info_point = info_cloud_->points[current_idx];
     value.addPoint(point);
