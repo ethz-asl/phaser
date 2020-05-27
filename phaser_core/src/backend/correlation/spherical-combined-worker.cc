@@ -20,6 +20,8 @@ void SphericalCombinedWorker::run() {
   CHECK_NOTNULL(sph_corr_);
   VLOG(1) << "[SphericalCombinedWorker] Estimating rotation...";
 
+  // TODO(lbern): refactor this
+
   // Get the intensities.
   SampledSignal f_intensities;
   SampledSignal h_intensities;
@@ -36,8 +38,25 @@ void SphericalCombinedWorker::run() {
   convertFunctionValues(f_values_, func_range, &f_range);
   convertFunctionValues(h_values_, func_range, &h_range);
 
+  // Get the reflectivities.
+  SampledSignal f_reflectivity;
+  SampledSignal h_reflectivity;
+  std::function<double(const model::FunctionValue&)> func_reflectivity =
+      [](const model::FunctionValue& v) { return v.getAveragedReflectivity(); };
+  convertFunctionValues(f_values_, func_reflectivity, &f_reflectivity);
+  convertFunctionValues(h_values_, func_reflectivity, &h_reflectivity);
+
+  // Get the ambient points.
+  SampledSignal f_ambient;
+  SampledSignal h_ambient;
+  std::function<double(const model::FunctionValue&)> func_ambient =
+      [](const model::FunctionValue& v) { return v.getAveragedAmbientNoise(); };
+  convertFunctionValues(f_values_, func_ambient, &f_ambient);
+  convertFunctionValues(h_values_, func_ambient, &h_ambient);
+
   sph_corr_->correlateSampledSignals(
-      {f_intensities, f_range}, {h_intensities, h_range});
+      {f_intensities, f_range, f_reflectivity, f_ambient},
+      {h_intensities, h_range, h_reflectivity, h_ambient});
   is_completed_ = true;
 }
 

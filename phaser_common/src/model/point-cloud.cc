@@ -149,6 +149,8 @@ void PointCloud::sampleNearestWithoutCloudInfo(
     value.addPoint(point);
     value.addRange(ranges_.at(current_idx));
     value.addIntensity(point.intensity);
+    value.addReflectivity(reflectivities_.at(current_idx));
+    value.addAmbientNoise(ambient_points_.at(current_idx));
   }
 }
 
@@ -247,6 +249,8 @@ PointCloud PointCloud::clone() const {
   pcl::copyPointCloud(*cloud_, *cloned_cloud.cloud_);
   pcl::copyPointCloud(*info_cloud_, *cloned_cloud.info_cloud_);
   cloned_cloud.ranges_ = ranges_;
+  cloned_cloud.reflectivities_ = reflectivities_;
+  cloned_cloud.ambient_points_ = ambient_points_;
   cloned_cloud.ply_read_directory_ = ply_read_directory_;
   return cloned_cloud;
 }
