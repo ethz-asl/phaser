@@ -101,7 +101,7 @@ void SpatialCorrelation::complexMulVecUsingIndices(
   __m128d vec_C_real = _mm_setzero_pd();
   __m128d vec_C_img = _mm_setzero_pd();
   const uint32_t n_points = indices.size();
-  for (uint32_t idx = 0u; idx < n_points; idx += 2) {
+  for (uint32_t idx = 0u; idx < n_points - 1; idx += 2) {
     const uint32_t i = indices[idx];
     const uint32_t j = indices[idx + 1];
     const uint32_t padded_i =
@@ -146,9 +146,16 @@ void SpatialCorrelation::complexMulSeqUsingIndices(
   const uint32_t n_points = indices.size();
 #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < n_points; ++i) {
-    const uint32_t idx = zero_padding_ != 0u ? computeZeroPaddedIndex(i) : i;
-    C[idx][0] = F[i][0] * G[i][0] - F[i][1] * (-G[i][1]);
-    C[idx][1] = F[i][0] * (-G[i][1]) + F[i][1] * G[i][0];
+    const uint32_t padded_idx =
+        zero_padding_ != 0u ? computeZeroPaddedIndex(i) : indices[i];
+    const uint32_t idx = indices[i];
+    CHECK_LT(idx, total_n_voxels_);
+    CHECK_GE(idx, 0);
+    CHECK_LT(padded_idx, total_n_voxels_);
+    CHECK_GE(padded_idx, 0);
+
+    C[padded_idx][0] = F[idx][0] * G[idx][0] - F[idx][1] * (-G[idx][1]);
+    C[padded_idx][1] = F[idx][0] * (-G[idx][1]) + F[idx][1] * G[idx][0];
   }
 }
 

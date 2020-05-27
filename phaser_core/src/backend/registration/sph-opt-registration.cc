@@ -123,7 +123,7 @@ std::vector<SphericalCorrelation> SphOptRegistration::correlatePointcloud(
 
   // Add workers to pool and execute them.
   auto start = std::chrono::high_resolution_clock::now();
-  th_pool_.add_worker(corr_range_worker);
+  th_pool_.add_worker(corr_intensity_worker);
   th_pool_.run_and_wait_all();
   // th_pool_.add_worker(corr_range_worker);
   // th_pool_.run_and_wait_all();
@@ -132,7 +132,7 @@ std::vector<SphericalCorrelation> SphOptRegistration::correlatePointcloud(
           << std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
                  .count()
           << "ms";
-  return {corr_range_worker->getCorrelationObject()};
+  return {corr_intensity_worker->getCorrelationObject()};
   // corr_range_worker->getCorrelationObject()};
 }
 

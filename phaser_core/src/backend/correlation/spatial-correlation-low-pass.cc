@@ -89,6 +89,7 @@ void SpatialCorrelationLowPass::computeIndicesBasedOnBounds() {
       }
     }
   }
+
   VLOG(1) << "Computed indicies for bounds: " << low_pass_lower_bound_
           << " and " << low_pass_upper_bound_ << ".";
 }
