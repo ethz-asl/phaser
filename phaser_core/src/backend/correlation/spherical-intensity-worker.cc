@@ -27,8 +27,8 @@ void SphericalIntensityWorker::run() {
       [](const model::FunctionValue& v) { return v.getAveragedIntensity(); };
   convertFunctionValues(f_values_, func, &f_intensities);
   convertFunctionValues(h_values_, func, &h_intensities);
-  // sph_corr_->correlateSampledSignals({f_intensities}, {h_intensities});
-  sph_corr_->correlateSignals(f_values_, h_values_);
+  sph_corr_->correlateSampledSignals({f_intensities}, {h_intensities});
+  // sph_corr_->correlateSignals(f_values_, h_values_);
 
   is_completed_ = true;
 }

@@ -251,31 +251,31 @@ PointCloud PointCloud::clone() const {
   return cloned_cloud;
 }
 
-void PointCloud::setRange(const float range, const uint32_t i) {
+void PointCloud::setRange(const double range, const uint32_t i) {
   CHECK_LT(i, ranges_.size());
   ranges_.at(i) = range;
 }
 
-float PointCloud::rangeAt(const uint32_t i) const {
+double PointCloud::rangeAt(const uint32_t i) const {
   CHECK_LT(i, ranges_.size());
-  float range = ranges_.at(i);
+  double range = ranges_.at(i);
   if (range == 0) {
     return calcRangeAt(i);
   }
   return range;
 }
 
-float PointCloud::calcRangeAt(const uint32_t i) const {
+double PointCloud::calcRangeAt(const uint32_t i) const {
   const common::Point_t& p = pointAt(i);
   return std::sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
 }
 
-float PointCloud::getReflectivity(const uint32_t i) const {
+double PointCloud::getReflectivity(const uint32_t i) const {
   CHECK_LT(i, reflectivities_.size());
   return reflectivities_.at(i);
 }
 
-float PointCloud::getAmbientNoise(const uint32_t i) const {
+double PointCloud::getAmbientNoise(const uint32_t i) const {
   CHECK_LT(i, ambient_points_.size());
   return ambient_points_.at(i);
 }
@@ -314,8 +314,8 @@ std::string PointCloud::getPlyReadDirectory() const noexcept {
 
 void PointCloud::parsePlyPointCloud(PlyPointCloud&& ply_point_cloud) {
   CHECK_NOTNULL(cloud_);
-  const std::vector<float>& xyz = ply_point_cloud.getXYZPoints();
-  const std::vector<float>& intensities = ply_point_cloud.getIntentsities();
+  const std::vector<double>& xyz = ply_point_cloud.getXYZPoints();
+  const std::vector<double>& intensities = ply_point_cloud.getIntentsities();
   const uint32_t n_points = xyz.size();
   const uint32_t n_intensities = intensities.size();
   CHECK_GT(n_points, 0u);

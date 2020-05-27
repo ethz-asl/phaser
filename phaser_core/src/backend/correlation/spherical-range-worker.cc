@@ -22,13 +22,6 @@ void SphericalRangeWorker::run() {
       [](const model::FunctionValue& v) { return v.getAveragedRange(); };
   convertFunctionValues(f_values_, func, &f_range);
   convertFunctionValues(h_values_, func, &h_range);
-
-  VLOG(1) << "===============================================================";
-  for (uint32_t i = 0u; i < f_values_.size(); ++i) {
-    if (std::isnan(f_range[i]) || std::isnan(h_range[i]))
-      VLOG(1) << "rnage: " << f_range[i] << ", " << h_range[i] << " i: " << i;
-  }
-  VLOG(1) << "===============================================================";
   sph_corr_.correlateSampledSignals({f_range}, {h_range});
 
   is_completed_ = true;
