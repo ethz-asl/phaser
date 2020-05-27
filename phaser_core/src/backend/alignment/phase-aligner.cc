@@ -37,7 +37,7 @@ PhaseAligner::PhaseAligner()
   g_intensities_ = Eigen::VectorXd::Zero(total_n_voxels_);
   g_ranges_ = Eigen::VectorXd::Zero(total_n_voxels_);
   hist_ = Eigen::VectorXd::Zero(total_n_voxels_);
-  spatial_correlation_.reset(new SpatialCorrelation(
+  spatial_correlation_.reset(new SpatialCorrelationLowPass(
       n_voxels_, FLAGS_phaser_core_spatial_zero_padding));
 }
 

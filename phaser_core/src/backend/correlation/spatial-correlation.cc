@@ -34,6 +34,15 @@ SpatialCorrelation::SpatialCorrelation(
   C_ = static_cast<fftw_complex*>(
       fftw_malloc(sizeof(fftw_complex) * n_padded_size));
 
+  for (uint32_t i = 0u; i < total_n_voxels_; ++i) {
+    F_[i][0] = 0.0;
+    F_[i][1] = 0.0;
+    G_[i][0] = 0.0;
+    G_[i][1] = 0.0;
+    C_[i][0] = 0.0;
+    C_[i][1] = 0.0;
+  }
+
   c_ = new double[n_padded_size]{};
   f_ = new double[total_n_voxels_]{};
   g_ = new double[total_n_voxels_]{};
