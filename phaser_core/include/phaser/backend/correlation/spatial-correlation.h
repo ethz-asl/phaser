@@ -33,6 +33,7 @@ class SpatialCorrelation : public BaseSpatialCorrelation {
       const std::vector<uint32_t>& indices, fftw_complex* F, fftw_complex* G,
       fftw_complex* C);
   uint32_t computeZeroPaddedIndex(const uint32_t idx);
+  void setCorrelationToZero();
 
   fftw_plan f_plan_;
   fftw_plan g_plan_;

@@ -41,7 +41,7 @@ PhaseAligner::PhaseAligner()
   g_reflectivity_ = Eigen::VectorXd::Zero(total_n_voxels_);
   g_ambient_ = Eigen::VectorXd::Zero(total_n_voxels_);
   hist_ = Eigen::VectorXd::Zero(total_n_voxels_);
-  spatial_correlation_.reset(new SpatialCorrelationLaplace(
+  spatial_correlation_.reset(new SpatialCorrelation(
       n_voxels_, FLAGS_phaser_core_spatial_zero_padding));
 }
 

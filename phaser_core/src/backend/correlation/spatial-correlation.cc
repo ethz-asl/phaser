@@ -168,8 +168,8 @@ double* SpatialCorrelation::correlateSignals(
   CHECK_GT(g.size(), 0u);
 
   const uint32_t function_size = total_n_voxels_ * sizeof(double);
-  memcpy(f_, f[0]->data(), function_size);
-  memcpy(g_, g[0]->data(), function_size);
+  memcpy(f_, f[1]->data(), function_size);
+  memcpy(g_, g[1]->data(), function_size);
 
   // Perform the two FFTs on the discretized signals.
   VLOG(1) << "Performing FFT on the first point cloud.";
@@ -180,10 +180,39 @@ double* SpatialCorrelation::correlateSignals(
   // Correlate the signals in the frequency domain.
   complexMulSeq(F_, G_, C_);
 
+  double max_val = 0;
+  uint32_t idx = 0u;
+  for (size_t i = 0u; i < total_n_voxels_padded_; ++i) {
+    double energy = sqrt(C_[i][0] * C_[i][0] + C_[i][1] * C_[i][1]);
+    if (energy > max_val) {
+      max_val = energy;
+      idx = i;
+    }
+  }
+  const uint32_t padding_per_dim = 2u * zero_padding_;
+  std::array<uint32_t, 3> ijk = common::SignalUtils::Ind2Sub(
+      idx, n_voxels_per_dim_ + padding_per_dim,
+      n_voxels_per_dim_ + padding_per_dim);
+  VLOG(1) << "MAXIMUM FREQ CORR: " << max_val << " at " << idx;
+  VLOG(1) << "CORRESPONDS TO: " << ijk[0] << ", " << ijk[1] << ", " << ijk[2];
+
   // Perform the IFFT on the correlation tensor.
   VLOG(1) << "Performing IFFT on correlation.";
   fftw_execute(c_plan_);
+
+  if (zero_padding_ != 0u) {
+    // Not sure yet why we have to do this.
+    setCorrelationToZero();
+  }
+
   return c_;
+}
+
+void SpatialCorrelation::setCorrelationToZero() {
+  for (uint32_t i = 0u; i < total_n_voxels_padded_; ++i) {
+    C_[i][0] = 0.0;
+    C_[i][1] = 0.0;
+  }
 }
 
 uint32_t SpatialCorrelation::getZeroPadding() const {
