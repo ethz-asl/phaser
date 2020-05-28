@@ -48,12 +48,12 @@ class PointCloud {
   std::size_t size() const;
   PointCloud clone() const;
 
-  void setRange(const float range, const uint32_t i);
-  float rangeAt(const uint32_t i) const;
-  float calcRangeAt(const uint32_t i) const;
+  void setRange(const double range, const uint32_t i);
+  double rangeAt(const uint32_t i) const;
+  double calcRangeAt(const uint32_t i) const;
 
-  float getReflectivity(const uint32_t i) const;
-  float getAmbientNoise(const uint32_t i) const;
+  double getReflectivity(const uint32_t i) const;
+  double getAmbientNoise(const uint32_t i) const;
 
   void initialize_kd_tree();
   void writeToFile(std::string&& directory = "");
@@ -71,6 +71,7 @@ class PointCloud {
       const std::vector<float>& pointNKNSquaredDistance,
       std::vector<FunctionValue>* function_values) const;
   void parsePlyPointCloud(PlyPointCloud&& ply_point_cloud);
+  float calcSquaredVoxelSize() const;
 
   common::PointCloud_tPtr cloud_;
   common::PointCloud_tPtr info_cloud_;
@@ -78,10 +79,11 @@ class PointCloud {
 
   bool kd_tree_is_initialized_;
   std::string ply_directory_;
-  std::vector<float> ranges_;
-  std::vector<float> reflectivities_;
-  std::vector<float> ambient_points_;
+  std::vector<double> ranges_;
+  std::vector<double> reflectivities_;
+  std::vector<double> ambient_points_;
   std::string ply_read_directory_;
+  float squared_voxel_size_;
 };
 
 using PointCloudPtr = std::shared_ptr<PointCloud>;

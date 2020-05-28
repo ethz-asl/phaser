@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 
+#include "phaser/backend/correlation/spherical-correlation-low-pass.h"
 #include "phaser/backend/correlation/spherical-correlation.h"
 #include "phaser/common/base-worker.h"
 #include "phaser/common/spherical-sampler.h"
@@ -16,7 +17,7 @@ class SphericalRangeWorker : public common::BaseWorker {
  public:
   explicit SphericalRangeWorker(
       const model::FunctionValueVec& f_values,
-      const model::FunctionValueVec& h_values, const uint16_t bandwidth);
+      const model::FunctionValueVec& h_values);
 
   void run() override;
 
@@ -24,10 +25,9 @@ class SphericalRangeWorker : public common::BaseWorker {
   const SphericalCorrelation& getCorrelationObject() const noexcept;
 
  private:
-  SphericalCorrelation sph_corr_;
+  SphericalCorrelationLowPass sph_corr_;
   const model::FunctionValueVec& f_values_;
   const model::FunctionValueVec& h_values_;
-  const uint32_t bw_;
 };
 
 using SphericalRangeWorkerPtr = std::shared_ptr<SphericalRangeWorker>;

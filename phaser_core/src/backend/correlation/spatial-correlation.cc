@@ -21,20 +21,31 @@ SpatialCorrelation::SpatialCorrelation(
   const double total_n_padding_factor = ratio_n_padding_per_dim *
                                         ratio_n_padding_per_dim *
                                         ratio_n_padding_per_dim;
-  const uint32_t n_padded_size =
+  total_n_voxels_padded_ =
       static_cast<uint32_t>(total_n_voxels_ * total_n_padding_factor);
   VLOG(1) << "Initializing spatial correlation with padding " << zero_padding
           << " (ratio: " << ratio_n_padding_per_dim
           << ", factor: " << total_n_padding_factor << ").";
-  VLOG(1) << "padded size: " << n_padded_size;
+  VLOG(1) << "padded size: " << total_n_voxels_padded_;
 
   const uint32_t n_fftw_size = sizeof(fftw_complex) * total_n_voxels_;
   F_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size));
   G_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size));
   C_ = static_cast<fftw_complex*>(
-      fftw_malloc(sizeof(fftw_complex) * n_padded_size));
+      fftw_malloc(sizeof(fftw_complex) * total_n_voxels_padded_));
 
-  c_ = new double[n_padded_size]{};
+  for (uint32_t i = 0u; i < total_n_voxels_; ++i) {
+    F_[i][0] = 0.0;
+    F_[i][1] = 0.0;
+    G_[i][0] = 0.0;
+    G_[i][1] = 0.0;
+  }
+  for (uint32_t i = 0u; i < total_n_voxels_padded_; ++i) {
+    C_[i][0] = 0.0;
+    C_[i][1] = 0.0;
+  }
+
+  c_ = new double[total_n_voxels_padded_]{};
   f_ = new double[total_n_voxels_]{};
   g_ = new double[total_n_voxels_]{};
 
@@ -92,7 +103,7 @@ void SpatialCorrelation::complexMulVecUsingIndices(
   __m128d vec_C_real = _mm_setzero_pd();
   __m128d vec_C_img = _mm_setzero_pd();
   const uint32_t n_points = indices.size();
-  for (uint32_t idx = 0u; idx < n_points; idx += 2) {
+  for (uint32_t idx = 0u; idx < n_points - 1; idx += 2) {
     const uint32_t i = indices[idx];
     const uint32_t j = indices[idx + 1];
     const uint32_t padded_i =
@@ -137,9 +148,16 @@ void SpatialCorrelation::complexMulSeqUsingIndices(
   const uint32_t n_points = indices.size();
 #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < n_points; ++i) {
-    const uint32_t idx = zero_padding_ != 0u ? computeZeroPaddedIndex(i) : i;
-    C[idx][0] = F[i][0] * G[i][0] - F[i][1] * (-G[i][1]);
-    C[idx][1] = F[i][0] * (-G[i][1]) + F[i][1] * G[i][0];
+    const uint32_t idx = indices[i];
+    const uint32_t padded_idx =
+        zero_padding_ != 0u ? computeZeroPaddedIndex(idx) : idx;
+    CHECK_LT(idx, total_n_voxels_);
+    CHECK_GE(idx, 0);
+    CHECK_LT(padded_idx, total_n_voxels_padded_);
+    CHECK_GE(padded_idx, 0);
+
+    C[padded_idx][0] = F[idx][0] * G[idx][0] - F[idx][1] * (-G[idx][1]);
+    C[padded_idx][1] = F[idx][0] * (-G[idx][1]) + F[idx][1] * G[idx][0];
   }
 }
 
@@ -162,14 +180,47 @@ double* SpatialCorrelation::correlateSignals(
   // Correlate the signals in the frequency domain.
   complexMulSeq(F_, G_, C_);
 
+  double max_val = 0;
+  uint32_t idx = 0u;
+  for (size_t i = 0u; i < total_n_voxels_padded_; ++i) {
+    double energy = sqrt(C_[i][0] * C_[i][0] + C_[i][1] * C_[i][1]);
+    if (energy > max_val) {
+      max_val = energy;
+      idx = i;
+    }
+  }
+  const uint32_t padding_per_dim = 2u * zero_padding_;
+  std::array<uint32_t, 3> ijk = common::SignalUtils::Ind2Sub(
+      idx, n_voxels_per_dim_ + padding_per_dim,
+      n_voxels_per_dim_ + padding_per_dim);
+  VLOG(1) << "MAXIMUM FREQ CORR: " << max_val << " at " << idx;
+  VLOG(1) << "CORRESPONDS TO: " << ijk[0] << ", " << ijk[1] << ", " << ijk[2];
+
   // Perform the IFFT on the correlation tensor.
   VLOG(1) << "Performing IFFT on correlation.";
   fftw_execute(c_plan_);
+
+  if (zero_padding_ != 0u) {
+    // Not sure yet why we have to do this.
+    setCorrelationToZero();
+  }
+
   return c_;
+}
+
+void SpatialCorrelation::setCorrelationToZero() {
+  for (uint32_t i = 0u; i < total_n_voxels_padded_; ++i) {
+    C_[i][0] = 0.0;
+    C_[i][1] = 0.0;
+  }
 }
 
 uint32_t SpatialCorrelation::getZeroPadding() const {
   return zero_padding_;
+}
+
+uint32_t SpatialCorrelation::getCorrelationSize() const {
+  return total_n_voxels_padded_;
 }
 
 uint32_t SpatialCorrelation::computeZeroPaddedIndex(const uint32_t idx) {

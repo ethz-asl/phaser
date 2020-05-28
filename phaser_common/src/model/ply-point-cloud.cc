@@ -2,43 +2,43 @@
 
 namespace model {
 
-std::vector<float>& PlyPointCloud::getXYZPoints() {
+std::vector<double>& PlyPointCloud::getXYZPoints() {
   return xyz_points_;
 }
 
-const std::vector<float>& PlyPointCloud::getXYZPoints() const {
+const std::vector<double>& PlyPointCloud::getXYZPoints() const {
   return xyz_points_;
 }
 
-std::vector<float>& PlyPointCloud::getIntentsities() {
+std::vector<double>& PlyPointCloud::getIntentsities() {
   return intensities_;
 }
 
-const std::vector<float>& PlyPointCloud::getIntentsities() const {
+const std::vector<double>& PlyPointCloud::getIntentsities() const {
   return intensities_;
 }
 
-std::vector<float>& PlyPointCloud::getReflectivities() {
+std::vector<double>& PlyPointCloud::getReflectivities() {
   return reflectivities_;
 }
 
-const std::vector<float>& PlyPointCloud::getReflectivities() const {
+const std::vector<double>& PlyPointCloud::getReflectivities() const {
   return reflectivities_;
 }
 
-std::vector<float>& PlyPointCloud::getAmbientPoints() {
+std::vector<double>& PlyPointCloud::getAmbientPoints() {
   return ambient_points_;
 }
 
-const std::vector<float>& PlyPointCloud::getAmbientPoints() const {
+const std::vector<double>& PlyPointCloud::getAmbientPoints() const {
   return ambient_points_;
 }
 
-std::vector<float>& PlyPointCloud::getRange() {
+std::vector<double>& PlyPointCloud::getRange() {
   return range_;
 }
 
-const std::vector<float>& PlyPointCloud::getRange() const {
+const std::vector<double>& PlyPointCloud::getRange() const {
   return range_;
 }
 

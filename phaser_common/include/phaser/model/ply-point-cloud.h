@@ -7,27 +7,27 @@ namespace model {
 
 class PlyPointCloud {
  public:
-  std::vector<float>& getXYZPoints();
-  const std::vector<float>& getXYZPoints() const;
+  std::vector<double>& getXYZPoints();
+  const std::vector<double>& getXYZPoints() const;
 
-  std::vector<float>& getIntentsities();
-  const std::vector<float>& getIntentsities() const;
+  std::vector<double>& getIntentsities();
+  const std::vector<double>& getIntentsities() const;
 
-  std::vector<float>& getReflectivities();
-  const std::vector<float>& getReflectivities() const;
+  std::vector<double>& getReflectivities();
+  const std::vector<double>& getReflectivities() const;
 
-  std::vector<float>& getAmbientPoints();
-  const std::vector<float>& getAmbientPoints() const;
+  std::vector<double>& getAmbientPoints();
+  const std::vector<double>& getAmbientPoints() const;
 
-  std::vector<float>& getRange();
-  const std::vector<float>& getRange() const;
+  std::vector<double>& getRange();
+  const std::vector<double>& getRange() const;
 
  private:
-  std::vector<float> xyz_points_;
-  std::vector<float> intensities_;
-  std::vector<float> reflectivities_;
-  std::vector<float> ambient_points_;
-  std::vector<float> range_;
+  std::vector<double> xyz_points_;
+  std::vector<double> intensities_;
+  std::vector<double> reflectivities_;
+  std::vector<double> ambient_points_;
+  std::vector<double> range_;
 };
 
 }  // namespace model

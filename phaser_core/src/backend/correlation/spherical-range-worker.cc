@@ -2,15 +2,16 @@
 
 #include <glog/logging.h>
 
+#include "phaser/common/core-gflags.h"
+
 namespace phaser_core {
 
 SphericalRangeWorker::SphericalRangeWorker(
     const model::FunctionValueVec& f_values,
-    const model::FunctionValueVec& h_values, const uint16_t bandwidth)
+    const model::FunctionValueVec& h_values)
     : f_values_(f_values),
       h_values_(h_values),
-      bw_(bandwidth),
-      sph_corr_(bandwidth) {}
+      sph_corr_(FLAGS_phaser_core_spherical_bandwidth) {}
 
 void SphericalRangeWorker::run() {
   VLOG(1) << "[SphericalIntensityWorker] Estimating rotation...";

@@ -16,10 +16,14 @@ class FunctionValue {
 
   double getAveragedRange() const noexcept;
   double getAveragedIntensity() const noexcept;
+  double getAveragedReflectivity() const noexcept;
+  double getAveragedAmbientNoise() const noexcept;
   common::Point_t getAveragedPoint() const noexcept;
 
   void addRange(const double range);
   void addIntensity(const double intensity);
+  void addReflectivity(const double reflectivity);
+  void addAmbientNoise(const double ambient);
   void addSemanticClass(const uint16_t class_id);
   void addInstance(const uint16_t instance);
   void addPoint(const common::Point_t& point);
@@ -29,6 +33,8 @@ class FunctionValue {
  private:
   std::vector<double> range_;
   std::vector<double> intensity_;
+  std::vector<double> reflectivity_;
+  std::vector<double> ambient_noise_;
   std::vector<uint16_t> semantic_classes_;
   std::vector<uint16_t> semantic_instances_;
   common::PointCloud_tPtr points_;

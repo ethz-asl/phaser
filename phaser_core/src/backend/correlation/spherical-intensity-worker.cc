@@ -13,8 +13,8 @@ SphericalIntensityWorker::SphericalIntensityWorker(
     const model::FunctionValueVec& h_values)
     : f_values_(f_values), h_values_(h_values) {
   sph_corr_.reset(new SphericalCorrelation(
-      phaser_core::FLAGS_phaser_core_spherical_bandwidth,
-      phaser_core::FLAGS_phaser_core_spherical_zero_padding));
+      FLAGS_phaser_core_spherical_bandwidth,
+      FLAGS_phaser_core_spherical_zero_padding));
 }
 
 void SphericalIntensityWorker::run() {
@@ -28,6 +28,7 @@ void SphericalIntensityWorker::run() {
   convertFunctionValues(f_values_, func, &f_intensities);
   convertFunctionValues(h_values_, func, &h_intensities);
   sph_corr_->correlateSampledSignals({f_intensities}, {h_intensities});
+  // sph_corr_->correlateSignals(f_values_, h_values_);
 
   is_completed_ = true;
 }

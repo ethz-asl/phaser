@@ -43,8 +43,8 @@ double* SpatialCorrelationLowPass::correlateSignals(
   CHECK_GT(f.size(), 0u);
   CHECK_GT(g.size(), 0u);
   const uint32_t function_size = total_n_voxels_ * sizeof(double);
-  memcpy(f_, f[0]->data(), function_size);
-  memcpy(g_, g[0]->data(), function_size);
+  memcpy(f_, f[1]->data(), function_size);
+  memcpy(g_, g[1]->data(), function_size);
 
   // Perform the two FFTs on the discretized signals.
   VLOG(1) << "Performing FFT on the first point cloud.";
@@ -60,7 +60,7 @@ double* SpatialCorrelationLowPass::correlateSignals(
   // TODO(lbern): Fill C_ with zeros.
 
   // Correlate the signals in the frequency domain.
-  complexMulVecUsingIndices(linear_indices_, F_, G_, C_);
+  complexMulSeqUsingIndices(linear_indices_, F_, G_, C_);
 
   // Perform the IFFT on the correlation tensor.
   VLOG(1) << "Shifting back the signals. Performing IFFT on low passed filtered"
@@ -89,6 +89,7 @@ void SpatialCorrelationLowPass::computeIndicesBasedOnBounds() {
       }
     }
   }
+
   VLOG(1) << "Computed indicies for bounds: " << low_pass_lower_bound_
           << " and " << low_pass_upper_bound_ << ".";
 }

@@ -22,9 +22,9 @@ double* SpatialCorrelationLaplace::correlateSignals(
   extractTransformedChannels(f, g, &f_channels, &g_channels);
 
   std::vector<complex_t> F_fused =
-      laplace_.fuseChannels(f_channels, total_n_voxels_, 3);
+      laplace_.fuseChannels(f_channels, total_n_voxels_, 5);
   std::vector<complex_t> G_fused =
-      laplace_.fuseChannels(g_channels, total_n_voxels_, 3);
+      laplace_.fuseChannels(g_channels, total_n_voxels_, 5);
 
   complexMulSeq(
       reinterpret_cast<fftw_complex*>(F_fused.data()),

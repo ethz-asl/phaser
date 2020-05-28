@@ -1,4 +1,5 @@
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
+#include "phaser/common/signal-utils.h"
 #include "phaser/common/translation-utils.h"
 #include "phaser/distribution/gaussian.h"
 
@@ -81,7 +82,7 @@ void GaussianPeakBasedEval::retrievePeakNeighbors(
   uint32_t k = 0u;
   for (uint32_t i = start; i <= end; ++i) {
     std::array<uint32_t, 3> xyz =
-        common::TranslationUtils::Ind2sub(i, n_voxels);
+        common::SignalUtils::Ind2Sub(i, n_voxels, n_voxels);
     (*samples)(0, k) = common::TranslationUtils::ComputeTranslationFromIndex(
         static_cast<double>(xyz[0]), n_voxels, discretize_lower_bound,
         discretize_upper_bound);

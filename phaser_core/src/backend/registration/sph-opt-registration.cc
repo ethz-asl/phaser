@@ -112,15 +112,10 @@ std::vector<SphericalCorrelation> SphOptRegistration::correlatePointcloud(
   sampler_.sampleUniformly(*source, &h_values);
 
   // Create workers for the spherical correlation.
-  /*
-  SphericalIntensityWorkerPtr corr_intensity_worker =
-      CHECK_NOTNULL(std::make_shared<SphericalIntensityWorker>(
-          f_values, h_values));
+  SphericalIntensityWorkerPtr corr_intensity_worker = CHECK_NOTNULL(
+      std::make_shared<SphericalIntensityWorker>(f_values, h_values));
   SphericalRangeWorkerPtr corr_range_worker =
-      CHECK_NOTNULL(std::make_shared<SphericalRangeWorker>(
-          f_values, h_values, sampler_.getInitializedBandwith()));
-          */
-
+      CHECK_NOTNULL(std::make_shared<SphericalRangeWorker>(f_values, h_values));
   SphericalCombinedWorkerPtr corr_combined_worker = CHECK_NOTNULL(
       std::make_shared<SphericalCombinedWorker>(f_values, h_values));
 
