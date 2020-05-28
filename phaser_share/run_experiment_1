@@ -13,11 +13,13 @@ rosrun phaser_ros phaser_ros \
     --phaser_core_spherical_bandwidth=100 \
     --phaser_core_spherical_low_pass_lower_bound=000 \
     --phaser_core_spherical_low_pass_upper_bound=10000 \
+    --phaser_core_spherical_zero_padding=10 \
     --phaser_core_spatial_n_voxels=201 \
     --phaser_core_spatial_discretize_lower=-50 \
     --phaser_core_spatial_discretize_upper=50 \
     --phaser_core_spatial_low_pass_lower_bound=85 \
     --phaser_core_spatial_low_pass_upper_bound=115 \
+    --phaser_core_spatial_zero_padding=0 \
     --gaussian_peak_neighbors=0 \
     --bingham_peak_neighbors=0 \
     --z_score_filter_threshold=0.01 \

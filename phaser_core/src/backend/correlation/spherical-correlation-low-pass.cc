@@ -7,8 +7,9 @@
 
 namespace phaser_core {
 
-SphericalCorrelationLowPass::SphericalCorrelationLowPass(const uint32_t bw)
-    : SphericalCorrelation(bw) {}
+SphericalCorrelationLowPass::SphericalCorrelationLowPass(
+    const uint32_t bw, const uint32_t zero_padding)
+    : SphericalCorrelation(bw, zero_padding) {}
 
 void SphericalCorrelationLowPass::correlateSampledSignals(
     const std::vector<SampledSignal>& f1,

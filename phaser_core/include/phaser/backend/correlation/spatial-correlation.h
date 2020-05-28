@@ -41,6 +41,7 @@ class SpatialCorrelation : public BaseSpatialCorrelation {
   double* g_;
   Eigen::VectorXd hist_;
   const uint32_t total_n_voxels_;
+  uint32_t total_n_voxels_padded_;
   const uint32_t n_voxels_per_dim_;
   const uint32_t zero_padding_;
 };

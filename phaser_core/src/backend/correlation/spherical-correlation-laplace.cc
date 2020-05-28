@@ -6,8 +6,9 @@
 
 namespace phaser_core {
 
-SphericalCorrelationLaplace::SphericalCorrelationLaplace(const uint32_t bw)
-    : SphericalCorrelation(bw) {}
+SphericalCorrelationLaplace::SphericalCorrelationLaplace(
+    const uint32_t bw, const uint32_t zero_padding)
+    : SphericalCorrelation(bw, zero_padding) {}
 
 void SphericalCorrelationLaplace::correlateSampledSignals(
     const std::vector<SampledSignal>& f, const std::vector<SampledSignal>& g) {

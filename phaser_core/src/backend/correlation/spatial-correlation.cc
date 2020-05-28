@@ -21,18 +21,18 @@ SpatialCorrelation::SpatialCorrelation(
   const double total_n_padding_factor = ratio_n_padding_per_dim *
                                         ratio_n_padding_per_dim *
                                         ratio_n_padding_per_dim;
-  const uint32_t n_padded_size =
+  total_n_voxels_padded_ =
       static_cast<uint32_t>(total_n_voxels_ * total_n_padding_factor);
   VLOG(1) << "Initializing spatial correlation with padding " << zero_padding
           << " (ratio: " << ratio_n_padding_per_dim
           << ", factor: " << total_n_padding_factor << ").";
-  VLOG(1) << "padded size: " << n_padded_size;
+  VLOG(1) << "padded size: " << total_n_voxels_padded_;
 
   const uint32_t n_fftw_size = sizeof(fftw_complex) * total_n_voxels_;
   F_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size));
   G_ = static_cast<fftw_complex*>(fftw_malloc(n_fftw_size));
   C_ = static_cast<fftw_complex*>(
-      fftw_malloc(sizeof(fftw_complex) * n_padded_size));
+      fftw_malloc(sizeof(fftw_complex) * total_n_voxels_padded_));
 
   for (uint32_t i = 0u; i < total_n_voxels_; ++i) {
     F_[i][0] = 0.0;
@@ -43,7 +43,7 @@ SpatialCorrelation::SpatialCorrelation(
     C_[i][1] = 0.0;
   }
 
-  c_ = new double[n_padded_size]{};
+  c_ = new double[total_n_voxels_padded_]{};
   f_ = new double[total_n_voxels_]{};
   g_ = new double[total_n_voxels_]{};
 
@@ -151,7 +151,7 @@ void SpatialCorrelation::complexMulSeqUsingIndices(
     const uint32_t idx = indices[i];
     CHECK_LT(idx, total_n_voxels_);
     CHECK_GE(idx, 0);
-    CHECK_LT(padded_idx, total_n_voxels_);
+    CHECK_LT(padded_idx, total_n_voxels_padded_);
     CHECK_GE(padded_idx, 0);
 
     C[padded_idx][0] = F[idx][0] * G[idx][0] - F[idx][1] * (-G[idx][1]);

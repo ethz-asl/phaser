@@ -11,7 +11,8 @@ namespace phaser_core {
 
 class SphericalCorrelationLaplace : public SphericalCorrelation {
  public:
-  explicit SphericalCorrelationLaplace(const uint32_t bw = 100);
+  explicit SphericalCorrelationLaplace(
+      const uint32_t bw = 100, const uint32_t zero_padding = 0);
   virtual ~SphericalCorrelationLaplace() = default;
   void correlateSampledSignals(
       const std::vector<SampledSignal>& f,

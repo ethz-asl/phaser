@@ -9,7 +9,8 @@ namespace phaser_core {
 
 class SphericalCorrelationLowPass : public SphericalCorrelation {
  public:
-  explicit SphericalCorrelationLowPass(const uint32_t bw = 100);
+  explicit SphericalCorrelationLowPass(
+      const uint32_t bw = 100, const uint32_t zero_padding = 0);
   virtual ~SphericalCorrelationLowPass() = default;
   void correlateSampledSignals(
       const std::vector<SampledSignal>& f1,
