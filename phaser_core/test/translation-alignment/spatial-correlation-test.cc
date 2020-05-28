@@ -2,6 +2,7 @@
 #include "phaser/common/signal-utils.h"
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
+#include "phaser/common/translation-utils.h"
 
 #include <algorithm>
 #include <chrono>
@@ -92,7 +93,7 @@ TEST_F(SpatialCorrelationTest, SimplePaddedCorrelation) {
   double* c = corr.correlateSignals(signal_f, signal_g);
 
   CHECK_NOTNULL(c);
-  const uint32_t n_padded_corr_per_dim = n_corr_per_dim + padding;
+  const uint32_t n_padded_corr_per_dim = n_corr_per_dim + 2 * padding;
   const uint32_t n_padded_cor =
       n_padded_corr_per_dim * n_padded_corr_per_dim * n_padded_corr_per_dim;
   EXPECT_GT(nnz(c, n_padded_cor), 0);
@@ -113,17 +114,23 @@ TEST_F(SpatialCorrelationTest, PaddedCorrelation) {
   double* c = corr.correlateSignals(signal_f, signal_g);
   CHECK_NOTNULL(c);
 
-  const uint32_t n_padded_corr_per_dim = n_corr_per_dim + padding;
+  const uint32_t n_padded_corr_per_dim = n_corr_per_dim + 2 * padding;
   const uint32_t n_padded_cor =
       n_padded_corr_per_dim * n_padded_corr_per_dim * n_padded_corr_per_dim;
   const std::vector<double> c_vec(c, c + n_padded_cor);
   auto max_it = std::max_element(c_vec.cbegin(), c_vec.cend());
-  const uint32_t lin_idx_max = std::distance(c_vec.cbegin(), max_it);
+  const uint32_t lin_idx_max = std::distance(c_vec.cbegin(), max_it) + 1;
   const std::array<uint32_t, 3> xyz = common::SignalUtils::Ind2Sub(
       lin_idx_max, n_padded_corr_per_dim, n_padded_corr_per_dim);
-  EXPECT_EQ(xyz[0], 0u);
-  EXPECT_EQ(xyz[1], 4u);
-  EXPECT_EQ(xyz[2], 0u);
+  double x = common::TranslationUtils::ComputeTranslationFromIndex(
+      static_cast<double>(xyz[0]), n_padded_corr_per_dim, 0, 3);
+  double y = common::TranslationUtils::ComputeTranslationFromIndex(
+      static_cast<double>(xyz[1]), n_padded_corr_per_dim, 0, 3);
+  double z = common::TranslationUtils::ComputeTranslationFromIndex(
+      static_cast<double>(xyz[2]), n_padded_corr_per_dim, 0, 3);
+  EXPECT_EQ(x, 0u);
+  EXPECT_NEAR(y, -1.0, 0.2);
+  EXPECT_EQ(z, 0u);
 }
 
 }  // namespace phaser_core

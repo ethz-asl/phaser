@@ -7,7 +7,7 @@
 #include <fftw3/fftw3.h>
 
 #include "phaser/backend/alignment/base-aligner.h"
-#include "phaser/backend/correlation/base-spatial-correlation.h"
+#include "phaser/backend/correlation/spatial-correlation.h"
 
 namespace phaser_core {
 
@@ -25,18 +25,11 @@ class PhaseAligner : public BaseAligner {
   uint32_t getNumberOfVoxels() const noexcept;
   uint32_t getLowerBound() const noexcept;
   uint32_t getUpperBound() const noexcept;
-  double computeTranslationFromIndex(double index) const;
-  std::array<uint32_t, 3> ind2sub(const uint32_t lin_index) const;
 
  private:
   void discretizePointcloud(
       const model::PointCloud& cloud, const std::vector<Eigen::VectorXd*>& f,
       Eigen::VectorXd* hist) const;
-  uint32_t sub2ind(
-      const uint32_t i, const uint32_t j, const uint32_t k, const uint32_t rows,
-      const uint32_t cols) const;
-  std::array<uint32_t, 3> ind2sub(
-      const uint32_t lin_index, const uint32_t rows, const uint32_t cols) const;
   void normalizeSignal(const Eigen::VectorXd& hist, Eigen::VectorXd* f) const;
 
   Eigen::VectorXd f_intensities_;
@@ -54,7 +47,7 @@ class PhaseAligner : public BaseAligner {
   const int lower_bound_;
   const int upper_bound_;
   Eigen::VectorXf edges_;
-  BaseSpatialCorrelationPtr spatial_correlation_;
+  SpatialCorrelationPtr spatial_correlation_;
   std::vector<double> previous_correlation_;
 };
 

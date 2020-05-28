@@ -2,9 +2,9 @@
 #include "phaser/backend/correlation/spatial-correlation-cuda.h"
 #include "phaser/backend/correlation/spatial-correlation-laplace.h"
 #include "phaser/backend/correlation/spatial-correlation-low-pass.h"
-#include "phaser/backend/correlation/spatial-correlation.h"
 #include "phaser/common/core-gflags.h"
 #include "phaser/common/point-cloud-utils.h"
+#include "phaser/common/signal-utils.h"
 
 #include <algorithm>
 #include <chrono>
@@ -63,7 +63,8 @@ void PhaseAligner::alignRegistered(
   discretizePointcloud(cloud_reg, g, &hist_);
 
   double* c = spatial_correlation_->correlateSignals(f, g);
-  previous_correlation_ = std::vector<double>(c, c + total_n_voxels_);
+  previous_correlation_ =
+      std::vector<double>(c, c + spatial_correlation_->getCorrelationSize());
 }
 
 void PhaseAligner::discretizePointcloud(
@@ -100,8 +101,8 @@ void PhaseAligner::discretizePointcloud(
   const uint32_t n_f = f_intensities->rows();
   // #pragma omp parallel for num_threads(4)
   for (uint32_t i = 0u; i < n_points; ++i) {
-    const uint32_t lin_index =
-        sub2ind(x_bins(i), y_bins(i), z_bins(i), n_voxels_, n_voxels_);
+    const uint32_t lin_index = common::SignalUtils::Sub2Ind(
+        x_bins(i), y_bins(i), z_bins(i), n_voxels_, n_voxels_);
     if (lin_index > n_f) {
       continue;
     }
@@ -126,41 +127,12 @@ void PhaseAligner::normalizeSignal(
   *f = f->unaryExpr([](double v) { return std::isfinite(v) ? v : 0.0; });
 }
 
-uint32_t PhaseAligner::sub2ind(
-    const uint32_t i, const uint32_t j, const uint32_t k, const uint32_t rows,
-    const uint32_t cols) const {
-  return (i * cols + j) + (rows * cols * k);
-}
-
-std::array<uint32_t, 3> PhaseAligner::ind2sub(const uint32_t lin_index) const {
-  return ind2sub(lin_index, n_voxels_, n_voxels_);
-}
-
-std::array<uint32_t, 3> PhaseAligner::ind2sub(
-    const uint32_t lin_index, const uint32_t rows, const uint32_t cols) const {
-  std::array<uint32_t, 3> xyz;
-  xyz[1] = lin_index % cols;
-  const int updated_index = lin_index / cols;
-  xyz[0] = updated_index % rows;
-  xyz[2] = updated_index / rows;
-  return xyz;
-}
-
-double PhaseAligner::computeTranslationFromIndex(double index) const {
-  static double n_voxels_half = n_voxels_ / 2.0;
-  static double width = std::abs(lower_bound_) + std::abs(upper_bound_);
-  if (index <= n_voxels_half) {
-    return ((index)*width) / n_voxels_;
-  }
-  return (index - n_voxels_) * width / n_voxels_;
-}
-
 std::vector<double> PhaseAligner::getCorrelation() const {
   return previous_correlation_;
 }
 
 uint32_t PhaseAligner::getNumberOfVoxels() const noexcept {
-  return n_voxels_ + FLAGS_phaser_core_spatial_zero_padding;
+  return n_voxels_ + 2 * spatial_correlation_->getZeroPadding();
 }
 
 uint32_t PhaseAligner::getLowerBound() const noexcept {

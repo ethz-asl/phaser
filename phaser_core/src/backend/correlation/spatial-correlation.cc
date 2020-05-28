@@ -39,6 +39,8 @@ SpatialCorrelation::SpatialCorrelation(
     F_[i][1] = 0.0;
     G_[i][0] = 0.0;
     G_[i][1] = 0.0;
+  }
+  for (uint32_t i = 0u; i < total_n_voxels_padded_; ++i) {
     C_[i][0] = 0.0;
     C_[i][1] = 0.0;
   }
@@ -146,9 +148,9 @@ void SpatialCorrelation::complexMulSeqUsingIndices(
   const uint32_t n_points = indices.size();
 #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < n_points; ++i) {
-    const uint32_t padded_idx =
-        zero_padding_ != 0u ? computeZeroPaddedIndex(i) : indices[i];
     const uint32_t idx = indices[i];
+    const uint32_t padded_idx =
+        zero_padding_ != 0u ? computeZeroPaddedIndex(idx) : idx;
     CHECK_LT(idx, total_n_voxels_);
     CHECK_GE(idx, 0);
     CHECK_LT(padded_idx, total_n_voxels_padded_);
@@ -186,6 +188,10 @@ double* SpatialCorrelation::correlateSignals(
 
 uint32_t SpatialCorrelation::getZeroPadding() const {
   return zero_padding_;
+}
+
+uint32_t SpatialCorrelation::getCorrelationSize() const {
+  return total_n_voxels_padded_;
 }
 
 uint32_t SpatialCorrelation::computeZeroPaddedIndex(const uint32_t idx) {

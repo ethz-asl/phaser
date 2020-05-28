@@ -22,6 +22,7 @@ common::BaseDistributionPtr PhaseCorrelationEval::calcTranslationUncertainty(
   const uint32_t n_voxels = aligner.getNumberOfVoxels();
   const uint32_t lower_bound = aligner.getLowerBound();
   const uint32_t upper_bound = aligner.getUpperBound();
+  VLOG(1) << "----------- Computing translation with " << n_voxels << " voxels";
   return positional_eval_->evaluateCorrelationFromTranslation(
       n_voxels, lower_bound, upper_bound, corr);
 }
