@@ -15,7 +15,7 @@ class TransGMTest : public ::testing::Test {
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
-    ds_->setDatasetFolder("./test_clouds/arche/sigma-level-1/");
+    ds_->setDatasetFolder("./test_clouds/translation_only/");
     registrator_ = std::make_unique<SphRegistration>("phase", "bingham", "gmm");
     z_score_eval_ =
         dynamic_cast<ZScoreEval*>(&registrator_->getPosEvaluation());

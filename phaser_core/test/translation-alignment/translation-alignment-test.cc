@@ -22,7 +22,7 @@ class TranslationAlignmentTest : public ::testing::Test {
  protected:
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
-    ds_->setDatasetFolder("./test_clouds/arche/sigma-level-1/");
+    ds_->setDatasetFolder("./test_clouds/translation_only/");
   }
 
   BaseRegistration* initializeRegistration(bool mocked) {
