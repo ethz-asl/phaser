@@ -18,6 +18,7 @@ class PyramidStruct {
   uint32_t getCoefficientsForLevel(const uint8_t level) const noexcept;
   uint32_t getLowerBoundForLevel(const uint8_t level) const noexcept;
   uint32_t getUpperBoundForLevel(const uint8_t level) const noexcept;
+  uint32_t getInitialCoefficientSize() const noexcept;
 
  private:
   void computeCoefficientsPerLevel(
@@ -26,6 +27,7 @@ class PyramidStruct {
   std::vector<uint32_t> coefficients_per_level_;
   std::vector<uint32_t> lower_bound_per_level_;
   std::vector<uint32_t> upper_bound_per_level_;
+  uint32_t initial_coefficient_size_;
 };
 
 }  // namespace phaser_core

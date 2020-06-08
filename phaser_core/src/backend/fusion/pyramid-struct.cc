@@ -10,7 +10,8 @@ PyramidStruct::PyramidStruct(
     const uint32_t n_coeffs, const uint8_t n_levels, const float div)
     : coefficients_per_level_(n_levels),
       lower_bound_per_level_(n_levels),
-      upper_bound_per_level_(n_levels) {
+      upper_bound_per_level_(n_levels),
+      initial_coefficient_size_(n_coeffs) {
   computeCoefficientsPerLevel(n_coeffs, n_levels, div);
 }
 
@@ -56,6 +57,10 @@ uint32_t PyramidStruct::getUpperBoundForLevel(const uint8_t level) const
     noexcept {
   CHECK(level < upper_bound_per_level_.size());
   return upper_bound_per_level_[level];
+}
+
+uint32_t PyramidStruct::getInitialCoefficientSize() const noexcept {
+  return initial_coefficient_size_;
 }
 
 }  // namespace phaser_core

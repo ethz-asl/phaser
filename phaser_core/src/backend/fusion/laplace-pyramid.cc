@@ -12,16 +12,21 @@ namespace phaser_core {
 LaplacePyramid::LaplacePyramid(const float div) : divider_(div) {}
 
 PyramidLevel LaplacePyramid::reduce(
-    complex_t* coefficients, const uint32_t n_coeffs) {
+    complex_t* coefficients, const PyramidStruct& py_struct,
+    const uint8_t lvl) {
   CHECK_NOTNULL(coefficients);
-  // We will reduce the spectrum by half the number of coefficients.
-  const uint32_t lower_bound = std::round(n_coeffs / divider_);
-  const uint32_t upper_bound = n_coeffs - lower_bound;
-  const uint32_t n_low_pass = upper_bound - lower_bound;
+  // We will reduce the spectrum.
+  const uint32_t lower_bound = py_struct.getLowerBoundForLevel(lvl);
+  const uint32_t upper_bound = py_struct.getUpperBoundForLevel(lvl);
+  const uint32_t n_low_pass = py_struct.getCoefficientsForLevel(lvl);
+  const uint32_t n_laplace = lvl > 0
+                                 ? py_struct.getCoefficientsForLevel(lvl - 1)
+                                 : py_struct.getInitialCoefficientSize();
+
   VLOG(2) << "Reducing the bw using [" << lower_bound << ", " << upper_bound
           << "] resulting in " << n_low_pass << " samples.";
   std::vector<complex_t> coeff_low_pass(n_low_pass);
-  std::vector<complex_t> coeff_laplace(coefficients, coefficients + n_coeffs);
+  std::vector<complex_t> coeff_laplace(coefficients, coefficients + n_laplace);
 
   for (uint32_t i = lower_bound; i < upper_bound; ++i) {
     const uint32_t k = i - lower_bound;
@@ -58,6 +63,7 @@ std::vector<complex_t> LaplacePyramid::fuseChannels(
   const uint32_t n_channels = channels.size();
   std::vector<std::vector<complex_t>> fused_levels(n_levels);
   std::vector<std::vector<PyramidLevel>> pyramids_per_channel(n_levels);
+  PyramidStruct py_struct(n_coeffs, n_levels, divider_);
 
   // Build the pyramid levels per channel.
   VLOG(2) << "Constructing " << n_levels << " pyramid levels for " << n_channels
@@ -67,16 +73,14 @@ std::vector<complex_t> LaplacePyramid::fuseChannels(
     coefficients[i] = reinterpret_cast<complex_t*>(channels[i]);
   }
 
-  uint32_t coeffs_per_level = n_coeffs;
   for (uint32_t i = 0u; i < n_levels; ++i) {
     std::vector<PyramidLevel> pyramid_level(n_channels);
     for (uint32_t j = 0u; j < n_channels; ++j) {
       VLOG(2) << "Level " << i << " and channel " << j;
-      pyramid_level[j] = reduce(coefficients[j], coeffs_per_level);
+      pyramid_level[j] = reduce(coefficients[j], py_struct, i);
       coefficients[j] = pyramid_level[j].first.data();
     }
-    fused_levels[i] = fuseLevelByMaxCoeff(pyramid_level, coeffs_per_level);
-    coeffs_per_level = pyramid_level[0].first.size();
+    fused_levels[i] = fuseLevelByMaxCoeff(pyramid_level, py_struct, i);
     pyramids_per_channel[i] = std::move(pyramid_level);
   }
 
@@ -99,12 +103,14 @@ std::vector<complex_t> LaplacePyramid::fuseChannels(
 
 std::vector<complex_t> LaplacePyramid::fuseLevelByMaxCoeff(
     const std::vector<PyramidLevel>& levels_per_channel,
-    const uint32_t n_coeffs) {
+    const PyramidStruct& py_struct, const uint8_t lvl) {
   CHECK_GT(levels_per_channel.size(), 0);
-  CHECK_GT(n_coeffs, 0);
+  const uint32_t n_laplace = lvl > 0
+                                 ? py_struct.getCoefficientsForLevel(lvl - 1)
+                                 : py_struct.getInitialCoefficientSize();
 
-  std::vector<complex_t> fused(n_coeffs);
-  for (uint32_t i = 0u; i < n_coeffs; ++i) {
+  std::vector<complex_t> fused(n_laplace);
+  for (uint32_t i = 0u; i < n_laplace; ++i) {
     const uint32_t max_channel = findMaxCoeffForChannels(levels_per_channel, i);
     const complex_t& max_coeff = levels_per_channel[max_channel].second[i];
     fused[i][0] = max_coeff[0];
