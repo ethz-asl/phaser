@@ -25,7 +25,7 @@ class LaplacePyramid {
       const std::vector<complex_t>& low_pass, std::vector<complex_t>* lapl);
   std::vector<complex_t> fuseChannels(
       const std::vector<fftw_complex*>& channels, const uint32_t n_coeffs,
-      const uint32_t n_levels);
+      const uint8_t n_levels);
   std::vector<complex_t> fuseLevelByMaxCoeff(
       const std::vector<PyramidLevel>& level, const uint32_t n_coeffs);
   std::vector<complex_t> fuseLastLowPassLayer(

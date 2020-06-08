@@ -36,6 +36,13 @@ double* SpatialCorrelationLaplace::correlateSignals(
   common::SignalUtils::IFFTShift(C_, total_n_voxels_);
   fftw_execute(c_plan_);
 
+  if (zero_padding_ != 0u) {
+    for (uint32_t i = 0u; i < total_n_voxels_padded_; ++i) {
+      C_[i][0] = 0.0;
+      C_[i][1] = 0.0;
+    }
+  }
+
   // Free the used memory for the fusion.
   freeChannels(&f_channels);
   freeChannels(&g_channels);

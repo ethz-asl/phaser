@@ -20,7 +20,7 @@ rosrun phaser_ros phaser_ros \
     --phaser_core_spatial_discretize_upper=50 \
     --phaser_core_spatial_low_pass_lower_bound=85 \
     --phaser_core_spatial_low_pass_upper_bound=115 \
-    --phaser_core_spatial_zero_padding=0 \
+    --phaser_core_spatial_zero_padding=255 \
     --gaussian_peak_neighbors=0 \
     --bingham_peak_neighbors=0 \
     --z_score_filter_threshold=0.01 \

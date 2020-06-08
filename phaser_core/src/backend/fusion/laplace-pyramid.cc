@@ -54,7 +54,7 @@ void LaplacePyramid::expand(
 
 std::vector<complex_t> LaplacePyramid::fuseChannels(
     const std::vector<fftw_complex*>& channels, const uint32_t n_coeffs,
-    const uint32_t n_levels) {
+    const uint8_t n_levels) {
   const uint32_t n_channels = channels.size();
   std::vector<std::vector<complex_t>> fused_levels(n_levels);
   std::vector<std::vector<PyramidLevel>> pyramids_per_channel(n_levels);

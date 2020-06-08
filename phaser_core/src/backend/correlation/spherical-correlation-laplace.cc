@@ -20,9 +20,9 @@ void SphericalCorrelationLaplace::correlateSampledSignals(
 
   const uint32_t full_bw = bw_ * bw_;
   std::vector<complex_t> F_fused =
-      laplace_.fuseChannels(f_channels, full_bw, 4);
+      laplace_.fuseChannels(f_channels, full_bw, 5);
   std::vector<complex_t> G_fused =
-      laplace_.fuseChannels(g_channels, full_bw, 4);
+      laplace_.fuseChannels(g_channels, full_bw, 5);
 
   VLOG(2) << "Setting the fused values for the original input.";
   setFusedCoefficients(F_fused, G_fused, full_bw);
