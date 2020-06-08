@@ -57,9 +57,10 @@ class LaplacePyramidTest : public ::testing::Test {
 TEST_F(LaplacePyramidTest, SimpleReduceTest) {
   LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 8u;
+  PyramidStruct py_struct(n_coeffs, 1u, 4.0);
   fftw_complex* coeffs = createRandomCoefficients(n_coeffs);
   PyramidLevel first_level =
-      laplace.reduce(reinterpret_cast<complex_t*>(coeffs), n_coeffs);
+      laplace.reduce(reinterpret_cast<complex_t*>(coeffs), py_struct, 0);
 
   const std::vector<complex_t>& low_pass = first_level.first;
   EXPECT_EQ(low_pass.size(), 4u);
@@ -83,9 +84,10 @@ TEST_F(LaplacePyramidTest, SimpleReduceTest) {
 TEST_F(LaplacePyramidTest, SimpleExpandTest) {
   LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 8u;
+  PyramidStruct py_struct(n_coeffs, 1u, 4.0);
   fftw_complex* coeffs = createRandomCoefficients(n_coeffs);
   PyramidLevel first_level =
-      laplace.reduce(reinterpret_cast<complex_t*>(coeffs), n_coeffs);
+      laplace.reduce(reinterpret_cast<complex_t*>(coeffs), py_struct, 0);
 
   const std::vector<complex_t>& low_pass = first_level.first;
   std::vector<complex_t>* lapl = &first_level.second;
@@ -99,15 +101,17 @@ TEST_F(LaplacePyramidTest, SimpleExpandTest) {
 TEST_F(LaplacePyramidTest, MaxCoeffTest) {
   LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 8u;
+  PyramidStruct py_struct(n_coeffs, 1u, 4.0);
   fftw_complex* coeffs = createFixedCoefficients(1, n_coeffs);
   fftw_complex* coeffs_2 = createFixedCoefficients(15, n_coeffs);
   std::vector<PyramidLevel> levels;
   levels.emplace_back(
-      laplace.reduce(reinterpret_cast<complex_t*>(coeffs), n_coeffs));
+      laplace.reduce(reinterpret_cast<complex_t*>(coeffs), py_struct, 0));
   levels.emplace_back(
-      laplace.reduce(reinterpret_cast<complex_t*>(coeffs_2), n_coeffs));
+      laplace.reduce(reinterpret_cast<complex_t*>(coeffs_2), py_struct, 0));
 
-  std::vector<complex_t> fused = laplace.fuseLevelByMaxCoeff(levels, n_coeffs);
+  std::vector<complex_t> fused =
+      laplace.fuseLevelByMaxCoeff(levels, py_struct, 0);
   const std::vector<complex_t>& lapl_1 = levels[0].second;
   const std::vector<complex_t>& lapl_2 = levels[1].second;
   const float tol = 1e-3;
@@ -131,13 +135,14 @@ TEST_F(LaplacePyramidTest, MaxCoeffTest) {
 TEST_F(LaplacePyramidTest, LowPassAverageTest) {
   LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 8u;
+  PyramidStruct py_struct(n_coeffs, 1u, 4.0);
   fftw_complex* coeffs = createFixedCoefficients(5, n_coeffs);
   fftw_complex* coeffs_2 = createFixedCoefficients(15, n_coeffs);
   std::vector<PyramidLevel> levels;
   levels.emplace_back(
-      laplace.reduce(reinterpret_cast<complex_t*>(coeffs), n_coeffs));
+      laplace.reduce(reinterpret_cast<complex_t*>(coeffs), py_struct, 0));
   levels.emplace_back(
-      laplace.reduce(reinterpret_cast<complex_t*>(coeffs_2), n_coeffs));
+      laplace.reduce(reinterpret_cast<complex_t*>(coeffs_2), py_struct, 0));
 
   std::vector<complex_t> fused = laplace.fuseLastLowPassLayer(levels);
   const float tol = 1e-3;
@@ -167,13 +172,13 @@ TEST_F(LaplacePyramidTest, FuseChannelsUsing2LevelsTest) {
   delete[] coeffs_2;
 }
 
-TEST_F(LaplacePyramidTest, FuseChannelsUsing5LevelsTest) {
+TEST_F(LaplacePyramidTest, FuseChannelsUsing3LevelsTest) {
   LaplacePyramid laplace(4.0);
   const uint32_t n_coeffs = 80u;
   fftw_complex* coeffs = createFixedCoefficients(5, n_coeffs);
   fftw_complex* coeffs_2 = createFixedCoefficients(15, n_coeffs);
   std::vector<complex_t> fused =
-      laplace.fuseChannels({coeffs, coeffs_2}, n_coeffs, 5);
+      laplace.fuseChannels({coeffs, coeffs_2}, n_coeffs, 3);
 
   for (uint32_t i = 0u; i < n_coeffs; ++i) {
     EXPECT_GT(fused[i][0], 0.0);
