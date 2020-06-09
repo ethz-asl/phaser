@@ -24,27 +24,31 @@ class LaplacePyramid {
   explicit LaplacePyramid(const float div = 4.0);
   PyramidLevel reduce(
       complex_t* coefficients, const PyramidStruct& py_struct,
-      const uint8_t lvl);
+      const uint8_t lvl) const;
   void expand(
-      const std::vector<complex_t>& low_pass, std::vector<complex_t>* lapl);
+      const std::vector<complex_t>& low_pass,
+      std::vector<complex_t>* lapl) const;
   std::vector<complex_t> fuseChannels(
       const std::vector<fftw_complex*>& channels, const uint32_t n_coeffs,
       const uint8_t n_levels);
   std::vector<complex_t> fuseLevelByMaxCoeff(
       const std::vector<PyramidLevel>& level, const PyramidStruct& py_struct,
-      const uint8_t lvl);
+      const uint8_t lvl) const;
   std::vector<complex_t> fuseLastLowPassLayer(
-      const std::vector<PyramidLevel>& levels_per_channel);
+      const std::vector<PyramidLevel>& levels_per_channel) const;
 
  private:
   uint32_t findMaxCoeffForChannels(
-      const std::vector<PyramidLevel>& levels_per_channel, const uint32_t idx);
+      const std::vector<PyramidLevel>& levels_per_channel,
+      const uint32_t idx) const;
   double computeSignalEnergyForLevel(
-      const PyramidLevel& level, const uint32_t idx);
+      const PyramidLevel& level, const uint32_t idx) const;
 
   std::array<double, 2> averageCoeffForChannels(
-      const std::vector<PyramidLevel>& levels_per_channel, const uint32_t idx);
-  std::array<double, 2> averageSignal(const std::vector<complex_t>& signals);
+      const std::vector<PyramidLevel>& levels_per_channel,
+      const uint32_t idx) const;
+  std::array<double, 2> averageSignal(
+      const std::vector<complex_t>& signals) const;
   void writeToFile(
       const std::string& filename, const std::vector<complex_t>& signal);
 
