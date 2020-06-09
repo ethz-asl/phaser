@@ -75,6 +75,8 @@ std::vector<complex_t> LaplacePyramid::fuseChannels(
 
   for (uint32_t i = 0u; i < n_levels; ++i) {
     std::vector<PyramidLevel> pyramid_level(n_channels);
+#pragma omp parallel for num_threads(n_channels) \
+    shared(pyramid_level, coefficients)
     for (uint32_t j = 0u; j < n_channels; ++j) {
       VLOG(2) << "Level " << i << " and channel " << j;
       pyramid_level[j] = reduce(coefficients[j], py_struct, i);
