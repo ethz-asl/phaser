@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 REST=$@
+#EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/exp/"
+EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/real-world-distilled/5.0/"
 
 rosrun phaser_ros phaser_ros \
     --alsologtostderr=1 \
@@ -7,23 +9,25 @@ rosrun phaser_ros phaser_ros \
 		--enable_debug=true \
 		--registration_algorithm="sph-opt" \
 		--datasource="ply" \
-		--PlyReadDirectory="/home/berlukas/Documents/ply_datasets/phaser_v2/exp/" \
+		--PlyReadDirectory="${EXP_DIR}" \
     --app_mode="experiment1" \
-    --truth_file="/home/berlukas/Documents/ply_datasets/phaser_v2/exp/ground_truth.txt" \
+    --truth_file="${EXP_DIR}ground_truth.txt" \
     --n_clouds_to_process=0 \
-    --phaser_core_spherical_bandwidth=100 \
+    --phaser_core_spherical_bandwidth=120 \
     --phaser_core_spherical_low_pass_lower_bound=000 \
     --phaser_core_spherical_low_pass_upper_bound=10000 \
     --phaser_core_spherical_zero_padding=10 \
-    --phaser_core_spatial_n_voxels=201 \
-    --phaser_core_spatial_discretize_lower=-50 \
-    --phaser_core_spatial_discretize_upper=50 \
+    --phaser_core_spatial_n_voxels=301 \
+    --phaser_core_spatial_discretize_lower=-3 \
+    --phaser_core_spatial_discretize_upper=3 \
     --phaser_core_spatial_low_pass_lower_bound=85 \
     --phaser_core_spatial_low_pass_upper_bound=115 \
     --phaser_core_spatial_zero_padding=0 \
-    --gaussian_peak_neighbors=0 \
-    --bingham_peak_neighbors=0 \
+    --gaussian_peak_neighbors=1 \
+    --bingham_peak_neighbors=1 \
     --z_score_filter_threshold=0.01 \
     --z_score_lag_max=3 \
     --z_score_threshold=3.0 \
+    --phaser_pre_enable_geometric_cloud_segmentation=false \
+    --phaser_pre_enable_pass_through_gnd_filtering=false \
     $REST

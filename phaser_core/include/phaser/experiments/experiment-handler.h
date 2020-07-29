@@ -3,6 +3,7 @@
 
 #include "phaser/backend/registration/sph-opt-registration.h"
 #include "phaser/model/point-cloud.h"
+#include "phaser_pre/cloud-pre-processor.h"
 
 #include <Eigen/Dense>
 #include <memory>
@@ -34,6 +35,7 @@ class ExperimentHandler {
   std::vector<Eigen::VectorXd> states_;
   Eigen::MatrixXd gt_;
   uint16_t n_registered_ = 0u;
+  preproc::CloudPreProcessor preprocessor_;
 };
 
 using ExperimentHandlerPtr = std::unique_ptr<ExperimentHandler>;

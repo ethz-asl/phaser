@@ -149,8 +149,10 @@ void PointCloud::sampleNearestWithoutCloudInfo(
     value.addPoint(point);
     value.addRange(ranges_.at(current_idx));
     value.addIntensity(point.intensity);
-    value.addReflectivity(reflectivities_.at(current_idx));
-    value.addAmbientNoise(ambient_points_.at(current_idx));
+    if (!reflectivities_.empty())
+      value.addReflectivity(reflectivities_.at(current_idx));
+    if (!ambient_points_.empty())
+      value.addAmbientNoise(ambient_points_.at(current_idx));
   }
 }
 
@@ -282,6 +284,14 @@ double PointCloud::getReflectivity(const uint32_t i) const {
 double PointCloud::getAmbientNoise(const uint32_t i) const {
   CHECK_LT(i, ambient_points_.size());
   return ambient_points_.at(i);
+}
+
+bool PointCloud::hasReflectivityPoints() const {
+  return !reflectivities_.empty();
+}
+
+bool PointCloud::hasAmbientNoisePoints() const {
+  return !ambient_points_.empty();
 }
 
 void PointCloud::writeToFile(std::string&& directory) {

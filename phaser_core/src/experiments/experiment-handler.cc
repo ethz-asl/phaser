@@ -37,12 +37,14 @@ void ExperimentHandler::runExperiment1(const model::PointCloudPtr& cloud) {
   VLOG(2) << gt_.col(n_registered_).transpose();
   VLOG(1) << "Cloud1: " << prev_point_cloud_->getPlyReadDirectory();
   VLOG(1) << "Cloud2: " << cloud->getPlyReadDirectory();
+  preprocessor_.process(prev_point_cloud_);
+  preprocessor_.process(cloud);
 
-  translateToSensorFrame(cloud);
+  // translateToSensorFrame(cloud);
   // rotateToSensorFrame(cloud);
   model::RegistrationResult result =
       registrator_->estimateRotation(prev_point_cloud_, cloud);
-  translateToOdomFrame(result.getRegisteredCloud());
+  // translateToOdomFrame(result.getRegisteredCloud());
   // model::RegistrationResult result(cloud);
   registrator_->estimateTranslation(prev_point_cloud_, &result);
   appendResult(result);
