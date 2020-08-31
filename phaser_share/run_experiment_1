@@ -1,7 +1,10 @@
 #!/usr/bin/env zsh
 REST=$@
 #EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/exp/"
-EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/real-world-distilled/5.0/"
+EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/real-world-distilled/0.1/"
+#EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/exp-partial-overlap/30/"
+#EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/exp-occlusion/100/"
+#EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/exp-40db/2/"
 
 rosrun phaser_ros phaser_ros \
     --alsologtostderr=1 \
@@ -13,13 +16,13 @@ rosrun phaser_ros phaser_ros \
     --app_mode="experiment1" \
     --truth_file="${EXP_DIR}ground_truth.txt" \
     --n_clouds_to_process=0 \
-    --phaser_core_spherical_bandwidth=120 \
+    --phaser_core_spherical_bandwidth=150 \
     --phaser_core_spherical_low_pass_lower_bound=000 \
     --phaser_core_spherical_low_pass_upper_bound=10000 \
     --phaser_core_spherical_zero_padding=10 \
-    --phaser_core_spatial_n_voxels=301 \
-    --phaser_core_spatial_discretize_lower=-3 \
-    --phaser_core_spatial_discretize_upper=3 \
+    --phaser_core_spatial_n_voxels=201 \
+    --phaser_core_spatial_discretize_lower=-5 \
+    --phaser_core_spatial_discretize_upper=5 \
     --phaser_core_spatial_low_pass_lower_bound=85 \
     --phaser_core_spatial_low_pass_upper_bound=115 \
     --phaser_core_spatial_zero_padding=0 \

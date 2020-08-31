@@ -14,6 +14,7 @@ extern "C" {
 #include <glog/logging.h>
 
 #include <algorithm>
+#include <fstream>
 
 namespace phaser_core {
 
@@ -78,7 +79,6 @@ void SphericalCorrelation::getStatistics(
 
 void SphericalCorrelation::convertSignalValues(
     double* signal_values, const int bw) {
-  VLOG(1) << "ADDING CORR KEYS FOR BW " << bw;
   const std::size_t n_values = 8 * bw * bw * bw;
   for (std::size_t i = 0u; i < n_values; ++i) {
     statistics_manager_.emplaceValue(kSignalKey, signal_values[i]);
@@ -237,6 +237,26 @@ void SphericalCorrelation::performSphericalTransforms(
       tmp_coef_[0], tmp_coef_[1], pat_coef_[0], pat_coef_[1], bw_,
       seminaive_naive_table_, reinterpret_cast<double*>(workspace2_), 1, bw_,
       &dct_plan_, &fft_plan_, weights_);
+
+  /*
+static std::size_t counter = 0u;
+std::ofstream file_sig_r("sig_r_" + std::to_string(counter) + ".txt");
+std::ofstream file_sig_i("sig_i_" + std::to_string(counter) + ".txt");
+std::ofstream file_pat_r("pat_r_" + std::to_string(counter) + ".txt");
+std::ofstream file_pat_i("pat_i_" + std::to_string(counter) + ".txt");
+++counter;
+const uint32_t bwp2 = bw_ * bw_;
+for (uint32_t i = 0u; i < bwp2; ++i) {
+file_sig_r << sig_coef_[0][i] << ", ";
+file_sig_i << sig_coef_[1][i] << ", ";
+file_pat_r << pat_coef_[0][i] << ", ";
+file_pat_i << pat_coef_[1][i] << ", ";
+}
+file_sig_r.close();
+file_sig_i.close();
+file_pat_r.close();
+file_pat_i.close();
+*/
 }
 
 void SphericalCorrelation::correlate() {
@@ -266,10 +286,16 @@ void SphericalCorrelation::inverseTransform() {
 
   so3_mag_sig_ = std::vector<double>(so3_bw_);
   // #pragma omp parallel for num_threads(2)
-  for (uint32_t i = 0; i < so3_bw_; ++i) {
+  // static std::size_t counter = 0u;
+  // std::ofstream file_sig_r("corr_r_" + std::to_string(counter) + ".txt");
+  // std::ofstream file_sig_i("corr_i_" + std::to_string(counter) + ".txt");
+  // ++counter;
+  for (uint32_t i = 0u; i < so3_bw_; ++i) {
     const double real = so3_sig_[i][0];
     const double imag = so3_sig_[i][1];
     const double temp = real * real + imag * imag;
+    // file_sig_r << real << ", ";
+    // file_sig_i << imag << ", ";
     /*
     if (std::isnan(temp)) {
       VLOG(1) << "===================================== NAN =================";
@@ -277,6 +303,8 @@ void SphericalCorrelation::inverseTransform() {
     } */
     so3_mag_sig_[i] = real * real + imag * imag;
   }
+  // file_sig_r.close();
+  // file_sig_i.close();
 }
 
 }  // namespace phaser_core

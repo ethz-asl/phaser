@@ -57,9 +57,9 @@ void SpatialCorrelationLaplace::extractTransformedChannels(
     std::vector<fftw_complex*>* g_channels) {
   CHECK_NOTNULL(f_channels);
   CHECK_NOTNULL(g_channels);
-  // const uint32_t n_channels = fs.size();
-  const uint32_t n_channels = 2;
-  // CHECK_EQ(n_channels, gs.size());
+  const uint32_t n_channels = fs.size();
+  // const uint32_t n_channels = 2;
+  CHECK_EQ(n_channels, gs.size());
   CHECK_GT(n_channels, 0u);
 
   const uint32_t function_size = total_n_voxels_ * sizeof(double);
