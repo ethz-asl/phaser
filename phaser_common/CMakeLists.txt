@@ -31,6 +31,7 @@ cs_add_library(${PROJECT_NAME}_lib
 
    src/common/data/datasource-ros.cc
    src/common/data/datasource-ply.cc
+   src/common/data/datasource-features.cc
    src/common/data/file-system-helper.cc
    src/common/data/ply-helper.cc
    src/common/spherical-projection.cc
@@ -48,6 +49,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/common/test-worker.cc
    src/common/signal-utils.cc
    src/common/core-gflags.cc
+   src/common/spherical-feature.cc
 
    src/common/test/testing-entrypoint.cc
 
