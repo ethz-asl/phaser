@@ -259,6 +259,29 @@ file_pat_i.close();
 */
 }
 
+void SphericalCorrelation::performSphericalTransform(
+    const std::vector<double>& input, double** transformed) {
+  CHECK_NOTNULL(tmp_coef_[0]);
+  CHECK_NOTNULL(tmp_coef_[1]);
+  CHECK_NOTNULL(workspace2_);
+  CHECK_NOTNULL(dct_plan_);
+  CHECK_NOTNULL(fft_plan_);
+  CHECK_NOTNULL(weights_);
+
+  VLOG(1) << "Performing SFT of the first signal.";
+  // #pragma omp parallel for num_threads(2)
+  for (uint32_t i = 0u; i < howmany_; ++i) {
+    tmp_coef_[0][i] = input[i];
+    tmp_coef_[1][i] = 0.;
+  }
+
+  // Perform spherical transform of f1.
+  FST_semi_memo(
+      tmp_coef_[0], tmp_coef_[1], transformed[0], transformed[1], bw_,
+      seminaive_naive_table_, reinterpret_cast<double*>(workspace2_), 1, bw_,
+      &dct_plan_, &fft_plan_, weights_);
+}
+
 void SphericalCorrelation::correlate() {
   CHECK_NOTNULL(sig_coef_[0]);
   CHECK_NOTNULL(sig_coef_[1]);

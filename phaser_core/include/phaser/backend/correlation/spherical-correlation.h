@@ -41,6 +41,8 @@ class SphericalCorrelation {
   void initializeAll(const uint32_t bw);
   void performSphericalTransforms(
       const std::vector<double>& f1, const std::vector<double>& f2);
+  void performSphericalTransform(
+      const std::vector<double>& input, double** transformed);
   void correlate();
   void inverseTransform();
 
