@@ -67,24 +67,38 @@ void PhaserFeatureController::transformFeatures(
 
 bool PhaserFeatureController::writeTransformedFeaturesToFile(
     const common::SphericalFeature& feature) {
-  const std::string path_range = output_folder_ + "range_transformed/";
-  const std::string path_intensity = output_folder_ + "intensity_transformed/";
-  const std::string path_visual = output_folder_ + "visual_transformed/";
+  if (!pathExists(output_folder_)) {
+    return false;
+  }
+  const std::string path_range = output_folder_ + "range_transformed";
+  const std::string path_intensity = output_folder_ + "intensity_transformed";
+  const std::string path_visual = output_folder_ + "visual_transformed";
   const std::string csv = ".csv";
-  if (!pathExists(path_range)) {
-    return false;
-  }
-  if (!pathExists(path_intensity)) {
-    return false;
-  }
-  if (!pathExists(path_visual)) {
+
+  const std::string range_transformed =
+      path_range + std::to_string(feature_counter_) + csv;
+  const std::string intensity_transformed =
+      path_intensity + std::to_string(feature_counter_) + csv;
+  const std::string visual_transformed =
+      path_visual + std::to_string(feature_counter_) + csv;
+  std::ofstream out_range_file(range_transformed);
+  std::ofstream out_intensity_file(intensity_transformed);
+  std::ofstream out_visual_file(visual_transformed);
+  if (!out_range_file.is_open() || !out_intensity_file.is_open() ||
+      !out_visual_file.is_open()) {
     return false;
   }
 
-  std::ofstream out_file("");
+  if (!writeFeature(feature.getRangeTransformed(), &out_range_file) ||
+      !writeFeature(feature.getIntensityTransformed(), &out_intensity_file) ||
+      !writeFeature(feature.getVisualTransformed(), &out_visual_file)) {
+    return false;
+  }
 
   ++feature_counter_;
-  out_file.close();
+  out_range_file.close();
+  out_intensity_file.close();
+  out_visual_file.close();
   return true;
 }
 
