@@ -16,19 +16,17 @@ using PhaserFeatureVec = std::vector<common::SphericalFeature>;
 
 class DatasourceFeatures {
  public:
-  DatasourceFeatures();
+  explicit DatasourceFeatures(const std::string& datasource_folder);
   virtual void subscribeToFeatures(
-      boost::function<void(const common::SphericalFeature&)> func);
+      boost::function<void(common::SphericalFeature*)> func);
   virtual void startStreaming();
-  void setDatasetFolder(std::string&& datasource);
 
  private:
-  std::vector<boost::function<void(const common::SphericalFeature&)>>
-      callbacks_;
+  std::vector<boost::function<void(common::SphericalFeature*)>> callbacks_;
   PhaserFeatureVec readAllFeatures();
   void readFeature(const std::string& directory, PhaserFeature* feature);
   std::vector<double> parseLine(std::ifstream* in_file);
-  std::string datasource_folder_;
+  const std::string& datasource_folder_;
 };
 
 using DatasourceFeaturesPtr = std::unique_ptr<DatasourceFeatures>;

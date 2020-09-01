@@ -31,6 +31,10 @@ class SphericalCorrelation {
   void getStatistics(common::StatisticsManager* manager) const noexcept;
   std::vector<double> getCorrelation() const noexcept;
   uint32_t getBandwidth() const noexcept;
+  void performSphericalTransforms(
+      const std::vector<double>& f1, const std::vector<double>& f2);
+  void performSphericalTransform(
+      const std::vector<double>& input, double** transformed);
 
  protected:
   void convertSignalValues(double* signal_values, const int bw);
@@ -39,10 +43,6 @@ class SphericalCorrelation {
       const std::vector<model::FunctionValue>& f,
       std::vector<double>* interpolation);
   void initializeAll(const uint32_t bw);
-  void performSphericalTransforms(
-      const std::vector<double>& f1, const std::vector<double>& f2);
-  void performSphericalTransform(
-      const std::vector<double>& input, double** transformed);
   void correlate();
   void inverseTransform();
 

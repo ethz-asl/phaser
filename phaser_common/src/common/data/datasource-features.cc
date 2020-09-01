@@ -8,17 +8,13 @@
 #include <boost/filesystem.hpp>
 #include <glog/logging.h>
 
-DEFINE_string(
-    FeaturesReadDirectory, "",
-    "Defines the directory to read the features from.");
-
 namespace data {
 
-DatasourceFeatures::DatasourceFeatures()
-    : datasource_folder_(FLAGS_FeaturesReadDirectory) {}
+DatasourceFeatures::DatasourceFeatures(const std::string& datasource_folder)
+    : datasource_folder_(datasource_folder) {}
 
 void DatasourceFeatures::subscribeToFeatures(
-    boost::function<void(const common::SphericalFeature&)> func) {
+    boost::function<void(common::SphericalFeature*)> func) {
   callbacks_.emplace_back(func);
 }
 
@@ -29,15 +25,11 @@ void DatasourceFeatures::startStreaming() {
   const uint32_t n_features = features.size();
   VLOG(1) << "Reading features done. number of features: " << n_features;
   for (uint32_t i = 0u; i < n_features; ++i) {
-    common::SphericalFeature& feature = features.at(i);
+    common::SphericalFeature* feature = &features.at(i);
     for (auto& callback : callbacks_) {
       callback(feature);
     }
   }
-}
-
-void DatasourceFeatures::setDatasetFolder(std::string&& datasource) {
-  datasource_folder_ = datasource;
 }
 
 PhaserFeatureVec DatasourceFeatures::readAllFeatures() {
