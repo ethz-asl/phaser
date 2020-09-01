@@ -268,7 +268,7 @@ void SphericalCorrelation::performSphericalTransform(
   CHECK_NOTNULL(fft_plan_);
   CHECK_NOTNULL(weights_);
 
-  VLOG(1) << "Performing SFT of the first signal.";
+  VLOG(1) << "Performing SFT of the signal.";
   // #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < howmany_; ++i) {
     tmp_coef_[0][i] = input[i];

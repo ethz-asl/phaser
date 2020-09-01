@@ -15,7 +15,10 @@ DEFINE_int32(
 
 PhaserFeatureController::PhaserFeatureController(
     const data::DatasourceFeaturesPtr& ds, const std::string& output_folder)
-    : ds_(ds), feature_counter_(0u), output_folder_(output_folder) {
+    : ds_(ds),
+      correlation_(static_cast<uint32_t>(FLAGS_phaser_features_bandwidth)),
+      feature_counter_(0u),
+      output_folder_(output_folder) {
   CHECK_GT(FLAGS_phaser_features_bandwidth, 0);
   ds_->subscribeToFeatures([this](common::SphericalFeature* feature) {
     this->featureCallback(feature);
@@ -42,6 +45,8 @@ void PhaserFeatureController::featureCallback(
   transformFeatures(range_features, bw_squared, &range_transformed);
   transformFeatures(intensity_features, bw_squared, &intensity_transformed);
   transformFeatures(visual_features, bw_squared, &visual_transformed);
+
+  writeTransformedFeaturesToFile(*feature);
 }
 
 void PhaserFeatureController::transformFeatures(
@@ -67,6 +72,7 @@ void PhaserFeatureController::transformFeatures(
 
 bool PhaserFeatureController::writeTransformedFeaturesToFile(
     const common::SphericalFeature& feature) {
+  VLOG(1) << "Writing transformed features to file: " << output_folder_;
   if (!pathExists(output_folder_)) {
     return false;
   }
@@ -107,15 +113,15 @@ bool PhaserFeatureController::writeFeature(
     std::ofstream* output_file) {
   CHECK_NOTNULL(output_file);
   const uint32_t linear_size = transformed_features.size();
-  const uint32_t double_bw = FLAGS_phaser_features_bandwidth;
+  const uint32_t bw = FLAGS_phaser_features_bandwidth;
 
   constexpr const char* kDelimiter = ";";
   constexpr const char* kNewLine = "\n";
-  for (uint32_t i = 0u; i < double_bw; ++i) {
-    for (uint32_t j = 0u; j < double_bw; ++j) {
-      const uint32_t linear_idx = i * linear_size + j;
+  for (uint32_t i = 0u; i < bw; ++i) {
+    for (uint32_t j = 0u; j < bw; ++j) {
+      const uint32_t linear_idx = i * bw + j;
       CHECK_LT(linear_idx, linear_size);
-      if (j != double_bw - 1)
+      if (j != bw - 1)
         (*output_file) << transformed_features[linear_idx] << kDelimiter;
       else
         (*output_file) << transformed_features[linear_idx];
