@@ -108,10 +108,5 @@ catkin_add_gtest(test_spatial_correlation
   test/translation-alignment/spatial-correlation-test.cc)
 target_link_libraries(test_spatial_correlation ${PROJECT_NAME}_lib)
 
-catkin_add_gtest(test_translation
-  test/translation-alignment/translation-alignment-test.cc)
-target_link_libraries(test_translation ${PROJECT_NAME}_lib)
-phaser_import_test_maps(test_translation)
-
 cs_install()
 cs_export()
