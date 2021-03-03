@@ -25,7 +25,10 @@ We exploit the properties of Fourier analysis to derive a novel registration pip
      libvtk6-jni libnlopt-dev
 ```
 
-Within the caktin workspace
+
+__Important:__ Currently, PHASER also requires `nvcc` for compilation as most-recent experiments deal with performing the FFTs on the GPU. 
+
+For the remaining package dependencies, run within the `caktin` workspace
 
 ```
   wstool init
