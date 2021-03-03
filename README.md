@@ -1,4 +1,4 @@
-# Phase Correlation Based Point Cloud Registration
+# PHASER: A Robust and Correspondence-Free Global Pointcloud Registration
 
 ## Overview
 Point cloud registration using correspondences is inefficient and prone to errors in the many steps of correspondence extraction, description, and matching.
@@ -48,8 +48,18 @@ However, this might take some minutes to finish.
 
 ### Example
 
-To be done
+The package `phaser_core` provides a simple test driver to run PHASER using two pointclouds stored as `.ply` files.
+Additionally, run script for the test driver is provided in the `phaser_share` directory.
 
+The initial alignment of the two pointclouds is as follows:
+![PHASER Input Example](./phaser_share/img/input.png "Input source and target pointcloud")
+
+By running
+```
+./phaser_share/run_phaser_core_driver
+```
+the registered pointcloud is written to disk:
+![PHASER Registered Example](./phaser_share/img/registered.png "Globally registered pointcloud")
 
 ## Reference
 

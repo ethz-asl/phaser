@@ -1,14 +1,13 @@
 #!/usr/bin/env zsh
 REST=$@
-EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/exp-lidarmace-gt-dist/"
+EXP_DIR="/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_test_data/test_clouds/os0/"
 
 rosrun phaser_core phaser_core_driver \
   --v=3 \
   --alsologtostderr=1 \
-  --target_cloud="${EXP_DIR}cloud003.ply" \
-  --source_cloud="${EXP_DIR}cloud004.ply" \
-  --reg_cloud="./cloud01.ply" \
-  --n_clouds_to_process=0 \
+  --target_cloud="${EXP_DIR}target_2.ply" \
+  --source_cloud="${EXP_DIR}source_2.ply" \
+  --reg_cloud="./registered.ply" \
   --phaser_core_spherical_bandwidth=150 \
   --phaser_core_spherical_low_pass_lower_bound=000 \
   --phaser_core_spherical_low_pass_upper_bound=10000 \
