@@ -26,7 +26,7 @@ class CloudSegmentationTest : public ::testing::Test {
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
-    ds_->setDatasetFolder("./test_clouds/rotation_and_translation/");
+    ds_->setDatasetFolder("./test_clouds/os0/");
   }
 
   data::DatasourcePlyPtr ds_;
@@ -56,11 +56,6 @@ TEST_F(CloudSegmentationTest, SegmentCloudTest) {
     EXPECT_NE(seg_info_cloud, nullptr);
     EXPECT_GT(seg_cloud->size(), 0);
     EXPECT_GT(seg_info_cloud->size(), 0);
-    /*
-    std::stringstream ss;
-    ss << "/home/berlukas/Documents/ply/reg" << ++ply_counter << ".ply";
-    pcl::io::savePLYFileASCII(ss.str(), *seg_cloud);
-    */
   });
   ds_->startStreaming(1);
 }
