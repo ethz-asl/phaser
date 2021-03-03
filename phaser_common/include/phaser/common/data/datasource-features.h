@@ -23,7 +23,7 @@ class DatasourceFeatures {
 
  private:
   std::vector<boost::function<void(common::SphericalFeature*)>> callbacks_;
-  PhaserFeatureVec readAllFeatures();
+  bool readAllFeatures();
   void readFeature(const std::string& directory, PhaserFeature* feature);
   std::vector<double> parseLine(std::ifstream* in_file);
   const std::string& datasource_folder_;

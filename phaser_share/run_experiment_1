@@ -1,10 +1,12 @@
 #!/usr/bin/env zsh
 REST=$@
 #EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/exp/"
-EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/real-world-distilled/0.1/"
+#EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/real-world-distilled/3.75/"
+#EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/real-world/"
 #EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/exp-partial-overlap/30/"
 #EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/exp-occlusion/100/"
 #EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/exp-40db/2/"
+EXP_DIR="/home/berlukas/Documents/ply_datasets/phaser_v2/experiments/exp-50db/kitti/"
 
 rosrun phaser_ros phaser_ros \
     --alsologtostderr=1 \
@@ -21,13 +23,13 @@ rosrun phaser_ros phaser_ros \
     --phaser_core_spherical_low_pass_upper_bound=10000 \
     --phaser_core_spherical_zero_padding=10 \
     --phaser_core_spatial_n_voxels=201 \
-    --phaser_core_spatial_discretize_lower=-5 \
-    --phaser_core_spatial_discretize_upper=5 \
+    --phaser_core_spatial_discretize_lower=-50 \
+    --phaser_core_spatial_discretize_upper=50 \
     --phaser_core_spatial_low_pass_lower_bound=85 \
     --phaser_core_spatial_low_pass_upper_bound=115 \
     --phaser_core_spatial_zero_padding=0 \
-    --gaussian_peak_neighbors=1 \
-    --bingham_peak_neighbors=1 \
+    --gaussian_peak_neighbors=3 \
+    --bingham_peak_neighbors=3 \
     --z_score_filter_threshold=0.01 \
     --z_score_lag_max=3 \
     --z_score_threshold=3.0 \

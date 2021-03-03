@@ -115,7 +115,7 @@ bool PhaserFeatureController::writeFeature(
   const uint32_t linear_size = transformed_features.size();
   const uint32_t bw = FLAGS_phaser_features_bandwidth;
 
-  constexpr const char* kDelimiter = ";";
+  constexpr const char* kDelimiter = ",";
   constexpr const char* kNewLine = "\n";
   for (uint32_t i = 0u; i < bw; ++i) {
     for (uint32_t j = 0u; j < bw; ++j) {

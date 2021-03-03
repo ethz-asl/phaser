@@ -168,8 +168,8 @@ double* SpatialCorrelation::correlateSignals(
   CHECK_GT(g.size(), 0u);
 
   const uint32_t function_size = total_n_voxels_ * sizeof(double);
-  memcpy(f_, f[0]->data(), function_size);
-  memcpy(g_, g[0]->data(), function_size);
+  memcpy(f_, f[1]->data(), function_size);
+  memcpy(g_, g[1]->data(), function_size);
 
   // Perform the two FFTs on the discretized signals.
   VLOG(1) << "Performing FFT on the first point cloud.";

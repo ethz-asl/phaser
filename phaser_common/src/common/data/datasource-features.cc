@@ -19,23 +19,18 @@ void DatasourceFeatures::subscribeToFeatures(
 }
 
 void DatasourceFeatures::startStreaming() {
-  VLOG(1) << "reading features from: " << datasource_folder_;
-  PhaserFeatureVec features = readAllFeatures();
-  CHECK(!features.empty());
-  const uint32_t n_features = features.size();
-  VLOG(1) << "Reading features done. number of features: " << n_features;
-  for (uint32_t i = 0u; i < n_features; ++i) {
-    common::SphericalFeature* feature = &features.at(i);
-    for (auto& callback : callbacks_) {
-      callback(feature);
-    }
+  VLOG(1) << "Reading features from: " << datasource_folder_;
+  if (readAllFeatures()) {
+    LOG(ERROR) << "Failed to transform features.";
   }
+  VLOG(1) << "Reading and writing features done.";
 }
 
-PhaserFeatureVec DatasourceFeatures::readAllFeatures() {
-  PhaserFeatureVec features;
-  if (datasource_folder_.empty())
-    return features;
+bool DatasourceFeatures::readAllFeatures() {
+  if (datasource_folder_.empty()) {
+    LOG(WARNING) << "Warning: No dataset folder specificed.";
+    return false;
+  }
 
   const std::string range_feature = datasource_folder_ + "range";
   const std::string intensity_feature = datasource_folder_ + "intensity";
@@ -44,8 +39,11 @@ PhaserFeatureVec DatasourceFeatures::readAllFeatures() {
 
   std::vector<std::string> files;
   FileSystemHelper::readDirectory(datasource_folder_, &files);
-  if (files.empty())
-    return features;
+  if (files.empty()) {
+    LOG(WARNING) << "Warning: feature directory: " << datasource_folder_
+                 << "  is empty.";
+    return false;
+  }
 
   const uint32_t n_files = files.size();
   const uint32_t files_per_type = n_files / 3.0;
@@ -59,9 +57,12 @@ PhaserFeatureVec DatasourceFeatures::readAllFeatures() {
     readFeature(path_to_range, &feature.getRangeFeatures());
     readFeature(path_to_intensity, &feature.getIntensityFeatures());
     readFeature(path_to_visual, &feature.getVisualFeatures());
-    features.emplace_back(std::move(feature));
+
+    for (auto& callback : callbacks_) {
+      callback(&feature);
+    }
   }
-  return features;
+  return true;
 }
 
 void DatasourceFeatures::readFeature(

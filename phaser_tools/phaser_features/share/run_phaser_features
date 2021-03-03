@@ -5,7 +5,7 @@ REST=$@
 rosrun phaser_features phaser_features \
   --v=7 \
   --alsologtostderr \
-  --phaser_features_input_dataset="/mnt/data/datasets/Spherical/exported_features/anchor/" \
-  --phaser_features_output_dataset="/mnt/data/datasets/Spherical/transformed_features/anchor/" \
+  --phaser_features_input_dataset="/mnt/data/datasets/Spherical/exported_features/negative/" \
+  --phaser_features_output_dataset="/mnt/data/datasets/Spherical/transformed_features/negative/" \
   --phaser_features_bandwidth=100 \
   $REST
