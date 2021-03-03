@@ -62,6 +62,8 @@ void PhaseAligner::alignRegistered(
   discretizePointcloud(cloud_prev, f, &hist_);
   discretizePointcloud(cloud_reg, g, &hist_);
 
+  // f.erase(f.begin() + 1);
+  // g.erase(g.begin() + 1);
   double* c = spatial_correlation_->correlateSignals(f, g);
   previous_correlation_ =
       std::vector<double>(c, c + spatial_correlation_->getCorrelationSize());
@@ -109,10 +111,12 @@ void PhaseAligner::discretizePointcloud(
     (*f_intensities)(lin_index) =
         (*f_intensities)(lin_index) + cloud.pointAt(i).intensity;
     (*f_ranges)(lin_index) = (*f_ranges)(lin_index) + cloud.rangeAt(i);
-    (*f_reflectivity)(lin_index) =
-        (*f_reflectivity)(lin_index) + cloud.getReflectivity(i);
-    (*f_ambient)(lin_index) =
-        (*f_ambient)(lin_index) + cloud.getAmbientNoise(i);
+    if (cloud.hasReflectivityPoints())
+      (*f_reflectivity)(lin_index) =
+          (*f_reflectivity)(lin_index) + cloud.getReflectivity(i);
+    if (cloud.hasAmbientNoisePoints())
+      (*f_ambient)(lin_index) =
+          (*f_ambient)(lin_index) + cloud.getAmbientNoise(i);
     (*hist)(lin_index) = (*hist)(lin_index) + 1;
   }
   normalizeSignal(*hist, f_intensities);

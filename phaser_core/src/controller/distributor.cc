@@ -93,6 +93,8 @@ model::RegistrationResult Distributor::registerPointCloud(
       prev_point_cloud_, cloud);
   VLOG(1) << "Full registration took: " << duration_sample_f_ms << "ms.";
       */
+  preprocessor_.process(prev_point_cloud_);
+  preprocessor_.process(cloud);
   model::RegistrationResult result =
       registrator_->registerPointCloud(prev_point_cloud_, cloud);
   // registrator_->registerPointCloud(prev_point_cloud_, cloud);

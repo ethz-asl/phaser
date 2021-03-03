@@ -55,8 +55,8 @@ void SphericalCombinedWorker::run() {
   convertFunctionValues(h_values_, func_ambient, &h_ambient);
 
   sph_corr_->correlateSampledSignals(
-      {f_intensities, f_range, f_reflectivity, f_ambient},
-      {h_intensities, h_range, h_reflectivity, h_ambient});
+      {f_range, f_intensities, f_reflectivity, f_ambient},
+      {h_range, h_intensities, h_reflectivity, h_ambient});
   is_completed_ = true;
 }
 

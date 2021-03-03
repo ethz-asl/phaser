@@ -10,6 +10,7 @@
 #include "phaser/common/statistics-manager.h"
 #include "phaser/experiments/experiment-handler.h"
 #include "phaser/model/point-cloud.h"
+#include "phaser_pre/cloud-pre-processor.h"
 
 namespace phaser_core {
 
@@ -47,6 +48,7 @@ class Distributor {
   common::StatisticsManager statistics_manager_;
   uint32_t cloud_counter_;
   std::vector<Eigen::VectorXd> states_;
+  preproc::CloudPreProcessor preprocessor_;
 };
 
 }  // namespace phaser_core

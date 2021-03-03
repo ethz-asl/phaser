@@ -1,5 +1,7 @@
 #include "phaser/backend/correlation/spherical-correlation-laplace.h"
 
+#include <fstream>
+
 #include <glog/logging.h>
 
 #include "phaser/common/signal-utils.h"
@@ -20,9 +22,28 @@ void SphericalCorrelationLaplace::correlateSampledSignals(
 
   const uint32_t full_bw = bw_ * bw_;
   std::vector<complex_t> F_fused =
-      laplace_.fuseChannels(f_channels, full_bw, 4);
+      laplace_.fuseChannels(f_channels, full_bw, 5);
   std::vector<complex_t> G_fused =
-      laplace_.fuseChannels(g_channels, full_bw, 4);
+      laplace_.fuseChannels(g_channels, full_bw, 5);
+
+  /*
+  static std::size_t counter = 0u;
+  std::ofstream file_sig_r("fused_sig_r_" + std::to_string(counter) + ".txt");
+  std::ofstream file_sig_i("fused_sig_i_" + std::to_string(counter) + ".txt");
+  std::ofstream file_pat_r("fused_pat_r_" + std::to_string(counter) + ".txt");
+  std::ofstream file_pat_i("fused_pat_i_" + std::to_string(counter) + ".txt");
+  ++counter;
+  for (uint32_t i = 0u; i < full_bw; ++i) {
+    file_sig_r << F_fused[i][0] << ", ";
+    file_sig_i << F_fused[i][1] << ", ";
+    file_pat_r << G_fused[i][0] << ", ";
+    file_pat_i << G_fused[i][1] << ", ";
+  }
+  file_sig_r.close();
+  file_sig_i.close();
+  file_pat_r.close();
+  file_pat_i.close();
+  */
 
   VLOG(2) << "Setting the fused values for the original input.";
   setFusedCoefficients(F_fused, G_fused, full_bw);

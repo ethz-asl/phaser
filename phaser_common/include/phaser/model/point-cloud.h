@@ -52,6 +52,8 @@ class PointCloud {
   double rangeAt(const uint32_t i) const;
   double calcRangeAt(const uint32_t i) const;
 
+  bool hasReflectivityPoints() const;
+  bool hasAmbientNoisePoints() const;
   double getReflectivity(const uint32_t i) const;
   double getAmbientNoise(const uint32_t i) const;
 

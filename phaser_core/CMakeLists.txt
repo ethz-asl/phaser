@@ -74,7 +74,7 @@ cs_add_library(${PROJECT_NAME}_lib
    src/experiments/experiment-handler.cc
 
    src/backend/fusion/laplace-pyramid.cc
-
+   src/backend/fusion/pyramid-struct.cc
 )
 
  cuda_add_library(${PROJECT_NAME}_cuda_lib
@@ -96,10 +96,13 @@ catkin_add_gtest(test_sanity_check test/sanity-check/sanity-check-test.cc)
 target_link_libraries(test_sanity_check
   ${PROJECT_NAME}_lib)
 
-
 catkin_add_gtest(test_laplace_pyramid
   test/fusion/laplace-pyramid-test.cc)
 target_link_libraries(test_laplace_pyramid ${PROJECT_NAME}_lib)
+
+catkin_add_gtest(test_pyramid_struct
+  test/fusion/pyramid-struct-test.cc)
+target_link_libraries(test_pyramid_struct ${PROJECT_NAME}_lib)
 
 catkin_add_gtest(test_spatial_correlation
   test/translation-alignment/spatial-correlation-test.cc)
