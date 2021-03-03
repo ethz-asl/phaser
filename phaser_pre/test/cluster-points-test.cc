@@ -22,7 +22,7 @@ class ClusterPointsTest : public ::testing::Test {
   virtual void SetUp() {
     ds_ = std::make_unique<data::DatasourcePly>();
     CHECK_NOTNULL(ds_);
-    ds_->setDatasetFolder("./test_clouds/rotation_and_translation/");
+    ds_->setDatasetFolder("./test_clouds/os0/");
   }
 
   data::DatasourcePlyPtr ds_;
