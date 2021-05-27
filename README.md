@@ -11,22 +11,20 @@ We exploit the properties of Fourier analysis to derive a novel registration pip
 ### Prerequisites
 
 ```
-  # Standard maplab requirements
-  sudo apt-get install -y doxygen liblapack-dev libblas-dev autotools-dev \
+  # Some standard requirements
+  sudo apt-get install -y doxygen autotools-dev \
      dh-autoreconf libboost-all-dev python-setuptools git g++ cppcheck \
-     default-jre libreadline-dev libgtest-dev libglew-dev python-git pylint \
-     checkstyle python-termcolor liblog4cplus-dev cimg-dev python-wstool \
-     python-catkin-tools libssh2-1-dev libatlas3-base libv4l-dev python-scipy \
-
+     libgtest-dev python-git pylint \
+     python-termcolor liblog4cplus-dev cimg-dev python-wstool \
+     python-catkin-tools \
 
    # Ubuntu 18.04 / ROS Melodic.
    sudo apt-get install -y clang-format-6.0 ros-melodic-pcl-conversions \
-     libpcl-dev ros-melodic-octomap libvtk6-dev libvtk6-qt-dev libvtk6-java \
-     libvtk6-jni libnlopt-dev
+     libpcl-dev libnlopt-dev \
 ```
 
 
-__Important:__ Currently, PHASER also requires `nvcc` for compilation as most-recent experiments deal with performing the FFTs on the GPU. 
+__Important:__ Currently, PHASER also requires `nvcc` for compilation as most-recent experiments deal with performing the FFTs on the GPU.
 
 For the remaining package dependencies, run within the `caktin` workspace
 
