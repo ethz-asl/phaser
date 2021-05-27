@@ -1,5 +1,5 @@
-#ifndef PACKLO_DISTRIBUTION_GAUSSIAN_H_
-#define PACKLO_DISTRIBUTION_GAUSSIAN_H_
+#ifndef PHASER_DISTRIBUTION_GAUSSIAN_H_
+#define PHASER_DISTRIBUTION_GAUSSIAN_H_
 
 #include "phaser/distribution/base-distribution.h"
 
@@ -40,4 +40,4 @@ using GaussianPtr = std::shared_ptr<Gaussian>;
 
 }  // namespace common
 
-#endif  // PACKLO_DISTRIBUTION_GAUSSIAN_H_
+#endif  // PHASER_DISTRIBUTION_GAUSSIAN_H_

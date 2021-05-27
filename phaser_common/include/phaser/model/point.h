@@ -1,5 +1,5 @@
-#ifndef INCLUDE_PACKLO_MODEL_POINT_H_
-#define INCLUDE_PACKLO_MODEL_POINT_H_
+#ifndef PHASER_MODEL_POINT_H_
+#define PHASER_MODEL_POINT_H_
 
 namespace model {
 
@@ -52,4 +52,4 @@ class PointIST : public PointIS {
 
 }  // namespace model
 
-#endif  // INCLUDE_PACKLO_MODEL_POINT_H_
+#endif  // PHASER_MODEL_POINT_H_

@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_UNCERTAINTY_Z_SCORE_PEAK_EXTRACTION_H_
-#define PACKLO_BACKEND_UNCERTAINTY_Z_SCORE_PEAK_EXTRACTION_H_
+#ifndef PHASER_BACKEND_UNCERTAINTY_Z_SCORE_PEAK_EXTRACTION_H_
+#define PHASER_BACKEND_UNCERTAINTY_Z_SCORE_PEAK_EXTRACTION_H_
 
 #include "phaser/backend/uncertainty/base-peak-extraction.h"
 #include "phaser/common/statistics-manager.h"
@@ -44,4 +44,4 @@ class ZScorePeakExtraction : public BasePeakExtraction {
 
 }  // namespace phaser_core
 
-#endif  // PACKLO_BACKEND_UNCERTAINTY_Z_SCORE_PEAK_EXTRACTION_H_
+#endif  // PHASER_BACKEND_UNCERTAINTY_Z_SCORE_PEAK_EXTRACTION_H_

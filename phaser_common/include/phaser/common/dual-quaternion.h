@@ -1,5 +1,5 @@
-#ifndef PACKLO_COMMON_DUAL_QUATERNION_H_
-#define PACKLO_COMMON_DUAL_QUATERNION_H_
+#ifndef PHASER_COMMON_DUAL_QUATERNION_H_
+#define PHASER_COMMON_DUAL_QUATERNION_H_
 
 #include <Eigen/Dense>
 
@@ -25,4 +25,4 @@ class DualQuaternion {
 
 }  // namespace common
 
-#endif  // PACKLO_COMMON_DUAL_QUATERNION_H_
+#endif  // PHASER_COMMON_DUAL_QUATERNION_H_

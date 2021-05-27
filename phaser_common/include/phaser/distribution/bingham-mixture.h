@@ -1,5 +1,5 @@
-#ifndef PACKLO_DISTRIBUTION_BINGHAM_MIXTURE_H_
-#define PACKLO_DISTRIBUTION_BINGHAM_MIXTURE_H_
+#ifndef PHASER_DISTRIBUTION_BINGHAM_MIXTURE_H_
+#define PHASER_DISTRIBUTION_BINGHAM_MIXTURE_H_
 
 #include "phaser/distribution/base-distribution.h"
 #include "phaser/distribution/bingham.h"
@@ -43,4 +43,4 @@ using BinghamMixturePtr = std::shared_ptr<BinghamMixture>;
 
 }  // namespace common
 
-#endif  // PACKLO_DISTRIBUTION_BINGHAM_MIXTURE_H_
+#endif  // PHASER_DISTRIBUTION_BINGHAM_MIXTURE_H_

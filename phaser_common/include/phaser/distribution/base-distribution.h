@@ -1,5 +1,5 @@
-#ifndef PACKLO_DISTRIBUTION_BASE_DISTRIBUTION_H_
-#define PACKLO_DISTRIBUTION_BASE_DISTRIBUTION_H_
+#ifndef PHASER_DISTRIBUTION_BASE_DISTRIBUTION_H_
+#define PHASER_DISTRIBUTION_BASE_DISTRIBUTION_H_
 
 #include <Eigen/Dense>
 #include <memory>
@@ -17,4 +17,4 @@ using BaseDistributionPtr = std::shared_ptr<BaseDistribution>;
 
 }  // namespace common
 
-#endif  // PACKLO_DISTRIBUTION_BASE_DISTRIBUTION_H_
+#endif  // PHASER_DISTRIBUTION_BASE_DISTRIBUTION_H_
