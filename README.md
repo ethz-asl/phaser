@@ -62,8 +62,9 @@ By running
 ```
 ./phaser_share/run_phaser_core_driver
 ```
-the registered pointcloud is written to disk as `registered.ply`.
-In this particular case, the registration is configured to be very fine. Thus, it will take a few seconds to finish.
+the registered pointcloud is written to disk as `registered.ply`. You might need to adapt the source and target pointcloud paths. Furthermore, other pointcloud examples can be found in the `phaser_test_data/test_clouds/os0/` directory.
+
+In this particular case, the registration is configured to be very fine. Thus, it will take a few seconds to finish:
 ![PHASER Registered Example](./phaser_share/img/registered.png "Globally registered pointcloud")
 
 ## Reference
