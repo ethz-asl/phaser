@@ -1,5 +1,8 @@
 # PHASER: A Robust and Correspondence-Free Global Pointcloud Registration
 
+*Ubuntu 18.04+ROS Melodic*: [![Build Status](https://jenkins.asl.ethz.ch/buildStatus/icon?job=phaser_nightly)](https://jenkins.asl.ethz.ch/job/phaser_nightly)
+
+
 ## Overview
 Point cloud registration using correspondences is inefficient and prone to errors in the many steps of correspondence extraction, description, and matching.
 Similarly, the most widespread registration methods work only locally, requiring an initial guess already close to the true solution, something unaffordable in real robotic deployments.
@@ -59,7 +62,8 @@ By running
 ```
 ./phaser_share/run_phaser_core_driver
 ```
-the registered pointcloud is written to disk:
+the registered pointcloud is written to disk as `registered.ply`.
+In this particular case, the registration is configured to be very fine. Thus, it will take a few seconds to finish.
 ![PHASER Registered Example](./phaser_share/img/registered.png "Globally registered pointcloud")
 
 ## Reference
