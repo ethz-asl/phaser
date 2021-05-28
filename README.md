@@ -5,9 +5,9 @@
 ----------------------------
 
 ## Overview
-Point cloud registration using correspondences is inefficient and prone to errors in the many steps of correspondence extraction, description, and matching.
+Pointcloud registration using correspondences is inefficient and prone to errors in the many steps of correspondence extraction, description, and matching.
 Similarly, the most widespread registration methods work only locally, requiring an initial guess already close to the true solution, something unaffordable in real robotic deployments.
-We propose an algorithm for the registration of partially overlapping point clouds that operates at the global level and on the raw data, i.e., no initial guess as well as no candidate matches are required.
+We propose an algorithm for the registration of partially overlapping pointclouds that operates at the global level and on the raw data, i.e., no initial guess as well as no candidate matches are required.
 We exploit the properties of Fourier analysis to derive a novel registration pipeline based on the cross-correlation of the phases.
 
 ### Packages
