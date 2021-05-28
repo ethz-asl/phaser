@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-#ifndef PACKLO_COMMON_TEST_TESTING_PREDICATES_H_
-#define PACKLO_COMMON_TEST_TESTING_PREDICATES_H_
+#ifndef PHASER_COMMON_TEST_TESTING_PREDICATES_H_
+#define PHASER_COMMON_TEST_TESTING_PREDICATES_H_
 #include <cmath>
 #include <string>
 #include <vector>
@@ -152,4 +152,4 @@ template <typename T, typename Alloc>
       ASSERT, (T_A).getTransformationMatrix(),                \
       (T_B).getTransformationMatrix(), precision)
 
-#endif  // PACKLO_COMMON_TEST_TESTING_PREDICATES_H_
+#endif  // PHASER_COMMON_TEST_TESTING_PREDICATES_H_

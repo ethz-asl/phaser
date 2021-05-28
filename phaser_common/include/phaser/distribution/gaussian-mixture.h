@@ -1,5 +1,5 @@
-#ifndef PACKLO_DISTRIBUTION_GAUSSIAN_MIXTURE_H_
-#define PACKLO_DISTRIBUTION_GAUSSIAN_MIXTURE_H_
+#ifndef PHASER_DISTRIBUTION_GAUSSIAN_MIXTURE_H_
+#define PHASER_DISTRIBUTION_GAUSSIAN_MIXTURE_H_
 
 #include "phaser/distribution/base-distribution.h"
 #include "phaser/distribution/gaussian.h"
@@ -50,4 +50,4 @@ using GaussianMixturePtr = std::shared_ptr<GaussianMixture>;
 
 }  // namespace common
 
-#endif  // PACKLO_DISTRIBUTION_GAUSSIAN_MIXTURE_H_
+#endif  // PHASER_DISTRIBUTION_GAUSSIAN_MIXTURE_H_

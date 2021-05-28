@@ -1,5 +1,5 @@
-#ifndef INCLUDE_PACKLO_COMMON_POINT_TYPES_H_
-#define INCLUDE_PACKLO_COMMON_POINT_TYPES_H_
+#ifndef PHASER_COMMON_POINT_TYPES_H_
+#define PHASER_COMMON_POINT_TYPES_H_
 
 #include <Eigen/Dense>
 #include <pcl/point_cloud.h>
@@ -14,4 +14,4 @@ using PointCloud_tPtr = pcl::PointCloud<Point_t>::Ptr;
 using Vector_t = Eigen::Vector3d;
 }  // namespace common
 
-#endif  // INCLUDE_PACKLO_COMMON_POINT_TYPES_H_
+#endif  // PHASER_COMMON_POINT_TYPES_H_

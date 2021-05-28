@@ -1,5 +1,8 @@
 # PHASER: A Robust and Correspondence-Free Global Pointcloud Registration
 
+*Ubuntu 18.04+ROS Melodic*: [![Build Status](https://jenkins.asl.ethz.ch/buildStatus/icon?job=phaser_nightly)](https://jenkins.asl.ethz.ch/job/phaser_nightly)
+
+
 ## Overview
 Point cloud registration using correspondences is inefficient and prone to errors in the many steps of correspondence extraction, description, and matching.
 Similarly, the most widespread registration methods work only locally, requiring an initial guess already close to the true solution, something unaffordable in real robotic deployments.
@@ -11,22 +14,20 @@ We exploit the properties of Fourier analysis to derive a novel registration pip
 ### Prerequisites
 
 ```
-  # Standard maplab requirements
-  sudo apt-get install -y doxygen liblapack-dev libblas-dev autotools-dev \
+  # Some standard requirements
+  sudo apt-get install -y doxygen autotools-dev \
      dh-autoreconf libboost-all-dev python-setuptools git g++ cppcheck \
-     default-jre libreadline-dev libgtest-dev libglew-dev python-git pylint \
-     checkstyle python-termcolor liblog4cplus-dev cimg-dev python-wstool \
-     python-catkin-tools libssh2-1-dev libatlas3-base libv4l-dev python-scipy \
-
+     libgtest-dev python-git pylint \
+     python-termcolor liblog4cplus-dev cimg-dev python-wstool \
+     python-catkin-tools \
 
    # Ubuntu 18.04 / ROS Melodic.
    sudo apt-get install -y clang-format-6.0 ros-melodic-pcl-conversions \
-     libpcl-dev ros-melodic-octomap libvtk6-dev libvtk6-qt-dev libvtk6-java \
-     libvtk6-jni libnlopt-dev
+     libpcl-dev libnlopt-dev \
 ```
 
 
-__Important:__ Currently, PHASER also requires `nvcc` for compilation as most-recent experiments deal with performing the FFTs on the GPU. 
+__Important:__ Currently, PHASER also requires `nvcc` for compilation as most-recent experiments deal with performing the FFTs on the GPU.
 
 For the remaining package dependencies, run within the `caktin` workspace
 
@@ -61,7 +62,9 @@ By running
 ```
 ./phaser_share/run_phaser_core_driver
 ```
-the registered pointcloud is written to disk:
+the registered pointcloud is written to disk as `registered.ply`. You might need to adapt the source and target pointcloud paths. Furthermore, other pointcloud examples can be found in the `phaser_test_data/test_clouds/os0/` directory.
+
+In this particular case, the registration is configured to be very fine. Thus, it will take a few seconds to finish:
 ![PHASER Registered Example](./phaser_share/img/registered.png "Globally registered pointcloud")
 
 ## Reference

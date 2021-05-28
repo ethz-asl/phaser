@@ -112,18 +112,16 @@ std::vector<SphericalCorrelation> SphOptRegistration::correlatePointcloud(
   sampler_.sampleUniformly(*source, &h_values);
 
   // Create workers for the spherical correlation.
-  SphericalIntensityWorkerPtr corr_intensity_worker = CHECK_NOTNULL(
-      std::make_shared<SphericalIntensityWorker>(f_values, h_values));
-  SphericalRangeWorkerPtr corr_range_worker =
-      CHECK_NOTNULL(std::make_shared<SphericalRangeWorker>(f_values, h_values));
+  // SphericalIntensityWorkerPtr corr_intensity_worker = CHECK_NOTNULL(
+  // std::make_shared<SphericalIntensityWorker>(f_values, h_values));
+  // SphericalRangeWorkerPtr corr_range_worker =
+  // CHECK_NOTNULL(std::make_shared<SphericalRangeWorker>(f_values, h_values));
   SphericalCombinedWorkerPtr corr_combined_worker = CHECK_NOTNULL(
       std::make_shared<SphericalCombinedWorker>(f_values, h_values));
 
   // Add workers to pool and execute them.
   auto start = std::chrono::high_resolution_clock::now();
   th_pool_.add_worker(corr_combined_worker);
-  // th_pool_.run_and_wait_all();
-  // th_pool_.add_worker(corr_range_worker);
   th_pool_.run_and_wait_all();
   auto end = std::chrono::high_resolution_clock::now();
   VLOG(1) << "Time for rot est: "

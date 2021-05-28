@@ -19,8 +19,8 @@
  * Titus Cieslewski,
  * ASL, ETH Zurich, Switzerland in 2015.
  */
-#ifndef PACKLO_COMMON_TEST_TESTING_ENTRYPOINT_H_
-#define PACKLO_COMMON_TEST_TESTING_ENTRYPOINT_H_
+#ifndef PHASER_COMMON_TEST_TESTING_ENTRYPOINT_H_
+#define PHASER_COMMON_TEST_TESTING_ENTRYPOINT_H_
 
 #include <gflags/gflags.h>
 #include <glog/logging.h>
@@ -98,4 +98,4 @@ class UnitTestEntryPoint : public UnitTestEntryPointBase {
     return entry_point.run(argc, argv);     \
   }
 
-#endif  // PACKLO_COMMON_TEST_TESTING_ENTRYPOINT_H_
+#endif  // PHASER_COMMON_TEST_TESTING_ENTRYPOINT_H_

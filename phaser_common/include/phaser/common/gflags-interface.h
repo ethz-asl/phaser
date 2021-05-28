@@ -1,5 +1,5 @@
-#ifndef PACKLO_COMMON_GFLAGS_INTERFACE_H_
-#define PACKLO_COMMON_GFLAGS_INTERFACE_H_
+#ifndef PHASER_COMMON_GFLAGS_INTERFACE_H_
+#define PHASER_COMMON_GFLAGS_INTERFACE_H_
 
 #include <gflags/gflags.h>
 #include <glog/logging.h>
@@ -12,4 +12,4 @@ void parseGflagsFromRosParams(
 
 }  // namespace common
 
-#endif  // PACKLO_COMMON_GFLAGS_INTERFACE_H_
+#endif  // PHASER_COMMON_GFLAGS_INTERFACE_H_

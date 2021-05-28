@@ -1,5 +1,5 @@
-#ifndef PACKLO_BACKEND_UNCERTAINTY_PEAK_BASED_EVAL_H_
-#define PACKLO_BACKEND_UNCERTAINTY_PEAK_BASED_EVAL_H_
+#ifndef PHASER_BACKEND_UNCERTAINTY_PEAK_BASED_EVAL_H_
+#define PHASER_BACKEND_UNCERTAINTY_PEAK_BASED_EVAL_H_
 
 #include <vector>
 #include "phaser/backend/uncertainty/base-peak-extraction.h"
@@ -18,4 +18,4 @@ class PeakBasedEval {
 
 }  // namespace phaser_core
 
-#endif  // PACKLO_BACKEND_UNCERTAINTY_PEAK_BASED_EVAL_H_
+#endif  // PHASER_BACKEND_UNCERTAINTY_PEAK_BASED_EVAL_H_

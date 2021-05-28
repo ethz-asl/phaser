@@ -3,8 +3,8 @@
  *  AbstractHypersphericalDistribution in libDirecitonal
  */
 
-#ifndef PACKLO_COMMON_MATH_UTILS_H_
-#define PACKLO_COMMON_MATH_UTILS_H_
+#ifndef PHASER_COMMON_MATH_UTILS_H_
+#define PHASER_COMMON_MATH_UTILS_H_
 
 #include <Eigen/Dense>
 #include <cmath>
@@ -146,4 +146,4 @@ MathUtils::pseudoinverse(const MatT& mat, typename MatT::Scalar tolerance) {
   return svd.matrixV() * singularValuesInv * svd.matrixU().adjoint();
 }
 
-#endif  // PACKLO_COMMON_MATH_UTILS_H_
+#endif  // PHASER_COMMON_MATH_UTILS_H_

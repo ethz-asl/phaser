@@ -1,5 +1,5 @@
-#ifndef PACKLO_MODEL_STATE_H_
-#define PACKLO_MODEL_STATE_H_
+#ifndef PHASER_MODEL_STATE_H_
+#define PHASER_MODEL_STATE_H_
 
 #include "phaser/common/dual-quaternion.h"
 #include "phaser/distribution/bingham.h"
@@ -26,4 +26,4 @@ class State {
 
 }  // namespace model
 
-#endif  // PACKLO_MODEL_STATE_H_
+#endif  // PHASER_MODEL_STATE_H_

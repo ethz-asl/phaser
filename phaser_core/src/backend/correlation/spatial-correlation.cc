@@ -193,8 +193,6 @@ double* SpatialCorrelation::correlateSignals(
   std::array<uint32_t, 3> ijk = common::SignalUtils::Ind2Sub(
       idx, n_voxels_per_dim_ + padding_per_dim,
       n_voxels_per_dim_ + padding_per_dim);
-  VLOG(1) << "MAXIMUM FREQ CORR: " << max_val << " at " << idx;
-  VLOG(1) << "CORRESPONDS TO: " << ijk[0] << ", " << ijk[1] << ", " << ijk[2];
 
   // Perform the IFFT on the correlation tensor.
   VLOG(1) << "Performing IFFT on correlation.";

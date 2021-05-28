@@ -5,8 +5,8 @@
  * The Annals of Statistics, vol. 2, no. 6, pp. 1201-1225, Nov. 1974.
  *
  */
-#ifndef PACKLO_DISTRIBUTION_BINGHAM_H_
-#define PACKLO_DISTRIBUTION_BINGHAM_H_
+#ifndef PHASER_DISTRIBUTION_BINGHAM_H_
+#define PHASER_DISTRIBUTION_BINGHAM_H_
 
 #include "phaser/distribution/base-distribution.h"
 
@@ -236,4 +236,4 @@ using BinghamPtr = std::shared_ptr<Bingham>;
 
 }  // namespace common
 
-#endif  // PACKLO_DISTRIBUTION_BINGHAM_H_
+#endif  // PHASER_DISTRIBUTION_BINGHAM_H_

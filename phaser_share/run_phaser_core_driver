@@ -1,12 +1,12 @@
 #!/usr/bin/env zsh
 REST=$@
-EXP_DIR="/home/berlukas/Documents/workspace/phaser_ws/src/phaser/phaser_test_data/test_clouds/os0/"
+EXP_DIR="./phaser_test_data/test_clouds/os0/"
 
 rosrun phaser_core phaser_core_driver \
   --v=3 \
   --alsologtostderr=1 \
-  --target_cloud="${EXP_DIR}target_2.ply" \
-  --source_cloud="${EXP_DIR}source_2.ply" \
+  --target_cloud="${EXP_DIR}target_1.ply" \
+  --source_cloud="${EXP_DIR}source_1.ply" \
   --reg_cloud="./registered.ply" \
   --phaser_core_spherical_bandwidth=150 \
   --phaser_core_spherical_low_pass_lower_bound=000 \

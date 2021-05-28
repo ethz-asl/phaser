@@ -1,5 +1,5 @@
-#ifndef INCLUDE_PACKLO_COMMON_SPHERICAL_SAMPLER_H_
-#define INCLUDE_PACKLO_COMMON_SPHERICAL_SAMPLER_H_
+#ifndef PHASER_COMMON_SPHERICAL_SAMPLER_H_
+#define PHASER_COMMON_SPHERICAL_SAMPLER_H_
 
 #include <vector>
 #include "phaser/common/spherical-projection.h"
@@ -29,4 +29,4 @@ class SphericalSampler {
 
 }  // namespace common
 
-#endif  // INCLUDE_PACKLO_COMMON_SPHERICAL_SAMPLER_H_
+#endif  // PHASER_COMMON_SPHERICAL_SAMPLER_H_

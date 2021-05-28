@@ -1,5 +1,5 @@
-#ifndef PACKLO_MODEL_GMM_PARAMETERS_H_
-#define PACKLO_MODEL_GMM_PARAMETERS_H_
+#ifndef PHASER_MODEL_GMM_PARAMETERS_H_
+#define PHASER_MODEL_GMM_PARAMETERS_H_
 
 #include <Eigen/Dense>
 #include <vector>
@@ -30,4 +30,4 @@ class GmmParameters {
 
 }  // namespace model
 
-#endif  // PACKLO_MODEL_GMM_PARAMETERS_H_
+#endif  // PHASER_MODEL_GMM_PARAMETERS_H_

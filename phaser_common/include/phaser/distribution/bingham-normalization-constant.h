@@ -8,8 +8,8 @@
  * via: https://github.com/libDirectional/libDirectional
  */
 
-#ifndef PACKLO_DISTRIBUTION_BINGHAM_NORMALIZATION_CONSTANT_H_
-#define PACKLO_DISTRIBUTION_BINGHAM_NORMALIZATION_CONSTANT_H_
+#ifndef PHASER_DISTRIBUTION_BINGHAM_NORMALIZATION_CONSTANT_H_
+#define PHASER_DISTRIBUTION_BINGHAM_NORMALIZATION_CONSTANT_H_
 
 class BinghamNormalizationConstant {
  public:
@@ -23,4 +23,4 @@ class BinghamNormalizationConstant {
       double t, int dim, double* la, double* res, int derriv);
 };
 
-#endif  // PACKLO_DISTRIBUTION_BINGHAM_NORMALIZATION_CONSTANT_H_
+#endif  // PHASER_DISTRIBUTION_BINGHAM_NORMALIZATION_CONSTANT_H_
