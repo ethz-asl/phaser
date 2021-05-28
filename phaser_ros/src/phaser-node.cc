@@ -1,4 +1,3 @@
-#include "phaser/phaser-node.h"
 #include "phaser/backend/registration/mock/sph-registration-mock-cutted.h"
 #include "phaser/backend/registration/mock/sph-registration-mock-rotated.h"
 #include "phaser/backend/registration/mock/sph-registration-mock-transformed.h"
@@ -7,13 +6,13 @@
 #include "phaser/backend/registration/sph-registration.h"
 #include "phaser/common/data/datasource-ply.h"
 #include "phaser/common/data/datasource-ros.h"
-#include "phaser/controller/distributor.h"
+#include "phaser/phaser-node.h"
 #include "phaser/visualization/plotty-visualizer.h"
 
 #include <glog/logging.h>
 #include <ros/ros.h>
 
-namespace packlo {
+namespace phaser_ros {
 
 DEFINE_string(datasource, "bag", "Defines the datasource to use for packlo.");
 
@@ -27,18 +26,37 @@ PhaserNode::PhaserNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private)
     : spinner_(1), node_handle_(nh), node_handle_private_(nh_private) {
   should_exit_.store(false);
   initializeDatasource(FLAGS_datasource);
-  phaser_core::BaseRegistrationPtr reg =
-      initializeRegistrationAlgorithm(FLAGS_registration_algorithm);
-
   CHECK_NOTNULL(ds_);
-  CHECK_NOTNULL(reg);
-  dist_ = std::make_unique<phaser_core::Distributor>(ds_, std::move(reg));
+
+  controller_ = std::make_unique<phaser_core::CloudController>("sph-opt");
+  subscribeToTopics();
+}
+
+void PhaserNode::subscribeToTopics() {
+  CHECK_NOTNULL(ds_);
+  ds_->subscribeToPointClouds([&](const model::PointCloudPtr& cloud) {
+    CHECK(cloud);
+    pointCloudCallback(cloud);
+  });
+}
+
+void PhaserNode::pointCloudCallback(const model::PointCloudPtr& cloud) {
+  CHECK_NOTNULL(cloud);
+  CHECK_NOTNULL(controller_);
+
+  if (prev_point_cloud_ == nullptr) {
+    prev_point_cloud_ = cloud;
+    return;
+  }
+
+  controller_->registerPointCloud(prev_point_cloud_, cloud);
+  prev_point_cloud_ = cloud;
 }
 
 bool PhaserNode::run() {
-  LOG(INFO) << "Running PackLO";
+  LOG(INFO) << "Running PHASER";
   spinner_.start();
-  if (ds_ == nullptr || dist_ == nullptr) {
+  if (ds_ == nullptr || controller_ == nullptr) {
     return false;
   }
   VLOG(1) << "Loading " << FLAGS_n_clouds_to_process << " clouds.";
@@ -51,24 +69,11 @@ const std::atomic<bool>& PhaserNode::shouldExit() const noexcept {
 }
 
 std::string PhaserNode::updateAndPrintStatistics() {
-  /*
-  std::vector<common::StatisticsManager> managers = retrieveStatistics();
-  for (common::StatisticsManager manager : managers) {
-  }
-  */
-  // dist_->updateStatistics();
-  /*
-  common::StatisticsManager manager("main");
-  dist_->getStatistics(&manager);
-  visualization::PlottyVisualizer::getInstance()
-    .createPlotFor(manager, "signal_values");
-  */
-
   return "";
 }
 
 void PhaserNode::shutdown() {
-  dist_->shutdown();
+  controller_->shutdown();
 }
 
 void PhaserNode::initializeDatasource(const std::string& type) {
@@ -83,28 +88,8 @@ void PhaserNode::initializeDatasource(const std::string& type) {
 std::vector<common::StatisticsManager> PhaserNode::retrieveStatistics() const
     noexcept {
   std::vector<common::StatisticsManager> managers;
-  //  managers.emplace_back(dist_->getStatistics());
 
   return managers;
 }
 
-phaser_core::BaseRegistrationPtr PhaserNode::initializeRegistrationAlgorithm(
-    const std::string& algo) {
-  if (algo == "sph")
-    return std::make_unique<phaser_core::SphRegistration>();
-  else if (algo == "sph-opt")
-    return std::make_unique<phaser_core::SphOptRegistration>();
-  else if (algo == "sph-mock-rotated")
-    return std::make_unique<phaser_core::SphRegistrationMockRotated>();
-  else if (algo == "sph-mock-cutted")
-    return std::make_unique<phaser_core::SphRegistrationMockCutted>();
-  else if (algo == "sph-mock-translated")
-    return std::make_unique<phaser_core::SphRegistrationMockTranslated>();
-  else if (algo == "sph-mock-transformed")
-    return std::make_unique<phaser_core::SphRegistrationMockTransformed>();
-  else
-    LOG(FATAL) << "Unknown registration algorithm specified!";
-  return nullptr;
-}
-
-}  // namespace packlo
+}  // namespace phaser_ros

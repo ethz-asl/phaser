@@ -33,4 +33,8 @@ model::RegistrationResult CloudController::registerPointCloud(
   return registrator_->registerPointCloud(target, source);
 }
 
+void CloudController::shutdown() {
+  // NOOP
+}
+
 }  // namespace phaser_core

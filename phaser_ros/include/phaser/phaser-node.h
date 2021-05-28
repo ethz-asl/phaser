@@ -3,7 +3,8 @@
 
 #include "phaser/common/data/base-datasource.h"
 #include "phaser/common/statistics-manager.h"
-#include "phaser/controller/distributor.h"
+#include "phaser/controller/cloud-controller.h"
+#include "phaser/model/point-cloud.h"
 
 #include <atomic>
 #include <memory>
@@ -11,7 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace packlo {
+namespace phaser_ros {
 
 class PhaserNode {
  public:
@@ -24,18 +25,19 @@ class PhaserNode {
 
  private:
   void initializeDatasource(const std::string& type);
-  phaser_core::BaseRegistrationPtr initializeRegistrationAlgorithm(
-      const std::string& algo);
   std::vector<common::StatisticsManager> retrieveStatistics() const noexcept;
+  void subscribeToTopics();
+  void pointCloudCallback(const model::PointCloudPtr& cloud);
 
   ros::AsyncSpinner spinner_;
   ros::NodeHandle& node_handle_;
   ros::NodeHandle& node_handle_private_;
   data::DatasourcePtr ds_;
   std::atomic<bool> should_exit_;
-  std::unique_ptr<phaser_core::Distributor> dist_;
+  std::unique_ptr<phaser_core::CloudController> controller_;
+  model::PointCloudPtr prev_point_cloud_;
 };  // class PhaserNode
 
-}  // namespace packlo
+}  // namespace phaser_ros
 
 #endif  // PHASER_PHASER_NODE_H_
