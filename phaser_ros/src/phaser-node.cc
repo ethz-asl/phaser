@@ -1,3 +1,4 @@
+#include "phaser/phaser-node.h"
 #include "phaser/backend/registration/mock/sph-registration-mock-cutted.h"
 #include "phaser/backend/registration/mock/sph-registration-mock-rotated.h"
 #include "phaser/backend/registration/mock/sph-registration-mock-transformed.h"
@@ -6,7 +7,6 @@
 #include "phaser/backend/registration/sph-registration.h"
 #include "phaser/common/data/datasource-ply.h"
 #include "phaser/common/data/datasource-ros.h"
-#include "phaser/phaser-node.h"
 #include "phaser/visualization/plotty-visualizer.h"
 
 #include <glog/logging.h>
