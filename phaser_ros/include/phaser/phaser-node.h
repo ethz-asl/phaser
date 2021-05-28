@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PHASER_PHASER_NODE_H_
+#define PHASER_PHASER_NODE_H_
 
 #include "phaser/common/data/base-datasource.h"
 #include "phaser/common/statistics-manager.h"
@@ -7,13 +8,15 @@
 #include <atomic>
 #include <memory>
 #include <ros/ros.h>
+#include <string>
 #include <vector>
 
 namespace packlo {
 
-class PackloNode {
+class PhaserNode {
  public:
-  explicit PackloNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private_);
+  explicit PhaserNode(
+      ros::NodeHandle& nh, ros::NodeHandle& nh_private_);  // NOLINT
   bool run();
   const std::atomic<bool>& shouldExit() const noexcept;
   std::string updateAndPrintStatistics();
@@ -31,6 +34,8 @@ class PackloNode {
   data::DatasourcePtr ds_;
   std::atomic<bool> should_exit_;
   std::unique_ptr<phaser_core::Distributor> dist_;
-};  // class PackloNode
+};  // class PhaserNode
 
 }  // namespace packlo
+
+#endif  // PHASER_PHASER_NODE_H_

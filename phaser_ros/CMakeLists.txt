@@ -17,10 +17,10 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 cs_add_library(${PROJECT_NAME}_lib
-   src/packlo-node.cc
+   src/phaser-node.cc
 )
 
-cs_add_executable(${PROJECT_NAME} app/packlo-app.cc)
+cs_add_executable(${PROJECT_NAME} app/phaser-app.cc)
 target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
 
 cs_install()

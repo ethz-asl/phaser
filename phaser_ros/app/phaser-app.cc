@@ -1,12 +1,12 @@
 #include "phaser/common/gflags-interface.h"
 #include "phaser/controller/distributor.h"
-#include "phaser/packlo-node.h"
+#include "phaser/phaser-node.h"
 
-#include <ros/ros.h>
 #include <glog/logging.h>
+#include <ros/ros.h>
 
-#include <thread>
 #include <chrono>
+#include <thread>
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "packlo");
@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
   ros::NodeHandle nh, nh_private("~");
   common::parseGflagsFromRosParams(argv[0], nh_private);
 
-  packlo::PackloNode packlo_node(nh, nh_private);
+  packlo::PhaserNode packlo_node(nh, nh_private);
   if (!packlo_node.run()) {
     ROS_FATAL("Failed to start running the packlo node!");
     ros::shutdown();

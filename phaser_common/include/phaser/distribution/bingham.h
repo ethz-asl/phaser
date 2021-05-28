@@ -4,6 +4,9 @@
  * C. Bingham, "An antipodally symmetric distribution on the sphere",
  * The Annals of Statistics, vol. 2, no. 6, pp. 1201-1225, Nov. 1974.
  *
+ * Reference implementation:
+ * Kurz et al., "Directional Statistics and Filtering Using libDirectional",
+ * Journal of Statistical Software, vol. 89, no. 4 (2019): 1-31.
  */
 #ifndef PHASER_DISTRIBUTION_BINGHAM_H_
 #define PHASER_DISTRIBUTION_BINGHAM_H_

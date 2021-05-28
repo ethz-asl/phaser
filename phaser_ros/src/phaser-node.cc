@@ -1,4 +1,4 @@
-#include "phaser/packlo-node.h"
+#include "phaser/phaser-node.h"
 #include "phaser/backend/registration/mock/sph-registration-mock-cutted.h"
 #include "phaser/backend/registration/mock/sph-registration-mock-rotated.h"
 #include "phaser/backend/registration/mock/sph-registration-mock-transformed.h"
@@ -23,7 +23,7 @@ DEFINE_string(
     registration_algorithm, "sph",
     "Defines the used algorithm for the point cloud registration.");
 
-PackloNode::PackloNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private)
+PhaserNode::PhaserNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private)
     : spinner_(1), node_handle_(nh), node_handle_private_(nh_private) {
   should_exit_.store(false);
   initializeDatasource(FLAGS_datasource);
@@ -35,7 +35,7 @@ PackloNode::PackloNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private)
   dist_ = std::make_unique<phaser_core::Distributor>(ds_, std::move(reg));
 }
 
-bool PackloNode::run() {
+bool PhaserNode::run() {
   LOG(INFO) << "Running PackLO";
   spinner_.start();
   if (ds_ == nullptr || dist_ == nullptr) {
@@ -46,11 +46,11 @@ bool PackloNode::run() {
   return true;
 }
 
-const std::atomic<bool>& PackloNode::shouldExit() const noexcept {
+const std::atomic<bool>& PhaserNode::shouldExit() const noexcept {
   return should_exit_;
 }
 
-std::string PackloNode::updateAndPrintStatistics() {
+std::string PhaserNode::updateAndPrintStatistics() {
   /*
   std::vector<common::StatisticsManager> managers = retrieveStatistics();
   for (common::StatisticsManager manager : managers) {
@@ -67,11 +67,11 @@ std::string PackloNode::updateAndPrintStatistics() {
   return "";
 }
 
-void PackloNode::shutdown() {
+void PhaserNode::shutdown() {
   dist_->shutdown();
 }
 
-void PackloNode::initializeDatasource(const std::string& type) {
+void PhaserNode::initializeDatasource(const std::string& type) {
   if (type == "bag")
     ds_ = std::make_shared<data::DatasourceRos>(node_handle_);
   else if (type == "ply")
@@ -80,7 +80,7 @@ void PackloNode::initializeDatasource(const std::string& type) {
     LOG(FATAL) << "Unknown datasource type specified.";
 }
 
-std::vector<common::StatisticsManager> PackloNode::retrieveStatistics() const
+std::vector<common::StatisticsManager> PhaserNode::retrieveStatistics() const
     noexcept {
   std::vector<common::StatisticsManager> managers;
   //  managers.emplace_back(dist_->getStatistics());
@@ -88,7 +88,7 @@ std::vector<common::StatisticsManager> PackloNode::retrieveStatistics() const
   return managers;
 }
 
-phaser_core::BaseRegistrationPtr PackloNode::initializeRegistrationAlgorithm(
+phaser_core::BaseRegistrationPtr PhaserNode::initializeRegistrationAlgorithm(
     const std::string& algo) {
   if (algo == "sph")
     return std::make_unique<phaser_core::SphRegistration>();
@@ -104,12 +104,6 @@ phaser_core::BaseRegistrationPtr PackloNode::initializeRegistrationAlgorithm(
     return std::make_unique<phaser_core::SphRegistrationMockTransformed>();
   else
     LOG(FATAL) << "Unknown registration algorithm specified!";
-  /*
-  if (FLAGS_app_mode == "experiment1" || FLAGS_app_mode == "experiment2" ||
-      FLAGS_app_mode == "experiment3") {
-    experiment_handler_ = std::make_unique<ExperimentHandler>();
-  }
-  */
   return nullptr;
 }
 
