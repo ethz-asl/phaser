@@ -22,6 +22,7 @@ class SphericalCombinedWorker : public common::BaseWorker {
 
   std::vector<double> getCorrelation() const noexcept;
   const SphericalCorrelation& getCorrelationObject() const noexcept;
+  void shutdown();
 
  private:
   SphericalCorrelationPtr sph_corr_;

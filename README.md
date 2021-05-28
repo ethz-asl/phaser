@@ -2,6 +2,7 @@
 
 *Ubuntu 18.04+ROS Melodic*: [![Build Status](https://jenkins.asl.ethz.ch/buildStatus/icon?job=phaser_nightly)](https://jenkins.asl.ethz.ch/job/phaser_nightly)
 
+----------------------------
 
 ## Overview
 Point cloud registration using correspondences is inefficient and prone to errors in the many steps of correspondence extraction, description, and matching.
@@ -9,9 +10,20 @@ Similarly, the most widespread registration methods work only locally, requiring
 We propose an algorithm for the registration of partially overlapping point clouds that operates at the global level and on the raw data, i.e., no initial guess as well as no candidate matches are required.
 We exploit the properties of Fourier analysis to derive a novel registration pipeline based on the cross-correlation of the phases.
 
-## Installation
+### Packages
+PHASER is composed of the following packages:
+ - [phaser_core](https://github.com/ethz-asl/phaser/tree/master/phaser_core): The registration core of PHASER. Contains the spherical and spatial correlation.
+ - [phaser_ros](https://github.com/ethz-asl/phaser/tree/master/phaser_ros): This is a ROS wrapper to use the PHASER as a registration framework. Hardly used anymore.
+ - [phaser_common](https://github.com/ethz-asl/phaser/tree/master/phaser_common): Exposes common classes, utils and models.
+ - [phaser_pre](https://github.com/ethz-asl/phaser/tree/master/phaser_pre): Experimental preprocessing of pointcloud data.
+ - [phaser_viz](https://github.com/ethz-asl/phaser/tree/master/phaser_viz): Provides visualization functions.
+ - [phaser_test_data](https://github.com/ethz-asl/phaser/tree/master/phaser_test_data): Contains example data as PLYs.
+ - [phaser_share](https://github.com/ethz-asl/phaser/tree/master/phaser_share): Provides run and build scripts.
 
-### Prerequisites
+## Installation
+PHASER requires ROS and some other dependencies to be installed:
+
+### Dependencies
 
 ```
   # Some standard requirements
@@ -66,6 +78,11 @@ the registered pointcloud is written to disk as `registered.ply`. You might need
 
 In this particular case, the registration is configured to be very fine. Thus, it will take a few seconds to finish:
 ![PHASER Registered Example](./phaser_share/img/registered.png "Globally registered pointcloud")
+
+## Development Guidelines
+
+ - [Use the Google C++ Code Style](https://google.github.io/styleguide/cppguide.html)
+ - [How to install and use the linter](https://github.com/ethz-asl/linter/blob/master/README.md#installation)
 
 ## Reference
 

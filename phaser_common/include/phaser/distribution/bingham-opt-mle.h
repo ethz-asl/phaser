@@ -10,7 +10,6 @@ namespace common {
 class BinghamOptMLE {
  public:
   static Eigen::VectorXd compute(const Eigen::VectorXd& omega);
-  // static int compute(int dim, double* in, double* res);
 
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW

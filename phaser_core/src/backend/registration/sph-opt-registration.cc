@@ -31,6 +31,7 @@ SphOptRegistration::SphOptRegistration()
   CHECK_NE(fftw_init_threads(), 0);
   fftw_plan_with_nthreads(12);
 }
+SphOptRegistration::~SphOptRegistration() {}
 
 model::RegistrationResult SphOptRegistration::registerPointCloud(
     model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) {
@@ -44,7 +45,6 @@ model::RegistrationResult SphOptRegistration::registerPointCloud(
   // Register the point cloud.
   model::RegistrationResult result = estimateRotation(cloud_prev, cloud_cur);
   estimateTranslation(cloud_prev, &result);
-
   return result;
 }
 
@@ -63,14 +63,15 @@ model::RegistrationResult SphOptRegistration::estimateRotation(
   Eigen::VectorXd b_est =
       common::RotationUtils::ConvertQuaternionToXYZ(rot->getEstimate());
 
-  VLOG(1) << "Bingham q: " << rot->getEstimate().transpose();
-  VLOG(1) << "Bingham rotation: " << b_est.transpose();
+  VLOG(2) << "Bingham q: " << rot->getEstimate().transpose();
+  VLOG(2) << "Bingham rotation: " << b_est.transpose();
   common::RotationUtils::RotateAroundXYZ(
       cloud_cur, b_est(0), b_est(1), b_est(2));
 
   model::RegistrationResult result(std::move(*cloud_cur));
   result.setRotUncertaintyEstimate(rot);
   result.setRotationCorrelation(corr.getCorrelation());
+
   return result;
 }
 
@@ -86,8 +87,8 @@ void SphOptRegistration::estimateTranslation(
       correlation_eval_->calcTranslationUncertainty(aligner_);
   Eigen::VectorXd g_est = pos->getEstimate();
 
-  VLOG(1) << "Gaussian translation: " << g_est.transpose();
-  VLOG(1) << "Translational alignment took: " << duration_translation_f_ms
+  VLOG(2) << "Gaussian translation: " << g_est.transpose();
+  VLOG(2) << "Translational alignment took: " << duration_translation_f_ms
           << "ms.";
 
   common::TranslationUtils::TranslateXYZ(
@@ -128,6 +129,7 @@ std::vector<SphericalCorrelation> SphOptRegistration::correlatePointcloud(
           << std::chrono::duration_cast<std::chrono::milliseconds>(end - start)
                  .count()
           << "ms";
+  corr_combined_worker->shutdown();
   return {corr_combined_worker->getCorrelationObject()};
 }
 

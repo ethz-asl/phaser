@@ -54,3 +54,5 @@ CMakeLists.txt.user
 .vscode
 .cquery_cache
 
+# Registered PLY
+registered.ply

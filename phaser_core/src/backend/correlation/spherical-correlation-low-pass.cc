@@ -44,14 +44,14 @@ void SphericalCorrelationLowPass::filterAndCorrelateCoefficients() {
     pat_coef_[0][i] = 0.0;
     pat_coef_[1][i] = 0.0;
   }
-  VLOG(1) << "finished lower third.";
+  VLOG(3) << "finished lower third.";
   for (uint32_t i = upper_bound; i < full_bw; ++i) {
     sig_coef_[0][i] = 0.0;
     sig_coef_[1][i] = 0.0;
     pat_coef_[0][i] = 0.0;
     pat_coef_[1][i] = 0.0;
   }
-  VLOG(1) << "Left "
+  VLOG(2) << "Left "
           << (upper_bound - lower_bound) / static_cast<float>(full_bw) * 100.0
           << "% in the spectrum.";
   inverseShiftSignals(full_bw);

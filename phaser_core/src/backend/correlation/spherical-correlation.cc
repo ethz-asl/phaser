@@ -26,32 +26,36 @@ SphericalCorrelation::SphericalCorrelation(
       zero_padding_(zero_padding) {
   initializeAll(bw);
 }
-SphericalCorrelation::~SphericalCorrelation() {
-  // TODO(lbern): This is a terrible bug here that needs to be fixed.
-  /*
-    free(seminaive_naive_table_);
-    free(seminaive_naive_tablespace_);
-    fftw_destroy_plan(inverse_so3_);
-    fftw_destroy_plan(inverse_so3_);
-    fftw_destroy_plan(fft_plan_);
-    fftw_destroy_plan(dct_plan_);
-    fftw_free(workspace1_);
-    fftw_free(workspace2_);
-    fftw_free(so3_sig_);
-    fftw_free(so3_coef_);
-    free(workspace3_);
-    free(weights_);
-    for (std::size_t i = 0u; i < 2u; ++i) {
-      free(pat_coef_[i]);
-      free(sig_coef_[i]);
-      free(tmp_coef_[i]);
-    }
-  */
+
+void SphericalCorrelation::shutdown() {
+  if (!is_initialized_) {
+    LOG(ERROR) << "Can't shutdown. Correlation is not initialized";
+    return;
+  }
+  free(workspace3_);
+  free(weights_);
+  free(seminaive_naive_table_);
+  free(seminaive_naive_tablespace_);
+  fftw_destroy_plan(inverse_so3_);
+  fftw_destroy_plan(fft_plan_);
+  fftw_destroy_plan(dct_plan_);
+  fftw_free(workspace1_);
+  fftw_free(workspace2_);
+  fftw_free(so3_sig_);
+  fftw_free(so3_coef_);
+  for (std::size_t i = 0u; i < 2u; ++i) {
+    free(pat_coef_[i]);
+    free(sig_coef_[i]);
+    free(tmp_coef_[i]);
+  }
+  is_initialized_ = false;
 }
 
 void SphericalCorrelation::correlateSignals(
     const std::vector<model::FunctionValue>& f1,
     const std::vector<model::FunctionValue>& f2) {
+  if (!is_initialized_)
+    LOG(FATAL) << "[SphericalCorrelation] Is not initialized!";
   // Retrieve S2 function values
   SampledSignal averaged_signal;
   SampledSignal averaged_pattern;
@@ -65,6 +69,8 @@ void SphericalCorrelation::correlateSignals(
 void SphericalCorrelation::correlateSampledSignals(
     const std::vector<SampledSignal>& f1,
     const std::vector<SampledSignal>& f2) {
+  if (!is_initialized_)
+    LOG(FATAL) << "[SphericalCorrelation] Is not initialized!";
   CHECK_EQ(f1.size(), f2.size());
   CHECK_GT(f1.size(), 0u);
   VLOG(1) << "Starting the correlation with a " << bw_ << " bandwidth";
@@ -114,7 +120,7 @@ uint32_t SphericalCorrelation::getBandwidth() const noexcept {
 }
 
 void SphericalCorrelation::initializeAll(const uint32_t bw) {
-  VLOG(1) << "Initializing spherical correlation.";
+  VLOG(2) << "Initializing spherical correlation with a " << bw << " bandwidth";
   const uint32_t bwp2 = bw * bw;
   const uint32_t bwp3 = bwp2 * bw;
 
@@ -196,6 +202,7 @@ void SphericalCorrelation::initializeAll(const uint32_t bw) {
 
   // make quadrature weights for the S^2 transform.
   makeweights(bw, weights_);
+  is_initialized_ = true;
 }
 
 void SphericalCorrelation::performSphericalTransforms(
@@ -212,8 +219,7 @@ void SphericalCorrelation::performSphericalTransforms(
   CHECK_NOTNULL(fft_plan_);
   CHECK_NOTNULL(weights_);
 
-  VLOG(1) << "Performing SFT of the first signal.";
-  // #pragma omp parallel for num_threads(2)
+  VLOG(2) << "Performing SFT of the first signal.";
   for (uint32_t i = 0u; i < howmany_; ++i) {
     tmp_coef_[0][i] = f1[i];
     tmp_coef_[1][i] = 0.;
@@ -225,7 +231,7 @@ void SphericalCorrelation::performSphericalTransforms(
       seminaive_naive_table_, reinterpret_cast<double*>(workspace2_), 1, bw_,
       &dct_plan_, &fft_plan_, weights_);
 
-  VLOG(1) << "Performing SFT of the second signal.";
+  VLOG(2) << "Performing SFT of the second signal.";
   // #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < howmany_; ++i) {
     tmp_coef_[0][i] = f2[i];
@@ -237,26 +243,6 @@ void SphericalCorrelation::performSphericalTransforms(
       tmp_coef_[0], tmp_coef_[1], pat_coef_[0], pat_coef_[1], bw_,
       seminaive_naive_table_, reinterpret_cast<double*>(workspace2_), 1, bw_,
       &dct_plan_, &fft_plan_, weights_);
-
-  /*
-static std::size_t counter = 0u;
-std::ofstream file_sig_r("sig_r_" + std::to_string(counter) + ".txt");
-std::ofstream file_sig_i("sig_i_" + std::to_string(counter) + ".txt");
-std::ofstream file_pat_r("pat_r_" + std::to_string(counter) + ".txt");
-std::ofstream file_pat_i("pat_i_" + std::to_string(counter) + ".txt");
-++counter;
-const uint32_t bwp2 = bw_ * bw_;
-for (uint32_t i = 0u; i < bwp2; ++i) {
-file_sig_r << sig_coef_[0][i] << ", ";
-file_sig_i << sig_coef_[1][i] << ", ";
-file_pat_r << pat_coef_[0][i] << ", ";
-file_pat_i << pat_coef_[1][i] << ", ";
-}
-file_sig_r.close();
-file_sig_i.close();
-file_pat_r.close();
-file_pat_i.close();
-*/
 }
 
 void SphericalCorrelation::correlate() {
@@ -285,26 +271,11 @@ void SphericalCorrelation::inverseTransform() {
       workspace3_out_, &inverse_so3_, 1);
 
   so3_mag_sig_ = std::vector<double>(so3_bw_);
-  // #pragma omp parallel for num_threads(2)
-  // static std::size_t counter = 0u;
-  // std::ofstream file_sig_r("corr_r_" + std::to_string(counter) + ".txt");
-  // std::ofstream file_sig_i("corr_i_" + std::to_string(counter) + ".txt");
-  // ++counter;
   for (uint32_t i = 0u; i < so3_bw_; ++i) {
     const double real = so3_sig_[i][0];
     const double imag = so3_sig_[i][1];
-    const double temp = real * real + imag * imag;
-    // file_sig_r << real << ", ";
-    // file_sig_i << imag << ", ";
-    /*
-    if (std::isnan(temp)) {
-      VLOG(1) << "===================================== NAN =================";
-      VLOG(1) << "real: " << real << " imag: " << imag;
-    } */
     so3_mag_sig_[i] = real * real + imag * imag;
   }
-  // file_sig_r.close();
-  // file_sig_i.close();
 }
 
 }  // namespace phaser_core

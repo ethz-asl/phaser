@@ -20,8 +20,6 @@ void SphericalCombinedWorker::run() {
   CHECK_NOTNULL(sph_corr_);
   VLOG(1) << "[SphericalCombinedWorker] Estimating rotation...";
 
-  // TODO(lbern): refactor this
-
   // Get the intensities.
   SampledSignal f_intensities;
   SampledSignal h_intensities;
@@ -69,6 +67,11 @@ const SphericalCorrelation& SphericalCombinedWorker::getCorrelationObject()
     const noexcept {
   CHECK_NOTNULL(sph_corr_);
   return *sph_corr_;
+}
+
+void SphericalCombinedWorker::shutdown() {
+  CHECK_NOTNULL(sph_corr_);
+  sph_corr_->shutdown();
 }
 
 }  // namespace phaser_core

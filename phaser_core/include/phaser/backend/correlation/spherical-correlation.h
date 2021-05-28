@@ -19,7 +19,7 @@ class SphericalCorrelation {
  public:
   explicit SphericalCorrelation(
       const uint32_t bw = 100, const uint32_t zero_padding = 0);
-  virtual ~SphericalCorrelation();
+  virtual ~SphericalCorrelation() = default;
   void correlateSignals(
       const std::vector<model::FunctionValue>& f1,
       const std::vector<model::FunctionValue>& f2);
@@ -31,6 +31,7 @@ class SphericalCorrelation {
   void getStatistics(common::StatisticsManager* manager) const noexcept;
   std::vector<double> getCorrelation() const noexcept;
   uint32_t getBandwidth() const noexcept;
+  void shutdown();
 
  protected:
   void convertSignalValues(double* signal_values, const int bw);
@@ -58,18 +59,18 @@ class SphericalCorrelation {
   fftw_plan dct_plan_;
   fftw_plan fft_plan_;
   fftw_plan inverse_so3_;
-  fftw_complex* workspace1_;
-  fftw_complex* workspace2_;
-  double* workspace3_;
+  fftw_complex* workspace1_ = nullptr;
+  fftw_complex* workspace2_ = nullptr;
+  double* workspace3_ = nullptr;
 
-  fftw_complex* workspace2_out_;
-  double* workspace3_out_;
+  fftw_complex* workspace2_out_ = nullptr;
+  double* workspace3_out_ = nullptr;
 
-  fftw_complex* so3_sig_;
-  double* seminaive_naive_tablespace_;
-  double** seminaive_naive_table_;
+  fftw_complex* so3_sig_ = nullptr;
+  double* seminaive_naive_tablespace_ = nullptr;
+  double** seminaive_naive_table_ = nullptr;
 
-  double* weights_;
+  double* weights_ = nullptr;
   int rank_, howmany_, howmany_rank_, istride_, idist_, ostride_, odist_;
   fftw_iodim dims_[1], howmany_dims_[1];
   int na_[2], inembed_[2], onembed_[2];
@@ -77,8 +78,9 @@ class SphericalCorrelation {
   double* tmp_coef_[2];
   double* sig_coef_[2];
   double* pat_coef_[2];
-  fftw_complex* so3_coef_;
+  fftw_complex* so3_coef_ = nullptr;
   std::vector<double> so3_mag_sig_;
+  bool is_initialized_ = false;
 };
 
 using SphericalCorrelationPtr = std::unique_ptr<SphericalCorrelation>;

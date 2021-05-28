@@ -37,7 +37,6 @@ cs_add_library(${PROJECT_NAME}_lib
    lib/SOFT/soft_fftw.c
    lib/SOFT/wignerTransforms_fftw.c
 
-   src/controller/distributor.cc
    src/controller/cloud-controller.cc
    src/backend/registration/base-registration.cc
    src/backend/registration/sph-registration.cc
@@ -70,8 +69,6 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/uncertainty/signal-analysis.cc
 
    src/backend/alignment/phase-aligner.cc
-
-   src/experiments/experiment-handler.cc
 
    src/backend/fusion/laplace-pyramid.cc
    src/backend/fusion/pyramid-struct.cc
