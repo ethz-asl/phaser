@@ -144,7 +144,7 @@ void SpatialCorrelation::complexMulSeqUsingIndices(
     const std::vector<uint32_t>& indices, fftw_complex* F, fftw_complex* G,
     fftw_complex* C) {
   CHECK(!indices.empty());
-  VLOG(1) << "Performing correlation using: " << indices.size() << " samples.";
+  VLOG(3) << "Performing correlation using: " << indices.size() << " samples.";
   const uint32_t n_points = indices.size();
 #pragma omp parallel for num_threads(2)
   for (uint32_t i = 0u; i < n_points; ++i) {

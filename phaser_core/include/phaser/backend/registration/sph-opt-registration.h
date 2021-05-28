@@ -19,7 +19,7 @@ namespace phaser_core {
 class SphOptRegistration : public BaseRegistration {
  public:
   SphOptRegistration();
-  virtual ~SphOptRegistration() = default;
+  virtual ~SphOptRegistration();
 
   model::RegistrationResult registerPointCloud(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) override;
