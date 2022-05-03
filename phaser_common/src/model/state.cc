@@ -1,8 +1,9 @@
 #include "phaser/model/state.h"
-#include "phaser/distribution/bingham.h"
-#include "phaser/distribution/gaussian.h"
 
 #include <glog/logging.h>
+
+#include "phaser/distribution/bingham.h"
+#include "phaser/distribution/gaussian.h"
 
 namespace model {
 

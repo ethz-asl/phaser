@@ -2,11 +2,10 @@
 #define PHASER_BACKEND_CORRELATION_SPHERICAL_CORRELATION_H_
 
 #include <array>
+#include <fftw3/fftw3.h>
 #include <memory>
 #include <string>
 #include <vector>
-
-#include <fftw3/fftw3.h>
 
 #include "phaser/common/statistics-manager.h"
 #include "phaser/model/function-value.h"

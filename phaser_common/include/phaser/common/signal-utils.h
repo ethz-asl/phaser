@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <array>
 #include <complex>
-
 #include <fftw3/fftw3.h>
 #include <glog/logging.h>
 

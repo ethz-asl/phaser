@@ -1,21 +1,21 @@
+#include "phaser_pre/algorithm/image-gradient.h"
+
+#include <Eigen/Dense>
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <eigen-checks/gtest.h>
 #include <gtest/gtest.h>
 #include <memory>
-#include <random>
-
-#include <Eigen/Dense>
-#include <eigen-checks/gtest.h>
 #include <opencv2/core/eigen.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc.hpp>
+#include <random>
 
 #include "phaser/common/data/datasource-ply.h"
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
 #include "phaser/model/point-cloud.h"
-#include "phaser_pre/algorithm/image-gradient.h"
 #include "phaser_pre/algorithm/image-projection.h"
 
 namespace preproc {

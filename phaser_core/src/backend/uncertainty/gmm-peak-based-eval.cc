@@ -1,10 +1,11 @@
 #include "phaser/backend/uncertainty/gmm-peak-based-eval.h"
-#include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
-#include "phaser/common/translation-utils.h"
-#include "phaser/distribution/gaussian.h"
 
 #include <glog/logging.h>
 #include <vector>
+
+#include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
+#include "phaser/common/translation-utils.h"
+#include "phaser/distribution/gaussian.h"
 
 namespace phaser_core {
 

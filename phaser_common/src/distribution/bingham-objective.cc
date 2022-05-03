@@ -1,7 +1,8 @@
 #include "phaser/distribution/bingham-objective.h"
-#include "phaser/distribution/bingham.h"
 
 #include <glog/logging.h>
+
+#include "phaser/distribution/bingham.h"
 
 namespace common {
 

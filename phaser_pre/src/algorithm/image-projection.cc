@@ -1,7 +1,6 @@
 #include "phaser_pre/algorithm/image-projection.h"
 
 #include <chrono>
-
 #include <glog/logging.h>
 
 #define USE_SSE2

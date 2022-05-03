@@ -1,7 +1,8 @@
 #include "phaser/backend/uncertainty/bmm-peak-based-eval.h"
-#include "phaser/common/rotation-utils.h"
 
 #include <glog/logging.h>
+
+#include "phaser/common/rotation-utils.h"
 
 DEFINE_int32(
     bmm_peak_neighbors, 2,

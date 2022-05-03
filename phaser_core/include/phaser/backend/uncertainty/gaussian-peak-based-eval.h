@@ -1,13 +1,13 @@
 #ifndef PHASER_BACKEND_UNCERTAINTY_GAUSSIAN_PEAK_BASED_EVAL_H_
 #define PHASER_BACKEND_UNCERTAINTY_GAUSSIAN_PEAK_BASED_EVAL_H_
 
-#include "phaser/backend/alignment/base-aligner.h"
-#include "phaser/backend/uncertainty/z-score-eval.h"
-#include "phaser/distribution/gaussian.h"
-
 #include <set>
 #include <utility>
 #include <vector>
+
+#include "phaser/backend/alignment/base-aligner.h"
+#include "phaser/backend/uncertainty/z-score-eval.h"
+#include "phaser/distribution/gaussian.h"
 
 namespace phaser_core {
 

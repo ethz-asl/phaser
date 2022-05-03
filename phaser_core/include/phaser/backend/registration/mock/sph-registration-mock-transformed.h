@@ -5,13 +5,12 @@
 namespace phaser_core {
 
 class SphRegistrationMockTransformed : public SphRegistration {
-  public:
-    virtual ~SphRegistrationMockTransformed() = default;
-    virtual model::RegistrationResult registerPointCloud(
-        model::PointCloudPtr cloud_prev, 
-        model::PointCloudPtr cloud_cur) override;
+ public:
+  virtual ~SphRegistrationMockTransformed() = default;
+  virtual model::RegistrationResult registerPointCloud(
+      model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) override;
 
-  private:
+ private:
 };
 
 }  // namespace phaser_core

@@ -2,6 +2,7 @@
 #define PHASER_PRE_CLOUD_PRE_PROCESSOR_H_
 
 #include <vector>
+
 #include "phaser_pre/common/base-command.h"
 #include "phaser_pre/common/base-pre-processor.h"
 

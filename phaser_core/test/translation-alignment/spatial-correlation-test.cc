@@ -1,8 +1,4 @@
 #include "phaser/backend/correlation/spatial-correlation.h"
-#include "phaser/common/signal-utils.h"
-#include "phaser/common/test/testing-entrypoint.h"
-#include "phaser/common/test/testing-predicates.h"
-#include "phaser/common/translation-utils.h"
 
 #include <algorithm>
 #include <chrono>
@@ -10,6 +6,11 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <random>
+
+#include "phaser/common/signal-utils.h"
+#include "phaser/common/test/testing-entrypoint.h"
+#include "phaser/common/test/testing-predicates.h"
+#include "phaser/common/translation-utils.h"
 
 namespace phaser_core {
 

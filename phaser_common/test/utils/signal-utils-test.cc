@@ -1,14 +1,14 @@
-#include <chrono>
-#include <cmath>
-#include <memory>
-#include <random>
+#include "phaser/common/signal-utils.h"
 
 #include <Eigen/Dense>
+#include <chrono>
+#include <cmath>
 #include <fftw3/fftw3.h>
 #include <glog/logging.h>
 #include <gtest/gtest.h>
+#include <memory>
+#include <random>
 
-#include "phaser/common/signal-utils.h"
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
 

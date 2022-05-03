@@ -61,6 +61,7 @@ is < 2e-7 and atan2_ps max deviation is < 2.5e-7
 
 #define USE_SSE2
 #include "phaser_pre/common/sse-mathfun-extension.h"
+
 #include "phaser_pre/common/sse-mathfun.h"
 
 namespace preproc {

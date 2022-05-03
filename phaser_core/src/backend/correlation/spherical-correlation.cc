@@ -1,4 +1,5 @@
 #include "phaser/backend/correlation/spherical-correlation.h"
+
 #include "phaser/model/function-value.h"
 
 extern "C" {
@@ -11,10 +12,9 @@ extern "C" {
 #include "soft/wrap_fftw.h"
 }
 
-#include <glog/logging.h>
-
 #include <algorithm>
 #include <fstream>
+#include <glog/logging.h>
 
 namespace phaser_core {
 

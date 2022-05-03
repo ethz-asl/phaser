@@ -1,13 +1,13 @@
 #ifndef PHASER_MODEL_REGISTRATION_RESULT_H_
 #define PHASER_MODEL_REGISTRATION_RESULT_H_
 
-#include "phaser/distribution/base-distribution.h"
-#include "phaser/model/point-cloud.h"
-#include "phaser/model/state.h"
-
 #include <array>
 #include <memory>
 #include <vector>
+
+#include "phaser/distribution/base-distribution.h"
+#include "phaser/model/point-cloud.h"
+#include "phaser/model/state.h"
 
 namespace model {
 

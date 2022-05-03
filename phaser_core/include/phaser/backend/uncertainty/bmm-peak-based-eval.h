@@ -1,11 +1,11 @@
 #ifndef PHASER_BACKEND_UNCERTAINTY_BMM_PEAK_BASED_EVAL_H_
 #define PHASER_BACKEND_UNCERTAINTY_BMM_PEAK_BASED_EVAL_H_
 
-#include "phaser/backend/uncertainty/z-score-eval.h"
-#include "phaser/distribution/bingham-mixture.h"
-
 #include <set>
 #include <vector>
+
+#include "phaser/backend/uncertainty/z-score-eval.h"
+#include "phaser/distribution/bingham-mixture.h"
 
 namespace phaser_core {
 

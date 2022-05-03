@@ -1,9 +1,10 @@
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
+
+#include <glog/logging.h>
+
 #include "phaser/common/signal-utils.h"
 #include "phaser/common/translation-utils.h"
 #include "phaser/distribution/gaussian.h"
-
-#include <glog/logging.h>
 
 DEFINE_int32(
     gaussian_peak_neighbors, 0,

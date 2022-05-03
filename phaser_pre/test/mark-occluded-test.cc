@@ -1,13 +1,14 @@
+#include "phaser_pre/algorithm/mark-occluded.h"
+
+#include <Eigen/Dense>
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <eigen-checks/gtest.h>
 #include <gtest/gtest.h>
 #include <memory>
-#include <random>
-
-#include <Eigen/Dense>
-#include <eigen-checks/gtest.h>
 #include <opencv2/core/eigen.hpp>
+#include <random>
 
 #include "phaser/common/data/datasource-ply.h"
 #include "phaser/common/test/testing-entrypoint.h"
@@ -17,7 +18,6 @@
 #include "phaser_pre/algorithm/cloud-segmentation.h"
 #include "phaser_pre/algorithm/cluster-points.h"
 #include "phaser_pre/algorithm/image-projection.h"
-#include "phaser_pre/algorithm/mark-occluded.h"
 
 namespace preproc {
 

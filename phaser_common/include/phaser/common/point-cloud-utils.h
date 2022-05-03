@@ -5,9 +5,8 @@
 namespace common {
 
 class PointCloudUtils {
-  public:
-    static model::PointCloud performZeroMeaning(
-        const model::PointCloud& cloud);
+ public:
+  static model::PointCloud performZeroMeaning(const model::PointCloud& cloud);
 };
 
-} // namespace common
+}  // namespace common

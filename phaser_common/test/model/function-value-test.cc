@@ -1,15 +1,15 @@
+#include "phaser/model/function-value.h"
+
+#include <Eigen/Dense>
 #include <chrono>
 #include <cmath>
+#include <glog/logging.h>
+#include <gtest/gtest.h>
 #include <memory>
 #include <random>
 
-#include <Eigen/Dense>
-#include <glog/logging.h>
-#include <gtest/gtest.h>
-
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
-#include "phaser/model/function-value.h"
 
 namespace common {
 

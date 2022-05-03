@@ -1,9 +1,8 @@
 #ifndef PHASER_PRE_ALGORITHM_CLUSTER_POINTS_H_
 #define PHASER_PRE_ALGORITHM_CLUSTER_POINTS_H_
 
-#include <vector>
-
 #include <opencv2/core/mat.hpp>
+#include <vector>
 
 #include "phaser/model/point-cloud.h"
 #include "phaser_pre/common/vec-helper.h"

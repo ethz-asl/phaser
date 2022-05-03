@@ -1,9 +1,8 @@
 #ifndef PHASER_MODEL_FUNCTION_VALUE_H_
 #define PHASER_MODEL_FUNCTION_VALUE_H_
 
-#include <vector>
-
 #include <Eigen/Dense>
+#include <vector>
 
 #include "phaser/common/point-types.h"
 

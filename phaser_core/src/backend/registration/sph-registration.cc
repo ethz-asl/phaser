@@ -1,5 +1,10 @@
-#include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/registration/sph-registration.h"
+
+#include <algorithm>
+#include <glog/logging.h>
+#include <iostream>
+
+#include "phaser/backend/alignment/phase-aligner.h"
 #include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
 #include "phaser/backend/uncertainty/bmm-peak-based-eval.h"
 #include "phaser/backend/uncertainty/gaussian-peak-based-eval.h"
@@ -7,10 +12,6 @@
 #include "phaser/common/rotation-utils.h"
 #include "phaser/common/statistic-utils.h"
 #include "phaser/common/translation-utils.h"
-
-#include <algorithm>
-#include <glog/logging.h>
-#include <iostream>
 
 DEFINE_int32(
     spherical_bandwith, 75,
@@ -156,8 +157,8 @@ void SphRegistration::estimateTranslation(
   result->setPosUncertaintyEstimate(pos);
 }
 
-void SphRegistration::getStatistics(common::StatisticsManager* manager) const
-    noexcept {
+void SphRegistration::getStatistics(
+    common::StatisticsManager* manager) const noexcept {
   BaseRegistration::getStatistics(manager);
   sph_corr_.getStatistics(manager);
 }

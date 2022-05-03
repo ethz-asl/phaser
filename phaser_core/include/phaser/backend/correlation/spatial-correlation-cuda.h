@@ -1,14 +1,13 @@
 #ifndef PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_CUDA_H_
 #define PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_CUDA_H_
 
-#include "phaser/backend/correlation/base-spatial-correlation.h"
-
 #include <array>
-#include <vector>
-
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include <cufft.h>
+#include <vector>
+
+#include "phaser/backend/correlation/base-spatial-correlation.h"
 
 namespace phaser_core {
 

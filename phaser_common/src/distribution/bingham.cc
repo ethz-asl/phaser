@@ -1,8 +1,4 @@
 #include "phaser/distribution/bingham.h"
-#include "phaser/common/math-utils.h"
-#include "phaser/distribution/bingham-mle.h"
-#include "phaser/distribution/bingham-normalization-constant.h"
-#include "phaser/distribution/bingham-opt-mle.h"
 
 #include <algorithm>
 #include <boost/math/special_functions/bessel.hpp>
@@ -10,6 +6,11 @@
 #include <glog/logging.h>
 #include <iostream>
 #include <vector>
+
+#include "phaser/common/math-utils.h"
+#include "phaser/distribution/bingham-mle.h"
+#include "phaser/distribution/bingham-normalization-constant.h"
+#include "phaser/distribution/bingham-opt-mle.h"
 
 namespace common {
 
@@ -48,7 +49,7 @@ Eigen::MatrixXd Bingham::gaussianCovariance(bool angle) {
     sample(&samples, sample_count);
     Eigen::VectorXd m = mode();
     Eigen::MatrixXd zero_samples = samples - m.replicate(samples.rows(), 1);
-    return zero_samples*zero_samples.transpose()/sample_count;
+    return zero_samples * zero_samples.transpose() / sample_count;
   }
 }
 

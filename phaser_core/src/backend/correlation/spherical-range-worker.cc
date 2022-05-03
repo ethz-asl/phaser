@@ -31,8 +31,8 @@ std::vector<double> SphericalRangeWorker::getCorrelation() const noexcept {
   return sph_corr_.getCorrelation();
 }
 
-const SphericalCorrelation& SphericalRangeWorker::getCorrelationObject() const
-    noexcept {
+const SphericalCorrelation& SphericalRangeWorker::getCorrelationObject()
+    const noexcept {
   return sph_corr_;
 }
 

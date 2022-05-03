@@ -1,12 +1,12 @@
 #ifndef PHASER_COMMON_ROTATION_UTILS_H_
 #define PHASER_COMMON_ROTATION_UTILS_H_
 
-#include "phaser/model/function-value.h"
-#include "phaser/model/point-cloud.h"
-
 #include <Eigen/Dense>
 #include <array>
 #include <vector>
+
+#include "phaser/model/function-value.h"
+#include "phaser/model/point-cloud.h"
 
 namespace common {
 

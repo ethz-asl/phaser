@@ -1,8 +1,7 @@
 #include "phaser/backend/fusion/pyramid-struct.h"
 
-#include <glog/logging.h>
-
 #include <cmath>
+#include <glog/logging.h>
 
 namespace phaser_core {
 
@@ -41,20 +40,20 @@ std::vector<uint32_t> PyramidStruct::getUpperBounds() const noexcept {
   return upper_bound_per_level_;
 }
 
-uint32_t PyramidStruct::getCoefficientsForLevel(const uint8_t level) const
-    noexcept {
+uint32_t PyramidStruct::getCoefficientsForLevel(
+    const uint8_t level) const noexcept {
   CHECK(level < coefficients_per_level_.size());
   return coefficients_per_level_[level];
 }
 
-uint32_t PyramidStruct::getLowerBoundForLevel(const uint8_t level) const
-    noexcept {
+uint32_t PyramidStruct::getLowerBoundForLevel(
+    const uint8_t level) const noexcept {
   CHECK(level < lower_bound_per_level_.size());
   return lower_bound_per_level_[level];
 }
 
-uint32_t PyramidStruct::getUpperBoundForLevel(const uint8_t level) const
-    noexcept {
+uint32_t PyramidStruct::getUpperBoundForLevel(
+    const uint8_t level) const noexcept {
   CHECK(level < upper_bound_per_level_.size());
   return upper_bound_per_level_[level];
 }

@@ -1,6 +1,6 @@
 #include "phaser/common/translation-utils.h"
-#include <cmath>
 
+#include <cmath>
 #include <glog/logging.h>
 
 namespace common {

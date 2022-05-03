@@ -1,18 +1,17 @@
 #ifndef PHASER_MODEL_POINT_CLOUD_H_
 #define PHASER_MODEL_POINT_CLOUD_H_
 
+#include <memory>
+#include <pcl/common/projection_matrix.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/point_types.h>
+#include <string>
+#include <vector>
+
 #include "phaser/common/point-types.h"
 #include "phaser/model/function-value.h"
 #include "phaser/model/ply-point-cloud.h"
 #include "phaser/model/point.h"
-
-#include <pcl/common/projection_matrix.h>
-#include <pcl/kdtree/kdtree_flann.h>
-#include <pcl/point_types.h>
-
-#include <memory>
-#include <string>
-#include <vector>
 
 namespace model {
 

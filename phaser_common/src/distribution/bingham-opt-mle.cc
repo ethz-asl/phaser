@@ -1,9 +1,10 @@
 #include "phaser/distribution/bingham-opt-mle.h"
-#include "phaser/distribution/bingham-objective.h"
 
 #include <glog/logging.h>
 #include <nlopt.hpp>
 #include <vector>
+
+#include "phaser/distribution/bingham-objective.h"
 
 namespace common {
 

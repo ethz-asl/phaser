@@ -1,15 +1,15 @@
 #ifndef PHASER_BACKEND_UNCERTAINTY_GMM_PEAK_BASED_EVAL_H_
 #define PHASER_BACKEND_UNCERTAINTY_GMM_PEAK_BASED_EVAL_H_
 
-#include "phaser/backend/alignment/base-aligner.h"
-#include "phaser/backend/uncertainty/z-score-eval.h"
-#include "phaser/distribution/gaussian-mixture.h"
-#include "phaser/model/gmm-parameters.h"
-
 #include <Eigen/Dense>
 #include <set>
 #include <utility>
 #include <vector>
+
+#include "phaser/backend/alignment/base-aligner.h"
+#include "phaser/backend/uncertainty/z-score-eval.h"
+#include "phaser/distribution/gaussian-mixture.h"
+#include "phaser/model/gmm-parameters.h"
 
 namespace phaser_core {
 

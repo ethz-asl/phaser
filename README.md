@@ -38,9 +38,6 @@ PHASER requires ROS and some other dependencies to be installed:
      libpcl-dev libnlopt-dev \
 ```
 
-
-__Important:__ Currently, PHASER also requires `nvcc` for compilation as most-recent experiments deal with performing the FFTs on the GPU.
-
 For the remaining package dependencies, run within the `caktin` workspace
 
 ```

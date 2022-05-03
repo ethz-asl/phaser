@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+
 #include "phaser/common/statistics-manager.h"
 
 namespace visualization {

@@ -1,11 +1,11 @@
 #ifndef PHASER_BACKEND_ALIGNMENT_BASE_ALIGNER_H_
 #define PHASER_BACKEND_ALIGNMENT_BASE_ALIGNER_H_
 
-#include "phaser/common/statistics-manager.h"
-#include "phaser/model/point-cloud.h"
-
 #include <memory>
 #include <vector>
+
+#include "phaser/common/statistics-manager.h"
+#include "phaser/model/point-cloud.h"
 
 namespace phaser_core {
 

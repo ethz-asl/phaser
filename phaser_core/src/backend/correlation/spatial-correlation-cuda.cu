@@ -1,10 +1,10 @@
 #include <complex.h>
 #include <cufft.h>
-#include <vector>
-#include "phaser/backend/correlation/spatial-correlation-cuda.h"
-
 #include <gflags/gflags.h>
 #include <glog/logging.h>
+#include <vector>
+
+#include "phaser/backend/correlation/spatial-correlation-cuda.h"
 
 DEFINE_double(phase_gpu_batch, 1, "");
 

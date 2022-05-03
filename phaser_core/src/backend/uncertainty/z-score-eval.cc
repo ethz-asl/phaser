@@ -1,19 +1,18 @@
 #include "phaser/backend/uncertainty/z-score-eval.h"
-#include "phaser/backend/alignment/phase-aligner.h"
-#include "phaser/backend/uncertainty/signal-analysis.h"
-#include "phaser/distribution/bingham.h"
-#include "phaser/distribution/gaussian.h"
-
-#include "phaser/visualization/plotty-visualizer.h"
 
 #include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <functional>
+#include <glog/logging.h>
 #include <numeric>
 #include <sstream>
 
-#include <glog/logging.h>
+#include "phaser/backend/alignment/phase-aligner.h"
+#include "phaser/backend/uncertainty/signal-analysis.h"
+#include "phaser/distribution/bingham.h"
+#include "phaser/distribution/gaussian.h"
+#include "phaser/visualization/plotty-visualizer.h"
 
 namespace phaser_core {
 

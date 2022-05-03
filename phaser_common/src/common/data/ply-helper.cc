@@ -1,10 +1,9 @@
-#include <fstream>
+#include "phaser/common/data/ply-helper.h"
 
+#include <fstream>
 #include <glog/logging.h>
 
 #include "tinyply/tinyply.h"
-
-#include "phaser/common/data/ply-helper.h"
 
 DEFINE_string(
     phaser_ply_intensity_str, "intensity",

@@ -1,17 +1,17 @@
 #include "phaser/model/point-cloud.h"
-#include "phaser/common/core-gflags.h"
-#include "phaser/common/data/file-system-helper.h"
-#include "phaser/common/data/ply-helper.h"
 
+#include <chrono>
+#include <glog/logging.h>
+#include <omp.h>
 #include <pcl/common/io.h>
 #include <pcl/common/transforms.h>
 #include <pcl/features/normal_3d.h>
 #include <pcl/io/ply_io.h>
 #include <pcl/kdtree/impl/kdtree_flann.hpp>
 
-#include <chrono>
-#include <glog/logging.h>
-#include <omp.h>
+#include "phaser/common/core-gflags.h"
+#include "phaser/common/data/file-system-helper.h"
+#include "phaser/common/data/ply-helper.h"
 
 DEFINE_string(
     PlyWriteDirectory, "", "Defines the directory to store the point clouds.");

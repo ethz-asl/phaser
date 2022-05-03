@@ -1,3 +1,5 @@
+#include <gtest/gtest.h>
+
 #include "phaser/backend/registration/sph-registration.h"
 #include "phaser/backend/uncertainty/z-score-eval.h"
 #include "phaser/common/data/datasource-ply.h"
@@ -5,8 +7,6 @@
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
 #include "phaser/distribution/bingham.h"
-
-#include <gtest/gtest.h>
 
 namespace phaser_core {
 

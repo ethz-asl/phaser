@@ -1,9 +1,8 @@
 #include "phaser/backend/correlation/spatial-correlation.h"
 
-#include <numeric>
-
 #include <emmintrin.h>
 #include <glog/logging.h>
+#include <numeric>
 
 #include "phaser/common/signal-utils.h"
 

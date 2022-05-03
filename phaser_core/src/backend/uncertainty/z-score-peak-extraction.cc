@@ -1,13 +1,13 @@
 #include "phaser/backend/uncertainty/z-score-peak-extraction.h"
-#include "phaser/backend/uncertainty/signal-analysis.h"
 
+#include <Eigen/Dense>
 #include <algorithm>
 #include <cmath>
 #include <functional>
+#include <glog/logging.h>
 #include <numeric>
 
-#include <Eigen/Dense>
-#include <glog/logging.h>
+#include "phaser/backend/uncertainty/signal-analysis.h"
 
 DEFINE_double(
     z_score_lag_percentile, 0.05,

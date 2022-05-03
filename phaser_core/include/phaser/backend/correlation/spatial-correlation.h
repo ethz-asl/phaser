@@ -2,10 +2,9 @@
 #define PHASER_BACKEND_CORRELATION_SPATIAL_CORRELATION_H_
 
 #include <complex>
+#include <fftw3/fftw3.h>
 #include <memory>
 #include <vector>
-
-#include <fftw3/fftw3.h>
 
 #include "phaser/backend/correlation/base-spatial-correlation.h"
 

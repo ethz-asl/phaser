@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <cmath>
 #include <fstream>
-
 #include <glog/logging.h>
 #include <omp.h>
 

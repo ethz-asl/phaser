@@ -1,7 +1,6 @@
 #include "phaser/backend/correlation/spherical-correlation-laplace.h"
 
 #include <fstream>
-
 #include <glog/logging.h>
 
 #include "phaser/common/signal-utils.h"

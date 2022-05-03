@@ -2,9 +2,8 @@
 #define PHASER_BACKEND_ALIGNMENT_PHASE_ALIGNER_H_
 
 #include <array>
-#include <vector>
-
 #include <fftw3/fftw3.h>
+#include <vector>
 
 #include "phaser/backend/alignment/base-aligner.h"
 #include "phaser/backend/correlation/spatial-correlation.h"

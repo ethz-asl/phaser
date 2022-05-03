@@ -11,11 +11,11 @@
 #ifndef PHASER_DISTRIBUTION_BINGHAM_H_
 #define PHASER_DISTRIBUTION_BINGHAM_H_
 
-#include "phaser/distribution/base-distribution.h"
-
 #include <Eigen/Dense>
 #include <memory>
 #include <string>
+
+#include "phaser/distribution/base-distribution.h"
 
 namespace common {
 

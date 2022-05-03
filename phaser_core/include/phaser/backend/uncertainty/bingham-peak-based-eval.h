@@ -1,12 +1,12 @@
 #ifndef PHASER_BACKEND_UNCERTAINTY_BINGHAM_PEAK_BASED_EVAL_H_
 #define PHASER_BACKEND_UNCERTAINTY_BINGHAM_PEAK_BASED_EVAL_H_
 
+#include <set>
+#include <vector>
+
 #include "phaser/backend/alignment/base-aligner.h"
 #include "phaser/backend/uncertainty/z-score-eval.h"
 #include "phaser/distribution/bingham.h"
-
-#include <set>
-#include <vector>
 
 namespace phaser_core {
 

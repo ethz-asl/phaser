@@ -1,9 +1,8 @@
 #include "phaser/model/function-value.h"
 
 #include <algorithm>
-#include <numeric>
-
 #include <glog/logging.h>
+#include <numeric>
 
 namespace model {
 
