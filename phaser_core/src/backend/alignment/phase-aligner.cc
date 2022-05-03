@@ -1,19 +1,18 @@
 #include "phaser/backend/alignment/phase-aligner.h"
-#include "phaser/backend/correlation/spatial-correlation-cuda.h"
+
+#include <algorithm>
+#include <chrono>
+#include <complex.h>  // needs to be included before fftw
+#include <glog/logging.h>
+#include <omp.h>
+#include <vector>
+
+#include "igl/histc.h"
 #include "phaser/backend/correlation/spatial-correlation-laplace.h"
 #include "phaser/backend/correlation/spatial-correlation-low-pass.h"
 #include "phaser/common/core-gflags.h"
 #include "phaser/common/point-cloud-utils.h"
 #include "phaser/common/signal-utils.h"
-
-#include <algorithm>
-#include <chrono>
-#include <complex.h>  // needs to be included before fftw
-#include <vector>
-
-#include <glog/logging.h>
-#include <omp.h>
-#include "igl/histc.h"
 
 namespace phaser_core {
 
@@ -57,8 +56,8 @@ void PhaseAligner::alignRegistered(
       &f_reflectivity_,
       &f_ambient_,
   };
-  std::vector<Eigen::VectorXd*> g = {&g_intensities_, &g_ranges_,
-                                     &g_reflectivity_, &g_ambient_};
+  std::vector<Eigen::VectorXd*> g = {
+      &g_intensities_, &g_ranges_, &g_reflectivity_, &g_ambient_};
   discretizePointcloud(cloud_prev, f, &hist_);
   discretizePointcloud(cloud_reg, g, &hist_);
 

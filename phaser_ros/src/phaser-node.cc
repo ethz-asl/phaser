@@ -1,4 +1,8 @@
 #include "phaser/phaser-node.h"
+
+#include <glog/logging.h>
+#include <ros/ros.h>
+
 #include "phaser/backend/registration/mock/sph-registration-mock-cutted.h"
 #include "phaser/backend/registration/mock/sph-registration-mock-rotated.h"
 #include "phaser/backend/registration/mock/sph-registration-mock-transformed.h"
@@ -8,9 +12,6 @@
 #include "phaser/common/data/datasource-ply.h"
 #include "phaser/common/data/datasource-ros.h"
 #include "phaser/visualization/plotty-visualizer.h"
-
-#include <glog/logging.h>
-#include <ros/ros.h>
 
 namespace phaser_ros {
 
@@ -85,8 +86,8 @@ void PhaserNode::initializeDatasource(const std::string& type) {
     LOG(FATAL) << "Unknown datasource type specified.";
 }
 
-std::vector<common::StatisticsManager> PhaserNode::retrieveStatistics() const
-    noexcept {
+std::vector<common::StatisticsManager> PhaserNode::retrieveStatistics()
+    const noexcept {
   std::vector<common::StatisticsManager> managers;
 
   return managers;

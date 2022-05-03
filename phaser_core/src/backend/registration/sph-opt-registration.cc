@@ -1,13 +1,11 @@
 #include "phaser/backend/registration/sph-opt-registration.h"
 
 #include <algorithm>
-#include <iostream>
-
 #include <fftw3/fftw3.h>
 #include <glog/logging.h>
+#include <iostream>
 
 #include "phaser/backend/alignment/phase-aligner.h"
-#include "phaser/backend/correlation/spatial-correlation-cuda.h"
 #include "phaser/backend/correlation/spherical-combined-worker.h"
 #include "phaser/backend/correlation/spherical-intensity-worker.h"
 #include "phaser/backend/correlation/spherical-range-worker.h"
@@ -96,8 +94,8 @@ void SphOptRegistration::estimateTranslation(
   result->setPosUncertaintyEstimate(pos);
 }
 
-void SphOptRegistration::getStatistics(common::StatisticsManager* manager) const
-    noexcept {
+void SphOptRegistration::getStatistics(
+    common::StatisticsManager* manager) const noexcept {
   BaseRegistration::getStatistics(manager);
 }
 

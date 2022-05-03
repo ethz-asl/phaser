@@ -1,8 +1,11 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(phaser_core)
 
-set(CMAKE_CUDA_COMPILER  /usr/local/cuda/bin/nvcc)
-find_package(CUDA REQUIRED)
+if(BUILD_TYPE MATCHES CUDA)
+  set(CMAKE_CUDA_COMPILER  /usr/local/cuda/bin/nvcc)
+  find_package(CUDA REQUIRED)
+endif()
+
 find_package(OpenMP REQUIRED)
 
 include(CheckCXXCompilerFlag)
@@ -74,24 +77,28 @@ cs_add_library(${PROJECT_NAME}_lib
    src/backend/fusion/pyramid-struct.cc
 )
 
- cuda_add_library(${PROJECT_NAME}_cuda_lib
+if(BUILD_TYPE MATCHES CUDA)
+  cuda_add_library(${PROJECT_NAME}_cuda_lib
    src/backend/correlation/spatial-correlation-cuda.cu
- )
+  )
+endif()
 
 #############
 ## TESTING ##
 #############
 
-cuda_add_executable(${PROJECT_NAME}_driver test/driver.cc)
-cuda_add_cufft_to_target(${PROJECT_NAME}_driver)
-target_link_libraries(${PROJECT_NAME}_driver
-  ${PROJECT_NAME}_lib ${PROJECT_NAME}_cuda_lib
-  ${CUDA_LIBRARIES} ${CUDA_CUFFT_LIBRARIES} ${OpenMP_LIBS})
+if(BUILD_TYPE MATCHES CUDA)
+  cuda_add_executable(${PROJECT_NAME}_driver test/driver.cc)
+  cuda_add_cufft_to_target(${PROJECT_NAME}_driver)
+  target_link_libraries(${PROJECT_NAME}_driver
+    ${PROJECT_NAME}_lib ${PROJECT_NAME}_cuda_lib
+    ${CUDA_LIBRARIES} ${CUDA_CUFFT_LIBRARIES} ${OpenMP_LIBS})
+endif()
 
 # Sanity check.
 catkin_add_gtest(test_sanity_check test/sanity-check/sanity-check-test.cc)
 target_link_libraries(test_sanity_check
-  ${PROJECT_NAME}_lib)
+  ${PROJECT_NAME}_lib )
 
 catkin_add_gtest(test_laplace_pyramid
   test/fusion/laplace-pyramid-test.cc)
