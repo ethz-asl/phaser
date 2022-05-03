@@ -1,4 +1,5 @@
 #include "phaser/common/math-utils.h"
+
 #include <chrono>
 #include <numeric>
 #include <random>

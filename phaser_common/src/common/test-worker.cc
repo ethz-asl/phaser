@@ -1,9 +1,8 @@
 #include "phaser/common/test-worker.h"
 
 #include <chrono>
-#include <thread>
-
 #include <glog/logging.h>
+#include <thread>
 
 namespace common {
 

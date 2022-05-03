@@ -1,8 +1,7 @@
 #include "phaser/common/rotation-utils.h"
 
-#include <glog/logging.h>
-
 #include <cmath>
+#include <glog/logging.h>
 
 namespace common {
 

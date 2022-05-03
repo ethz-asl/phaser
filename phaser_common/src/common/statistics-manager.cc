@@ -4,11 +4,11 @@
 
 namespace common {
 
-StatisticsManager::StatisticsManager(std::string &&name)
-  : reference_name_(name) {}
+StatisticsManager::StatisticsManager(std::string&& name)
+    : reference_name_(name) {}
 
-StatisticsManager::StatisticsManager(const std::string &name)
-  : reference_name_(name) {}
+StatisticsManager::StatisticsManager(const std::string& name)
+    : reference_name_(name) {}
 
 void StatisticsManager::emplaceValue(std::string&& key, double value) {
   statistics_[key].emplace_back(value);
@@ -19,14 +19,16 @@ void StatisticsManager::emplaceValue(const std::string& key, double value) {
 }
 
 std::vector<double> StatisticsManager::getValuesForKey(
-    const std::string &key) const {
-  if (statistics_.count(key) == 0) return std::vector<double>();
+    const std::string& key) const {
+  if (statistics_.count(key) == 0)
+    return std::vector<double>();
   return statistics_.at(key);
 }
 
-std::vector<double> StatisticsManager::getValuesForKey(std::string&& key) 
-    const {
-  if (statistics_.count(key) == 0) return std::vector<double>();
+std::vector<double> StatisticsManager::getValuesForKey(
+    std::string&& key) const {
+  if (statistics_.count(key) == 0)
+    return std::vector<double>();
   return statistics_.at(key);
 }
 
@@ -38,5 +40,4 @@ std::size_t StatisticsManager::count(std::string&& key) const {
   return statistics_.count(key);
 }
 
-
-} // namespace common
+}  // namespace common

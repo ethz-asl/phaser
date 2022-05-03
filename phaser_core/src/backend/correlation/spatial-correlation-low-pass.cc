@@ -1,7 +1,6 @@
 #include "phaser/backend/correlation/spatial-correlation-low-pass.h"
 
 #include <algorithm>
-
 #include <glog/logging.h>
 
 #include "phaser/common/core-gflags.h"

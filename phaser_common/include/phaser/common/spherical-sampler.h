@@ -2,6 +2,7 @@
 #define PHASER_COMMON_SPHERICAL_SAMPLER_H_
 
 #include <vector>
+
 #include "phaser/common/spherical-projection.h"
 #include "phaser/model/point-cloud.h"
 

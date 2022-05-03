@@ -1,7 +1,8 @@
 #include "phaser/model/registration-result.h"
-#include "phaser/common/rotation-utils.h"
 
 #include <glog/logging.h>
+
+#include "phaser/common/rotation-utils.h"
 
 namespace model {
 
@@ -92,8 +93,8 @@ void RegistrationResult::setRotationCorrelation(
   rotation_correlation_ = rot;
 }
 
-const std::vector<double>& RegistrationResult::getRotationCorrelation() const
-    noexcept {
+const std::vector<double>& RegistrationResult::getRotationCorrelation()
+    const noexcept {
   return rotation_correlation_;
 }
 

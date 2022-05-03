@@ -1,7 +1,7 @@
 #include "phaser/common/spherical-projection.h"
 
-#include <glog/logging.h>
 #include <cmath>
+#include <glog/logging.h>
 
 namespace common {
 
@@ -10,7 +10,7 @@ void SphericalProjection::convertPointCloud(model::PointCloud* cloud) {
 }
 
 model::PointCloud SphericalProjection::convertPointCloudCopy(
-    const model::PointCloud &cloud) {
+    const model::PointCloud& cloud) {
   model::PointCloud cloned = cloud.clone();
   naiveProjection(cloud, &cloned);
   return cloned;
@@ -20,7 +20,7 @@ void SphericalProjection::naiveProjection(
     const model::PointCloud& cloud_in, model::PointCloud* cloud_out) {
   const uint32_t n_points = cloud_in.size();
   for (uint32_t i = 0u; i < n_points; ++i) {
-    const common::Point_t &point = cloud_in.pointAt(i);
+    const common::Point_t& point = cloud_in.pointAt(i);
     // Calculate the distance to the point.
     const double dist_xy = std::sqrt(point.x * point.x + point.y * point.y);
     const double dist = std::sqrt(dist_xy * dist_xy + point.z * point.z);

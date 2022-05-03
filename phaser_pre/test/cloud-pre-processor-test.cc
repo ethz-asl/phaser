@@ -1,3 +1,5 @@
+#include "phaser_pre/cloud-pre-processor.h"
+
 #include <chrono>
 #include <cmath>
 #include <gtest/gtest.h>
@@ -7,7 +9,6 @@
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
 #include "phaser/model/point-cloud.h"
-#include "phaser_pre/cloud-pre-processor.h"
 
 namespace preproc {
 

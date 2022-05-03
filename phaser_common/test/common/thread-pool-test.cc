@@ -1,16 +1,16 @@
-#include <chrono>
-#include <cmath>
-#include <memory>
-#include <random>
+#include "phaser/common/thread-pool.h"
 
 #include <Eigen/Dense>
+#include <chrono>
+#include <cmath>
 #include <glog/logging.h>
 #include <gtest/gtest.h>
+#include <memory>
+#include <random>
 
 #include "phaser/common/test-worker.h"
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
-#include "phaser/common/thread-pool.h"
 
 namespace common {
 

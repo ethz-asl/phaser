@@ -1,11 +1,11 @@
+#include "phaser/backend/fusion/pyramid-struct.h"
+
 #include <chrono>
 #include <cmath>
+#include <gtest/gtest.h>
 #include <memory>
 #include <random>
 
-#include <gtest/gtest.h>
-
-#include "phaser/backend/fusion/pyramid-struct.h"
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
 

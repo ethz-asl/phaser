@@ -1,16 +1,16 @@
 #ifndef PHASER_PHASER_NODE_H_
 #define PHASER_PHASER_NODE_H_
 
-#include "phaser/common/data/base-datasource.h"
-#include "phaser/common/statistics-manager.h"
-#include "phaser/controller/cloud-controller.h"
-#include "phaser/model/point-cloud.h"
-
 #include <atomic>
 #include <memory>
 #include <ros/ros.h>
 #include <string>
 #include <vector>
+
+#include "phaser/common/data/base-datasource.h"
+#include "phaser/common/statistics-manager.h"
+#include "phaser/controller/cloud-controller.h"
+#include "phaser/model/point-cloud.h"
 
 namespace phaser_ros {
 

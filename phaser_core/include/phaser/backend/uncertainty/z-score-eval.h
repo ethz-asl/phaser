@@ -1,14 +1,14 @@
 #ifndef PHASER_BACKEND_UNCERTAINTY_Z_SCORE_EVAL_H_
 #define PHASER_BACKEND_UNCERTAINTY_Z_SCORE_EVAL_H_
 
-#include "phaser/backend/uncertainty/base-eval.h"
-#include "phaser/backend/uncertainty/z-score-peak-extraction.h"
-#include "phaser/common/statistics-manager.h"
-
 #include <cstdint>
 #include <set>
 #include <utility>
 #include <vector>
+
+#include "phaser/backend/uncertainty/base-eval.h"
+#include "phaser/backend/uncertainty/z-score-peak-extraction.h"
+#include "phaser/common/statistics-manager.h"
 
 namespace phaser_core {
 

@@ -1,12 +1,12 @@
 #ifndef PHASER_BACKEND_UNCERTAINTY_BASE_EVAL_H_
 #define PHASER_BACKEND_UNCERTAINTY_BASE_EVAL_H_
 
+#include <memory>
+#include <vector>
+
 #include "phaser/backend/alignment/base-aligner.h"
 #include "phaser/backend/correlation/spherical-correlation.h"
 #include "phaser/distribution/base-distribution.h"
-
-#include <memory>
-#include <vector>
 
 namespace phaser_core {
 

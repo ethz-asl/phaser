@@ -1,7 +1,4 @@
 #include "phaser/distribution/bingham.h"
-#include "phaser/common/rotation-utils.h"
-#include "phaser/common/test/testing-entrypoint.h"
-#include "phaser/common/test/testing-predicates.h"
 
 #include <Eigen/Dense>
 #include <chrono>
@@ -10,6 +7,10 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <random>
+
+#include "phaser/common/rotation-utils.h"
+#include "phaser/common/test/testing-entrypoint.h"
+#include "phaser/common/test/testing-predicates.h"
 
 namespace common {
 
@@ -104,8 +105,8 @@ TEST_F(BinghamTest, sampleDeterministicTest) {
 
   Eigen::MatrixXd true_samples(2, 3);
   Eigen::RowVector3d true_weights(0.3333333, 0.3333333, 0.3333333);
-  true_samples << 0, 0.550363580623329, -0.550363580623329,
-    1, 0.834925103900624, 0.834925103900624;
+  true_samples << 0, 0.550363580623329, -0.550363580623329, 1,
+      0.834925103900624, 0.834925103900624;
 
   EXPECT_NEAR_EIGEN(deterministic_weights, true_weights, 1e-4);
   EXPECT_NEAR_EIGEN(deterministic_samples, true_samples, 1e-4);

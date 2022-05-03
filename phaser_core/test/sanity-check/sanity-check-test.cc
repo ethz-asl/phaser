@@ -1,6 +1,6 @@
-#include "phaser/common/test/testing-entrypoint.h"
-
 #include <gtest/gtest.h>
+
+#include "phaser/common/test/testing-entrypoint.h"
 
 namespace phaser_core {
 

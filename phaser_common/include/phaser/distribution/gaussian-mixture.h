@@ -1,13 +1,13 @@
 #ifndef PHASER_DISTRIBUTION_GAUSSIAN_MIXTURE_H_
 #define PHASER_DISTRIBUTION_GAUSSIAN_MIXTURE_H_
 
-#include "phaser/distribution/base-distribution.h"
-#include "phaser/distribution/gaussian.h"
-
 #include <Eigen/Dense>
 #include <memory>
 #include <utility>
 #include <vector>
+
+#include "phaser/distribution/base-distribution.h"
+#include "phaser/distribution/gaussian.h"
 
 namespace common {
 

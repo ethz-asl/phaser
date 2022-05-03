@@ -1,9 +1,9 @@
 #include "phaser/visualization/plotty-visualizer.h"
-#include <plotty/matplotlibcpp.hpp>
 
 #include <Eigen/Dense>
 #include <fstream>
 #include <glog/logging.h>
+#include <plotty/matplotlibcpp.hpp>
 
 namespace visualization {
 

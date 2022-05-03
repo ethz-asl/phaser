@@ -1,8 +1,9 @@
 #include "phaser/backend/uncertainty/bingham-peak-based-eval.h"
-#include "phaser/common/rotation-utils.h"
 
 #include <algorithm>
 #include <glog/logging.h>
+
+#include "phaser/common/rotation-utils.h"
 
 DEFINE_int32(
     bingham_peak_neighbors, 0,

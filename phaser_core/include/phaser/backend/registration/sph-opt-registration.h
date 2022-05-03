@@ -24,8 +24,8 @@ class SphOptRegistration : public BaseRegistration {
   model::RegistrationResult registerPointCloud(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) override;
 
-  void getStatistics(common::StatisticsManager* manager) const
-      noexcept override;
+  void getStatistics(
+      common::StatisticsManager* manager) const noexcept override;
 
   model::RegistrationResult estimateRotation(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur);

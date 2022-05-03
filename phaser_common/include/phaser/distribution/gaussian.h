@@ -1,19 +1,19 @@
 #ifndef PHASER_DISTRIBUTION_GAUSSIAN_H_
 #define PHASER_DISTRIBUTION_GAUSSIAN_H_
 
-#include "phaser/distribution/base-distribution.h"
-
 #include <Eigen/Dense>
 #include <memory>
 #include <utility>
+
+#include "phaser/distribution/base-distribution.h"
 
 namespace common {
 
 class Gaussian : public BaseDistribution {
  public:
   explicit Gaussian(const Eigen::VectorXd& mu, const Eigen::MatrixXd& cov);
-  explicit Gaussian(const Eigen::MatrixXd& samples,
-    const Eigen::VectorXd& weights);
+  explicit Gaussian(
+      const Eigen::MatrixXd& samples, const Eigen::VectorXd& weights);
   virtual ~Gaussian() = default;
   Eigen::VectorXd getEstimate() const override;
 
@@ -29,8 +29,8 @@ class Gaussian : public BaseDistribution {
   Eigen::VectorXd weights_;
 
  private:
-  void setMeanAndCov(const Eigen::MatrixXd& samples,
-     const Eigen::VectorXd& weights);
+  void setMeanAndCov(
+      const Eigen::MatrixXd& samples, const Eigen::VectorXd& weights);
 
   Eigen::VectorXd mu_;
   Eigen::MatrixXd cov_;

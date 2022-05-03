@@ -1,19 +1,18 @@
 #pragma once
 
-#include "phaser/model/point.h"
-
 #include <memory>
 #include <vector>
+
+#include "phaser/model/point.h"
 
 namespace model {
 
 class Packet {
-  public:
-    Packet();
+ public:
+  Packet();
 
-  private:
-    std::vector<PointXYZIf> points_;
-
+ private:
+  std::vector<PointXYZIf> points_;
 };
 
-} // namespace model
+}  // namespace model

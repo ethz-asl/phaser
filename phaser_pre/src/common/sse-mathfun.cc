@@ -29,9 +29,9 @@
   (this is the zlib license)
 */
 
-#include <xmmintrin.h>
-
 #include "phaser_pre/common/sse-mathfun.h"
+
+#include <xmmintrin.h>
 
 namespace preproc {
 

@@ -1,17 +1,17 @@
 #ifndef PHASER_BACKEND_REGISTRATION_SPH_REGISTRATION_H_
 #define PHASER_BACKEND_REGISTRATION_SPH_REGISTRATION_H_
 
+#include <array>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "phaser/backend/alignment/base-aligner.h"
 #include "phaser/backend/correlation/spherical-correlation.h"
 #include "phaser/backend/registration/base-registration.h"
 #include "phaser/backend/uncertainty/base-eval.h"
 #include "phaser/backend/uncertainty/phase-correlation-eval.h"
 #include "phaser/common/spherical-sampler.h"
-
-#include <array>
-#include <memory>
-#include <string>
-#include <vector>
 
 namespace phaser_core {
 
@@ -26,8 +26,8 @@ class SphRegistration : public BaseRegistration {
   model::RegistrationResult registerPointCloud(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur) override;
 
-  void getStatistics(common::StatisticsManager* manager) const
-      noexcept override;
+  void getStatistics(
+      common::StatisticsManager* manager) const noexcept override;
 
   model::RegistrationResult estimateRotation(
       model::PointCloudPtr cloud_prev, model::PointCloudPtr cloud_cur);

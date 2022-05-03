@@ -5,8 +5,8 @@
 
 namespace data {
 
-void FileSystemHelper::readDirectory(const std::string& directory,
-    std::vector<std::string>* files) {
+void FileSystemHelper::readDirectory(
+    const std::string& directory, std::vector<std::string>* files) {
   boost::filesystem::path p(directory);
   if (!boost::filesystem::exists(p)) {
     LOG(FATAL) << "PLY directory does not exist!";

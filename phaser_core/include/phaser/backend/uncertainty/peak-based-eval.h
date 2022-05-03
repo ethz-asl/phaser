@@ -2,6 +2,7 @@
 #define PHASER_BACKEND_UNCERTAINTY_PEAK_BASED_EVAL_H_
 
 #include <vector>
+
 #include "phaser/backend/uncertainty/base-peak-extraction.h"
 
 namespace phaser_core {

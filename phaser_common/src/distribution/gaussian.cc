@@ -11,8 +11,8 @@ Gaussian::Gaussian(const Eigen::VectorXd& mu, const Eigen::MatrixXd& cov)
   CHECK_EQ(cov_.cols(), 3);
 }
 
-Gaussian::Gaussian(const Eigen::MatrixXd& samples,
-    const Eigen::VectorXd& weights) {
+Gaussian::Gaussian(
+    const Eigen::MatrixXd& samples, const Eigen::VectorXd& weights) {
   CHECK_GT(samples.cols(), 0);
   CHECK_GT(samples.rows(), 0);
   CHECK_EQ(samples.cols(), weights.rows());
@@ -45,8 +45,8 @@ std::pair<Eigen::VectorXd, Eigen::MatrixXd> Gaussian::getParameters() const {
   return std::make_pair(mu_, cov_);
 }
 
-void Gaussian::setMeanAndCov(const Eigen::MatrixXd& samples,
-   const Eigen::VectorXd& weights) {
+void Gaussian::setMeanAndCov(
+    const Eigen::MatrixXd& samples, const Eigen::VectorXd& weights) {
   mu_ = samples * weights;
   Eigen::MatrixXd zero_mean_samples = samples.colwise() - mu_;
   Eigen::MatrixXd sqrt_weights = weights.transpose().array().sqrt();

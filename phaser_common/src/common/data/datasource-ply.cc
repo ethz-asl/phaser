@@ -1,8 +1,9 @@
 #include "phaser/common/data/datasource-ply.h"
-#include "phaser/common/data/file-system-helper.h"
 
 #include <boost/filesystem.hpp>
 #include <glog/logging.h>
+
+#include "phaser/common/data/file-system-helper.h"
 
 DEFINE_string(
     PlyReadDirectory, "", "Defines the directory to read the PLYs from.");

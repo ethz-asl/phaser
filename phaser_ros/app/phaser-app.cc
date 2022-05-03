@@ -1,11 +1,10 @@
-#include "phaser/common/gflags-interface.h"
-#include "phaser/phaser-node.h"
-
+#include <chrono>
 #include <glog/logging.h>
 #include <ros/ros.h>
-
-#include <chrono>
 #include <thread>
+
+#include "phaser/common/gflags-interface.h"
+#include "phaser/phaser-node.h"
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "phaser");

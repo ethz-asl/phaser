@@ -1,10 +1,9 @@
 #ifndef PHASER_BACKEND_CORRELATION_BASE_SPATIAL_CORRELATION_H_
 #define PHASER_BACKEND_CORRELATION_BASE_SPATIAL_CORRELATION_H_
 
+#include <Eigen/Dense>
 #include <memory>
 #include <vector>
-
-#include <Eigen/Dense>
 
 namespace phaser_core {
 

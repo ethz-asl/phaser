@@ -1,19 +1,19 @@
-#include <chrono>
-#include <cmath>
-#include <gtest/gtest.h>
-#include <memory>
-#include <random>
+#include "phaser_pre/algorithm/image-projection.h"
 
 #include <Eigen/Dense>
+#include <chrono>
+#include <cmath>
 #include <eigen-checks/gtest.h>
+#include <gtest/gtest.h>
+#include <memory>
 #include <opencv2/core/eigen.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <random>
 
 #include "phaser/common/data/datasource-ply.h"
 #include "phaser/common/test/testing-entrypoint.h"
 #include "phaser/common/test/testing-predicates.h"
 #include "phaser/model/point-cloud.h"
-#include "phaser_pre/algorithm/image-projection.h"
 
 namespace preproc {
 

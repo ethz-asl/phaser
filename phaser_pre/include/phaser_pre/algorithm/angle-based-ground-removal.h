@@ -2,6 +2,7 @@
 #define PHASER_PRE_ALGORITHM_ANGLE_BASED_GROUND_REMOVAL_H_
 
 #include <opencv2/core/mat.hpp>
+
 #include "phaser/model/point-cloud.h"
 #include "phaser_pre/common/vec-helper.h"
 #include "phaser_pre/model/ground-removal-result.h"

@@ -1,6 +1,4 @@
 #include "phaser/distribution/gaussian-mixture.h"
-#include "phaser/common/test/testing-entrypoint.h"
-#include "phaser/common/test/testing-predicates.h"
 
 #include <Eigen/Dense>
 #include <chrono>
@@ -9,6 +7,9 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <random>
+
+#include "phaser/common/test/testing-entrypoint.h"
+#include "phaser/common/test/testing-predicates.h"
 
 namespace common {
 
