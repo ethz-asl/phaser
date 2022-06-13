@@ -93,6 +93,10 @@ if(BUILD_TYPE MATCHES CUDA)
   target_link_libraries(${PROJECT_NAME}_driver
     ${PROJECT_NAME}_lib ${PROJECT_NAME}_cuda_lib
     ${CUDA_LIBRARIES} ${CUDA_CUFFT_LIBRARIES} ${OpenMP_LIBS})
+else()
+  cs_add_executable(${PROJECT_NAME}_driver test/driver.cc)
+  target_link_libraries(${PROJECT_NAME}_driver
+    ${PROJECT_NAME}_lib ${OpenMP_LIBS})
 endif()
 
 # Sanity check.
