@@ -1,5 +1,5 @@
 #!/bin/bash -e
-echo "Running the prepare script for maplab.";
+echo "Running the prepare script for phaser.";
 
 if [[ $(uname) == "Linux" ]]; then
   sudo apt-get install -y doxygen liblapack-dev libblas-dev autotools-dev \
@@ -7,7 +7,7 @@ if [[ $(uname) == "Linux" ]]; then
     default-jre libreadline-dev libgtest-dev libglew-dev python-git pylint \
     checkstyle python-termcolor liblog4cplus-dev cimg-dev python-wstool \
     python-catkin-tools libssh2-1-dev libatlas3-base libv4l-dev python-scipy \
-    libnlopt-dev
+    libnlopt-dev wget
 
   if lsb_release -c 2> /dev/null | grep trusty > /dev/null ; then
     # Ubuntu 14.04 / ROS Indigo.

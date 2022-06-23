@@ -31,11 +31,11 @@ PHASER requires ROS and some other dependencies to be installed:
      dh-autoreconf libboost-all-dev python-setuptools git g++ cppcheck \
      libgtest-dev python-git pylint \
      python-termcolor liblog4cplus-dev cimg-dev python-wstool \
-     python-catkin-tools \
+     python-catkin-tools
 
    # Ubuntu 18.04 / ROS Melodic.
    sudo apt-get install -y clang-format-6.0 ros-melodic-pcl-conversions \
-     libpcl-dev libnlopt-dev \
+     libpcl-dev libnlopt-dev
 ```
 
 For the remaining package dependencies, run within the `caktin` workspace
