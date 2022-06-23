@@ -14,7 +14,7 @@ rsync -a \
   --exclude '*.git' \
   --exclude '*.md' \
   --exclude '*.ply' \
-  --exclude 'phaser_deploy' \
+  --exclude 'phaser_deploy/' \
   "${project_dir}" "${ws}"
 
 # Copy the installation script to the context.

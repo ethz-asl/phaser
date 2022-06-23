@@ -11,17 +11,20 @@ RUN sh ./install_base.sh && rm ./install_base.sh
 COPY install_ros.sh ./install_ros.sh
 RUN sh ./install_ros.sh && rm ./install_ros.sh
 
-# Install the custom packages.
-COPY ./ws ./ws
-COPY install_packages.sh ./install_packages.sh
-RUN sh ./install_packages.sh && rm ./install_packages.sh
-
 # Configure the catkin workspace.
+WORKDIR /usr/home
+COPY ./ws ./ws
 WORKDIR /usr/home/ws
 RUN catkin init --workspace .
 RUN catkin config --merge-devel
 
+# Install the custom packages.
+WORKDIR /usr/home/ws/src
+COPY install_packages.sh ./install_packages.sh
+RUN sh ./install_packages.sh && rm ./install_packages.sh
+
 # Build the project.
+WORKDIR /usr/home/ws
 SHELL ["/bin/bash", "-c"]
 COPY compile.sh ../
 RUN ../compile.sh
