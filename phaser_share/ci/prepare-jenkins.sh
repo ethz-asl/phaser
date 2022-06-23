@@ -1,9 +1,8 @@
 #!/bin/bash -e
 echo "Running the prepare script for phaser.";
 
-sudo apt-get update -y
-
 if [[ $(uname) == "Linux" ]]; then
+  sudo apt-get update -y
   sudo apt-get install -y doxygen liblapack-dev libblas-dev autotools-dev \
     dh-autoreconf libboost-all-dev python-setuptools git g++ cppcheck \
     default-jre libreadline-dev libgtest-dev libglew-dev python-git pylint \
