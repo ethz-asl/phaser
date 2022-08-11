@@ -13,7 +13,6 @@ mkdir -p "${ws}"
 rsync -a \
   --exclude '*.git' \
   --exclude '*.md' \
-  --exclude '*.ply' \
   --exclude 'phaser_deploy/' \
   "${project_dir}" "${ws}"
 
