@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 . /usr/home/ws/devel/setup.bash
-roscore &
+roscore > /dev/null &
 exec "$@"
