@@ -1,11 +1,8 @@
 #!/usr/bin/env zsh
 REST=$@
 
-rosrun packlo packlo \
+rosrun phaser_ros phaser_ros \
     --alsologtostderr=1 \
     --v=3 \
-		--enable_debug=true \
-		--registration_algorithm=sph \
-		--spherical_bandwith=12 \
-		--PlyWriteDirectory="/home/berlukas/Documents/ply/" \
+    --registration_algorithm=sph \
     $REST
