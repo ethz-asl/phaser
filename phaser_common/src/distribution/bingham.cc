@@ -48,7 +48,7 @@ Eigen::MatrixXd Bingham::gaussianCovariance(bool angle) {
     Eigen::MatrixXd samples;
     sample(&samples, sample_count);
     Eigen::VectorXd m = mode();
-    Eigen::MatrixXd zero_samples = samples - m.replicate(samples.rows(), 1);
+    Eigen::MatrixXd zero_samples = samples.transpose() - m.replicate(1, samples.cols());
     return zero_samples * zero_samples.transpose() / sample_count;
   }
 }
